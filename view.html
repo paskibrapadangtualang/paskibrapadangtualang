@@ -1,0 +1,445 @@
+
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins', sans-serif;
+}
+
+body{
+  background:#f5f5f5;
+}
+
+@keyframes spin{
+
+  100%{
+    transform:rotate(360deg);
+  }
+
+}
+
+
+
+
+
+@keyframes zoomIn{
+
+  from{
+    transform:scale(0.7);
+    opacity:0;
+  }
+
+  to{
+    transform:scale(1);
+    opacity:1;
+  }
+
+}
+
+</style>
+
+
+
+<div id="profileContainer">
+
+  <div style="
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:80vh;
+    flex-direction:column;
+  ">
+
+    <!-- SPINNER -->
+    <div style="
+      width:55px;
+      height:55px;
+      border:5px solid #eee;
+      border-top:5px solid #c40000;
+      border-radius:50%;
+      animation:spin 1s linear infinite;
+    "></div>
+
+    <p style="
+      margin-top:15px;
+      color:#666;
+      font-size:14px;
+      font-weight:bold;
+    ">
+      Memuat profile...
+    </p>
+
+  </div>
+
+</div>
+
+
+
+
+<!-- MODAL ZOOM FOTO -->
+
+<div
+  id="zoomModal"
+  style="
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.9);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:99999;
+    padding:20px;
+  "
+  onclick="closeZoom()"
+>
+
+  <img
+    id="zoomImage"
+    style="
+      max-width:100%;
+      max-height:100%;
+      border-radius:20px;
+      object-fit:contain;
+      animation:zoomIn 0.3s ease;
+    "
+  >
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  get
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+// FIREBASE CONFIG
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+
+};
+
+// INIT
+
+const app = initializeApp(firebaseConfig);
+
+const database = getDatabase(app);
+
+// AMBIL ID URL
+
+const urlParams =
+  new URLSearchParams(
+    window.location.search
+  );
+
+const userId =
+  urlParams.get("id");
+
+// CONTAINER
+
+const profileContainer =
+  document.getElementById(
+    "profileContainer"
+  );
+
+// LOAD PROFILE
+
+async function loadProfile(){
+
+  try{
+
+    const snapshot = await get(
+      ref(database, "users/" + userId)
+    );
+
+    if(snapshot.exists()){
+
+      const data = snapshot.val();
+
+profileContainer.innerHTML = `
+
+<div style="
+  padding:20px;
+">
+
+  <div style="
+    background:white;
+    border-radius:28px;
+    overflow:hidden;
+    box-shadow:0 8px 25px rgba(0,0,0,0.08);
+  ">
+
+    <!-- HEADER -->
+    <div style="
+      background:linear-gradient(135deg,#c40000,#ff3b3b);
+      height:140px;
+      position:relative;
+    ">
+
+      <!-- FOTO -->
+      <div style="
+        position:absolute;
+        left:50%;
+        bottom:-55px;
+        transform:translateX(-50%);
+      ">
+
+        <img
+  src="${data.fotoSelfie || 'assets/images/user.png'}"
+  onclick="zoomFoto('${data.fotoSelfie || 'assets/images/user.png'}')"
+  style="
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    object-fit:cover;
+    border:5px solid white;
+    box-shadow:0 5px 15px rgba(0,0,0,0.2);
+    background:white;
+    cursor:pointer;
+  "
+>
+
+      </div>
+
+    </div>
+
+    <!-- CONTENT -->
+    <div style="
+      padding:75px 22px 25px;
+    ">
+
+      <!-- NAMA -->
+      <h2 style="
+        text-align:center;
+        font-size:24px;
+        color:#222;
+        margin-bottom:8px;
+      ">
+        ${data.namaLengkap || '-'}
+      </h2>
+
+      <!-- STATUS -->
+      <div style="
+        text-align:center;
+        margin-bottom:25px;
+      ">
+
+        <span style="
+          background:#ffe5e5;
+          color:#c40000;
+          padding:8px 16px;
+          border-radius:30px;
+          font-size:13px;
+          font-weight:bold;
+        ">
+          Angkatan ${data.angkatanTahun || data.tahunPaskibra || '-'}
+        </span>
+
+      </div>
+
+      <!-- CARD DATA -->
+      <div style="
+        display:flex;
+        flex-direction:column;
+        gap:15px;
+      ">
+
+        <!-- ITEM -->
+        <div style="
+          background:#f8f8f8;
+          padding:15px;
+          border-radius:18px;
+        ">
+
+          <div style="
+            font-size:12px;
+            color:#888;
+            margin-bottom:5px;
+          ">
+            Asal Sekolah
+          </div>
+
+          <div style="
+            font-size:16px;
+            font-weight:bold;
+            color:#222;
+          ">
+            ${data.asalSekolah || '-'}
+          </div>
+
+        </div>
+
+        <!-- ITEM -->
+        <div style="
+          background:#f8f8f8;
+          padding:15px;
+          border-radius:18px;
+        ">
+
+          <div style="
+            font-size:12px;
+            color:#888;
+            margin-bottom:5px;
+          ">
+            Nomor Pendaftaran
+          </div>
+
+          <div style="
+            font-size:16px;
+            font-weight:bold;
+            color:#222;
+          ">
+            ${data.nomorPendaftaran || '-'}
+          </div>
+
+        </div>
+
+        <!-- ITEM -->
+        <div style="
+          background:#f8f8f8;
+          padding:15px;
+          border-radius:18px;
+        ">
+
+          <div style="
+            font-size:12px;
+            color:#888;
+            margin-bottom:5px;
+          ">
+            Nomor HP
+          </div>
+
+          <div style="
+            font-size:16px;
+            font-weight:bold;
+            color:#222;
+          ">
+            ${
+              data.nomorHp
+              ? data.nomorHp.substring(0,4) + "******"
+              : '-'
+            }
+          </div>
+
+        </div>
+
+        <!-- ITEM -->
+        <div style="
+          background:#f8f8f8;
+          padding:15px;
+          border-radius:18px;
+        ">
+
+          <div style="
+            font-size:12px;
+            color:#888;
+            margin-bottom:5px;
+          ">
+            Alamat
+          </div>
+
+          <div style="
+            font-size:16px;
+            font-weight:bold;
+            color:#222;
+          ">
+            ${
+              data.alamat
+              ? data.alamat.substring(0,2) + "***********" + data.alamat.slice(-2)
+              : '-'
+            }
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+`;
+
+    }else{
+
+      profileContainer.innerHTML = `
+        <div>
+          Data user tidak ditemukan
+        </div>
+      `;
+
+    }
+
+  }catch(error){
+
+    console.log(error);
+
+    profileContainer.innerHTML = `
+      <div>
+        Gagal memuat profile
+      </div>
+    `;
+
+  }
+
+}
+
+// JALANKAN
+
+loadProfile();
+
+
+
+
+
+
+
+
+
+
+
+
+window.zoomFoto = function(src){
+
+  document.getElementById(
+    "zoomModal"
+  ).style.display = "flex";
+
+  document.getElementById(
+    "zoomImage"
+  ).src = src;
+
+}
+
+window.closeZoom = function(){
+
+  document.getElementById(
+    "zoomModal"
+  ).style.display = "none";
+
+}
+
+
+</script>

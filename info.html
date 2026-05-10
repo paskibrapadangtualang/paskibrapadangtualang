@@ -1,0 +1,366 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Info Hari Ini</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial, sans-serif;
+}
+
+body{
+  background:#f5f5f5;
+  padding-bottom:90px;
+}
+
+/* HEADER */
+
+header{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:65px;
+  background:#c40000;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  font-weight:bold;
+  z-index:1000;
+  box-shadow:0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* CONTAINER */
+
+.container{
+  padding:85px 15px 20px;
+}
+
+/* CHAT BOX */
+
+.chat-box{
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+/* CHAT ITEM */
+
+.chat-item{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+}
+
+/* FOTO ADMIN */
+
+.chat-avatar{
+  width:45px;
+  height:45px;
+  border-radius:50%;
+  object-fit:cover;
+  background:#ddd;
+}
+
+/* BUBBLE */
+
+.chat-bubble{
+  background:white;
+  padding:14px;
+  border-radius:15px;
+  max-width:85%;
+  box-shadow:0 2px 5px rgba(0,0,0,0.08);
+}
+
+.chat-title{
+  font-size:15px;
+  font-weight:bold;
+  color:#c40000;
+  margin-bottom:8px;
+}
+
+.chat-message{
+  font-size:14px;
+  color:#444;
+  line-height:1.5;
+  margin-bottom:10px;
+}
+
+.chat-date{
+  font-size:12px;
+  color:#888;
+  text-align:right;
+}
+
+/* LOADING */
+
+.loading{
+  text-align:center;
+  color:#777;
+  margin-top:30px;
+}
+
+/* NAVBAR */
+
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  height:70px;
+  background:white;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  box-shadow:0 -2px 5px rgba(0,0,0,0.1);
+}
+
+.nav-item{
+  text-decoration:none;
+  color:#444;
+  font-size:12px;
+  font-weight:bold;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+}
+
+.nav-item img{
+  width:24px;
+  height:24px;
+  object-fit:contain;
+}
+
+.active{
+  color:#c40000;
+}
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  INFO HARI INI
+</header>
+
+<!-- CONTAINER -->
+<div class="container">
+
+  <div
+    class="chat-box"
+    id="chatBox"
+  >
+
+    <div class="loading">
+      Loading pesan...
+    </div>
+
+  </div>
+
+</div>
+
+<!-- NAVBAR -->
+<nav class="bottom-nav">
+
+  <a href="home.html" class="nav-item">
+    <img src="assets/images/home.png">
+    <span>Home</span>
+  </a>
+
+  <a href="postingan.html" class="nav-item">
+    <img src="assets/images/postingan.png">
+    <span>Postingan</span>
+  </a>
+
+  <a href="user.html" class="nav-item active">
+    <img src="assets/images/user.png">
+    <span>User</span>
+  </a>
+
+</nav>
+
+<!-- FIREBASE -->
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  get,
+  set
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+// FIREBASE CONFIG
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+
+};
+
+// INIT
+
+const app = initializeApp(firebaseConfig);
+
+const database = getDatabase(app);
+
+// ======================
+// AUTO BUAT INFO DUMMY
+// ======================
+
+async function buatInfoDummy(){
+
+  const infoRef =
+    ref(database, "info");
+
+  const snapshot =
+    await get(infoRef);
+
+  // JIKA BELUM ADA INFO
+
+  if(!snapshot.exists()){
+
+    await set(infoRef, {
+
+      info1: {
+
+        judul:
+          "Latihan Perdana",
+
+        isi:
+          "Seluruh anggota wajib hadir jam 07:00 WIB di lapangan utama.",
+
+        tanggal:
+          "14 Juli 2026"
+
+      },
+
+      info2: {
+
+        judul:
+          "Pengumuman Seragam",
+
+        isi:
+          "Gunakan seragam lengkap dan sepatu hitam saat latihan.",
+
+        tanggal:
+          "15 Juli 2026"
+
+      }
+
+    });
+
+    console.log(
+      "Info dummy berhasil dibuat"
+    );
+
+  }
+
+}
+
+// ======================
+// LOAD INFO
+// ======================
+
+async function loadInfo(){
+
+  const chatBox =
+    document.getElementById(
+      "chatBox"
+    );
+
+  const snapshot =
+    await get(
+      ref(database, "info")
+    );
+
+  // TIDAK ADA INFO
+
+  if(!snapshot.exists()){
+
+    chatBox.innerHTML = `
+      <div class="loading">
+        Belum ada informasi
+      </div>
+    `;
+
+    return;
+
+  }
+
+  const data =
+    Object.values(snapshot.val());
+
+  // TERBARU DI ATAS
+
+  data.reverse();
+
+  let html = "";
+
+  data.forEach((item)=>{
+
+    html += `
+
+      <div class="chat-item">
+
+        <img
+          src="assets/images/RI.webp"
+          class="chat-avatar"
+        >
+
+        <div class="chat-bubble">
+
+          <div class="chat-title">
+            ${item.judul}
+          </div>
+
+          <div class="chat-message">
+            ${item.isi}
+          </div>
+
+          <div class="chat-date">
+            ${item.tanggal}
+          </div>
+
+        </div>
+
+      </div>
+
+    `;
+
+  });
+
+  chatBox.innerHTML = html;
+
+}
+
+// JALANKAN
+
+await buatInfoDummy();
+
+loadInfo();
+
+</script>
+
+</body>
+</html>

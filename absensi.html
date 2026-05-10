@@ -1,0 +1,1014 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Absensi Paskibra</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial, sans-serif;
+}
+
+body{
+  background:#f5f5f5;
+  padding:20px;
+}
+
+.container{
+  padding:20px;
+}
+
+.absensi-card{
+  background:white;
+  border-radius:25px;
+  padding:25px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.08);
+}
+
+.absensi-header{
+  display:flex;
+  align-items:center;
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.absensi-icon{
+  width:60px;
+  height:60px;
+  object-fit:contain;
+  background:#c40000;
+  padding:12px;
+  border-radius:18px;
+  
+  
+}
+
+.absensi-header h2{
+  color:#c40000;
+  font-size:22px;
+  margin-bottom:4px;
+}
+
+.absensi-header p{
+  color:#777;
+  font-size:14px;
+}
+
+.status-box{
+  background:#f7f7f7;
+  border-radius:18px;
+  padding:18px;
+  margin-bottom:25px;
+}
+
+.status-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
+}
+
+.status-item:last-child{
+  margin-bottom:0;
+}
+
+.label{
+  color:#666;
+  font-size:14px;
+  font-weight:bold;
+}
+
+.value{
+  font-size:14px;
+  font-weight:bold;
+  color:#222;
+}
+
+.status-active{
+  color:#2ecc71;
+}
+
+.absen-btn{
+  width:100%;
+  height:55px;
+  border:none;
+  border-radius:18px;
+  background:#c40000;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.absen-btn:hover{
+  transform:scale(1.02);
+}
+
+.absen-btn img{
+  width:22px;
+  height:22px;
+  object-fit:contain;
+  filter:brightness(0)
+  invert(1);
+}
+
+.absen-btn:disabled{
+  background:#999;
+  cursor:not-allowed;
+}
+
+.loading{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(255,255,255,0.9);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+
+.spinner{
+  width:50px;
+  height:50px;
+  border:5px solid #ddd;
+  border-top:5px solid #c40000;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  100%{
+    transform:rotate(360deg);
+  }
+}
+
+.alert{
+  position:fixed;
+  top:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#c40000;
+  color:white;
+  padding:12px 20px;
+  border-radius:10px;
+  display:none;
+  z-index:99999;
+}
+
+
+
+.history-card{
+  margin-top:20px;
+  background:white;
+  border-radius:25px;
+  padding:20px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.08);
+}
+
+.history-header{
+  display:flex;
+  align-items:center;
+  gap:15px;
+  margin-bottom:20px;
+}
+
+.history-icon{
+  width:55px;
+  height:55px;
+  object-fit:contain;
+  background:#c40000;
+  padding:12px;
+  border-radius:15px;
+}
+
+.history-header h2{
+  color:#c40000;
+  font-size:20px;
+  margin-bottom:4px;
+}
+
+.history-header p{
+  color:#777;
+  font-size:13px;
+}
+
+/* BOX SCROLL */
+
+.history-scroll{
+  max-height:350px;
+  overflow-y:auto;
+  padding-right:5px;
+}
+
+/* SCROLLBAR */
+
+.history-scroll::-webkit-scrollbar{
+  width:5px;
+}
+
+.history-scroll::-webkit-scrollbar-thumb{
+  background:#c40000;
+  border-radius:10px;
+}
+
+.loading-history{
+  text-align:center;
+  color:#777;
+  padding:20px;
+}
+
+
+
+</style>
+</head>
+<body>
+
+<div class="loading" id="loadingBox">
+  <div class="spinner"></div>
+</div>
+
+<div class="alert" id="alertBox"></div>
+
+<div class="container">
+
+  <!-- CARD ABSENSI -->
+  <div class="card absensi-card">
+
+    <!-- HEADER -->
+    <div class="absensi-header">
+
+      <img
+        src="assets/images/fingerprint.png"
+        class="absensi-icon"
+      >
+
+      <div>
+
+        <h2>
+          ABSENSI PASKIBRA
+        </h2>
+
+        <p>
+          Sistem Kehadiran Digital
+        </p>
+
+      </div>
+
+    </div>
+
+    <!-- STATUS -->
+    <div class="status-box">
+
+      <div class="status-item">
+
+        <span class="label">
+          Status Absen
+        </span>
+
+        <span
+          id="statusAbsen"
+          class="value status-active"
+        >
+          Mengecek...
+        </span>
+
+      </div>
+
+      <div class="status-item">
+
+        <span class="label">
+          Cooldown
+        </span>
+
+<span
+  id="cooldownText"
+  class="value"
+>
+  Loading...
+</span>
+
+      </div>
+
+    </div>
+
+    <!-- BUTTON -->
+    <button
+      class="absen-btn"
+      id="absenBtn"
+      onclick="absen()"
+    >
+
+      <img
+        src="assets/images/fingerprint.png"
+      >
+
+      <span>
+        ABSEN SEKARANG
+      </span>
+
+    </button>
+
+  </div>
+
+</div>
+
+
+
+<!-- HISTORY ABSEN -->
+
+<div class="card history-card">
+
+  <div class="history-header">
+
+    <img
+      src="assets/images/Formulirrr.png"
+      class="history-icon"
+    >
+
+    <div>
+
+      <h2>
+        History Absen
+      </h2>
+
+      <p>
+        Riwayat kehadiran terbaru
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- BOX SCROLL -->
+  <div
+    id="historyAbsen"
+    class="history-scroll"
+  >
+
+    <p class="loading-history">
+      Loading...
+    </p>
+
+  </div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getAuth,
+  onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+  getDatabase,
+  ref,
+  get,
+  push,
+  set,
+  serverTimestamp
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+// ======================
+// FIREBASE CONFIG
+// ======================
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+
+};
+
+// ======================
+// INIT FIREBASE
+// ======================
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+const database = getDatabase(app);
+
+// ======================
+// AUTO CREATE SETTINGS
+// ======================
+
+async function buatSettingAbsensi(){
+
+  const settingRef =
+    ref(database, "settings/absensi");
+
+  const snapshot =
+    await get(settingRef);
+
+  if(!snapshot.exists()){
+
+    await set(settingRef, {
+
+      status: true,
+
+      jamMulai: "00:00",
+
+      jamSelesai: "23:59",
+
+      cooldownMenit: 1
+
+    });
+
+  }
+
+}
+
+buatSettingAbsensi();
+
+// ======================
+// ALERT
+// ======================
+
+function showAlert(text){
+
+  const alertBox =
+    document.getElementById(
+      "alertBox"
+    );
+
+  alertBox.innerText = text;
+
+  alertBox.style.display = "block";
+
+  setTimeout(()=>{
+
+    alertBox.style.display = "none";
+
+  },3000);
+
+}
+
+// ======================
+// LOADING
+// ======================
+
+function showLoading(){
+
+  document.getElementById(
+    "loadingBox"
+  ).style.display = "flex";
+
+}
+
+function hideLoading(){
+
+  document.getElementById(
+    "loadingBox"
+  ).style.display = "none";
+
+}
+
+// ======================
+// TIMER
+// ======================
+
+function startCooldownTimer(duration){
+
+  let timer = duration;
+
+  const cooldownText =
+    document.getElementById(
+      "cooldownText"
+    );
+
+  const interval =
+    setInterval(()=>{
+
+      const menit =
+        Math.floor(timer / 60);
+
+      const detik =
+        timer % 60;
+
+      const formatDetik =
+        detik < 10
+        ? "0" + detik
+        : detik;
+
+      cooldownText.innerText =
+        menit +
+        "m " +
+        formatDetik +
+        "d";
+
+      timer--;
+
+      if(timer < 0){
+
+        clearInterval(interval);
+
+        cooldownText.innerText =
+          "Siap";
+
+        document.getElementById(
+          "statusAbsen"
+        ).innerText =
+          "Boleh absen";
+
+        document.getElementById(
+          "absenBtn"
+        ).disabled = false;
+
+      }
+
+    },1000);
+
+}
+
+// ======================
+// CEK LOGIN
+// ======================
+
+onAuthStateChanged(auth, async(user)=>{
+
+  if(!user){
+
+    window.location.href =
+      "akun.html";
+
+    return;
+
+  }
+
+  cekStatusAbsen(user.uid);
+
+  loadHistoryAbsen(user.uid);
+
+});
+
+// ======================
+// CEK STATUS ABSEN
+// ======================
+
+async function cekStatusAbsen(uid){
+
+  const settingSnapshot =
+    await get(
+      ref(database, "settings/absensi")
+    );
+
+  if(!settingSnapshot.exists()){
+
+    showAlert(
+      "Setting absensi belum dibuat"
+    );
+
+    return;
+
+  }
+
+  const setting =
+    settingSnapshot.val();
+
+  // ABSENSI OFF
+
+  if(!setting.status){
+
+    document.getElementById(
+      "statusAbsen"
+    ).innerText =
+      "Absensi ditutup";
+
+    document.getElementById(
+      "cooldownText"
+    ).innerText =
+      "OFF";
+
+    document.getElementById(
+      "absenBtn"
+    ).disabled = true;
+
+    return;
+
+  }
+
+  const snapshot =
+    await get(
+      ref(database, "absensi/" + uid)
+    );
+
+  if(snapshot.exists()){
+
+    const data =
+      Object.values(snapshot.val());
+
+    const terakhir =
+      data[data.length - 1];
+
+    const sekarang =
+      Date.now();
+
+    const selisih =
+      sekarang -
+      terakhir.timestamp;
+
+    const cooldown =
+      setting.cooldownMenit *
+      60 *
+      1000;
+
+    // MASIH COOLDOWN
+
+    if(selisih < cooldown){
+
+      const sisaDetik =
+        Math.ceil(
+          (cooldown - selisih)
+          / 1000
+        );
+
+      document.getElementById(
+        "statusAbsen"
+      ).innerText =
+        "Masih cooldown";
+
+      document.getElementById(
+        "absenBtn"
+      ).disabled = true;
+
+      startCooldownTimer(
+        sisaDetik
+      );
+
+    }else{
+
+      document.getElementById(
+        "statusAbsen"
+      ).innerText =
+        "Boleh absen";
+
+      document.getElementById(
+        "cooldownText"
+      ).innerText =
+        setting.cooldownMenit +
+        " Menit";
+
+      document.getElementById(
+        "absenBtn"
+      ).disabled = false;
+
+    }
+
+  }else{
+
+    document.getElementById(
+      "statusAbsen"
+    ).innerText =
+      "Belum pernah absen";
+
+    document.getElementById(
+      "cooldownText"
+    ).innerText =
+      setting.cooldownMenit +
+      " Menit";
+
+    document.getElementById(
+      "absenBtn"
+    ).disabled = false;
+
+  }
+
+}
+
+// ======================
+// ABSEN
+// ======================
+
+window.absen = async function(){
+
+  const user =
+    auth.currentUser;
+
+  if(!user){
+
+    showAlert(
+      "Harus login"
+    );
+
+    return;
+
+  }
+
+  showLoading();
+
+  try{
+
+    const settingSnapshot =
+      await get(
+        ref(database, "settings/absensi")
+      );
+
+    const setting =
+      settingSnapshot.val();
+
+    // ABSENSI OFF
+
+    if(!setting.status){
+
+      hideLoading();
+
+      showAlert(
+        "Absensi sedang ditutup"
+      );
+
+      return;
+
+    }
+
+    const now =
+      new Date();
+
+    const jamSekarang =
+      now
+      .toTimeString()
+      .slice(0,5);
+
+    // CEK JAM
+
+    if(
+
+      jamSekarang <
+      setting.jamMulai ||
+
+      jamSekarang >
+      setting.jamSelesai
+
+    ){
+
+      hideLoading();
+
+      showAlert(
+        "Belum masuk jam absensi"
+      );
+
+      return;
+
+    }
+
+    // USER DATA
+
+    const userSnapshot =
+      await get(
+        ref(
+          database,
+          "users/" + user.uid
+        )
+      );
+
+    const userData =
+      userSnapshot.val();
+
+    // DATA ABSEN
+
+    const dataAbsen = {
+
+      nama:
+        userData.namaLengkap,
+
+      email:
+        userData.email,
+
+      tanggal:
+        now.toLocaleDateString(
+          "id-ID"
+        ),
+
+      jam:
+        now.toLocaleTimeString(
+          "id-ID"
+        ),
+
+      timestamp:
+        Date.now(),
+
+      serverTime:
+        serverTimestamp(),
+
+      status:
+        "Hadir"
+
+    };
+
+    // SIMPAN ABSEN
+
+    const absenRef =
+      push(
+        ref(
+          database,
+          "absensi/" + user.uid
+        )
+      );
+
+    await set(
+      absenRef,
+      dataAbsen
+    );
+
+    // TOTAL ABSEN
+
+    const totalRef =
+      ref(
+        database,
+        "users/" +
+        user.uid +
+        "/totalAbsen"
+      );
+
+    const totalSnapshot =
+      await get(totalRef);
+
+    let totalAbsen = 0;
+
+    if(totalSnapshot.exists()){
+
+      totalAbsen =
+        totalSnapshot.val();
+
+    }
+
+    totalAbsen++;
+
+    await set(
+      totalRef,
+      totalAbsen
+    );
+
+    hideLoading();
+
+    showAlert(
+      "Absen berhasil"
+    );
+
+    document.getElementById(
+      "absenBtn"
+    ).disabled = true;
+
+    document.getElementById(
+      "statusAbsen"
+    ).innerText =
+      "Masih cooldown";
+
+    // START TIMER
+
+    startCooldownTimer(
+      setting.cooldownMenit * 60
+    );
+
+    // REFRESH HISTORY
+
+    loadHistoryAbsen(
+      user.uid
+    );
+
+  }catch(error){
+
+    console.log(error);
+
+    hideLoading();
+
+    showAlert(
+      error.message
+    );
+
+  }
+
+}
+
+// ======================
+// HISTORY ABSEN
+// ======================
+
+async function loadHistoryAbsen(uid){
+
+  const historyBox =
+    document.getElementById(
+      "historyAbsen"
+    );
+
+  const snapshot =
+    await get(
+      ref(database, "absensi/" + uid)
+    );
+
+  if(!snapshot.exists()){
+
+    historyBox.innerHTML = `
+      <p
+        style="
+          text-align:center;
+          color:#777;
+        "
+      >
+        Belum ada history absen
+      </p>
+    `;
+
+    return;
+
+  }
+
+  const data =
+    Object.values(snapshot.val());
+
+  data.reverse();
+
+  let html = "";
+
+  data.forEach((item)=>{
+
+    html += `
+
+      <div
+        style="
+          background:#f5f5f5;
+          padding:12px;
+          border-radius:12px;
+          margin-bottom:10px;
+        "
+      >
+
+        <div
+          style="
+            font-weight:bold;
+            color:#c40000;
+            margin-bottom:8px;
+            font-size:16px;
+          "
+        >
+          👤 ${item.nama}
+        </div>
+
+        <div
+          style="
+            font-size:14px;
+            color:#555;
+            margin-bottom:4px;
+          "
+        >
+          📌 Status :
+          ${item.status}
+        </div>
+
+        <div
+          style="
+            font-size:14px;
+            color:#555;
+            margin-bottom:4px;
+          "
+        >
+          📅 ${item.tanggal}
+        </div>
+
+        <div
+          style="
+            font-size:14px;
+            color:#555;
+          "
+        >
+          🕒 ${item.jam}
+        </div>
+
+      </div>
+
+    `;
+
+  });
+
+  historyBox.innerHTML = html;
+
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Akun - Paskibra PDTualang</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial, sans-serif;
+    }
+
+    body{
+      background:#f5f5f5;
+      padding-top:70px;
+      padding-bottom:70px;
+    }
+
+      /* HEADER */
+    header{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:60px;
+      background:#c40000;
+      color:white;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:20px;
+      font-weight:bold;
+      z-index:1000;
+      box-shadow:0 2px 5px rgba(0,0,0,0.2);
+    }
+
+
+
+
+
+/* HEADER */
+
+.main-header{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:60px;
+  background:#c40000;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 15px;
+  z-index:1000;
+  box-shadow:0 2px 5px rgba(0,0,0,0.2);
+}
+
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.logo{
+  width:38px;
+  height:38px;
+  object-fit:contain;
+}
+
+.header-left span{
+  color:white;
+  font-size:15px;
+  font-weight:bold;
+}
+
+.menu-icon{
+  width:24px;
+  height:24px;
+  cursor:pointer;
+  filter: brightness(0) invert(1);
+}
+
+/* DROPDOWN */
+
+.dropdown-menu{
+  position:fixed;
+  top:65px;
+  right:10px;
+  width:220px;
+  background:white;
+  border-radius:15px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.15);
+  overflow:hidden;
+  display:none;
+  z-index:2000;
+}
+
+.dropdown-menu a{
+  display:block;
+  padding:15px;
+  text-decoration:none;
+  color:#333;
+  font-size:14px;
+  border-bottom:1px solid #eee;
+}
+
+.dropdown-menu a:hover{
+  background:#f5f5f5;
+}
+
+    /* CONTENT */
+    .container{
+      padding:20px;
+    }
+
+    .card{
+      background:white;
+      border-radius:15px;
+      padding:20px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom:20px;
+    }
+
+    .card h2{
+      text-align:center;
+      color:#c40000;
+      margin-bottom:20px;
+    }
+
+    .input-group{
+      margin-bottom:15px;
+    }
+
+    .input-group label{
+      display:block;
+      margin-bottom:5px;
+      color:#444;
+      font-size:14px;
+      font-weight:bold;
+    }
+
+    .input-group input,
+    .input-group textarea{
+      width:100%;
+      padding:12px;
+      border:1px solid #ccc;
+      border-radius:10px;
+      outline:none;
+      font-size:14px;
+    }
+
+    textarea{
+      resize:none;
+      height:100px;
+    }
+
+    .btn{
+      width:100%;
+      padding:12px;
+      border:none;
+      border-radius:10px;
+      background:#c40000;
+      color:white;
+      font-size:16px;
+      font-weight:bold;
+      cursor:pointer;
+      transition:0.3s;
+    }
+
+    .btn:hover{
+      background:#a30000;
+    }
+
+    .switch-text{
+      text-align:center;
+      margin-top:15px;
+      font-size:14px;
+      color:#555;
+    }
+
+    .switch-text span{
+      color:#c40000;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
+    /* BOTTOM NAV */
+   /* NAVBAR */
+
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  height:65px;
+  background:white;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  box-shadow:0 -2px 5px rgba(0,0,0,0.1);
+  z-index:1000;
+}
+
+.nav-item{
+  text-decoration:none;
+  color:#444;
+  font-size:12px;
+  font-weight:bold;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+}
+
+.nav-item img{
+  width:22px;
+  height:22px;
+  object-fit:contain;
+}
+
+.bottom-nav a.active{
+  color:#c40000 !important;
+}
+
+/* FOTO USER */
+
+#navProfile{
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  object-fit:cover;
+}
+
+    
+
+    .hidden{
+      display:none;
+    }
+
+
+
+
+
+/* LOADING */
+
+.loading-box{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(255,255,255,0.9);
+  display:none;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+
+.spinner{
+  width:50px;
+  height:50px;
+  border:5px solid #ddd;
+  border-top:5px solid #c40000;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  100%{
+    transform:rotate(360deg);
+  }
+}
+
+.loading-box p{
+  margin-top:15px;
+  font-size:14px;
+  font-weight:bold;
+  color:#444;
+}
+
+/* ALERT */
+
+.custom-alert{
+  position:fixed;
+  top:80px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#009e35;
+  color:white;
+  padding:12px 20px;
+  border-radius:12px;
+  font-size:14px;
+  font-weight:bold;
+  display:none;
+  z-index:99999;
+  box-shadow:0 2px 10px rgba(0,0,0,0.2);
+}
+
+
+
+
+
+/* LOADING SCREEN */
+
+.loading-screen{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:99999;
+}
+
+/* SPINNER */
+
+.spinner{
+  width:50px;
+  height:50px;
+  border:5px solid #ddd;
+  border-top:5px solid #c40000;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+
+  100%{
+    transform:rotate(360deg);
+  }
+
+}
+
+
+  </style>
+</head>
+<body>
+
+
+<!-- LOADING SCREEN -->
+<div class="loading-screen" id="loadingScreen">
+
+  <div class="spinner"></div>
+
+</div>
+
+
+  <!-- HEADER -->
+<!-- HEADER -->
+<header class="main-header">
+
+  <!-- KIRI -->
+  <div class="header-left">
+
+    <img
+      src="assets/images/RI.webp"
+      class="logo"
+    >
+
+    <span>
+      PASKIBRA PADANG TUALANG
+    </span>
+
+  </div>
+
+  <!-- KANAN -->
+  <div class="header-right">
+
+    <img
+      src="assets/images/country_filter_icon.png"
+      class="menu-icon"
+      onclick="toggleMenu()"
+    >
+
+  </div>
+
+</header>
+
+<!-- DROPDOWN MENU -->
+<div class="dropdown-menu" id="dropdownMenu">
+
+  <a href="#">
+    Syarat dan Ketentuan
+  </a>
+
+  <a href="#">
+    Contact
+  </a>
+
+  <a href="#">
+    Tentang Kami
+  </a>
+
+  <a href="#">
+    Bantuan
+  </a>
+
+</div>
+
+
+  <div class="container">
+
+    <!-- LOGIN -->
+    <div class="card" id="loginBox">
+      <h2>Login</h2>
+
+      <div class="input-group">
+        <label>Email</label>
+        <input type="email" id="loginEmail" placeholder="Masukkan email">
+      </div>
+
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="Masukkan password">
+      </div>
+
+      <button class="btn" onclick="login()">
+        Login
+      </button>
+
+      <div class="switch-text">
+
+  Lupa password?
+  <span onclick="resetPassword()">
+    Reset Password
+  </span>
+
+</div>
+
+<div class="switch-text">
+
+  Belum punya akun?
+  <span onclick="showRegister()">
+    Daftar
+  </span>
+
+</div>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="card hidden" id="registerBox">
+
+      <h2>Daftar Akun</h2>
+
+      <div class="input-group">
+        <label>Nama Lengkap</label>
+        <input type="text" id="registerName" placeholder="Masukkan nama lengkap">
+      </div>
+
+
+
+        <!-- ✅ TAMBAHAN 1 -->
+  <div class="input-group">
+    <label>Angkatan Tahun</label>
+    <select id="angkatanTahun">
+      <option>2022</option>
+      <option>2023</option>
+      <option>2024</option>
+      <option>2025</option>
+      <option>2026</option>
+    </select>
+  </div>
+
+  <!-- ✅ TAMBAHAN 2 -->
+  <div class="input-group">
+    <label>Asal Sekolah</label>
+    <input type="text" id="asalSekolah">
+  </div>
+
+
+
+
+      <div class="input-group">
+        <label>Tanggal Lahir</label>
+        <input type="date" id="tanggalLahir" onchange="hitungUmur()">
+      </div>
+
+      <div class="input-group">
+        <label>Umur</label>
+        <input type="text" id="umur" readonly>
+      </div>
+
+      <div class="input-group">
+        <label>Nomor HP</label>
+        <input type="number" id="nomorHp" placeholder="08xxxxxxxxxx">
+      </div>
+
+      <div class="input-group">
+        <label>Email Aktif</label>
+        <input type="email" id="registerEmail" placeholder="Masukkan email">
+      </div>
+
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="registerPassword" placeholder="Masukkan password">
+      </div>
+
+      <div class="input-group">
+        <label>Konfirmasi Password</label>
+        <input type="password" id="confirmPassword" placeholder="Konfirmasi password">
+      </div>
+
+      <div class="input-group">
+        <label>Tinggi Badan</label>
+        <input type="text" id="tinggiBadan" placeholder="Contoh: 164 cm">
+      </div>
+
+      <div class="input-group">
+        <label>Foto Selfie</label>
+        <input type="file" id="fotoSelfie" accept="image/*">
+      </div>
+
+      <div class="input-group">
+        <label>Nomor WhatsApp</label>
+        <input type="number" id="nomorWa" placeholder="08xxxxxxxxxx">
+      </div>
+
+      <div class="input-group">
+        <label>Nama Ibu Kandung</label>
+        <input type="text" id="namaIbu" placeholder="Nama ibu kandung">
+      </div>
+
+      <div class="input-group">
+        <label>Nomor Pendaftaran</label>
+        <input type="text" id="nomorPendaftaran" placeholder="PDT-001">
+      </div>
+
+      <div class="input-group">
+        <label>Alamat Tempat Tinggal</label>
+        <textarea id="alamat" placeholder="Masukkan alamat lengkap"></textarea>
+      </div>
+
+      <button class="btn" onclick="register()">
+        Daftar Sekarang
+      </button>
+
+      <div class="switch-text">
+        Sudah punya akun?
+        <span onclick="showLogin()">Login</span>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- BOTTOM NAV -->
+<!-- NAVBAR -->
+<nav class="bottom-nav">
+
+  <!-- HOME -->
+  <a href="home.html" class="nav-item">
+
+    <img
+      src="assets/images/home.png"
+    >
+
+    <span>
+      Home
+    </span>
+
+  </a>
+
+  <!-- POSTINGAN -->
+  <a href="postingan.html" class="nav-item">
+
+    <img
+      src="assets/images/postingan.png"
+    >
+
+    <span>
+      Postingan
+    </span>
+
+  </a>
+
+  <!-- USER / LOGIN -->
+  <a href="akun.html" class="nav-item active">
+
+    <img
+      src="assets/images/user.png"
+      id="navProfile"
+    >
+
+    <span id="navText">
+      Login
+    </span>
+
+  </a>
+
+</nav>
+
+  <!-- FIREBASE -->
+  <script type="module">
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      sendPasswordResetEmail,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    import {
+      getDatabase,
+      ref,
+      set
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    // CONFIG FIREBASE
+ const firebaseConfig = {
+
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b",
+  measurementId: "G-1KGNVS3MRX"
+
+};
+
+    // INIT FIREBASE
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const database = getDatabase(app);
+
+
+// CEK LOGIN
+
+onAuthStateChanged(auth, (user)=>{
+
+  const loadingScreen =
+    document.getElementById(
+      "loadingScreen"
+    );
+
+  // CEK HALAMAN REGISTER SEDANG TERBUKA
+
+  const registerBox =
+    document.getElementById(
+      "registerBox"
+    );
+
+  const sedangRegister =
+    !registerBox.classList.contains(
+      "hidden"
+    );
+
+  if(user && !sedangRegister){
+
+    window.location.href =
+      "user.html";
+
+  }else{
+
+    loadingScreen.style.display =
+      "none";
+
+  }
+
+});
+
+
+    // TAMPIL REGISTER
+    window.showRegister = function(){
+      document.getElementById("loginBox").classList.add("hidden");
+      document.getElementById("registerBox").classList.remove("hidden");
+    }
+
+    // TAMPIL LOGIN
+    window.showLogin = function(){
+      document.getElementById("registerBox").classList.add("hidden");
+      document.getElementById("loginBox").classList.remove("hidden");
+    }
+
+    // HITUNG UMUR
+    window.hitungUmur = function(){
+
+      const tanggalLahir = document.getElementById("tanggalLahir").value;
+
+      if(!tanggalLahir) return;
+
+      const today = new Date();
+      const birthDate = new Date(tanggalLahir);
+
+      let umur = today.getFullYear() - birthDate.getFullYear();
+
+      const month = today.getMonth() - birthDate.getMonth();
+
+      if(month < 0 || (month === 0 && today.getDate() < birthDate.getDate())){
+        umur--;
+      }
+
+      document.getElementById("umur").value = umur + " Tahun";
+    }
+
+
+
+
+
+    // RESET PASSWORD
+
+window.resetPassword = async function(){
+
+  const email =
+    document.getElementById(
+      "loginEmail"
+    ).value;
+
+  if(email === ""){
+
+    showAlert(
+      "Masukkan email terlebih dahulu"
+    );
+
+    return;
+
+  }
+
+  try{
+
+    // LOADING
+
+    showLoading(
+      "Mengirim reset password..."
+    );
+
+    await sendPasswordResetEmail(
+      auth,
+      email
+    );
+
+    hideLoading();
+
+    showAlert(
+      "Link reset password berhasil dikirim"
+    );
+
+  }catch(error){
+
+    hideLoading();
+
+    let pesan =
+      "Terjadi kesalahan";
+
+    if(
+      error.code ===
+      "auth/user-not-found"
+    ){
+
+      pesan =
+        "Email tidak ditemukan";
+
+    }else if(
+      error.code ===
+      "auth/invalid-email"
+    ){
+
+      pesan =
+        "Format email tidak valid";
+
+    }
+
+    showAlert(pesan);
+
+  }
+
+}
+
+    // LOGIN
+ // =====================
+// CLOUDINARY
+// =====================
+
+const CLOUD_NAME = "djxlbemky";
+const UPLOAD_PRESET = "uploadgambar";
+
+// =====================
+// LOGIN
+// =====================
+
+window.login = async function(){
+
+  const email =
+    document.getElementById("loginEmail").value;
+
+  const password =
+    document.getElementById("loginPassword").value;
+
+  try{
+
+  // TAMPILKAN LOADING
+
+  showLoading(
+    "Mencocokkan data akun..."
+  );
+
+  await signInWithEmailAndPassword(
+    auth,
+    email,
+    password
+  );
+
+  // HIDE LOADING
+
+  hideLoading();
+
+  // NOTIF
+
+  showAlert("Login berhasil");
+
+  // PINDAH HALAMAN
+
+  setTimeout(()=>{
+
+    window.location.href =
+      "user.html";
+
+  }, 1500);
+
+}catch(error){
+
+  hideLoading();
+
+  let pesan = "Terjadi kesalahan";
+
+// EMAIL / PASSWORD SALAH
+
+if(
+  error.code === "auth/invalid-credential"
+){
+
+  pesan =
+    "Email atau password salah";
+
+// EMAIL TIDAK VALID
+
+}else if(
+  error.code === "auth/invalid-email"
+){
+
+  pesan =
+    "Format email tidak valid";
+
+// USER TIDAK ADA
+
+}else if(
+  error.code === "auth/user-not-found"
+){
+
+  pesan =
+    "Akun tidak ditemukan";
+
+// PASSWORD LEMAH
+
+}else if(
+  error.code === "auth/weak-password"
+){
+
+  pesan =
+    "Password terlalu lemah";
+
+// EMAIL SUDAH DIGUNAKAN
+
+}else if(
+  error.code === "auth/email-already-in-use"
+){
+
+  pesan =
+    "Email sudah digunakan";
+
+}else{
+
+  pesan = error.message;
+
+}
+
+showAlert(pesan);
+
+}
+
+}
+
+
+// CUSTOM ALERT
+
+function showAlert(message){
+
+  const alertBox =
+    document.getElementById("customAlert");
+
+  const alertText =
+    document.getElementById("alertText");
+
+  alertText.innerText = message;
+
+  alertBox.style.display = "block";
+
+  setTimeout(()=>{
+
+    alertBox.style.display = "none";
+
+  }, 3000);
+
+}
+
+// SHOW LOADING
+
+function showLoading(text = "Memproses..."){
+
+  document.getElementById(
+    "loadingBox"
+  ).style.display = "flex";
+
+  document.getElementById(
+    "loadingText"
+  ).innerText = text;
+
+}
+
+// HIDE LOADING
+
+function hideLoading(){
+
+  document.getElementById(
+    "loadingBox"
+  ).style.display = "none";
+
+}
+
+// =====================
+// REGISTER
+// =====================
+
+// =====================
+// REGISTER
+// =====================
+
+window.register = async function(){
+
+  const nama =
+    document.getElementById("registerName").value;
+
+  const angkatanTahun =
+    document.getElementById("angkatanTahun").value;
+
+  const asalSekolah =
+    document.getElementById("asalSekolah").value;
+
+  const tanggalLahir =
+    document.getElementById("tanggalLahir").value;
+
+  const umur =
+    document.getElementById("umur").value;
+
+  const nomorHp =
+    document.getElementById("nomorHp").value;
+
+  const email =
+    document.getElementById("registerEmail").value;
+
+  const password =
+    document.getElementById("registerPassword").value;
+
+  const confirmPassword =
+    document.getElementById("confirmPassword").value;
+
+  const tinggiBadan =
+    document.getElementById("tinggiBadan").value;
+
+  const nomorWa =
+    document.getElementById("nomorWa").value;
+
+  const namaIbu =
+    document.getElementById("namaIbu").value;
+
+  const nomorPendaftaran =
+    document.getElementById("nomorPendaftaran").value;
+
+  const alamat =
+    document.getElementById("alamat").value;
+
+  const foto =
+    document.getElementById("fotoSelfie").files[0];
+
+  // VALIDASI PASSWORD
+
+  if(password !== confirmPassword){
+
+    showAlert("Password tidak sama!");
+    return;
+
+  }
+
+  // VALIDASI FOTO
+
+  if(!foto){
+
+    showAlert("Foto selfie wajib diupload!");
+    return;
+
+  }
+
+  try{
+
+    // TAMPILKAN LOADING
+
+    showLoading("Mengupload data...");
+
+    // =====================
+    // UPLOAD FOTO CLOUDINARY
+    // =====================
+
+    const formData = new FormData();
+
+    formData.append("file", foto);
+
+    formData.append(
+      "upload_preset",
+      UPLOAD_PRESET
+    );
+
+    const cloudinaryResponse =
+      await fetch(
+        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+        {
+          method: "POST",
+          body: formData
+        }
+      );
+
+    const cloudinaryData =
+      await cloudinaryResponse.json();
+
+    const fotoUrl =
+      cloudinaryData.secure_url;
+
+    // =====================
+    // REGISTER FIREBASE AUTH
+    // =====================
+
+    const userCredential =
+      await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+    const user = userCredential.user;
+
+    // =====================
+    // SIMPAN DATABASE
+    // =====================
+
+    await set(
+      ref(database, "users/" + user.uid),
+      {
+
+        namaLengkap: nama,
+
+        angkatanTahun: angkatanTahun,
+
+        asalSekolah: asalSekolah,
+
+        tanggalLahir: tanggalLahir,
+
+        umur: umur,
+
+        nomorHp: nomorHp,
+
+        email: email,
+
+        tinggiBadan: tinggiBadan,
+
+        fotoSelfie: fotoUrl,
+
+        nomorWa: nomorWa,
+
+        namaIbu: namaIbu,
+
+        nomorPendaftaran: nomorPendaftaran,
+
+        alamat: alamat,
+
+        statusPenerimaan: "Menunggu Seleksi"
+
+      }
+    );
+
+    // HIDE LOADING
+
+    hideLoading();
+
+    // ALERT
+
+    showAlert("Pendaftaran berhasil!");
+
+    // DELAY SUPAYA DATABASE BENAR2 TERSIMPAN
+
+    setTimeout(()=>{
+
+      window.location.href =
+        "user.html";
+
+    }, 2000);
+
+  }catch(error){
+
+    hideLoading();
+
+    console.log(error);
+
+    let pesan =
+      "Terjadi kesalahan";
+
+    if(
+      error.code ===
+      "auth/email-already-in-use"
+    ){
+
+      pesan =
+        "Email sudah digunakan";
+
+    }else if(
+      error.code ===
+      "auth/weak-password"
+    ){
+
+      pesan =
+        "Password minimal 6 karakter";
+
+    }else if(
+      error.code ===
+      "auth/invalid-email"
+    ){
+
+      pesan =
+        "Format email tidak valid";
+
+    }else{
+
+      pesan = error.message;
+
+    }
+
+    showAlert(pesan);
+
+  }
+
+}
+  </script>
+
+
+
+
+<script>
+
+function toggleMenu(){
+
+  const menu =
+    document.getElementById("dropdownMenu");
+
+  if(menu.style.display === "block"){
+
+    menu.style.display = "none";
+
+  }else{
+
+    menu.style.display = "block";
+
+  }
+
+}
+
+// TUTUP MENU SAAT KLIK LUAR
+
+window.onclick = function(e){
+
+  if(
+    !e.target.matches('.menu-icon')
+  ){
+
+    const menu =
+      document.getElementById("dropdownMenu");
+
+    if(menu.style.display === "block"){
+
+      menu.style.display = "none";
+
+    }
+
+  }
+
+}
+
+</script>
+
+
+
+
+
+<!-- LOADING -->
+<div class="loading-box" id="loadingBox">
+
+  <div class="spinner"></div>
+
+  <p id="loadingText">
+    Memproses...
+  </p>
+
+</div>
+
+<!-- NOTIF -->
+<div class="custom-alert" id="customAlert">
+  <span id="alertText"></span>
+</div>
+
+</body>
+</html>

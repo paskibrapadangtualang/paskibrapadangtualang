@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User - Paskibra PDTualang</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial, sans-serif;
+    }
+
+    body{
+      background:#f5f5f5;
+      padding-top:70px;
+      padding-bottom:80px;
+    }
+
+  /* HEADER */
+    header{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:60px;
+      background:#c40000;
+      color:white;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:20px;
+      font-weight:bold;
+      z-index:1000;
+      box-shadow:0 2px 5px rgba(0,0,0,0.2);
+    }
+
+
+
+
+
+/* HEADER */
+
+.main-header{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:60px;
+  background:#c40000;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 15px;
+  z-index:1000;
+  box-shadow:0 2px 5px rgba(0,0,0,0.2);
+}
+
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.logo{
+  width:38px;
+  height:38px;
+  object-fit:contain;
+}
+
+.header-left span{
+  color:white;
+  font-size:15px;
+  font-weight:bold;
+}
+
+.menu-icon{
+  width:24px;
+  height:24px;
+  cursor:pointer;
+  filter: brightness(0) invert(1);
+}
+
+/* DROPDOWN */
+
+.dropdown-menu{
+  position:fixed;
+  top:65px;
+  right:10px;
+  width:220px;
+  background:white;
+  border-radius:15px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.15);
+  overflow:hidden;
+  display:none;
+  z-index:2000;
+}
+
+.dropdown-menu a{
+  display:block;
+  padding:15px;
+  text-decoration:none;
+  color:#333;
+  font-size:14px;
+  border-bottom:1px solid #eee;
+}
+
+.dropdown-menu a:hover{
+  background:#f5f5f5;
+}
+
+    .container{
+      padding:20px;
+    }
+
+    .profile-card{
+      background:white;
+      border-radius:15px;
+      padding:20px;
+      text-align:center;
+      box-shadow:0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom:20px;
+    }
+
+    .profile-card img{
+      width:120px;
+      height:120px;
+      border-radius:50%;
+      object-fit:cover;
+      border:4px solid #c40000;
+      margin-bottom:15px;
+    }
+
+.profile-card h2{
+  color:#c40000;
+  margin-bottom:5px;
+
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+    .profile-card p{
+      color:#666;
+      font-size:14px;
+    }
+
+
+
+
+
+
+
+
+
+    /* STATUS */
+
+.status-box{
+  margin-top:10px;
+  padding:8px 15px;
+  border-radius:20px;
+  font-size:14px;
+  font-weight:bold;
+  display:inline-block;
+}
+
+/* SELEKSI */
+
+.status-seleksi{
+  background:#f1c40f;
+}
+
+/* DITERIMA */
+
+.status-diterima{
+  background:#2ecc71;
+}
+
+/* DITOLAK */
+
+.status-ditolak{
+  background:#e74c3c;
+}
+
+
+
+
+    .data-card{
+      background:white;
+      border-radius:15px;
+      padding:20px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .data-card h3{
+      color:#c40000;
+      margin-bottom:20px;
+    }
+
+    .data-item{
+      margin-bottom:15px;
+      padding-bottom:10px;
+      border-bottom:1px solid #eee;
+    }
+
+    .data-item strong{
+      display:block;
+      color:#333;
+      margin-bottom:5px;
+    }
+
+    .data-item span{
+      color:#666;
+      font-size:14px;
+    }
+
+    .logout-btn{
+      width:100%;
+      margin-top:20px;
+      padding:12px;
+      border:none;
+      border-radius:10px;
+      background:#c40000;
+      color:white;
+      font-size:16px;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
+
+
+
+
+
+/* MENU */
+
+.menu-card{
+  background:white;
+  border-radius:15px;
+  padding:15px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:15px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+  cursor:pointer;
+}
+
+.menu-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.menu-left img{
+  width:24px;
+  height:24px;
+}
+
+.menu-left span{
+  font-weight:bold;
+  color:#333;
+}
+
+/* DATA */
+
+.data-card{
+  background:white;
+  border-radius:15px;
+  padding:20px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+  display:none;
+}
+
+
+
+
+
+
+/* NAVBAR */
+
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  height:65px;
+  background:white;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  box-shadow:0 -2px 5px rgba(0,0,0,0.1);
+  z-index:1000;
+}
+
+.nav-item{
+  text-decoration:none;
+  color:#444;
+  font-size:12px;
+  font-weight:bold;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+}
+
+.nav-item img{
+  width:22px;
+  height:22px;
+  object-fit:contain;
+}
+
+.bottom-nav a.active{
+  color:#c40000 !important;
+}
+
+#navProfile{
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  object-fit:cover;
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+<!-- HEADER -->
+<header class="main-header">
+
+  <!-- KIRI -->
+  <div class="header-left">
+
+    <img
+      src="assets/images/RI.webp"
+      class="logo"
+    >
+
+    <span>
+      PASKIBRA PADANG TUALANG
+    </span>
+
+  </div>
+
+  <!-- KANAN -->
+  <div class="header-right">
+
+    <img
+      src="assets/images/country_filter_icon.png"
+      class="menu-icon"
+      onclick="toggleMenu()"
+    >
+
+  </div>
+
+</header>
+
+<!-- DROPDOWN MENU -->
+<div class="dropdown-menu" id="dropdownMenu">
+
+  <a href="#">
+    Syarat dan Ketentuan
+  </a>
+
+  <a href="#">
+    Contact
+  </a>
+
+  <a href="#">
+    Tentang Kami
+  </a>
+
+  <a href="#">
+    Bantuan
+  </a>
+
+</div>
+
+
+  <div class="container">
+
+    <!-- PROFILE -->
+    <div class="profile-card">
+
+      <img id="fotoProfile" src="" alt="Foto Profile">
+
+      <h2 id="namaUser">Loading...</h2>
+
+      <p id="statusUser" class="status-box">
+       Status : Menunggu...
+      </p>
+
+    </div>
+
+    <!-- DATA -->
+<!-- MENU DATA SAYA -->
+<div
+  class="menu-card"
+  onclick="toggleDataSaya()"
+>
+
+  <div class="menu-left">
+
+    <img src="assets/images/aaz.png">
+
+    <span>Data Saya</span>
+
+  </div>
+
+  <span id="arrowMenu">
+    ▼
+  </span>
+
+</div>
+
+<!-- MENU ABSENSI -->
+<a
+  href="absensi.html"
+  class="menu-card"
+  style="
+    text-decoration:none;
+    color:#333;
+  "
+>
+
+  <div class="menu-left">
+
+    <img src="assets/images/fingerprint.png">
+
+    <span>Absensi</span>
+
+  </div>
+
+  <span>
+    ➜
+  </span>
+
+</a>
+
+
+
+
+
+<!-- MENU INFO HARI INI -->
+<!-- MENU INFO HARI INI -->
+<a
+  href="info.html"
+  class="menu-card"
+  id="infoMenu"
+  style="
+    text-decoration:none;
+    color:#333;
+    position:relative;
+  "
+>
+
+  <div class="menu-left">
+
+    <img src="assets/images/servant_icon.png">
+
+    <span>Info Hari Ini</span>
+
+  </div>
+
+  <!-- BADGE NOTIF -->
+  <div
+    id="notifBadge"
+    style="
+      position:absolute;
+      top:10px;
+      right:45px;
+      min-width:22px;
+      height:22px;
+      background:#ff0000;
+      color:white;
+      border-radius:50%;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      font-size:12px;
+      font-weight:bold;
+      padding:0 6px;
+      box-shadow:0 2px 5px rgba(0,0,0,0.2);
+    "
+  >
+    0
+  </div>
+
+  <span>
+    ➜
+  </span>
+
+</a>
+
+
+
+
+
+
+
+<!-- MENU ANGKATAN -->
+<a
+  href="angkatan.html"
+  class="menu-card"
+  id="menuAngkatanCard"
+  style="
+    text-decoration:none;
+    color:#333;
+  "
+>
+
+  <div
+    class="menu-left"
+    id="menuAngkatanLeft"
+  >
+
+    <img
+      src="assets/images/aen.png"
+      id="menuAngkatanIcon"
+    >
+
+    <span id="menuAngkatanText">
+      Angkatan Paskibra
+    </span>
+
+  </div>
+
+  <span id="menuAngkatanArrow">
+    ➜
+  </span>
+
+</a>
+
+
+
+
+
+
+
+<!-- DATA -->
+<div class="data-card" id="dataSayaBox">
+
+  <h3>Data Saya</h3>
+
+  <div class="data-item">
+    <strong>Nama Lengkap</strong>
+    <span id="dataNama"></span>
+  </div>
+
+
+  <div class="data-item">
+  <b>Angkatan Tahun :</b>
+  <span id="angkatanTahun">-</span>
+</div>
+
+<div class="data-item">
+  <b>Asal Sekolah :</b>
+  <span id="asalSekolah">-</span>
+</div>
+
+
+  <div class="data-item">
+    <strong>Tanggal Lahir</strong>
+    <span id="dataTanggalLahir"></span>
+  </div>
+
+  <div class="data-item">
+    <strong>Umur</strong>
+    <span id="dataUmur"></span>
+  </div>
+
+  <div class="data-item">
+    <strong>Nomor HP</strong>
+    <span id="dataHp"></span>
+  </div>
+
+  <div class="data-item">
+    <strong>Email</strong>
+    <span id="dataEmail"></span>
+  </div>
+
+  <div class="data-item">
+    <strong>Tinggi Badan</strong>
+    <span id="dataTinggi"></span>
+  </div>
+
+  <div class="data-item">
+    <strong>Nomor WhatsApp</strong>
+    <span id="dataWa"></span>
+  </div>
+
+  <div class="data-item">
+    <strong>Nama Ibu Kandung</strong>
+    <span id="dataIbu"></span>
+  </div>
+
+  <div class="data-item">
+    <strong>Nomor Pendaftaran</strong>
+    <span id="dataPendaftaran"></span>
+  </div>
+
+  <div class="data-item">
+    <strong>Alamat</strong>
+    <span id="dataAlamat"></span>
+  </div>
+
+  <button class="logout-btn" onclick="logout()">
+    Logout
+  </button>
+
+</div>
+
+  </div>
+
+  <!-- NAVBAR -->
+<!-- NAVBAR -->
+<nav class="bottom-nav">
+
+  <a href="home.html" class="nav-item">
+    <img src="assets/images/home.png">
+    <span>Home</span>
+  </a>
+
+  <a href="postingan.html" class="nav-item">
+    <img src="assets/images/postingan.png">
+    <span>Postingan</span>
+  </a>
+
+  <a href="user.html" class="nav-item active">
+
+  <img
+    src="assets/images/user.png"
+    id="navProfile"
+  >
+
+  <span id="navText">
+    Login
+  </span>
+
+</a>
+
+
+
+</nav>
+
+  <script type="module">
+
+    import { initializeApp }
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut
+    }
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    import {
+      getDatabase,
+      ref,
+      get
+    }
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    // FIREBASE CONFIG
+
+    const firebaseConfig = {
+
+      apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+      authDomain: "paskibra2026-300eb.firebaseapp.com",
+      databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+      projectId: "paskibra2026-300eb",
+      storageBucket: "paskibra2026-300eb.firebasestorage.app",
+      messagingSenderId: "937469132434",
+      appId: "1:937469132434:web:d1924e1160350000d1b04b"
+
+    };
+
+    // INIT FIREBASE
+
+    const app = initializeApp(firebaseConfig);
+
+    const auth = getAuth(app);
+
+    const database = getDatabase(app);
+
+
+
+
+    // ======================
+// NOTIF INFO BARU
+// ======================
+
+async function cekNotifInfo(){
+
+  const badge =
+    document.getElementById(
+      "notifBadge"
+    );
+
+  const snapshot =
+    await get(
+      ref(database, "info")
+    );
+
+  // JIKA ADA INFO
+
+  if(snapshot.exists()){
+
+    const totalInfo =
+      Object.keys(
+        snapshot.val()
+      ).length;
+
+    // YANG SUDAH DIBACA
+
+    const sudahBaca =
+      Number(
+        localStorage.getItem(
+          "lastInfoRead"
+        )
+      ) || 0;
+
+    // ADA INFO BARU
+
+    if(totalInfo > sudahBaca){
+
+      badge.style.display =
+        "flex";
+
+      badge.innerText =
+        totalInfo - sudahBaca;
+
+    }else{
+
+      badge.style.display =
+        "none";
+
+    }
+
+  }
+
+}
+
+// JALANKAN
+
+cekNotifInfo();
+
+// ======================
+// SAAT MENU DIKLIK
+// ======================
+
+document
+.getElementById("infoMenu")
+.addEventListener("click", async(e)=>{
+
+  e.preventDefault();
+
+  const snapshot =
+    await get(
+      ref(database, "info")
+    );
+
+  if(snapshot.exists()){
+
+    const totalInfo =
+      Object.keys(
+        snapshot.val()
+      ).length;
+
+    // SIMPAN SUDAH DIBACA
+
+    localStorage.setItem(
+      "lastInfoRead",
+      totalInfo
+    );
+
+  }
+
+  // MASUK HALAMAN INFO
+
+  window.location.href =
+    "info.html";
+
+});
+
+    // CEK LOGIN
+
+    onAuthStateChanged(auth, async(user)=>{
+
+      if(user){
+
+        const uid = user.uid;
+
+        const snapshot = await get(
+          ref(database, "users/" + uid)
+        );
+
+        if(snapshot.exists()){
+
+          const data = snapshot.val();
+
+          // PROFILE
+
+          document.getElementById("fotoProfile").src =
+            data.fotoSelfie;
+
+            document.getElementById("navProfile").src =
+            data.fotoSelfie;
+
+            document.getElementById("navText").innerText =
+            "User";
+
+          document.getElementById("namaUser").innerText =
+            data.namaLengkap;
+
+          
+
+
+            const statusUser =
+  document.getElementById("statusUser");
+
+statusUser.innerText =
+  "Status : " + data.statusPenerimaan;
+
+// RESET CLASS
+
+statusUser.classList.remove(
+  "status-seleksi",
+  "status-diterima",
+  "status-ditolak"
+);
+
+// RESET WARNA
+
+statusUser.style.color = "";
+
+// STATUS DITERIMA
+
+if(
+  data.statusPenerimaan === "Diterima"
+){
+
+  statusUser.classList.add(
+    "status-diterima"
+  );
+
+  statusUser.style.color = "white";
+
+// STATUS DITOLAK
+
+}else if(
+  data.statusPenerimaan === "Ditolak"
+){
+
+  statusUser.classList.add(
+    "status-ditolak"
+  );
+
+  statusUser.style.color = "white";
+
+// STATUS SELEKSI
+
+}else{
+
+  statusUser.classList.add(
+    "status-seleksi"
+  );
+
+  statusUser.style.color = "#333";
+
+}
+
+
+
+
+
+          // DATA
+
+          document.getElementById("dataNama").innerText =
+            data.namaLengkap;
+
+            document.getElementById("angkatanTahun").innerText =
+  data.angkatanTahun || "-";
+
+document.getElementById("asalSekolah").innerText =
+  data.asalSekolah || "-";
+
+          document.getElementById("dataTanggalLahir").innerText =
+            data.tanggalLahir;
+
+          document.getElementById("dataUmur").innerText =
+            data.umur;
+
+          document.getElementById("dataHp").innerText =
+            data.nomorHp;
+
+          document.getElementById("dataEmail").innerText =
+            data.email;
+
+          document.getElementById("dataTinggi").innerText =
+            data.tinggiBadan;
+
+          document.getElementById("dataWa").innerText =
+            data.nomorWa;
+
+          document.getElementById("dataIbu").innerText =
+            data.namaIbu;
+
+          document.getElementById("dataPendaftaran").innerText =
+            data.nomorPendaftaran;
+
+          document.getElementById("dataAlamat").innerText =
+            data.alamat;
+
+        }
+
+      }else{
+
+        window.location.href = "akun.html";
+
+      }
+
+    });
+
+    // LOGOUT
+
+    window.logout = async function(){
+
+      await signOut(auth);
+
+      alert("Logout berhasil");
+
+      window.location.href = "home.html";
+
+    }
+
+
+
+
+    // TOGGLE DATA SAYA
+
+window.toggleDataSaya = function(){
+
+  const box =
+    document.getElementById("dataSayaBox");
+
+  const arrow =
+    document.getElementById("arrowMenu");
+
+  if(box.style.display === "block"){
+
+    box.style.display = "none";
+
+    arrow.innerText = "▼";
+
+  }else{
+
+    box.style.display = "block";
+
+    arrow.innerText = "▲";
+
+  }
+
+}
+
+
+
+
+
+
+
+
+
+// CEK INFO ADMIN
+
+// ======================
+// AUTO BUAT INFO DUMMY
+// ======================
+
+async function buatInfoDummy(){
+
+  const infoRef =
+    ref(database, "info");
+
+  const snapshot =
+    await get(infoRef);
+
+  // JIKA BELUM ADA INFO
+
+  if(!snapshot.exists()){
+
+    await set(infoRef, {
+
+      info1: {
+
+        judul:
+          "Latihan Perdana",
+
+        isi:
+          "Latihan dimulai hari Minggu jam 07:00 WIB di lapangan utama.",
+
+        tanggal:
+          "14 Juli 2026"
+
+      },
+
+      info2: {
+
+        judul:
+          "Seragam Lengkap",
+
+        isi:
+          "Seluruh anggota wajib memakai seragam lengkap saat latihan.",
+
+        tanggal:
+          "15 Juli 2026"
+
+      }
+
+    });
+
+    console.log(
+      "Info dummy berhasil dibuat"
+    );
+
+  }
+
+}
+
+// JALANKAN
+
+buatInfoDummy();
+
+
+
+
+
+
+  </script>
+
+
+
+
+
+
+
+
+
+
+<script>
+
+function toggleMenu(){
+
+  const menu =
+    document.getElementById("dropdownMenu");
+
+  if(menu.style.display === "block"){
+
+    menu.style.display = "none";
+
+  }else{
+
+    menu.style.display = "block";
+
+  }
+
+}
+
+// TUTUP MENU SAAT KLIK LUAR
+
+window.onclick = function(e){
+
+  if(
+    !e.target.matches('.menu-icon')
+  ){
+
+    const menu =
+      document.getElementById("dropdownMenu");
+
+    if(menu.style.display === "block"){
+
+      menu.style.display = "none";
+
+    }
+
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+</body>
+</html>

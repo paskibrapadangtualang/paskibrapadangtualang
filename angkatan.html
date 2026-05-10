@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Angkatan Paskibra</title>
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial, sans-serif;
+    }
+
+    body{
+      background:#f5f5f5;
+      padding-top:80px;
+      padding-bottom:30px;
+    }
+
+    /* HEADER */
+
+    .header{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:65px;
+      background:#c40000;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 15px;
+      z-index:1000;
+      box-shadow:0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .header-title{
+      color:white;
+      font-size:18px;
+      font-weight:bold;
+    }
+
+    /* FILTER */
+
+    .filter-box{
+      position:relative;
+    }
+
+    .filter-button{
+      background:white;
+      border:none;
+      padding:10px 15px;
+      border-radius:12px;
+      font-size:13px;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
+    .filter-menu{
+      position:absolute;
+      top:52px;
+      right:-12px;
+      width:170px;
+      background:white;
+      border-radius:15px;
+      box-shadow:0 3px 12px rgba(0,0,0,0.15);
+      overflow:hidden;
+      display:none;
+      z-index:2000;
+    }
+
+    .filter-item{
+      padding:14px;
+      font-size:14px;
+      border-bottom:1px solid #eee;
+      cursor:pointer;
+    }
+
+    .filter-item:hover{
+      background:#f5f5f5;
+    }
+
+    /* CONTAINER */
+
+    .container{
+      padding:15px;
+    }
+
+    .angkatan-title{
+      font-size:20px;
+      font-weight:bold;
+      margin-bottom:20px;
+      color:#222;
+    }
+
+    /* CARD */
+
+    .anggota-card{
+      background:white;
+      border-radius:18px;
+      padding:18px;
+      margin-bottom:15px;
+      box-shadow:0 3px 10px rgba(0,0,0,0.08);
+      transition:0.2s;
+    }
+
+    .anggota-card:active{
+      transform:scale(0.98);
+    }
+
+    .anggota-nama{
+      font-size:17px;
+      font-weight:bold;
+      color:#111;
+      margin-bottom:10px;
+    }
+
+    .anggota-nomor{
+      font-size:14px;
+      color:#666;
+    }
+
+    .empty-data{
+      text-align:center;
+      color:#777;
+      margin-top:50px;
+      font-size:14px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+
+  <div class="header">
+
+    <div class="header-title">
+      Angkatan Paskibra
+    </div>
+
+    <!-- FILTER -->
+
+    <div class="filter-box">
+
+      <button
+        class="filter-button"
+        onclick="toggleFilterMenu()"
+      >
+        Filter Tahun
+      </button>
+
+      <div
+        class="filter-menu"
+        id="filterMenuAngkatan"
+      >
+
+        <div
+          class="filter-item"
+          onclick="filterTahun('2022')"
+        >
+          Tahun 2022
+        </div>
+
+        <div
+          class="filter-item"
+          onclick="filterTahun('2023')"
+        >
+          Tahun 2023
+        </div>
+
+        <div
+          class="filter-item"
+          onclick="filterTahun('2024')"
+        >
+          Tahun 2024
+        </div>
+
+        <div
+          class="filter-item"
+          onclick="filterTahun('2025')"
+        >
+          Tahun 2025
+        </div>
+
+        <div
+          class="filter-item"
+          onclick="filterTahun('2026')"
+        >
+          Tahun 2026
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- CONTENT -->
+
+  <div class="container">
+
+    <div
+      class="angkatan-title"
+      id="judulAngkatan"
+    >
+      Data Angkatan Tahun 2026
+    </div>
+
+    <div id="containerAnggota">
+
+      <div class="empty-data">
+        Loading data...
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- FIREBASE -->
+
+  <script type="module">
+
+    import { initializeApp }
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+    import {
+      getAuth
+    }
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    import {
+      getDatabase,
+      ref,
+      get,
+      set
+    }
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    // FIREBASE CONFIG
+
+    const firebaseConfig = {
+
+      apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+      authDomain: "paskibra2026-300eb.firebaseapp.com",
+      databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+      projectId: "paskibra2026-300eb",
+      storageBucket: "paskibra2026-300eb.firebasestorage.app",
+      messagingSenderId: "937469132434",
+      appId: "1:937469132434:web:d1924e1160350000d1b04b"
+
+    };
+
+    // INIT FIREBASE
+
+    const app = initializeApp(firebaseConfig);
+
+    const auth = getAuth(app);
+
+    const database = getDatabase(app);
+
+    // =========================================
+    // DATA DUMMY ANGKATAN
+    // =========================================
+
+    async function buatDummyAngkatan(){
+
+      // 2022
+
+      await set(
+        ref(database, "users/user2022_1"),
+        {
+
+          namaLengkap:
+            "Ahmad Fauzi",
+
+          nomorPendaftaran:
+            "PDT-2022-001",
+
+          angkatanTahun:
+            "2022"
+
+        }
+      );
+
+      await set(
+        ref(database, "users/user2022_2"),
+        {
+
+          namaLengkap:
+            "Rizky Ramadhan",
+
+          nomorPendaftaran:
+            "PDT-2022-002",
+
+          angkatanTahun:
+            "2022"
+
+        }
+      );
+
+      // 2023
+
+      await set(
+        ref(database, "users/user2023_1"),
+        {
+
+          namaLengkap:
+            "Dinda Safitri",
+
+          nomorPendaftaran:
+            "PDT-2023-001",
+
+          angkatanTahun:
+            "2023"
+
+        }
+      );
+
+      await set(
+        ref(database, "users/user2023_2"),
+        {
+
+          namaLengkap:
+            "Kevin Saputra",
+
+          nomorPendaftaran:
+            "PDT-2023-002",
+
+          angkatanTahun:
+            "2023"
+
+        }
+      );
+
+      // 2024
+
+      await set(
+        ref(database, "users/user2024_1"),
+        {
+
+          namaLengkap:
+            "Putri Amelia",
+
+          nomorPendaftaran:
+            "PDT-2024-001",
+
+          angkatanTahun:
+            "2024"
+
+        }
+      );
+
+      await set(
+        ref(database, "users/user2024_2"),
+        {
+
+          namaLengkap:
+            "Nanda Pratama",
+
+          nomorPendaftaran:
+            "PDT-2024-002",
+
+          angkatanTahun:
+            "2024"
+
+        }
+      );
+
+      // 2025
+
+      await set(
+        ref(database, "users/user2025_1"),
+        {
+
+          namaLengkap:
+            "Aulia Rahman",
+
+          nomorPendaftaran:
+            "PDT-2025-001",
+
+          angkatanTahun:
+            "2025"
+
+        }
+      );
+
+      await set(
+        ref(database, "users/user2025_2"),
+        {
+
+          namaLengkap:
+            "Fajar Hidayat",
+
+          nomorPendaftaran:
+            "PDT-2025-002",
+
+          angkatanTahun:
+            "2025"
+
+        }
+      );
+
+      // 2026
+
+      await set(
+        ref(database, "users/user2026_1"),
+        {
+
+          namaLengkap:
+            "Dino Saputra",
+
+          nomorPendaftaran:
+            "PDT-2026-001",
+
+          angkatanTahun:
+            "2026"
+
+        }
+      );
+
+      await set(
+        ref(database, "users/user2026_2"),
+        {
+
+          namaLengkap:
+            "Nabila Putri",
+
+          nomorPendaftaran:
+            "PDT-2026-002",
+
+          angkatanTahun:
+            "2026"
+
+        }
+      );
+
+      console.log(
+        "Dummy angkatan berhasil dibuat"
+      );
+
+    }
+
+    // =========================================
+    // LOAD DATA ANGKATAN
+    // =========================================
+
+    let tahunAktif = "2026";
+
+    const containerAnggota =
+      document.getElementById(
+        "containerAnggota"
+      );
+
+    const judulAngkatan =
+      document.getElementById(
+        "judulAngkatan"
+      );
+
+   async function loadAngkatan(tahun){
+
+  try{
+
+    judulAngkatan.innerText =
+      "Data Angkatan Tahun " + tahun;
+
+    containerAnggota.innerHTML = `
+      <div class="empty-data">
+        Loading data...
+      </div>
+    `;
+
+    const snapshot = await get(
+      ref(database, "users")
+    );
+
+    if(snapshot.exists()){
+
+      const data = snapshot.val();
+
+      containerAnggota.innerHTML = "";
+
+      let ditemukan = false;
+
+      Object.keys(data).forEach((id)=>{
+
+        const item = data[id];
+
+        // SUPPORT 2 FIELD
+        const tahunUser =
+          item.tahunPaskibra ||
+          item.angkatanTahun;
+
+        if(tahunUser == tahun){
+
+          ditemukan = true;
+
+         containerAnggota.innerHTML += `
+
+  <div 
+  class="anggota-card"
+  onclick="viewProfile('${id}')"
+  style="cursor:pointer;"
+>
+
+    <!-- FOTO PROFIL -->
+    <div style="
+      display:flex;
+      align-items:center;
+      gap:15px;
+    ">
+
+      <img
+        src="${item.fotoSelfie || 'assets/images/user.png'}"
+        style="
+          width:70px;
+          height:70px;
+          border-radius:50%;
+          object-fit:cover;
+          border:3px solid #c40000;
+        "
+      >
+
+      <div>
+
+        <!-- NAMA -->
+        <div class="anggota-nama">
+          ${item.namaLengkap || '-'}
+        </div>
+
+        <!-- ANGKATAN -->
+        <div class="anggota-nomor">
+          Angkatan :
+          ${item.angkatanTahun || '-'}
+        </div>
+
+        <!-- ASAL SEKOLAH -->
+        <div class="anggota-nomor">
+          Asal Sekolah :
+          ${item.asalSekolah || '-'}
+        </div>
+
+        <!-- NOMOR PENDAFTARAN -->
+        <div class="anggota-nomor">
+          Nomor Pendaftaran :
+          ${item.nomorPendaftaran || '-'}
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+`;
+
+        }
+
+      });
+
+      if(!ditemukan){
+
+        containerAnggota.innerHTML = `
+          <div class="empty-data">
+            Belum ada data angkatan tahun ${tahun}
+          </div>
+        `;
+
+      }
+
+    }else{
+
+      containerAnggota.innerHTML = `
+        <div class="empty-data">
+          Data tidak ditemukan
+        </div>
+      `;
+
+    }
+
+  }catch(error){
+
+    console.log(error);
+
+    containerAnggota.innerHTML = `
+      <div class="empty-data">
+        Gagal memuat data
+      </div>
+    `;
+
+  }
+
+}
+
+    // =========================================
+    // FILTER TAHUN
+    // =========================================
+
+    window.filterTahun = function(tahun){
+
+      tahunAktif = tahun;
+
+      loadAngkatan(tahun);
+
+      document.getElementById(
+        "filterMenuAngkatan"
+      ).style.display = "none";
+
+    }
+
+    // =========================================
+    // LOAD PERTAMA
+    // =========================================
+
+    loadAngkatan(tahunAktif);
+    window.viewProfile = function(userId){
+
+  // PINDAH KE HALAMAN PROFILE
+
+  window.location.href =
+    "view.html?id=" + userId;
+
+}
+
+    // =========================================
+    // JALANKAN SEKALI UNTUK DUMMY
+    // HAPUS // DIBAWAH UNTUK MENJALANKAN
+    // =========================================
+
+    // buatDummyAngkatan();
+
+  </script>
+
+  <!-- SCRIPT FILTER -->
+
+  <script>
+
+    function toggleFilterMenu(){
+
+      const menu =
+        document.getElementById(
+          "filterMenuAngkatan"
+        );
+
+      if(menu.style.display === "block"){
+
+        menu.style.display = "none";
+
+      }else{
+
+        menu.style.display = "block";
+
+      }
+
+    }
+
+    // TUTUP SAAT KLIK LUAR
+
+    window.onclick = function(e){
+
+      if(
+        !e.target.matches('.filter-button')
+      ){
+
+        const menu =
+          document.getElementById(
+            "filterMenuAngkatan"
+          );
+
+        if(menu.style.display === "block"){
+
+          menu.style.display = "none";
+
+        }
+
+      }
+
+    }
+
+  </script>
+
+</body>
+</html>

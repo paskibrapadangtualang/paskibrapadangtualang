@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Postingan - Paskibra PDTualang</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial, sans-serif;
+    }
+
+    body{
+      background:#f5f5f5;
+      padding-top:70px;
+      padding-bottom:80px;
+    }
+
+       /* HEADER */
+    header{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:60px;
+      background:#c40000;
+      color:white;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:20px;
+      font-weight:bold;
+      z-index:1000;
+      box-shadow:0 2px 5px rgba(0,0,0,0.2);
+    }
+
+
+
+
+
+/* HEADER */
+
+.main-header{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:60px;
+  background:#c40000;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 15px;
+  z-index:1000;
+  box-shadow:0 2px 5px rgba(0,0,0,0.2);
+}
+
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.logo{
+  width:38px;
+  height:38px;
+  object-fit:contain;
+}
+
+.header-left span{
+  color:white;
+  font-size:15px;
+  font-weight:bold;
+}
+
+.menu-icon{
+  width:24px;
+  height:24px;
+  cursor:pointer;
+  filter: brightness(0) invert(1);
+}
+
+/* DROPDOWN */
+
+.dropdown-menu{
+  position:fixed;
+  top:65px;
+  right:10px;
+  width:220px;
+  background:white;
+  border-radius:15px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.15);
+  overflow:hidden;
+  display:none;
+  z-index:2000;
+}
+
+.dropdown-menu a{
+  display:block;
+  padding:15px;
+  text-decoration:none;
+  color:#333;
+  font-size:14px;
+  border-bottom:1px solid #eee;
+}
+
+.dropdown-menu a:hover{
+  background:#f5f5f5;
+}
+
+    /* CONTENT */
+    .container{
+      padding:20px;
+    }
+
+/* ======================
+   BANNER
+====================== */
+
+.banner-card{
+  width:100%;
+  margin-bottom:20px;
+}
+
+.banner-image{
+  width:100%;
+  height:180px;
+  object-fit:cover;
+  border-radius:18px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* ======================
+   POST CARD
+====================== */
+
+.post-card{
+  background:white;
+  border-radius:18px;
+  overflow:hidden;
+  margin-bottom:20px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.post-card:active{
+  transform:scale(0.98);
+}
+
+.post-card img{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+}
+
+.post-content{
+  padding:15px;
+}
+
+.post-content h3{
+  font-size:18px;
+  margin-bottom:10px;
+  color:#111;
+}
+
+.post-content p{
+  font-size:14px;
+  color:#555;
+  line-height:1.7;
+  white-space:pre-line;
+}
+
+.post-date{
+  margin-top:12px;
+  font-size:12px;
+  color:#999;
+}
+
+/* NAVBAR */
+
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  height:65px;
+  background:white;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  box-shadow:0 -2px 5px rgba(0,0,0,0.1);
+  z-index:1000;
+}
+
+.nav-item{
+  text-decoration:none;
+  color:#444;
+  font-size:12px;
+  font-weight:bold;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+}
+
+.nav-item img{
+  width:22px;
+  height:22px;
+  object-fit:contain;
+}
+
+
+
+    .active{
+      color:#c40000 !important;
+    }
+
+
+
+    #navProfile{
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  object-fit:cover;
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+<!-- HEADER -->
+<header class="main-header">
+
+  <!-- KIRI -->
+  <div class="header-left">
+
+    <img
+      src="assets/images/RI.webp"
+      class="logo"
+    >
+
+    <span>
+      PASKIBRA PADANG TUALANG
+    </span>
+
+  </div>
+
+  <!-- KANAN -->
+  <div class="header-right">
+
+    <img
+      src="assets/images/country_filter_icon.png"
+      class="menu-icon"
+      onclick="toggleMenu()"
+    >
+
+  </div>
+
+</header>
+
+<!-- DROPDOWN MENU -->
+<div class="dropdown-menu" id="dropdownMenu">
+
+  <a href="#">
+    Syarat dan Ketentuan
+  </a>
+
+  <a href="#">
+    Contact
+  </a>
+
+  <a href="#">
+    Tentang Kami
+  </a>
+
+  <a href="#">
+    Bantuan
+  </a>
+
+  <!-- LOGOUT -->
+  <a
+    href="#"
+    id="logoutMenu"
+    onclick="logout()"
+    style="display:none;color:red;"
+  >
+    Logout
+  </a>
+
+</div>
+
+  <!-- CONTENT -->
+<!-- CONTENT -->
+<div class="container">
+
+
+  <!-- POSTINGAN -->
+  <div id="postinganContainer">
+
+    <p
+      style="
+        text-align:center;
+        color:#777;
+      "
+    >
+      Loading postingan...
+    </p>
+
+  </div>
+
+</div>
+
+   
+
+  <!-- NAVBAR -->
+<!-- NAVBAR -->
+<nav class="bottom-nav">
+
+  <!-- HOME -->
+  <a href="home.html" class="nav-item">
+
+    <img src="assets/images/home.png">
+
+    <span>
+      Home
+    </span>
+
+  </a>
+
+  <!-- POSTINGAN -->
+  <a
+    href="postingan.html"
+    class="nav-item active"
+  >
+
+    <img src="assets/images/postingan.png">
+
+    <span>
+      Postingan
+    </span>
+
+  </a>
+
+  <!-- USER -->
+  <a
+    href="akun.html"
+    class="nav-item"
+    id="menuUser"
+  >
+
+    <img
+      src="assets/images/user.png"
+      id="navProfile"
+    >
+
+    <span id="navText">
+      Login
+    </span>
+
+  </a>
+
+</nav>
+
+ 
+
+
+
+
+
+
+<!-- FIREBASE -->
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  set,
+  get
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+import {
+  getAuth,
+  onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+// FIREBASE CONFIG
+const firebaseConfig = {
+
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+
+};
+
+// INIT
+const app = initializeApp(firebaseConfig);
+
+const database = getDatabase(app);
+
+const auth = getAuth(app);
+
+// ===============================
+// NAVBAR USER
+// ===============================
+
+onAuthStateChanged(auth, async(user)=>{
+
+  const navProfile =
+    document.getElementById("navProfile");
+
+  const navText =
+    document.getElementById("navText");
+
+  const menuUser =
+    document.getElementById("menuUser");
+
+  if(user){
+
+    try{
+
+      const snapshot = await get(
+        ref(database, "users/" + user.uid)
+      );
+
+      if(snapshot.exists()){
+
+        const data = snapshot.val();
+
+        // FOTO PROFIL
+        navProfile.src =
+          data.fotoSelfie ||
+          "assets/images/user.png";
+
+        // NAMA USER
+        // NAMA USER
+          navText.innerText = "User";
+
+        // LINK USER
+        menuUser.href =
+          "user.html";
+
+      }
+
+    }catch(error){
+
+      console.log(error);
+
+    }
+
+  }else{
+
+    // DEFAULT
+    navProfile.src =
+      "assets/images/user.png";
+
+    navText.innerText =
+      "Login";
+
+    menuUser.href =
+      "akun.html";
+
+  }
+
+});
+
+// ===============================
+// CONTAINER
+// ===============================
+
+const postinganContainer =
+  document.getElementById("postinganContainer");
+
+// ===============================
+// LOAD POSTINGAN
+// ===============================
+
+async function loadPostingan(){
+
+  try{
+
+    const snapshot = await get(
+      ref(database, "postingan")
+    );
+
+    // KOSONGKAN
+    postinganContainer.innerHTML = "";
+
+    // CEK DATA ADA
+    if(snapshot.exists()){
+
+      const data = snapshot.val();
+
+      Object.keys(data)
+      .reverse()
+      .forEach((id)=>{
+
+        const post = data[id];
+
+        postinganContainer.innerHTML += `
+
+        <div
+          class="post-card"
+          onclick="bukaDetail('${id}')"
+        >
+
+          <img src="${post.gambar}">
+
+          <div class="post-content">
+
+            <h3>
+              ${post.judul}
+            </h3>
+
+            <p>
+              ${post.deskripsi}
+            </p>
+
+            <div class="post-date">
+              ${post.tanggal}
+            </div>
+
+          </div>
+
+        </div>
+
+        `;
+
+      });
+
+    }else{
+
+      postinganContainer.innerHTML = `
+        <p style="text-align:center;">
+          Belum ada postingan
+        </p>
+      `;
+
+    }
+
+  }catch(error){
+
+    console.log(error);
+
+    postinganContainer.innerHTML = `
+      <p style="text-align:center;color:red;">
+        Gagal memuat postingan
+      </p>
+    `;
+
+  }
+
+}
+
+// ===============================
+// DETAIL POSTINGAN
+// ===============================
+
+window.bukaDetail = function(id){
+
+  window.location.href =
+    "detailpostingan.html?id=" + id;
+
+}
+
+// ===============================
+// JALANKAN
+// ===============================
+
+loadPostingan();
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,748 @@
+
+
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Postingan</title>
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial,sans-serif;
+    }
+
+    body{
+      background:#f5f5f5;
+      color:#222;
+    }
+
+    /* HEADER */
+
+    .header{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:60px;
+      background:#c40000;
+      color:white;
+      display:flex;
+      align-items:center;
+      padding:0 20px;
+      z-index:1000;
+      font-weight:bold;
+      box-shadow:0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    /* CONTAINER */
+
+    .wrapper{
+      max-width:1200px;
+      margin:auto;
+      padding:90px 15px 30px;
+      display:grid;
+      grid-template-columns:2fr 1fr;
+      gap:20px;
+    }
+
+    /* DETAIL */
+
+    .detail-card{
+      background:white;
+      border-radius:20px;
+      overflow:hidden;
+      box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .detail-image{
+      width:100%;
+      height:350px;
+      object-fit:cover;
+    }
+
+    .detail-content{
+      padding:25px;
+    }
+
+    .detail-title{
+      font-size:30px;
+      margin-bottom:15px;
+      line-height:1.4;
+    }
+
+    .detail-date{
+      color:#888;
+      font-size:14px;
+      margin-bottom:20px;
+    }
+
+    .detail-description{
+      font-size:16px;
+      line-height:1.9;
+      color:#444;
+      white-space:pre-line;
+    }
+
+    /* SIDEBAR */
+
+    .sidebar{
+      background:white;
+      border-radius:20px;
+      padding:20px;
+      box-shadow:0 4px 12px rgba(0,0,0,0.08);
+      height:fit-content;
+      position:sticky;
+      top:80px;
+    }
+
+    .sidebar h2{
+      font-size:20px;
+      margin-bottom:20px;
+      color:#c40000;
+    }
+
+    .rekomendasi-item{
+      display:flex;
+      gap:12px;
+      margin-bottom:18px;
+      cursor:pointer;
+      transition:0.2s;
+      border-bottom:1px solid #eee;
+      padding-bottom:15px;
+    }
+
+    .rekomendasi-item:hover{
+      transform:translateY(-2px);
+    }
+
+    .rekomendasi-item img{
+      width:90px;
+      height:75px;
+      object-fit:cover;
+      border-radius:12px;
+      flex-shrink:0;
+    }
+
+    .rekomendasi-info h3{
+      font-size:14px;
+      margin-bottom:8px;
+      line-height:1.5;
+    }
+
+    .rekomendasi-info p{
+      font-size:12px;
+      color:#888;
+    }
+
+    .loading{
+      text-align:center;
+      padding:30px;
+      color:#777;
+    }
+
+    /* MOBILE */
+
+    @media(max-width:900px){
+
+      .wrapper{
+        grid-template-columns:1fr;
+      }
+
+      .sidebar{
+        position:relative;
+        top:0;
+      }
+
+      .detail-title{
+        font-size:24px;
+      }
+
+      .detail-image{
+        height:250px;
+      }
+
+    }
+
+
+
+
+
+
+    /* ===============================
+   SLIDER FOTO
+=============================== */
+
+.slider-container{
+  position:relative;
+  width:100%;
+  overflow:hidden;
+  background:#000;
+  border-radius:20px 20px 0 0;
+}
+
+.slider-wrapper{
+  display:flex;
+  transition:0.4s ease;
+}
+
+.detail-image{
+  width:100%;
+  min-width:100%;
+  height:350px;
+  object-fit:cover;
+  flex-shrink:0;
+}
+
+/* BUTTON SLIDER */
+
+.slider-btn{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:45px;
+  height:45px;
+  border:none;
+  border-radius:50%;
+  background:rgba(0,0,0,0.5);
+  color:white;
+  font-size:24px;
+  cursor:pointer;
+  z-index:10;
+  transition:0.2s;
+}
+
+.slider-btn:hover{
+  background:rgba(0,0,0,0.8);
+}
+
+.prev-btn{
+  left:15px;
+}
+
+.next-btn{
+  right:15px;
+}
+
+/* ===============================
+   TAG POSTINGAN
+=============================== */
+
+.tag-container{
+  margin-top:25px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.post-tag{
+  background:#f1f1f1;
+  color:#c40000;
+  padding:10px 15px;
+  border-radius:30px;
+  font-size:13px;
+  font-weight:bold;
+  transition:0.2s;
+  cursor:pointer;
+}
+
+.post-tag:hover{
+  background:#c40000;
+  color:white;
+}
+
+/* ===============================
+   MOBILE
+=============================== */
+
+@media(max-width:900px){
+
+  .detail-image{
+    height:250px;
+  }
+
+  .slider-btn{
+    width:40px;
+    height:40px;
+    font-size:20px;
+  }
+
+}
+
+
+
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+
+  <div class="header">
+    Detail Postingan
+  </div>
+
+  <!-- CONTENT -->
+
+  <div class="wrapper">
+
+    <!-- DETAIL -->
+
+    <div class="detail-card">
+
+      <div id="detailContainer">
+
+        <div class="loading">
+          Loading postingan...
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- SIDEBAR -->
+
+    <div class="sidebar">
+
+      <h2>
+        Rekomendasi Hari Ini
+      </h2>
+
+      <div id="rekomendasiContainer">
+
+        <div class="loading">
+          Loading rekomendasi...
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- FIREBASE -->
+
+<script type="module">
+
+  import { initializeApp }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+  import {
+    getDatabase,
+    ref,
+    get,
+    set
+  }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+  // FIREBASE CONFIG
+
+  const firebaseConfig = {
+
+    apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+    authDomain: "paskibra2026-300eb.firebaseapp.com",
+    databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+    projectId: "paskibra2026-300eb",
+    storageBucket: "paskibra2026-300eb.firebasestorage.app",
+    messagingSenderId: "937469132434",
+    appId: "1:937469132434:web:d1924e1160350000d1b04b"
+
+  };
+
+  // INIT
+
+  const app = initializeApp(firebaseConfig);
+
+  const database = getDatabase(app);
+
+  // ===============================
+  // DUMMY DATA
+  // ===============================
+
+  async function buatDummyPostingan(){
+
+    // POST 1
+
+    await set(
+      ref(database, "postingan/post1"),
+      {
+
+        judul:
+          "Latihan Gabungan Paskibra",
+
+        deskripsi:
+          "Kegiatan latihan gabungan seluruh anggota paskibra kecamatan Padang Tualang berlangsung dengan semangat dan penuh disiplin. Seluruh anggota mengikuti latihan baris berbaris, penghormatan, serta formasi pengibaran bendera merah putih untuk persiapan kegiatan besar mendatang.",
+
+        tanggal:
+          "10 Mei 2026",
+
+        gambar:
+          "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1200",
+
+        fotos:[
+
+          "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1200",
+
+          "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=1200",
+
+          "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1200",
+
+          "https://images.unsplash.com/photo-1496317899792-9d7dbcd928a1?q=80&w=1200",
+
+          "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1200"
+
+        ]
+
+      }
+    );
+
+    // POST 2
+
+    await set(
+      ref(database, "postingan/post2"),
+      {
+
+        judul:
+          "Seleksi Anggota Baru",
+
+        deskripsi:
+          "Pembukaan seleksi anggota baru paskibra tahun 2026 resmi dibuka. Seluruh siswa SMA/SMK sederajat dapat mengikuti tahapan seleksi fisik, mental, dan kedisiplinan.",
+
+        tanggal:
+          "11 Mei 2026",
+
+        gambar:
+          "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200",
+
+        fotos:[
+
+          "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200",
+
+          "https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?q=80&w=1200",
+
+          "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1200",
+
+          "https://images.unsplash.com/photo-1513258496099-48168024aec0?q=80&w=1200",
+
+          "https://images.unsplash.com/photo-1529390079861-591de354faf5?q=80&w=1200"
+
+        ]
+
+      }
+    );
+
+    // POST 3
+
+    await set(
+      ref(database, "postingan/post3"),
+      {
+
+        judul:
+          "Pengibaran Bendera HUT RI",
+
+        deskripsi:
+          "Tim paskibra sukses melaksanakan pengibaran bendera merah putih pada upacara HUT Republik Indonesia dengan penuh khidmat dan rasa nasionalisme.",
+
+        tanggal:
+          "12 Mei 2026",
+
+        gambar:
+          "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200",
+
+        fotos:[
+
+          "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200",
+
+          "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?q=80&w=1200",
+
+          "https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=1200",
+
+          "https://images.unsplash.com/photo-1497493292307-31c376b6e479?q=80&w=1200",
+
+          "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1200"
+
+        ]
+
+      }
+    );
+
+  }
+
+  // JALANKAN SEKALI
+  // HAPUS SETELAH DATA MASUK FIREBASE
+
+  // buatDummyPostingan();
+
+  // ===============================
+  // AMBIL ID URL
+  // ===============================
+
+  const params = new URLSearchParams(
+    window.location.search
+  );
+
+  const postId = params.get("id");
+
+  // ELEMENT
+
+  const detailContainer =
+    document.getElementById("detailContainer");
+
+  const rekomendasiContainer =
+    document.getElementById("rekomendasiContainer");
+
+  // ===============================
+  // LOAD DETAIL
+  // ===============================
+
+  async function loadDetail(){
+
+    try{
+
+      const snapshot = await get(
+        ref(database, "postingan/" + postId)
+      );
+
+      if(snapshot.exists()){
+
+        const post = snapshot.val();
+
+        detailContainer.innerHTML = `
+
+          <div class="slider-container">
+
+            <div
+              class="slider-wrapper"
+              id="sliderWrapper"
+            >
+
+              ${(post.fotos || [post.gambar])
+                .slice(0,5)
+                .map(foto => `
+
+                  <img
+                    src="${foto}"
+                    class="detail-image"
+                  >
+
+                `).join("")}
+
+            </div>
+
+            <button
+              class="slider-btn prev-btn"
+              onclick="slideFoto(-1)"
+            >
+              ❮
+            </button>
+
+            <button
+              class="slider-btn next-btn"
+              onclick="slideFoto(1)"
+            >
+              ❯
+            </button>
+
+          </div>
+
+          <div class="detail-content">
+
+            <h1 class="detail-title">
+              ${post.judul}
+            </h1>
+
+            <div class="detail-date">
+              ${post.tanggal}
+            </div>
+
+            <div class="detail-description">
+              ${post.deskripsi}
+            </div>
+
+            <!-- TAG -->
+
+            <div class="tag-container">
+
+              <span class="post-tag">
+                #postinganhariini
+              </span>
+
+              <span class="post-tag">
+                #paskibrapadangtualang
+              </span>
+
+              <span class="post-tag">
+                #paskibra2026
+              </span>
+
+            </div>
+
+          </div>
+
+        `;
+
+      }else{
+
+        detailContainer.innerHTML = `
+          <div class="loading">
+            Postingan tidak ditemukan
+          </div>
+        `;
+
+      }
+
+    }catch(error){
+
+      console.log(error);
+
+      detailContainer.innerHTML = `
+        <div class="loading">
+          Gagal memuat postingan
+        </div>
+      `;
+
+    }
+
+  }
+
+  // ===============================
+  // LOAD REKOMENDASI RANDOM
+  // ===============================
+
+  async function loadRekomendasi(){
+
+    try{
+
+      const snapshot = await get(
+        ref(database, "postingan")
+      );
+
+      if(snapshot.exists()){
+
+        const data = snapshot.val();
+
+        rekomendasiContainer.innerHTML = "";
+
+        let posts = Object.keys(data)
+        .map(id => ({
+          id,
+          ...data[id]
+        }));
+
+        // HAPUS POST YANG SEDANG DIBUKA
+
+        posts = posts.filter(
+          post => post.id !== postId
+        );
+
+        // RANDOM
+
+        posts.sort(() => Math.random() - 0.5);
+
+        // AMBIL 5
+
+        posts.slice(0,5).forEach((post)=>{
+
+          rekomendasiContainer.innerHTML += `
+
+            <div
+              class="rekomendasi-item"
+              onclick="bukaPostingan('${post.id}')"
+            >
+
+              <img src="${post.gambar}">
+
+              <div class="rekomendasi-info">
+
+                <h3>
+                  ${post.judul}
+                </h3>
+
+                <p>
+                  ${post.tanggal}
+                </p>
+
+              </div>
+
+            </div>
+
+          `;
+
+        });
+
+      }
+
+    }catch(error){
+
+      console.log(error);
+
+      rekomendasiContainer.innerHTML = `
+        <div class="loading">
+          Gagal memuat rekomendasi
+        </div>
+      `;
+
+    }
+
+  }
+
+  // ===============================
+  // SLIDER
+  // ===============================
+
+  let currentSlide = 0;
+
+  window.slideFoto = function(direction){
+
+    const wrapper =
+      document.getElementById("sliderWrapper");
+
+    if(!wrapper) return;
+
+    const totalSlide =
+      wrapper.children.length;
+
+    currentSlide += direction;
+
+    // LOOP
+
+    if(currentSlide < 0){
+      currentSlide = totalSlide - 1;
+    }
+
+    if(currentSlide >= totalSlide){
+      currentSlide = 0;
+    }
+
+    wrapper.style.transform =
+      `translateX(-${currentSlide * 100}%)`;
+
+  }
+
+  // ===============================
+  // BUKA POSTINGAN
+  // ===============================
+
+  window.bukaPostingan = function(id){
+
+    window.location.href =
+      "detailpostingan.html?id=" + id;
+
+  }
+
+  // ===============================
+  // LOAD
+  // ===============================
+
+  loadDetail();
+  loadRekomendasi();
+
+</script>
+
+</body>
+</html>
+
