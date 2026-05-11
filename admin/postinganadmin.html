@@ -1,0 +1,727 @@
+<!-- admin/postinganadmin.html -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Postingan</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#f1f5f9;
+  padding:20px;
+}
+
+.title{
+  color:#c40000;
+  margin-bottom:20px;
+}
+
+.form-box{
+  background:white;
+  padding:20px;
+  border-radius:20px;
+  margin-bottom:25px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.08);
+}
+
+.form-group{
+  margin-bottom:15px;
+}
+
+.form-group label{
+  display:block;
+  margin-bottom:8px;
+  font-weight:bold;
+  color:#333;
+}
+
+.form-group input,
+.form-group textarea{
+  width:100%;
+  padding:14px;
+  border:1px solid #ddd;
+  border-radius:12px;
+  outline:none;
+  font-size:14px;
+}
+
+.form-group textarea{
+  resize:none;
+  height:130px;
+}
+
+.upload-info{
+  font-size:13px;
+  color:#777;
+  margin-top:8px;
+}
+
+.preview-box{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(100px,1fr));
+  gap:10px;
+  margin-top:15px;
+}
+
+.preview-box img{
+  width:100%;
+  height:100px;
+  object-fit:cover;
+  border-radius:12px;
+}
+
+.post-btn{
+  width:100%;
+  height:50px;
+  border:none;
+  border-radius:14px;
+  background:#c40000;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.post-btn:hover{
+  opacity:0.9;
+}
+
+.loading{
+  display:none;
+  margin-top:15px;
+  text-align:center;
+  color:#c40000;
+  font-weight:bold;
+}
+
+.section-title{
+  margin-bottom:15px;
+  color:#111;
+}
+
+.post-card{
+  background:white;
+  border-radius:18px;
+  overflow:hidden;
+  margin-bottom:20px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.08);
+}
+
+.slider{
+  display:flex;
+  overflow-x:auto;
+  gap:10px;
+  padding:10px;
+}
+
+.slider img{
+  width:100%;
+  max-width:300px;
+  height:220px;
+  object-fit:cover;
+  border-radius:12px;
+  flex-shrink:0;
+}
+
+.slider::-webkit-scrollbar{
+  height:5px;
+}
+
+.slider::-webkit-scrollbar-thumb{
+  background:#c40000;
+  border-radius:10px;
+}
+
+.post-content{
+  padding:20px;
+}
+
+.post-content h3{
+  margin-bottom:10px;
+  color:#111;
+}
+
+.post-content p{
+  color:#555;
+  line-height:1.7;
+  white-space:pre-line;
+}
+
+.post-date{
+  margin-top:15px;
+  font-size:13px;
+  color:#888;
+}
+
+.delete-btn{
+  margin-top:15px;
+  width:100%;
+  height:45px;
+  border:none;
+  border-radius:12px;
+  background:red;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.kosong{
+  text-align:center;
+  color:#777;
+  padding:30px;
+}
+
+</style>
+</head>
+<body>
+
+<h2 class="title">
+Admin Postingan
+</h2>
+
+<!-- FORM -->
+
+<div class="form-box">
+
+  <div class="form-group">
+
+    <label>
+      Judul Postingan
+    </label>
+
+    <input
+      type="text"
+      id="judul"
+      placeholder="Masukkan judul postingan"
+    >
+
+  </div>
+
+  <div class="form-group">
+
+    <label>
+      Deskripsi
+    </label>
+
+    <textarea
+      id="deskripsi"
+      placeholder="Masukkan isi postingan"
+    ></textarea>
+
+  </div>
+
+  <div class="form-group">
+
+    <label>
+      Upload Foto (Max 5)
+    </label>
+
+    <input
+      type="file"
+      id="fotoInput"
+      accept="image/*"
+      multiple
+    >
+
+    <div class="upload-info">
+      Maksimal upload 5 foto
+    </div>
+
+    <div
+      class="preview-box"
+      id="previewBox"
+    ></div>
+
+  </div>
+
+  <button
+    class="post-btn"
+    onclick="buatPostingan()"
+  >
+    Upload Postingan
+  </button>
+
+  <div
+    class="loading"
+    id="loadingText"
+  >
+    Sedang upload postingan...
+  </div>
+
+</div>
+
+<h3 class="section-title">
+Semua Postingan
+</h3>
+
+<div id="postinganContainer">
+
+  <div class="kosong">
+    Loading postingan...
+  </div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  push,
+  set,
+  get,
+  remove
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+// FIREBASE
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+
+};
+
+// INIT
+
+const app =
+  initializeApp(firebaseConfig);
+
+const db =
+  getDatabase(app);
+
+// CLOUDINARY
+
+const CLOUD_NAME =
+  "djxlbemky";
+
+const UPLOAD_PRESET =
+  "uploadgambar";
+
+// ELEMENT
+
+const fotoInput =
+  document.getElementById(
+    "fotoInput"
+  );
+
+const previewBox =
+  document.getElementById(
+    "previewBox"
+  );
+
+const postinganContainer =
+  document.getElementById(
+    "postinganContainer"
+  );
+
+const loadingText =
+  document.getElementById(
+    "loadingText"
+  );
+
+// PREVIEW FOTO
+
+fotoInput.addEventListener(
+  "change",
+  ()=>{
+
+    previewBox.innerHTML = "";
+
+    const files =
+      [...fotoInput.files];
+
+    if(files.length > 5){
+
+      alert(
+        "Maksimal 5 foto"
+      );
+
+      fotoInput.value = "";
+
+      return;
+
+    }
+
+    files.forEach((file)=>{
+
+      const reader =
+        new FileReader();
+
+      reader.onload = function(e){
+
+        previewBox.innerHTML += `
+          <img src="${e.target.result}">
+        `;
+
+      }
+
+      reader.readAsDataURL(file);
+
+    });
+
+  }
+);
+
+// BUAT POSTINGAN
+
+window.buatPostingan =
+async function(){
+
+  const judul =
+    document.getElementById(
+      "judul"
+    ).value.trim();
+
+  const deskripsi =
+    document.getElementById(
+      "deskripsi"
+    ).value.trim();
+
+  const files =
+    [...fotoInput.files];
+
+  if(
+    judul === "" ||
+    deskripsi === ""
+  ){
+
+    alert(
+      "Lengkapi data dulu"
+    );
+
+    return;
+
+  }
+
+  if(files.length === 0){
+
+    alert(
+      "Upload minimal 1 foto"
+    );
+
+    return;
+
+  }
+
+  if(files.length > 5){
+
+    alert(
+      "Maksimal 5 foto"
+    );
+
+    return;
+
+  }
+
+  loadingText.style.display =
+    "block";
+
+  try{
+
+    let fotoList = [];
+
+    // UPLOAD SEMUA FOTO
+
+    for(const foto of files){
+
+      const formData =
+        new FormData();
+
+      formData.append(
+        "file",
+        foto
+      );
+
+      formData.append(
+        "upload_preset",
+        UPLOAD_PRESET
+      );
+
+      const cloudinaryResponse =
+        await fetch(
+          `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+          {
+            method:"POST",
+            body:formData
+          }
+        );
+
+      const cloudinaryData =
+        await cloudinaryResponse.json();
+
+      fotoList.push(
+        cloudinaryData.secure_url
+      );
+
+    }
+
+    // TANGGAL
+
+    const now =
+      new Date();
+
+    const tanggal =
+      now.toLocaleDateString(
+        "id-ID",
+        {
+          day:"numeric",
+          month:"long",
+          year:"numeric"
+        }
+      ) +
+      " " +
+      now.toLocaleTimeString(
+        "id-ID"
+      );
+
+    // DATA POSTINGAN
+
+    const postRef =
+      push(
+        ref(db,"postingan")
+      );
+
+    await set(postRef,{
+
+      judul:judul,
+
+      deskripsi:deskripsi,
+
+      gambar:
+        fotoList[0],
+
+      gambarList:
+        fotoList,
+
+      tanggal:tanggal,
+
+      createdAt:
+        Date.now()
+
+    });
+
+    alert(
+      "Postingan berhasil dibuat"
+    );
+
+    // RESET
+
+    document.getElementById(
+      "judul"
+    ).value = "";
+
+    document.getElementById(
+      "deskripsi"
+    ).value = "";
+
+    fotoInput.value = "";
+
+    previewBox.innerHTML = "";
+
+    // RELOAD
+
+    loadPostingan();
+
+  }catch(error){
+
+    console.log(error);
+
+    alert(
+      "Gagal upload postingan"
+    );
+
+  }
+
+  loadingText.style.display =
+    "none";
+
+}
+
+// LOAD POSTINGAN
+
+async function loadPostingan(){
+
+  postinganContainer.innerHTML = `
+    <div class="kosong">
+      Loading...
+    </div>
+  `;
+
+  try{
+
+    const snapshot =
+      await get(
+        ref(db,"postingan")
+      );
+
+    if(!snapshot.exists()){
+
+      postinganContainer.innerHTML = `
+        <div class="kosong">
+          Belum ada postingan
+        </div>
+      `;
+
+      return;
+
+    }
+
+    const data =
+      snapshot.val();
+
+    let html = "";
+
+    Object.entries(data)
+.sort((a,b)=>
+  b[1].createdAt - a[1].createdAt
+)
+.forEach(([id,post])=>{
+
+      
+
+      let gambarHTML = "";
+
+      // MULTI FOTO
+
+      if(
+        post.gambarList
+      ){
+
+        post.gambarList
+        .forEach((foto)=>{
+
+          gambarHTML += `
+            <img src="${foto}">
+          `;
+
+        });
+
+      }else{
+
+        gambarHTML = `
+          <img src="${post.gambar}">
+        `;
+
+      }
+
+      html += `
+
+      <div class="post-card">
+
+        <div class="slider">
+          ${gambarHTML}
+        </div>
+
+        <div class="post-content">
+
+          <h3>
+            ${post.judul}
+          </h3>
+
+          <p>
+            ${post.deskripsi}
+          </p>
+
+          <div class="post-date">
+            ${post.tanggal}
+          </div>
+
+          <button
+            class="delete-btn"
+            onclick="hapusPostingan('${id}')"
+          >
+            Hapus Postingan
+          </button>
+
+        </div>
+
+      </div>
+
+      `;
+
+    });
+
+    postinganContainer.innerHTML =
+      html;
+
+  }catch(error){
+
+    console.log(error);
+
+    postinganContainer.innerHTML = `
+      <div class="kosong">
+        Gagal memuat postingan
+      </div>
+    `;
+
+  }
+
+}
+
+// HAPUS POSTINGAN
+
+window.hapusPostingan =
+async function(id){
+
+  const yakin =
+    confirm(
+      "Yakin ingin hapus postingan?"
+    );
+
+  if(!yakin) return;
+
+  try{
+
+    await remove(
+      ref(
+        db,
+        "postingan/" + id
+      )
+    );
+
+    alert(
+      "Postingan berhasil dihapus"
+    );
+
+    loadPostingan();
+
+  }catch(error){
+
+    console.log(error);
+
+    alert(
+      "Gagal hapus postingan"
+    );
+
+  }
+
+}
+
+// LOAD
+
+loadPostingan();
+
+</script>
+
+</body>
+</html>

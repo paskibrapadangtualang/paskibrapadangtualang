@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Album Foto</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+
+*{
+  -webkit-tap-highlight-color: transparent; /* hilangkan efek biru klik mobile */
+  user-select: none; /* blok seleksi teks */
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+
+img{
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+    
+
+
+/* hilangkan highlight biru saat klik */
+a, button, div{
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* optional: cegah zoom pinch (mobile) */
+html, body{
+  touch-action: manipulation;
+}
+
+
+
+
+
+
+body{
+  background:#f5f5f5;
+  padding:20px;
+}
+
+h2{
+  margin-bottom:20px;
+  color:#c40000;
+}
+
+/* GRID ALBUM */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+
+@media(min-width:768px){
+  .grid{
+    grid-template-columns:repeat(4,1fr);
+  }
+}
+
+.card{
+  background:white;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 2px 10px rgba(0,0,0,0.08);
+  cursor:pointer;
+}
+
+.card img{
+  width:100%;
+  height:140px;
+  object-fit:cover;
+}
+
+/* MODAL ZOOM */
+.modal{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.9);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+
+.modal img{
+  width:90%;
+  max-width:500px;
+  border-radius:10px;
+  transform:scale(1);
+}
+
+.close{
+  position:absolute;
+  top:20px;
+  right:20px;
+  color:white;
+  font-size:30px;
+  cursor:pointer;
+}
+
+</style>
+</head>
+<body>
+
+<h2>📸 Album Foto Paskibra</h2>
+
+<div id="album" class="grid">
+  <p>Loading...</p>
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <span class="close" onclick="closeModal()">✖</span>
+  <img id="modalImg">
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  onValue
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const album = document.getElementById("album");
+
+/* =========================
+   LOAD SEMUA GAMBAR
+========================= */
+
+onValue(ref(db,"postingan"), (snapshot)=>{
+
+  album.innerHTML = "";
+
+  let semuaGambar = [];
+
+  snapshot.forEach((child)=>{
+
+    const data = child.val();
+
+    // gambar utama
+    if(data.gambar){
+      semuaGambar.push(data.gambar);
+    }
+
+    // gambar list
+    if(data.gambarList){
+      Object.values(data.gambarList).forEach((img)=>{
+        semuaGambar.push(img);
+      });
+    }
+
+    // fotos lama
+    if(data.fotos){
+      data.fotos.forEach((img)=>{
+        semuaGambar.push(img);
+      });
+    }
+
+  });
+
+  if(semuaGambar.length === 0){
+    album.innerHTML = "<p>Tidak ada gambar</p>";
+    return;
+  }
+
+  semuaGambar.forEach((img)=>{
+
+    album.innerHTML += `
+      <div class="card">
+        <img src="${img}" onclick="openModal('${img}')">
+      </div>
+    `;
+
+  });
+
+});
+
+/* =========================
+   MODAL ZOOM
+========================= */
+
+window.openModal = function(img){
+
+  document.getElementById("modal").style.display = "flex";
+  document.getElementById("modalImg").src = img;
+
+}
+
+window.closeModal = function(){
+
+  document.getElementById("modal").style.display = "none";
+
+}
+
+
+
+
+document.addEventListener('contextmenu', function(e){
+  e.preventDefault(); // disable klik kanan / copy
+});
+
+document.addEventListener('selectstart', function(e){
+  e.preventDefault(); // disable blok teks
+});
+
+document.addEventListener('dragstart', function(e){
+  e.preventDefault(); // disable drag gambar
+});
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Pelatih Paskibra</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#f4f6fb;
+  padding:20px;
+}
+
+
+
+*{
+  -webkit-tap-highlight-color: transparent; /* hilangkan efek biru klik mobile */
+  user-select: none; /* blok seleksi teks */
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+
+img{
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+    
+
+
+/* hilangkan highlight biru saat klik */
+a, button, div{
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* optional: cegah zoom pinch (mobile) */
+html, body{
+  touch-action: manipulation;
+}
+
+h2{
+  text-align:center;
+  color:#c40000;
+  margin-bottom:20px;
+}
+
+.wrapper{
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+/* CARD */
+.card{
+  background:white;
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 10px 25px rgba(0,0,0,0.1);
+}
+
+/* HEADER */
+.header{
+  background:linear-gradient(135deg,#c40000,#ff4d4d);
+  padding:20px;
+  text-align:center;
+}
+
+.header img{
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  object-fit:cover;
+  border:3px solid white;
+}
+
+/* CONTENT */
+.content{
+  padding:15px;
+}
+
+.role{
+  color:#c40000;
+  font-weight:bold;
+  font-size:13px;
+}
+
+.name{
+  font-size:18px;
+  font-weight:bold;
+  margin-bottom:5px;
+}
+
+.info-box{
+  margin:10px 0;
+  padding:10px;
+  background:#f8f8f8;
+  border-left:4px solid #c40000;
+  border-radius:10px;
+  font-size:13px;
+}
+
+/* VISI MISI */
+.vm-box{
+  display:flex;
+  background:#fff;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 5px 15px rgba(0,0,0,0.06);
+}
+
+.vm-col{
+  flex:1;
+  padding:10px;
+}
+
+.vm-title{
+  text-align:center;
+  font-weight:bold;
+  color:#c40000;
+  font-size:12px;
+  margin-bottom:5px;
+}
+
+.vm-text{
+  font-size:12px;
+  color:#555;
+  line-height:1.4;
+}
+
+.vm-divider{
+  width:1px;
+  background:#eee;
+}
+</style>
+</head>
+
+<body>
+
+<h2>DATA PELATIH PASKIBRA</h2>
+<div id="list" class="wrapper"></div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const path = ref(db,"pelatih");
+
+// =======================
+// LOAD DATA
+// =======================
+async function load(){
+
+  const snap = await get(path);
+
+  const dummy = {
+    pelatih1:{
+      nama:"Coach Andi",
+      jabatan:"Pelatih Utama",
+      visi:"Membentuk disiplin tinggi",
+      misi:"Melatih fisik dan mental",
+      tujuan:"Mencetak pasukan terbaik",
+      foto:"https://i.pravatar.cc/300?img=21"
+    },
+    pelatih2:{
+      nama:"Coach Budi",
+      jabatan:"Pelatih Senior",
+      visi:"Kedisiplinan adalah kunci",
+      misi:"Menguatkan mental anggota",
+      tujuan:"Menjadi tim terbaik",
+      foto:"https://i.pravatar.cc/300?img=22"
+    },
+    pelatih3:{
+      nama:"Coach Citra",
+      jabatan:"Pelatih Lapangan",
+      visi:"Solidaritas dan kerja sama",
+      misi:"Melatih kekompakan",
+      tujuan:"Tim yang solid",
+      foto:"https://i.pravatar.cc/300?img=23"
+    },
+    pelatih4:{
+      nama:"Coach Dedi",
+      jabatan:"Pelatih Fisik",
+      visi:"Tubuh kuat jiwa kuat",
+      misi:"Melatih stamina anggota",
+      tujuan:"Fisik prima",
+      foto:"https://i.pravatar.cc/300?img=24"
+    },
+    pelatih5:{
+      nama:"Coach Eka",
+      jabatan:"Asisten Pelatih",
+      visi:"Kedisiplinan dan loyalitas",
+      misi:"Membantu pelatihan utama",
+      tujuan:"Regenerasi pelatih",
+      foto:"https://i.pravatar.cc/300?img=25"
+    }
+  };
+
+  if(!snap.exists()){
+    await set(path,dummy);
+    return load();
+  }
+
+  const data = snap.val();
+
+  let html = "";
+
+  Object.values(data).forEach(d=>{
+
+    html += `
+    <div class="card">
+
+      <div class="header">
+        <img src="${d.foto}">
+      </div>
+
+      <div class="content">
+
+        <div class="role">${d.jabatan}</div>
+        <div class="name">${d.nama}</div>
+
+        <div class="info-box">
+          <b>Tujuan:</b> ${d.tujuan}
+        </div>
+
+        <div class="vm-box">
+
+          <div class="vm-col">
+            <div class="vm-title">VISI</div>
+            <div class="vm-text">${d.visi}</div>
+          </div>
+
+          <div class="vm-divider"></div>
+
+          <div class="vm-col">
+            <div class="vm-title">MISI</div>
+            <div class="vm-text">${d.misi}</div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+    `;
+
+  });
+
+  document.getElementById("list").innerHTML = html;
+
+}
+
+load();
+
+
+
+
+
+
+
+
+
+
+document.addEventListener('contextmenu', function(e){
+  e.preventDefault(); // disable klik kanan / copy
+});
+
+document.addEventListener('selectstart', function(e){
+  e.preventDefault(); // disable blok teks
+});
+
+document.addEventListener('dragstart', function(e){
+  e.preventDefault(); // disable drag gambar
+});
+
+</script>
+
+</body>
+</html>

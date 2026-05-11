@@ -1,0 +1,495 @@
+<!-- tolak.html -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>User Ditolak</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#f1f5f9;
+  padding:20px;
+}
+
+.top-bar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.title{
+  color:#ef4444;
+}
+
+.btn-kembali{
+  background:#111827;
+  color:white;
+  text-decoration:none;
+  padding:12px 18px;
+  border-radius:12px;
+  font-size:14px;
+  font-weight:bold;
+}
+
+.user-box{
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  margin-bottom:20px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.05);
+}
+
+.user-box img{
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  object-fit:cover;
+  margin-bottom:15px;
+}
+
+.user-box p{
+  margin-bottom:8px;
+  color:#444;
+  line-height:1.6;
+}
+
+.status{
+  background:#ef4444;
+  color:white;
+  padding:10px 15px;
+  border-radius:10px;
+  display:inline-block;
+  font-weight:bold;
+  margin-top:10px;
+  margin-bottom:15px;
+}
+
+.button-group{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:15px;
+}
+
+button{
+  border:none;
+  padding:12px 18px;
+  border-radius:10px;
+  color:white;
+  cursor:pointer;
+  font-size:14px;
+  font-weight:bold;
+}
+
+.btn-terima{
+  background:#22c55e;
+}
+
+.btn-pending{
+  background:#facc15;
+  color:#333;
+}
+
+.kosong{
+  text-align:center;
+  padding:30px;
+  color:#777;
+}
+
+
+
+
+/* FILTER */
+
+.filter-box{
+  background:white;
+  padding:15px;
+  border-radius:15px;
+  margin-bottom:20px;
+  display:flex;
+  gap:15px;
+  flex-wrap:wrap;
+  box-shadow:0 2px 10px rgba(0,0,0,0.05);
+}
+
+.filter-box input,
+.filter-box select{
+  flex:1;
+  min-width:220px;
+  padding:12px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  outline:none;
+  font-size:14px;
+}
+
+
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+
+ <!-- FILTER + PENCARIAN -->
+
+<div
+  style="
+    background:white;
+    padding:15px;
+    border-radius:15px;
+    margin-bottom:20px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.05);
+  "
+>
+
+  <input
+    type="text"
+    id="searchInput"
+    placeholder="Cari nama / email / sekolah..."
+    style="
+      width:100%;
+      padding:14px;
+      border:1px solid #ddd;
+      border-radius:10px;
+      margin-bottom:15px;
+      outline:none;
+      font-size:14px;
+    "
+  >
+
+  <select
+    id="filterTahun"
+    style="
+      width:100%;
+      padding:14px;
+      border:1px solid #ddd;
+      border-radius:10px;
+      outline:none;
+      font-size:14px;
+    "
+  >
+
+    <option value="">
+      Semua Tahun
+    </option>
+
+    <option value="2022">
+      Tahun 2022
+    </option>
+
+    <option value="2023">
+      Tahun 2023
+    </option>
+
+    <option value="2024">
+      Tahun 2024
+    </option>
+
+    <option value="2025">
+      Tahun 2025
+    </option>
+
+    <option value="2026">
+      Tahun 2026
+    </option>
+
+  </select>
+
+</div>
+
+
+
+  <h2 class="title">
+    Data User Ditolak
+  </h2>
+
+  <a
+    href="status.html"
+    class="btn-kembali"
+  >
+    Kembali
+  </a>
+
+</div>
+
+<div id="userList">
+
+  <div class="kosong">
+    Loading...
+  </div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  onValue,
+  update
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+// FIREBASE
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+
+};
+
+// INIT
+
+const app =
+  initializeApp(firebaseConfig);
+
+const db =
+  getDatabase(app);
+
+const userList =
+  document.getElementById("userList");
+
+const searchInput =
+  document.getElementById("searchInput");
+
+const filterTahun =
+  document.getElementById("filterTahun");
+
+// SIMPAN DATA
+
+let semuaUser = [];
+
+// LOAD DATA
+
+onValue(
+  ref(db, "users"),
+  (snapshot)=>{
+
+    semuaUser = [];
+
+    snapshot.forEach((child)=>{
+
+      semuaUser.push({
+        uid: child.key,
+        ...child.val()
+      });
+
+    });
+
+    tampilkanData();
+
+  }
+);
+
+// FILTER DATA
+
+function tampilkanData(){
+
+  userList.innerHTML = "";
+
+  let keyword =
+    searchInput.value.toLowerCase();
+
+  let tahun =
+    filterTahun.value;
+
+  // FILTER DITOLAK
+
+  let hasil =
+    semuaUser.filter((data)=>{
+
+      // STATUS
+      if(
+        data.statusPenerimaan !==
+        "Ditolak"
+      ){
+        return false;
+      }
+
+      // PENCARIAN
+      const cocokCari =
+
+        (data.namaLengkap || "")
+        .toLowerCase()
+        .includes(keyword)
+
+        ||
+
+        (data.email || "")
+        .toLowerCase()
+        .includes(keyword)
+
+        ||
+
+        (data.asalSekolah || "")
+        .toLowerCase()
+        .includes(keyword);
+
+      // FILTER TAHUN
+      let cocokTahun = true;
+
+      if(tahun){
+
+        cocokTahun =
+          String(
+            data.angkatanTahun || ""
+          ) === tahun;
+
+      }
+
+      return cocokCari && cocokTahun;
+
+    });
+
+  // JIKA KOSONG
+
+  if(hasil.length === 0){
+
+    userList.innerHTML = `
+      <div class="kosong">
+        Data tidak ditemukan
+      </div>
+    `;
+
+    return;
+
+  }
+
+  // TAMPILKAN DATA
+
+  hasil.forEach((data)=>{
+
+    userList.innerHTML += `
+
+    <div class="user-box">
+
+      <img src="${
+        data.fotoSelfie ||
+        'assets/images/user.png'
+      }">
+
+      <p>
+        <b>Nama:</b>
+        ${data.namaLengkap || '-'}
+      </p>
+
+      <p>
+        <b>Email:</b>
+        ${data.email || '-'}
+      </p>
+
+      <p>
+        <b>Sekolah:</b>
+        ${data.asalSekolah || '-'}
+      </p>
+
+      <p>
+        <b>Angkatan:</b>
+        ${data.angkatanTahun || '-'}
+      </p>
+
+      <p>
+        <b>No Pendaftaran:</b>
+        ${data.nomorPendaftaran || '-'}
+      </p>
+
+      <div class="status">
+        Status : Ditolak
+      </div>
+
+      <div class="button-group">
+
+        <button
+          class="btn-terima"
+          onclick="ubahStatus('${data.uid}','Diterima')"
+        >
+          Terima
+        </button>
+
+        <button
+          class="btn-pending"
+          onclick="ubahStatus('${data.uid}','Menunggu Seleksi')"
+        >
+          Pending
+        </button>
+
+      </div>
+
+    </div>
+
+    `;
+
+  });
+
+}
+
+// EVENT SEARCH
+
+searchInput.addEventListener(
+  "input",
+  tampilkanData
+);
+
+// EVENT FILTER
+
+filterTahun.addEventListener(
+  "change",
+  tampilkanData
+);
+
+// UBAH STATUS
+
+window.ubahStatus = async function(
+  uid,
+  status
+){
+
+  try{
+
+    await update(
+      ref(db, "users/" + uid),
+      {
+        statusPenerimaan: status
+      }
+    );
+
+    alert(
+      "Status berhasil diubah"
+    );
+
+  }catch(error){
+
+    alert(
+      "Gagal mengubah status"
+    );
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>

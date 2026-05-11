@@ -1,0 +1,880 @@
+<!-- admin/absen.html -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dashboard Absensi Admin</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#f1f5f9;
+  padding:20px;
+}
+
+/* TITLE */
+
+.title{
+  color:#c40000;
+  margin-bottom:20px;
+}
+
+/* FILTER */
+
+.filter-box{
+  background:white;
+  padding:20px;
+  border-radius:20px;
+  margin-bottom:20px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.05);
+}
+
+.filter-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:15px;
+}
+
+.filter-grid input,
+.filter-grid select{
+  width:100%;
+  padding:13px;
+  border:1px solid #ddd;
+  border-radius:12px;
+  outline:none;
+  font-size:14px;
+}
+
+/* STATS */
+
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:15px;
+  margin-bottom:20px;
+}
+
+.stats-card{
+  border-radius:20px;
+  padding:20px;
+  color:white;
+}
+
+.stats-card h3{
+  margin-bottom:10px;
+  font-size:15px;
+}
+
+.stats-card h1{
+  font-size:35px;
+}
+
+.total{
+  background:#2563eb;
+}
+
+.hadir{
+  background:#22c55e;
+}
+
+.belum{
+  background:#ef4444;
+}
+
+/* TITIK */
+
+.monitor-box{
+  background:white;
+  border-radius:20px;
+  padding:20px;
+  margin-bottom:20px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.05);
+}
+
+.monitor-title{
+  margin-bottom:20px;
+  color:#222;
+}
+
+.titik-container{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.titik{
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.titik:hover{
+  transform:scale(1.2);
+}
+
+.hijau{
+  background:#22c55e;
+}
+
+.merah{
+  background:#ef4444;
+}
+
+/* CARD */
+
+.absen-card{
+  background:white;
+  border-radius:20px;
+  padding:20px;
+  margin-bottom:15px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.05);
+}
+
+.absen-card img{
+  width:85px;
+  height:85px;
+  border-radius:50%;
+  object-fit:cover;
+  margin-bottom:15px;
+}
+
+.absen-card p{
+  margin-bottom:8px;
+  color:#444;
+  line-height:1.5;
+}
+
+.status{
+  display:inline-block;
+  padding:8px 14px;
+  border-radius:10px;
+  background:#22c55e;
+  color:white;
+  margin-top:10px;
+  font-size:14px;
+  font-weight:bold;
+}
+
+/* KOSONG */
+
+.kosong{
+  text-align:center;
+  padding:40px;
+  color:#777;
+}
+
+/* MODAL */
+
+.modal{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.5);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+  padding:20px;
+}
+
+.modal-box{
+  width:100%;
+  max-width:500px;
+  background:white;
+  border-radius:20px;
+  padding:20px;
+  max-height:80vh;
+  overflow-y:auto;
+}
+
+.modal-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.close-btn{
+  width:35px;
+  height:35px;
+  border:none;
+  border-radius:50%;
+  background:red;
+  color:white;
+  cursor:pointer;
+}
+
+.user-item{
+  display:flex;
+  align-items:center;
+  gap:15px;
+  background:#f5f5f5;
+  padding:12px;
+  border-radius:15px;
+  margin-bottom:10px;
+}
+
+.user-item img{
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  object-fit:cover;
+}
+
+.user-item h4{
+  margin-bottom:5px;
+}
+
+.user-item p{
+  color:#666;
+  font-size:14px;
+}
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+  .filter-grid{
+    grid-template-columns:1fr;
+  }
+
+}
+
+</style>
+</head>
+<body>
+
+<h2 class="title">
+Dashboard Absensi Admin
+</h2>
+
+<!-- FILTER -->
+
+<div class="filter-box">
+
+  <div class="filter-grid">
+
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Cari nama / email..."
+    >
+
+    <select id="filterTanggal">
+
+      <option value="">
+        Semua Tanggal
+      </option>
+
+    </select>
+
+    <select id="filterBulan">
+
+      <option value="">
+        Semua Bulan
+      </option>
+
+      <option value="01">Januari</option>
+      <option value="02">Februari</option>
+      <option value="03">Maret</option>
+      <option value="04">April</option>
+      <option value="05">Mei</option>
+      <option value="06">Juni</option>
+      <option value="07">Juli</option>
+      <option value="08">Agustus</option>
+      <option value="09">September</option>
+      <option value="10">Oktober</option>
+      <option value="11">November</option>
+      <option value="12">Desember</option>
+
+    </select>
+
+  </div>
+
+</div>
+
+<!-- STATS -->
+
+<div class="stats-grid">
+
+  <div class="stats-card total">
+
+    <h3>Total User</h3>
+
+    <h1 id="totalUser">
+      0
+    </h1>
+
+  </div>
+
+  <div class="stats-card hadir">
+
+    <h3>Sudah Absen</h3>
+
+    <h1 id="totalHadir">
+      0
+    </h1>
+
+  </div>
+
+  <div class="stats-card belum">
+
+    <h3>Belum Absen</h3>
+
+    <h1 id="totalBelum">
+      0
+    </h1>
+
+  </div>
+
+</div>
+
+<!-- TITIK -->
+
+<div class="monitor-box">
+
+  <h3 class="monitor-title">
+    Monitoring Kehadiran
+  </h3>
+
+  <div
+    class="titik-container"
+    id="titikContainer"
+  ></div>
+
+</div>
+
+<!-- DATA ABSEN -->
+
+<div id="absenList"></div>
+
+<!-- MODAL -->
+
+<div
+  class="modal"
+  id="modalUser"
+>
+
+  <div class="modal-box">
+
+    <div class="modal-header">
+
+      <h3 id="modalTitle">
+        Data User
+      </h3>
+
+      <button
+        class="close-btn"
+        onclick="tutupModal()"
+      >
+        X
+      </button>
+
+    </div>
+
+    <div id="modalContent"></div>
+
+  </div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  get
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+// FIREBASE
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+
+};
+
+// INIT
+
+const app =
+  initializeApp(firebaseConfig);
+
+const db =
+  getDatabase(app);
+
+// ELEMENT
+
+const absenList =
+  document.getElementById(
+    "absenList"
+  );
+
+const searchInput =
+  document.getElementById(
+    "searchInput"
+  );
+
+const filterTanggal =
+  document.getElementById(
+    "filterTanggal"
+  );
+
+const filterBulan =
+  document.getElementById(
+    "filterBulan"
+  );
+
+const titikContainer =
+  document.getElementById(
+    "titikContainer"
+  );
+
+// DATA
+
+let semuaData = [];
+
+let semuaUsers = [];
+
+let userHadir = [];
+
+let userBelum = [];
+
+// LOAD DATA
+
+async function loadAbsensi(){
+
+  absenList.innerHTML =
+    `<div class="kosong">Loading...</div>`;
+
+  semuaData = [];
+
+  const usersSnapshot =
+    await get(
+      ref(db, "users")
+    );
+
+  const absenSnapshot =
+    await get(
+      ref(db, "absensi")
+    );
+
+  const users =
+    usersSnapshot.val() || {};
+
+  const absensi =
+    absenSnapshot.val() || {};
+
+  semuaUsers =
+    Object.keys(users).map((uid)=>({
+
+      uid: uid,
+
+      nama:
+        users[uid].namaLengkap || "-",
+
+      email:
+        users[uid].email || "-",
+
+      foto:
+        users[uid].fotoSelfie || ""
+
+    }));
+
+  const tanggalSet =
+    new Set();
+
+  Object.keys(absensi).forEach((uid)=>{
+
+    const dataUser =
+      absensi[uid];
+
+    const userData =
+      users[uid] || {};
+
+    Object.values(dataUser)
+    .forEach((item)=>{
+
+      tanggalSet.add(
+        item.tanggal
+      );
+
+      semuaData.push({
+
+        uid: uid,
+
+        nama:
+          item.nama || "-",
+
+        email:
+          item.email || "-",
+
+        tanggal:
+          item.tanggal || "-",
+
+        jam:
+          item.jam || "-",
+
+        status:
+          item.status || "-",
+
+        foto:
+          userData.fotoSelfie || ""
+
+      });
+
+    });
+
+  });
+
+  // FILTER TANGGAL
+
+  [...tanggalSet]
+  .sort()
+  .forEach((tgl)=>{
+
+    filterTanggal.innerHTML += `
+
+      <option value="${tgl}">
+        ${tgl}
+      </option>
+
+    `;
+
+  });
+
+  renderData();
+
+}
+
+// RENDER
+
+function renderData(){
+
+  const cari =
+    searchInput.value
+    .toLowerCase();
+
+  const tanggal =
+    filterTanggal.value;
+
+  const bulan =
+    filterBulan.value;
+
+  let hasil =
+    semuaData.filter((item)=>{
+
+      const cocokCari =
+
+        item.nama
+        .toLowerCase()
+        .includes(cari)
+
+        ||
+
+        item.email
+        .toLowerCase()
+        .includes(cari);
+
+      const cocokTanggal =
+
+        tanggal === ""
+        ||
+
+        item.tanggal === tanggal;
+
+      let cocokBulan =
+        true;
+
+      if(bulan !== ""){
+
+        const split =
+          item.tanggal.split("/");
+
+        const bulanData =
+          split[1];
+
+        cocokBulan =
+          bulanData === bulan;
+
+      }
+
+      return (
+        cocokCari &&
+        cocokTanggal &&
+        cocokBulan
+      );
+
+    });
+
+  hasil.reverse();
+
+  // USER HADIR
+
+  userHadir = [];
+
+  hasil.forEach((item)=>{
+
+    const ada =
+      userHadir.find(
+        x => x.uid === item.uid
+      );
+
+    if(!ada){
+
+      userHadir.push(item);
+
+    }
+
+  });
+
+  // USER BELUM
+
+  userBelum =
+    semuaUsers.filter((user)=>{
+
+      return !userHadir.find(
+        hadir =>
+        hadir.uid === user.uid
+      );
+
+    });
+
+  // STATS
+
+  document.getElementById(
+    "totalUser"
+  ).innerText =
+    semuaUsers.length;
+
+  document.getElementById(
+    "totalHadir"
+  ).innerText =
+    userHadir.length;
+
+  document.getElementById(
+    "totalBelum"
+  ).innerText =
+    userBelum.length;
+
+  // TITIK
+
+  titikContainer.innerHTML = "";
+
+  userHadir.forEach((item)=>{
+
+    titikContainer.innerHTML += `
+
+      <div
+        class="titik hijau"
+        title="${item.nama}"
+        onclick="showModal('hadir')"
+      ></div>
+
+    `;
+
+  });
+
+  userBelum.forEach((item)=>{
+
+    titikContainer.innerHTML += `
+
+      <div
+        class="titik merah"
+        title="${item.nama}"
+        onclick="showModal('belum')"
+      ></div>
+
+    `;
+
+  });
+
+  // DATA KOSONG
+
+  if(hasil.length === 0){
+
+    absenList.innerHTML =
+      `<div class="kosong">Data tidak ditemukan</div>`;
+
+    return;
+
+  }
+
+  // CARD
+
+  let html = "";
+
+  hasil.forEach((item)=>{
+
+    html += `
+
+    <div class="absen-card">
+
+      <img src="${item.foto}">
+
+      <p>
+        <b>Nama:</b>
+        ${item.nama}
+      </p>
+
+      <p>
+        <b>Email:</b>
+        ${item.email}
+      </p>
+
+      <p>
+        <b>Tanggal:</b>
+        ${item.tanggal}
+      </p>
+
+      <p>
+        <b>Jam:</b>
+        ${item.jam}
+      </p>
+
+      <div class="status">
+        ${item.status}
+      </div>
+
+    </div>
+
+    `;
+
+  });
+
+  absenList.innerHTML =
+    html;
+
+}
+
+// MODAL
+
+window.showModal = function(type){
+
+  const modal =
+    document.getElementById(
+      "modalUser"
+    );
+
+  const modalContent =
+    document.getElementById(
+      "modalContent"
+    );
+
+  const modalTitle =
+    document.getElementById(
+      "modalTitle"
+    );
+
+  modal.style.display =
+    "flex";
+
+  let data = [];
+
+  if(type === "hadir"){
+
+    modalTitle.innerText =
+      "User Sudah Absen";
+
+    data = userHadir;
+
+  }else{
+
+    modalTitle.innerText =
+      "User Belum Absen";
+
+    data = userBelum;
+
+  }
+
+  let html = "";
+
+  data.forEach((item)=>{
+
+    html += `
+
+      <div class="user-item">
+
+        <img src="${item.foto}">
+
+        <div>
+
+          <h4>
+            ${item.nama}
+          </h4>
+
+          <p>
+            ${item.email}
+          </p>
+
+        </div>
+
+      </div>
+
+    `;
+
+  });
+
+  modalContent.innerHTML =
+    html;
+
+}
+
+// TUTUP MODAL
+
+window.tutupModal = function(){
+
+  document.getElementById(
+    "modalUser"
+  ).style.display =
+    "none";
+
+}
+
+// FILTER EVENT
+
+searchInput.addEventListener(
+  "input",
+  renderData
+);
+
+filterTanggal.addEventListener(
+  "change",
+  renderData
+);
+
+filterBulan.addEventListener(
+  "change",
+  renderData
+);
+
+// LOAD
+
+loadAbsensi();
+
+</script>
+
+</body>
+</html>

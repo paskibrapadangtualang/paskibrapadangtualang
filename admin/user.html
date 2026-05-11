@@ -1,0 +1,426 @@
+<!-- admin/user.html -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Data User</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#f1f5f9;
+  padding:20px;
+}
+
+.title{
+  margin-bottom:20px;
+}
+
+.user-box{
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  margin-bottom:20px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.05);
+}
+
+.user-box img{
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  object-fit:cover;
+  margin-bottom:15px;
+}
+
+.user-info{
+  margin-bottom:15px;
+}
+
+.user-info p{
+  margin-bottom:5px;
+  color:#444;
+}
+
+.edit-form{
+  display:none;
+  margin-top:15px;
+}
+
+.input-group{
+  margin-bottom:12px;
+}
+
+.input-group label{
+  display:block;
+  margin-bottom:5px;
+  font-size:14px;
+  color:#555;
+}
+
+.input-group input{
+  width:100%;
+  padding:12px;
+  border:1px solid #ccc;
+  border-radius:10px;
+  outline:none;
+}
+
+.button-group{
+  margin-top:15px;
+  display:flex;
+  gap:10px;
+}
+
+button{
+  border:none;
+  color:white;
+  padding:12px 18px;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:14px;
+}
+
+button:hover{
+  opacity:0.9;
+}
+
+.edit-btn{
+  background:#2563eb;
+}
+
+.delete-btn{
+  background:red;
+}
+
+</style>
+</head>
+<body>
+
+<h2 class="title">
+Semua Data User
+</h2>
+
+<div id="userList"></div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  onValue,
+  remove,
+  update
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+// FIREBASE
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b",
+  measurementId: "G-1KGNVS3MRX"
+
+};
+
+// INIT
+
+const app =
+  initializeApp(firebaseConfig);
+
+const db =
+  getDatabase(app);
+
+const userList =
+  document.getElementById("userList");
+
+// AMBIL DATA USER
+
+onValue(
+  ref(db, "users"),
+  (snapshot)=>{
+
+    userList.innerHTML = "";
+
+    snapshot.forEach((child)=>{
+
+      const uid =
+        child.key;
+
+      const data =
+        child.val();
+
+      userList.innerHTML += `
+
+      <div class="user-box">
+
+        <img src="${data.fotoSelfie || ''}">
+
+        <div class="user-info">
+
+          <p>
+            <b>Nama:</b>
+            ${data.namaLengkap || '-'}
+          </p>
+
+          <p>
+            <b>Email:</b>
+            ${data.email || '-'}
+          </p>
+
+          <p>
+            <b>Nomor WA:</b>
+            ${data.nomorWa || '-'}
+          </p>
+
+          <p>
+            <b>Sekolah:</b>
+            ${data.asalSekolah || '-'}
+          </p>
+
+          <p>
+            <b>Status:</b>
+            ${data.statusPenerimaan || '-'}
+          </p>
+
+        </div>
+
+        <!-- FORM EDIT -->
+
+        <div
+          class="edit-form"
+          id="editForm-${uid}"
+        >
+
+          <div class="input-group">
+            <label>Nama Lengkap</label>
+            <input
+              type="text"
+              id="nama-${uid}"
+              value="${data.namaLengkap || ''}"
+            >
+          </div>
+
+          <div class="input-group">
+            <label>Email</label>
+            <input
+              type="text"
+              id="email-${uid}"
+              value="${data.email || ''}"
+            >
+          </div>
+
+          <div class="input-group">
+            <label>Nomor WA</label>
+            <input
+              type="text"
+              id="wa-${uid}"
+              value="${data.nomorWa || ''}"
+            >
+          </div>
+
+          <div class="input-group">
+            <label>Asal Sekolah</label>
+            <input
+              type="text"
+              id="sekolah-${uid}"
+              value="${data.asalSekolah || ''}"
+            >
+          </div>
+
+          <div class="input-group">
+            <label>Status</label>
+            <input
+              type="text"
+              id="status-${uid}"
+              value="${data.statusPenerimaan || ''}"
+            >
+          </div>
+
+          <div class="input-group">
+            <label>Alamat</label>
+            <input
+              type="text"
+              id="alamat-${uid}"
+              value="${data.alamat || ''}"
+            >
+          </div>
+
+        </div>
+
+        <!-- BUTTON -->
+
+        <div class="button-group">
+
+          <button
+            class="edit-btn"
+            id="editBtn-${uid}"
+            onclick="toggleEdit('${uid}')"
+          >
+            Edit
+          </button>
+
+          <button
+            class="delete-btn"
+            onclick="hapusUser('${uid}')"
+          >
+            Hapus
+          </button>
+
+        </div>
+
+      </div>
+
+      `;
+
+    });
+
+  }
+);
+
+// EDIT & SIMPAN
+
+window.toggleEdit = async function(uid){
+
+  const form =
+    document.getElementById(
+      `editForm-${uid}`
+    );
+
+  const button =
+    document.getElementById(
+      `editBtn-${uid}`
+    );
+
+  const sedangEdit =
+    button.innerText === "Simpan";
+
+  // SIMPAN
+
+  if(sedangEdit){
+
+    const newData = {
+
+      namaLengkap:
+        document.getElementById(
+          `nama-${uid}`
+        ).value,
+
+      email:
+        document.getElementById(
+          `email-${uid}`
+        ).value,
+
+      nomorWa:
+        document.getElementById(
+          `wa-${uid}`
+        ).value,
+
+      asalSekolah:
+        document.getElementById(
+          `sekolah-${uid}`
+        ).value,
+
+      statusPenerimaan:
+        document.getElementById(
+          `status-${uid}`
+        ).value,
+
+      alamat:
+        document.getElementById(
+          `alamat-${uid}`
+        ).value
+
+    };
+
+    try{
+
+      await update(
+        ref(db, "users/" + uid),
+        newData
+      );
+
+      alert(
+        "Data berhasil disimpan"
+      );
+
+      form.style.display =
+        "none";
+
+      button.innerText =
+        "Edit";
+
+    }catch(error){
+
+      alert(
+        "Gagal menyimpan data"
+      );
+
+    }
+
+  }else{
+
+    // TAMPILKAN FORM
+
+    form.style.display =
+      "block";
+
+    button.innerText =
+      "Simpan";
+
+  }
+
+}
+
+// HAPUS USER
+
+window.hapusUser = async function(uid){
+
+  const yakin =
+    confirm(
+      "Yakin ingin menghapus user?"
+    );
+
+  if(!yakin) return;
+
+  try{
+
+    await remove(
+      ref(db, "users/" + uid)
+    );
+
+    alert(
+      "User berhasil dihapus"
+    );
+
+  }catch(error){
+
+    alert(
+      "Gagal menghapus user"
+    );
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>

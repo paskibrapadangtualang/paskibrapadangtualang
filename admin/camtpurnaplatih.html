@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel Paskibra</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#f4f6fb;
+  margin:0;
+  padding:20px;
+}
+
+h2{
+  text-align:center;
+  color:#c40000;
+  margin-bottom:20px;
+}
+
+/* TOP GRID */
+.top{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+
+/* FORM */
+.form-box{
+  background:white;
+  padding:15px;
+  border-radius:15px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+input, select, textarea{
+  padding:10px;
+  margin:6px 0;
+  border:1px solid #ddd;
+  border-radius:8px;
+}
+
+button{
+  width:100%;
+  padding:10px;
+  background:#c40000;
+  color:white;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+/* MONITOR */
+.monitor-wrapper{
+  margin-top:25px;
+}
+
+.section-title{
+  font-weight:bold;
+  color:#c40000;
+  margin:15px 0 10px;
+}
+
+.list{
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+  padding-bottom:10px;
+}
+
+.card{
+  min-width:180px;
+  background:white;
+  border-radius:15px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+  padding:10px;
+  text-align:center;
+}
+
+.card img{
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  object-fit:cover;
+}
+
+.name{
+  font-weight:bold;
+  font-size:14px;
+}
+
+.role{
+  font-size:12px;
+  color:#c40000;
+}
+
+.del{
+  background:black;
+  font-size:11px;
+  margin-top:8px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>ADMIN PANEL PASKIBRA</h2>
+
+<div class="top">
+
+  <!-- FORM -->
+  <div class="form-box">
+
+    <select id="type">
+      <option value="camat">Camat</option>
+      <option value="pelatih">Pelatih</option>
+      <option value="purna">Purna</option>
+    </select>
+
+    <input id="nama" placeholder="Nama">
+    <input id="jabatan" placeholder="Jabatan">
+
+    <!-- FOTO FILE -->
+    <input type="file" id="fotoFile">
+
+    <textarea id="visi" placeholder="Visi"></textarea>
+    <textarea id="misi" placeholder="Misi"></textarea>
+    <textarea id="tujuan" placeholder="Tujuan"></textarea>
+
+    <button onclick="saveData()">Simpan Data</button>
+
+  </div>
+
+  <!-- INFO -->
+  <div class="form-box">
+    <h3 style="color:#c40000;">Info Admin</h3>
+    <p>✔ Upload foto</p>
+    <p>✔ Data otomatis </p>
+    <p>✔ Hapus</p>
+  </div>
+
+</div>
+
+<!-- MONITOR -->
+<div class="monitor-wrapper">
+
+  <div class="section-title">📌 CAMAT</div>
+  <div class="list" id="camatList"></div>
+
+  <div class="section-title">📌 PELATIH</div>
+  <div class="list" id="pelatihList"></div>
+
+  <div class="section-title">📌 PURNA</div>
+  <div class="list" id="purnaList"></div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, push, set, get, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// =====================
+// CLOUDINARY
+// =====================
+const CLOUD_NAME = "djxlbemky";
+const UPLOAD_PRESET = "uploadgambar";
+
+async function uploadImage(file){
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", UPLOAD_PRESET);
+
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+    {
+      method:"POST",
+      body:formData
+    }
+  );
+
+  const data = await res.json();
+  return data.secure_url;
+}
+
+// =====================
+// SAVE DATA
+// =====================
+window.saveData = async function(){
+
+  const type = document.getElementById("type").value;
+  const nama = document.getElementById("nama").value;
+  const jabatan = document.getElementById("jabatan").value;
+  const file = document.getElementById("fotoFile").files[0];
+  const visi = document.getElementById("visi").value;
+  const misi = document.getElementById("misi").value;
+  const tujuan = document.getElementById("tujuan").value;
+
+  if(!nama || !jabatan || !file){
+    alert("Lengkapi data!");
+    return;
+  }
+
+  const fotoUrl = await uploadImage(file);
+
+  const newRef = push(ref(db,type));
+
+  await set(newRef,{
+    nama,
+    jabatan,
+    foto:fotoUrl,
+    visi,
+    misi,
+    tujuan
+  });
+
+  alert("Data berhasil disimpan");
+  loadAll();
+}
+
+// =====================
+// DELETE
+// =====================
+window.del = async function(type,id){
+  await remove(ref(db,type+"/"+id));
+  loadAll();
+}
+
+// =====================
+// LOAD DATA
+// =====================
+async function load(type, el){
+
+  const snap = await get(ref(db,type));
+  let html = "";
+
+  if(snap.exists()){
+
+    const data = snap.val();
+
+    Object.entries(data).forEach(([id,d])=>{
+
+      html += `
+      <div class="card">
+
+        <img src="${d.foto || ''}">
+        <div class="name">${d.nama || '-'}</div>
+        <div class="role">${d.jabatan || '-'}</div>
+
+        <button class="del" onclick="del('${type}','${id}')">
+          Hapus
+        </button>
+
+      </div>
+      `;
+    });
+  }
+
+  document.getElementById(el).innerHTML = html;
+}
+
+// =====================
+// LOAD ALL
+// =====================
+function loadAll(){
+  load("camat","camatList");
+  load("pelatih","pelatihList");
+  load("purna","purnaList");
+}
+
+loadAll();
+
+</script>
+
+</body>
+</html>

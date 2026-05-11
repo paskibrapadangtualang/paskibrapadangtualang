@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Purna Paskibra</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#f4f6fb;
+  padding:20px;
+}
+
+
+
+*{
+  -webkit-tap-highlight-color: transparent; /* hilangkan efek biru klik mobile */
+  user-select: none; /* blok seleksi teks */
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+
+img{
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+    
+
+
+/* hilangkan highlight biru saat klik */
+a, button, div{
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* optional: cegah zoom pinch (mobile) */
+html, body{
+  touch-action: manipulation;
+}
+
+
+
+h2{
+  text-align:center;
+  color:#c40000;
+  margin-bottom:20px;
+}
+
+/* GRID LIST */
+.wrapper{
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+/* CARD */
+.card{
+  background:white;
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 10px 25px rgba(0,0,0,0.1);
+}
+
+/* HEADER */
+.header{
+  background:linear-gradient(135deg,#111,#444);
+  padding:20px;
+  text-align:center;
+}
+
+.header img{
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  object-fit:cover;
+  border:3px solid white;
+}
+
+/* CONTENT */
+.content{
+  padding:15px;
+}
+
+.role{
+  color:#c40000;
+  font-weight:bold;
+  font-size:13px;
+}
+
+.name{
+  font-size:18px;
+  font-weight:bold;
+  margin-bottom:5px;
+}
+
+.info-box{
+  margin:10px 0;
+  padding:10px;
+  background:#f8f8f8;
+  border-left:4px solid #c40000;
+  border-radius:10px;
+  font-size:13px;
+}
+
+/* VISI MISI */
+.vm-box{
+  display:flex;
+  background:#fff;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 5px 15px rgba(0,0,0,0.06);
+}
+
+.vm-col{
+  flex:1;
+  padding:10px;
+}
+
+.vm-title{
+  text-align:center;
+  font-weight:bold;
+  color:#c40000;
+  font-size:12px;
+  margin-bottom:5px;
+}
+
+.vm-text{
+  font-size:12px;
+  color:#555;
+  line-height:1.4;
+}
+
+.vm-divider{
+  width:1px;
+  background:#eee;
+}
+</style>
+</head>
+
+<body>
+
+<h2>DATA PURNA PASKIBRA</h2>
+<div id="list" class="wrapper"></div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const path = ref(db,"purna");
+
+// =======================
+// LOAD DATA
+// =======================
+async function load(){
+
+  const snap = await get(path);
+
+  // =======================
+  // DUMMY 5 DATA
+  // =======================
+  const dummy = {
+    purna1:{
+      nama:"Agus Saputra",
+      jabatan:"Purna Senior",
+      visi:"Menjadi teladan generasi muda",
+      misi:"Membimbing anggota baru",
+      tujuan:"Menjaga nama baik organisasi",
+      foto:"https://i.pravatar.cc/300?img=11"
+    },
+    purna2:{
+      nama:"Budi Santoso",
+      jabatan:"Purna Madya",
+      visi:"Disiplin adalah kunci sukses",
+      misi:"Melatih mental kuat",
+      tujuan:"Membentuk karakter kuat",
+      foto:"https://i.pravatar.cc/300?img=12"
+    },
+    purna3:{
+      nama:"Citra Lestari",
+      jabatan:"Purna",
+      visi:"Kebersamaan adalah kekuatan",
+      misi:"Meningkatkan solidaritas",
+      tujuan:"Membangun persaudaraan",
+      foto:"https://i.pravatar.cc/300?img=13"
+    },
+    purna4:{
+      nama:"Dedi Kurniawan",
+      jabatan:"Purna Senior",
+      visi:"Prestasi tanpa batas",
+      misi:"Melatih kedisiplinan",
+      tujuan:"Menjadi contoh terbaik",
+      foto:"https://i.pravatar.cc/300?img=14"
+    },
+    purna5:{
+      nama:"Eka Pratama",
+      jabatan:"Purna",
+      visi:"Integritas dan loyalitas",
+      misi:"Menjaga nilai organisasi",
+      tujuan:"Menjadi panutan",
+      foto:"https://i.pravatar.cc/300?img=15"
+    }
+  };
+
+  // =======================
+  // JIKA KOSONG → SET DUMMY
+  // =======================
+  if(!snap.exists()){
+    await set(path,dummy);
+    return load();
+  }
+
+  const data = snap.val();
+
+  let html = "";
+
+  Object.values(data).forEach(d=>{
+
+    html += `
+    <div class="card">
+
+      <div class="header">
+        <img src="${d.foto}">
+      </div>
+
+      <div class="content">
+
+        <div class="role">${d.jabatan}</div>
+        <div class="name">${d.nama}</div>
+
+        <div class="info-box">
+          <b>Tujuan:</b> ${d.tujuan}
+        </div>
+
+        <div class="vm-box">
+
+          <div class="vm-col">
+            <div class="vm-title">VISI</div>
+            <div class="vm-text">${d.visi}</div>
+          </div>
+
+          <div class="vm-divider"></div>
+
+          <div class="vm-col">
+            <div class="vm-title">MISI</div>
+            <div class="vm-text">${d.misi}</div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+    `;
+
+  });
+
+  document.getElementById("list").innerHTML = html;
+
+}
+
+load();
+
+
+
+
+document.addEventListener('contextmenu', function(e){
+  e.preventDefault(); // disable klik kanan / copy
+});
+
+document.addEventListener('selectstart', function(e){
+  e.preventDefault(); // disable blok teks
+});
+
+document.addEventListener('dragstart', function(e){
+  e.preventDefault(); // disable drag gambar
+});
+
+</script>
+
+</body>
+</html>

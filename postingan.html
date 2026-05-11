@@ -2,7 +2,9 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
   <title>Postingan - Paskibra PDTualang</title>
 
   <style>
@@ -12,6 +14,35 @@
       box-sizing:border-box;
       font-family:Arial, sans-serif;
     }
+
+
+
+    *{
+  -webkit-tap-highlight-color: transparent; /* hilangkan efek biru klik mobile */
+  user-select: none; /* blok seleksi teks */
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+
+img{
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+    
+
+
+/* hilangkan highlight biru saat klik */
+a, button, div{
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* optional: cegah zoom pinch (mobile) */
+html, body{
+  touch-action: manipulation;
+}
+
 
     body{
       background:#f5f5f5;
@@ -375,6 +406,8 @@
 
 
 <!-- FIREBASE -->
+<!-- GANTI SELURUH FUNCTION loadPostingan() MENJADI INI -->
+
 <script type="module">
 
 import { initializeApp }
@@ -383,7 +416,6 @@ from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getDatabase,
   ref,
-  set,
   get
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -395,6 +427,7 @@ import {
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 // FIREBASE CONFIG
+
 const firebaseConfig = {
 
   apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
@@ -408,11 +441,15 @@ const firebaseConfig = {
 };
 
 // INIT
-const app = initializeApp(firebaseConfig);
 
-const database = getDatabase(app);
+const app =
+  initializeApp(firebaseConfig);
 
-const auth = getAuth(app);
+const database =
+  getDatabase(app);
+
+const auth =
+  getAuth(app);
 
 // ===============================
 // NAVBAR USER
@@ -433,24 +470,23 @@ onAuthStateChanged(auth, async(user)=>{
 
     try{
 
-      const snapshot = await get(
-        ref(database, "users/" + user.uid)
-      );
+      const snapshot =
+        await get(
+          ref(database,"users/" + user.uid)
+        );
 
       if(snapshot.exists()){
 
-        const data = snapshot.val();
+        const data =
+          snapshot.val();
 
-        // FOTO PROFIL
         navProfile.src =
           data.fotoSelfie ||
           "assets/images/user.png";
 
-        // NAMA USER
-        // NAMA USER
-          navText.innerText = "User";
+        navText.innerText =
+          "User";
 
-        // LINK USER
         menuUser.href =
           "user.html";
 
@@ -464,7 +500,6 @@ onAuthStateChanged(auth, async(user)=>{
 
   }else{
 
-    // DEFAULT
     navProfile.src =
       "assets/images/user.png";
 
@@ -483,7 +518,9 @@ onAuthStateChanged(auth, async(user)=>{
 // ===============================
 
 const postinganContainer =
-  document.getElementById("postinganContainer");
+  document.getElementById(
+    "postinganContainer"
+  );
 
 // ===============================
 // LOAD POSTINGAN
@@ -493,23 +530,64 @@ async function loadPostingan(){
 
   try{
 
-    const snapshot = await get(
-      ref(database, "postingan")
-    );
+    const snapshot =
+      await get(
+        ref(database,"postingan")
+      );
 
-    // KOSONGKAN
-    postinganContainer.innerHTML = "";
+    postinganContainer.innerHTML =
+      "";
 
-    // CEK DATA ADA
     if(snapshot.exists()){
 
-      const data = snapshot.val();
+      const data =
+        snapshot.val();
 
-      Object.keys(data)
-      .reverse()
-      .forEach((id)=>{
+      Object.entries(data)
 
-        const post = data[id];
+      // TERBARU PALING ATAS
+
+      .sort((a,b)=>
+
+        b[1].createdAt -
+        a[1].createdAt
+
+      )
+
+      .forEach(([id,post])=>{
+
+        // FOTO PERTAMA
+
+        let gambarAwal = "";
+
+        if(
+          post.gambarList &&
+          post.gambarList.length > 0
+        ){
+
+          gambarAwal =
+            post.gambarList[0];
+
+        }else{
+
+          gambarAwal =
+            post.gambar;
+
+        }
+
+        // DESKRIPSI SINGKAT
+
+        let deskripsiSingkat =
+          post.deskripsi
+          .substring(0,120);
+
+        if(
+          post.deskripsi.length > 120
+        ){
+
+          deskripsiSingkat += "...";
+
+        }
 
         postinganContainer.innerHTML += `
 
@@ -518,7 +596,7 @@ async function loadPostingan(){
           onclick="bukaDetail('${id}')"
         >
 
-          <img src="${post.gambar}">
+          <img src="${gambarAwal}">
 
           <div class="post-content">
 
@@ -527,7 +605,7 @@ async function loadPostingan(){
             </h3>
 
             <p>
-              ${post.deskripsi}
+              ${deskripsiSingkat}
             </p>
 
             <div class="post-date">
@@ -545,9 +623,16 @@ async function loadPostingan(){
     }else{
 
       postinganContainer.innerHTML = `
-        <p style="text-align:center;">
-          Belum ada postingan
-        </p>
+
+      <p
+        style="
+          text-align:center;
+          color:#777;
+        "
+      >
+        Belum ada postingan
+      </p>
+
       `;
 
     }
@@ -557,9 +642,16 @@ async function loadPostingan(){
     console.log(error);
 
     postinganContainer.innerHTML = `
-      <p style="text-align:center;color:red;">
-        Gagal memuat postingan
-      </p>
+
+    <p
+      style="
+        text-align:center;
+        color:red;
+      "
+    >
+      Gagal memuat postingan
+    </p>
+
     `;
 
   }
@@ -570,7 +662,8 @@ async function loadPostingan(){
 // DETAIL POSTINGAN
 // ===============================
 
-window.bukaDetail = function(id){
+window.bukaDetail =
+function(id){
 
   window.location.href =
     "detailpostingan.html?id=" + id;
@@ -578,11 +671,36 @@ window.bukaDetail = function(id){
 }
 
 // ===============================
-// JALANKAN
+// LOAD
 // ===============================
 
 loadPostingan();
 
+
+
+
+
+
+
+
+
+
+
+document.addEventListener('contextmenu', function(e){
+  e.preventDefault(); // disable klik kanan / copy
+});
+
+document.addEventListener('selectstart', function(e){
+  e.preventDefault(); // disable blok teks
+});
+
+document.addEventListener('dragstart', function(e){
+  e.preventDefault(); // disable drag gambar
+});
+
+
+
+</script>
 </script>
 
 

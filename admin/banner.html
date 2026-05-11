@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Banner Upload</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#f5f5f5;
+  padding:20px;
+}
+
+h2{color:#c40000}
+
+.box{
+  background:white;
+  padding:15px;
+  border-radius:10px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.1);
+  margin-bottom:20px;
+}
+
+input, textarea{
+  width:100%;
+  padding:10px;
+  margin:8px 0;
+  border:1px solid #ddd;
+  border-radius:8px;
+}
+
+button{
+  width:100%;
+  padding:10px;
+  background:#c40000;
+  color:white;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+button:disabled{
+  background:#888;
+  cursor:not-allowed;
+}
+
+.card{
+  background:white;
+  padding:10px;
+  margin-top:10px;
+  border-radius:10px;
+  box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+
+.card img{
+  width:100%;
+  border-radius:10px;
+  margin-top:10px;
+}
+
+.del{
+  background:black;
+  margin-top:10px;
+}
+</style>
+
+</head>
+<body>
+
+<h2>UPLOAD BANNER</h2>
+
+<div class="box">
+
+  <input id="judul" placeholder="Judul banner">
+  <textarea id="deskripsi" placeholder="Deskripsi"></textarea>
+
+  <input type="file" id="file" accept="image/*">
+
+  <button id="btnUpload" onclick="uploadBanner()">
+    Upload Banner
+  </button>
+
+</div>
+
+<div id="list"></div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, push, set, get, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+// =====================
+// FIREBASE CONFIG
+// =====================
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// =====================
+// CLOUDINARY CONFIG
+// =====================
+const CLOUD_NAME = "djxlbemky";
+const UPLOAD_PRESET = "uploadgambar";
+
+// =====================
+// UPLOAD KE CLOUDINARY
+// =====================
+async function uploadToCloudinary(file){
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", UPLOAD_PRESET);
+
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+    {
+      method: "POST",
+      body: formData
+    }
+  );
+
+  const data = await res.json();
+
+  if(!data.secure_url){
+    throw new Error("Upload gagal ke Cloudinary");
+  }
+
+  return data.secure_url;
+}
+
+// =====================
+// UPLOAD BANNER
+// =====================
+window.uploadBanner = async function(){
+
+  const btn = document.getElementById("btnUpload");
+  const judul = document.getElementById("judul").value.trim();
+  const deskripsi = document.getElementById("deskripsi").value.trim();
+  const file = document.getElementById("file").files[0];
+
+  if(!judul || !deskripsi || !file){
+    alert("Lengkapi semua data!");
+    return;
+  }
+
+  try{
+
+    btn.disabled = true;
+    btn.innerText = "Uploading...";
+
+    // upload ke cloudinary
+    const imageUrl = await uploadToCloudinary(file);
+
+    // simpan ke firebase
+    const newRef = push(ref(db,"banner"));
+
+    await set(newRef,{
+      judul,
+      deskripsi,
+      gambar: imageUrl
+    });
+
+    alert("Banner berhasil ditambahkan");
+
+    document.getElementById("judul").value = "";
+    document.getElementById("deskripsi").value = "";
+    document.getElementById("file").value = "";
+
+    loadBanner();
+
+  }catch(err){
+
+    console.log(err);
+    alert("Upload gagal!");
+
+  }finally{
+
+    btn.disabled = false;
+    btn.innerText = "Upload Banner";
+
+  }
+
+}
+
+// =====================
+// LOAD BANNER
+// =====================
+async function loadBanner(){
+
+  const snap = await get(ref(db,"banner"));
+
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+
+  if(snap.exists()){
+
+    const data = snap.val();
+
+    Object.entries(data).forEach(([id,val])=>{
+
+      list.innerHTML += `
+        <div class="card">
+
+          <b>${val.judul}</b>
+          <p>${val.deskripsi}</p>
+
+          <img src="${val.gambar}">
+
+          <button class="del" onclick="hapus('${id}')">
+            Hapus
+          </button>
+
+        </div>
+      `;
+
+    });
+
+  }
+
+}
+
+// =====================
+// HAPUS BANNER
+// =====================
+window.hapus = async function(id){
+
+  if(confirm("Hapus banner ini?")){
+
+    await remove(ref(db,"banner/"+id));
+
+    loadBanner();
+
+  }
+
+}
+
+loadBanner();
+
+</script>
+
+</body>
+</html>

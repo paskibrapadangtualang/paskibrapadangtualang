@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin YouTube Upload</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#f4f6fb;
+  padding:20px;
+}
+
+h2{
+  text-align:center;
+  color:#c40000;
+}
+
+.container{
+  max-width:800px;
+  margin:auto;
+}
+
+.box{
+  background:white;
+  padding:15px;
+  border-radius:15px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+  margin-bottom:20px;
+}
+
+input{
+  width:100%;
+  padding:10px;
+  margin:6px 0;
+  border:1px solid #ddd;
+  border-radius:8px;
+}
+
+button{
+  width:100%;
+  padding:10px;
+  background:#c40000;
+  color:white;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+.list{
+  margin-top:15px;
+}
+
+.item{
+  background:#fff;
+  padding:10px;
+  border-radius:12px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.08);
+  margin-bottom:10px;
+}
+
+.item h4{
+  margin:0;
+  color:#c40000;
+  font-size:14px;
+}
+
+.item a{
+  font-size:12px;
+  color:#333;
+  word-break:break-all;
+}
+
+.btns{
+  display:flex;
+  gap:5px;
+  margin-top:8px;
+}
+
+.btns button{
+  font-size:11px;
+  padding:6px;
+}
+.del{
+  background:black;
+}
+.edit{
+  background:#444;
+}
+</style>
+</head>
+
+<body>
+
+<h2>ADMIN YOUTUBE UPLOAD</h2>
+
+<div class="container">
+
+  <!-- FORM -->
+  <div class="box">
+ 
+     <input id="judul" placeholder="Judul Video">
+     <input id="deskripsi" placeholder="Deskripsi Video">
+     <input id="url" placeholder="Link YouTube">
+
+    <button onclick="tambahVideo()">
+      Tambah Video
+    </button>
+
+  </div>
+
+  <!-- LIST -->
+  <div class="box">
+
+    <h3 style="color:#c40000;">Monitoring Video</h3>
+
+    <div id="list" class="list"></div>
+
+  </div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getDatabase,
+  ref,
+  push,
+  set,
+  get,
+  remove,
+  update
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const ytRef = ref(db, "youtubeRekomendasi");
+
+// ===============================
+// TAMBAH VIDEO
+// ===============================
+window.tambahVideo = async function(){
+
+  const judul = document.getElementById("judul").value;
+  const deskripsi = document.getElementById("deskripsi").value;
+  const url = document.getElementById("url").value;
+
+  if(!judul || !url){
+    alert("Isi judul dan URL");
+    return;
+  }
+
+  const newRef = push(ytRef);
+
+  await set(newRef,{
+    judul,
+    deskripsi,
+    url,
+    createdAt: Date.now() // 🔥 penting untuk urutan terbaru
+  });
+
+  alert("Video berhasil ditambahkan");
+
+  loadData();
+}
+// ===============================
+// HAPUS
+// ===============================
+window.hapus = async function(id){
+  await remove(ref(db,"youtubeRekomendasi/"+id));
+  loadData();
+}
+
+// ===============================
+// EDIT
+// ===============================
+window.edit = async function(id,oldJudul,oldUrl,oldDeskripsi){
+
+  const judul = prompt("Edit Judul", oldJudul);
+  const deskripsi = prompt("Edit Deskripsi", oldDeskripsi || "");
+  const url = prompt("Edit URL", oldUrl);
+
+  if(judul && url){
+
+    await update(ref(db,"youtubeRekomendasi/"+id),{
+      judul,
+      deskripsi,
+      url,
+      createdAt: Date.now() // optional biar bisa naik lagi ke atas
+    });
+
+    loadData();
+  }
+
+}
+
+// ===============================
+// LOAD DATA
+// ===============================
+async function loadData(){
+
+  const snap = await get(ytRef);
+
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+
+  if(snap.exists()){
+
+    const data = snap.val();
+
+    // 🔥 ubah jadi array + sorting
+    let items = Object.entries(data).map(([id,val])=>({
+      id,
+      ...val
+    }));
+
+    // 🔥 TERBARU DI ATAS
+    items.sort((a,b)=> (b.createdAt || 0) - (a.createdAt || 0));
+
+    items.forEach((val)=>{
+
+      list.innerHTML += `
+        <div class="item">
+
+          <h4>${val.judul}</h4>
+
+          <p style="font-size:12px;color:#666;margin:5px 0;">
+            ${val.deskripsi || "-"}
+          </p>
+
+          <a href="${val.url}" target="_blank">
+            ${val.url}
+          </a>
+
+          <div class="btns">
+
+            <button class="edit"
+              onclick="edit('${val.id}','${val.judul}','${val.url}')"
+            >
+              Edit
+            </button>
+
+            <button class="del"
+              onclick="hapus('${val.id}')"
+            >
+              Hapus
+            </button>
+
+          </div>
+
+        </div>
+      `;
+
+    });
+
+  }
+
+}
+
+loadData();
+
+</script>
+
+</body>
+</html>

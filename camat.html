@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Camat</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#f4f6fb;
+  padding:20px;
+}
+
+
+
+
+*{
+  -webkit-tap-highlight-color: transparent; /* hilangkan efek biru klik mobile */
+  user-select: none; /* blok seleksi teks */
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+
+img{
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+    
+
+
+/* hilangkan highlight biru saat klik */
+a, button, div{
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* optional: cegah zoom pinch (mobile) */
+html, body{
+  touch-action: manipulation;
+}
+
+h2{
+  color:#c40000;
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.card{
+  max-width:420px;
+  margin:auto;
+  background:white;
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 10px 25px rgba(0,0,0,0.1);
+}
+
+/* HEADER FOTO */
+.header{
+  background:linear-gradient(135deg,#c40000,#ff4d4d);
+  padding:25px;
+  text-align:center;
+}
+
+.header img{
+  width:110px;
+  height:110px;
+  border-radius:50%;
+  object-fit:cover;
+  border:4px solid white;
+  box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
+
+.content{
+  padding:20px;
+}
+
+h3{
+  margin:10px 0 5px;
+  color:#222;
+}
+
+.role{
+  color:#c40000;
+  font-weight:bold;
+  margin-bottom:10px;
+}
+
+.info{
+  font-size:14px;
+  color:#555;
+  line-height:1.6;
+  margin-bottom:10px;
+}
+
+.label{
+  font-weight:bold;
+  color:#111;
+}
+
+
+
+.info-box{
+  margin:10px 0 15px;
+  padding:10px;
+  background:#f9f9f9;
+  border-left:4px solid #c40000;
+  border-radius:10px;
+  font-size:14px;
+}
+
+/* VISI MISI BOX */
+.vm-box{
+  display:flex;
+  background:#fff;
+  border-radius:15px;
+  overflow:hidden;
+  box-shadow:0 5px 15px rgba(0,0,0,0.08);
+  margin-top:10px;
+}
+
+/* COLUMN */
+.vm-col{
+  flex:1;
+  padding:12px;
+}
+
+/* TITLE */
+.vm-title{
+  font-weight:bold;
+  color:#c40000;
+  text-align:center;
+  margin-bottom:8px;
+  font-size:13px;
+  letter-spacing:1px;
+}
+
+/* TEXT */
+.vm-text{
+  font-size:13px;
+  color:#555;
+  line-height:1.5;
+  min-height:80px;
+}
+
+/* DIVIDER */
+.vm-divider{
+  width:1px;
+  background:#eee;
+}
+
+
+
+</style>
+</head>
+<body>
+
+<h2>PROFIL CAMAT</h2>
+<div id="content"></div>
+
+
+
+
+
+
+
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const path = ref(db,"camat");
+
+async function load(){
+
+  const snap = await get(path);
+
+  const defaultData = {
+    nama:"Andi Pratama",
+    jabatan:"Camat Paskibra",
+    visi:"Mewujudkan disiplin dan prestasi tinggi",
+    misi:"Membina generasi tangguh dan berkarakter",
+    tujuan:"Menjadikan Paskibra terbaik di daerah",
+    foto:"https://i.pravatar.cc/300?img=12"
+  };
+
+  // =========================
+  // JIKA KOSONG
+  // =========================
+  if(!snap.exists()){
+    await set(path, defaultData);
+    return load();
+  }
+
+  const data = snap.val();
+
+  // =========================
+  // AMBIL DATA PERTAMA (AMAN UNTUK PUSH)
+  // =========================
+  const firstKey = Object.keys(data)[0];
+  let d = data[firstKey];
+
+  // fallback kalau kosong
+  if(!d){
+    d = defaultData;
+  }
+
+  document.getElementById("content").innerHTML = `
+  <div class="card">
+
+    <div class="header">
+      <img src="${d.foto || defaultData.foto}">
+    </div>
+
+    <div class="content">
+
+      <div class="role">${d.jabatan || "-"}</div>
+      <h3>${d.nama || "-"}</h3>
+
+      <div class="info-box">
+        <b>Tujuan:</b> ${d.tujuan || "-"}
+      </div>
+
+      <div class="vm-box">
+
+        <div class="vm-col">
+          <div class="vm-title">VISI</div>
+          <div class="vm-text">${d.visi || "-"}</div>
+        </div>
+
+        <div class="vm-divider"></div>
+
+        <div class="vm-col">
+          <div class="vm-title">MISI</div>
+          <div class="vm-text">${d.misi || "-"}</div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+  `;
+}
+
+load();
+
+
+document.addEventListener('contextmenu', function(e){
+  e.preventDefault(); // disable klik kanan / copy
+});
+
+document.addEventListener('selectstart', function(e){
+  e.preventDefault(); // disable blok teks
+});
+
+document.addEventListener('dragstart', function(e){
+  e.preventDefault(); // disable drag gambar
+});
+
+
+
+</script>
+
+
+
+
+
+</body>
+</html>

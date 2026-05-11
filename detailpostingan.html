@@ -5,8 +5,9 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Detail Postingan</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Seputar Paskibra</title>
 
   <style>
 
@@ -16,6 +17,35 @@
       box-sizing:border-box;
       font-family:Arial,sans-serif;
     }
+
+
+
+    *{
+  -webkit-tap-highlight-color: transparent; /* hilangkan efek biru klik mobile */
+  user-select: none; /* blok seleksi teks */
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+
+img{
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+    
+
+
+/* hilangkan highlight biru saat klik */
+a, button, div{
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* optional: cegah zoom pinch (mobile) */
+html, body{
+  touch-action: manipulation;
+}
+
 
     body{
       background:#f5f5f5;
@@ -171,7 +201,65 @@
 
 
 
+.image-modal{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.95);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:99999;
+  overflow:hidden;
+}
 
+.image-modal.active{
+  display:flex;
+}
+
+.modal-image{
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  transition:transform 0.3s ease;
+  cursor:grab;
+  user-select:none;
+}
+
+.close-modal{
+  position:absolute;
+  top:20px;
+  right:20px;
+  width:45px;
+  height:45px;
+  border-radius:50%;
+  border:none;
+  background:rgba(255,255,255,0.2);
+  color:white;
+  font-size:28px;
+  cursor:pointer;
+  z-index:10;
+}
+
+.zoom-info{
+  position:absolute;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  color:white;
+  font-size:14px;
+  background:rgba(0,0,0,0.5);
+  padding:10px 15px;
+  border-radius:30px;
+}
+
+/* FOTO BISA DIKLIK */
+
+.detail-image{
+  cursor:pointer;
+}
 
 
     /* ===============================
@@ -260,21 +348,126 @@
    MOBILE
 =============================== */
 
-@media(max-width:900px){
+.image-modal{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.95);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:999999;
+  overflow:hidden;
+}
 
-  .detail-image{
-    height:250px;
-  }
+.image-modal.active{
+  display:flex;
+}
 
-  .slider-btn{
-    width:40px;
-    height:40px;
-    font-size:20px;
-  }
+.modal-image{
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  transition:transform 0.2s ease;
+  cursor:zoom-in;
+  touch-action:none;
+}
 
+.close-modal{
+  position:absolute;
+  top:20px;
+  right:20px;
+  color:white;
+  font-size:40px;
+  cursor:pointer;
+  z-index:10;
+}
+
+/* FOTO POSTINGAN */
+
+.detail-image{
+  cursor:pointer;
 }
 
 
+
+
+
+.main-footer{
+  margin-top:30px;
+  background:#e6e6e6;
+  color:white;
+  border-top-left-radius:25px;
+  border-top-right-radius:25px;
+  overflow:hidden;
+}
+
+.footer-top{
+  padding:20px;
+}
+
+.footer-contact h3{
+  margin-bottom:10px;
+  color:#000000;
+}
+
+.footer-contact p{
+  font-size:14px;
+  color:#720000;
+  margin:6px 0;
+}
+
+.footer-bottom{
+  background:#111;
+  text-align:center;
+  padding:12px;
+  font-size:12px;
+  color:#aaa;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.youtube-card{
+  display:flex;
+  gap:10px;
+  margin-bottom:15px;
+  cursor:pointer;
+  padding:10px;
+  border-radius:12px;
+  background:#fff;
+  box-shadow:0 3px 10px rgba(0,0,0,0.08);
+  transition:0.2s;
+}
+
+.youtube-card:hover{
+  transform:scale(1.02);
+}
+
+.youtube-thumb{
+  width:90px;
+  height:60px;
+  border-radius:10px;
+  object-fit:cover;
+}
+
+.youtube-title{
+  font-size:13px;
+  font-weight:bold;
+  color:#c40000;
+  line-height:1.4;
+}
 
   </style>
 </head>
@@ -283,7 +476,7 @@
   <!-- HEADER -->
 
   <div class="header">
-    Detail Postingan
+    Postingan Paskibra
   </div>
 
   <!-- CONTENT -->
@@ -306,23 +499,29 @@
 
     <!-- SIDEBAR -->
 
-    <div class="sidebar">
+ <div class="sidebar">
 
-      <h2>
-        Rekomendasi Hari Ini
-      </h2>
+  <h2 style="display:flex;align-items:center;gap:8px;">
+  <img src="assets/images/recommendation.png" style="width:22px;height:22px;">
+  Rekomendasi Hari Ini
+</h2>
+  <div id="rekomendasiContainer"></div>
 
-      <div id="rekomendasiContainer">
+  
+  
+<h2 style="display:flex;align-items:center;gap:8px;">
+  <img src="assets/images/youtube.png" style="width:22px;height:22px;">
+  Kanal YouTube
+</h2>
 
-        <div class="loading">
-          Loading rekomendasi...
-        </div>
 
-      </div>
+  <div id="youtubeContainer"></div>
 
-    </div>
+</div>
 
-  </div>
+
+
+
 
   <!-- FIREBASE -->
 
@@ -359,123 +558,136 @@
 
   const database = getDatabase(app);
 
-  // ===============================
-  // DUMMY DATA
-  // ===============================
+  const kontakRef = ref(database, "kontak");
 
-  async function buatDummyPostingan(){
 
-    // POST 1
 
-    await set(
-      ref(database, "postingan/post1"),
-      {
 
-        judul:
-          "Latihan Gabungan Paskibra",
 
-        deskripsi:
-          "Kegiatan latihan gabungan seluruh anggota paskibra kecamatan Padang Tualang berlangsung dengan semangat dan penuh disiplin. Seluruh anggota mengikuti latihan baris berbaris, penghormatan, serta formasi pengibaran bendera merah putih untuk persiapan kegiatan besar mendatang.",
+const youtubeContainer =
+  document.getElementById("youtubeContainer");
 
-        tanggal:
-          "10 Mei 2026",
+// ===============================
+// DUMMY YOUTUBE
+// ===============================
+const dummyYoutube = {
+  video1: {
+    judul: "Latihan Baris Berbaris Paskibra",
+    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    createdAt: Date.now()
+  },
+  video2: {
+    judul: "Persiapan Upacara Paskibra",
+    url: "https://www.youtube.com/watch?v=3JZ_D3ELwOQ",
+    createdAt: Date.now() - 1000
+  },
+  video3: {
+    judul: "Semangat Tim Paskibra",
+    url: "https://www.youtube.com/watch?v=9bZkp7q19f0",
+    createdAt: Date.now() - 2000
+  }
+};
 
-        gambar:
-          "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1200",
+// ===============================
+// LOAD YOUTUBE
+// ===============================
+async function loadYoutube(){
 
-        fotos:[
+  const youtubeRef = ref(database, "youtubeRekomendasi");
 
-          "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1200",
+  const snap = await get(youtubeRef);
 
-          "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=1200",
-
-          "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1200",
-
-          "https://images.unsplash.com/photo-1496317899792-9d7dbcd928a1?q=80&w=1200",
-
-          "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1200"
-
-        ]
-
-      }
-    );
-
-    // POST 2
-
-    await set(
-      ref(database, "postingan/post2"),
-      {
-
-        judul:
-          "Seleksi Anggota Baru",
-
-        deskripsi:
-          "Pembukaan seleksi anggota baru paskibra tahun 2026 resmi dibuka. Seluruh siswa SMA/SMK sederajat dapat mengikuti tahapan seleksi fisik, mental, dan kedisiplinan.",
-
-        tanggal:
-          "11 Mei 2026",
-
-        gambar:
-          "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200",
-
-        fotos:[
-
-          "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200",
-
-          "https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?q=80&w=1200",
-
-          "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1200",
-
-          "https://images.unsplash.com/photo-1513258496099-48168024aec0?q=80&w=1200",
-
-          "https://images.unsplash.com/photo-1529390079861-591de354faf5?q=80&w=1200"
-
-        ]
-
-      }
-    );
-
-    // POST 3
-
-    await set(
-      ref(database, "postingan/post3"),
-      {
-
-        judul:
-          "Pengibaran Bendera HUT RI",
-
-        deskripsi:
-          "Tim paskibra sukses melaksanakan pengibaran bendera merah putih pada upacara HUT Republik Indonesia dengan penuh khidmat dan rasa nasionalisme.",
-
-        tanggal:
-          "12 Mei 2026",
-
-        gambar:
-          "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200",
-
-        fotos:[
-
-          "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200",
-
-          "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?q=80&w=1200",
-
-          "https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=1200",
-
-          "https://images.unsplash.com/photo-1497493292307-31c376b6e479?q=80&w=1200",
-
-          "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1200"
-
-        ]
-
-      }
-    );
-
+  if(!snap.exists()){
+    await set(youtubeRef, dummyYoutube);
+    return loadYoutube();
   }
 
-  // JALANKAN SEKALI
-  // HAPUS SETELAH DATA MASUK FIREBASE
+  const data = snap.val();
 
-  // buatDummyPostingan();
+  // 🔥 FIX URUTAN
+  let list = Object.keys(data).map(key => ({
+    id: key,
+    ...data[key]
+  }));
+
+  // 🔥 TERBARU DI ATAS
+  list.sort((a,b)=> (b.createdAt || 0) - (a.createdAt || 0));
+
+  youtubeContainer.innerHTML = "";
+
+  list.forEach((item)=>{
+
+    const videoId = extractYoutubeID(item.url);
+
+    youtubeContainer.innerHTML += `
+  <div class="youtube-card" onclick="openYoutube('${item.url}')">
+
+    <img class="youtube-thumb"
+      src="https://img.youtube.com/vi/${videoId}/hqdefault.jpg">
+
+    <div>
+      <div class="youtube-title">
+        ${item.judul}
+      </div>
+
+      <div style="font-size:11px;color:#666;margin-top:5px;">
+        ${item.deskripsi || ""}
+      </div>
+    </div>
+
+  </div>
+`;
+
+  });
+}
+
+// ===============================
+// EXTRACT ID
+// ===============================
+function extractYoutubeID(url){
+  const match = url.match(/(?:v=|youtu\.be\/|embed\/)([^&?/]+)/);
+  return match ? match[1] : "";
+}
+
+// ===============================
+// OPEN VIDEO
+// ===============================
+window.openYoutube = function(url){
+  window.open(url, "_blank");
+}
+
+loadYoutube();
+
+
+
+// LOAD KONTAK FOOTER
+async function loadKontakFooter(){
+
+  const snap = await get(kontakRef);
+
+  const defaultData = {
+    alamat: "Padang Tualang, Langkat",
+    telepon: "081234567890",
+    email: "paskibrapadangtualang@gmail.com"
+  };
+
+  if(!snap.exists()){
+    await set(kontakRef, defaultData);
+    return loadKontakFooter();
+  }
+
+  const data = snap.val();
+
+  const elAlamat = document.getElementById("alamat");
+  const elTelp = document.getElementById("telepon");
+  const elEmail = document.getElementById("email");
+
+  if(elAlamat) elAlamat.innerText = "📍 " + data.alamat;
+  if(elTelp) elTelp.innerText = "📞 " + data.telepon;
+  if(elEmail) elEmail.innerText = "✉ " + data.email;
+}
+
+loadKontakFooter();
 
   // ===============================
   // AMBIL ID URL
@@ -492,6 +704,9 @@
   const detailContainer =
     document.getElementById("detailContainer");
 
+
+    
+
   const rekomendasiContainer =
     document.getElementById("rekomendasiContainer");
 
@@ -501,38 +716,83 @@
 
   async function loadDetail(){
 
-    try{
+  try{
 
-      const snapshot = await get(
-        ref(database, "postingan/" + postId)
-      );
+    const snapshot = await get(
+      ref(database, "postingan/" + postId)
+    );
 
-      if(snapshot.exists()){
+    if(snapshot.exists()){
 
-        const post = snapshot.val();
+      const post = snapshot.val();
 
-        detailContainer.innerHTML = `
+      // ===============================
+      // AMBIL SEMUA FOTO
+      // ===============================
 
-          <div class="slider-container">
+      let semuaFoto = [];
 
-            <div
-              class="slider-wrapper"
-              id="sliderWrapper"
-            >
+      // JIKA ADA gambarList
+      if(post.gambarList){
 
-              ${(post.fotos || [post.gambar])
-                .slice(0,5)
-                .map(foto => `
+        semuaFoto = Object.values(
+          post.gambarList
+        );
 
-                  <img
-                    src="${foto}"
-                    class="detail-image"
-                  >
+      }
 
-                `).join("")}
+      // FALLBACK JIKA ADA fotos
+      if(
+        semuaFoto.length === 0 &&
+        post.fotos
+      ){
 
-            </div>
+        semuaFoto = post.fotos;
 
+      }
+
+      // FALLBACK JIKA HANYA 1 FOTO
+      if(
+        semuaFoto.length === 0 &&
+        post.gambar
+      ){
+
+        semuaFoto = [post.gambar];
+
+      }
+
+      // ===============================
+      // RENDER
+      // ===============================
+
+      detailContainer.innerHTML = `
+
+       
+
+        <div class="slider-container">
+
+          <div
+            class="slider-wrapper"
+            id="sliderWrapper"
+          >
+
+            ${semuaFoto.map(foto => `
+
+              <img
+                src="${foto}"
+                class="detail-image"
+                onclick="openImageModal('${foto}')"
+                draggable="false"
+              >
+
+            `).join("")}
+
+          </div>
+
+          ${
+            semuaFoto.length > 1
+            ?
+            `
             <button
               class="slider-btn prev-btn"
               onclick="slideFoto(-1)"
@@ -546,71 +806,109 @@
             >
               ❯
             </button>
+            `
+            :
+            ""
+          }
+
+        </div>
+
+        <!-- THUMBNAIL -->
+
+        <div
+          style="
+            display:flex;
+            gap:10px;
+            overflow-x:auto;
+            padding:15px;
+            background:white;
+          "
+        >
+
+          ${semuaFoto.map((foto,index)=>`
+
+            <img
+              src="${foto}"
+              onclick="goToSlide(${index})"
+              style="
+                width:90px;
+                height:70px;
+                object-fit:cover;
+                border-radius:10px;
+                cursor:pointer;
+                flex-shrink:0;
+                border:2px solid #eee;
+              "
+            >
+
+          `).join("")}
+
+        </div>
+
+        <!-- CONTENT -->
+
+        <div class="detail-content">
+
+          <h1 class="detail-title">
+            ${post.judul || "-"}
+          </h1>
+
+          <div class="detail-date">
+            ${post.tanggal || "-"}
+          </div>
+
+          <div class="detail-description">
+            ${post.deskripsi || "-"}
+          </div>
+
+          <!-- TAG -->
+
+          <div class="tag-container">
+
+            <span class="post-tag">
+              #postinganhariini
+            </span>
+
+            <span class="post-tag">
+              #paskibrapadangtualang
+            </span>
+
+            <span class="post-tag">
+              #paskibra2026
+            </span>
 
           </div>
 
-          <div class="detail-content">
+        </div>
 
-            <h1 class="detail-title">
-              ${post.judul}
-            </h1>
+      `;
 
-            <div class="detail-date">
-              ${post.tanggal}
-            </div>
-
-            <div class="detail-description">
-              ${post.deskripsi}
-            </div>
-
-            <!-- TAG -->
-
-            <div class="tag-container">
-
-              <span class="post-tag">
-                #postinganhariini
-              </span>
-
-              <span class="post-tag">
-                #paskibrapadangtualang
-              </span>
-
-              <span class="post-tag">
-                #paskibra2026
-              </span>
-
-            </div>
-
-          </div>
-
-        `;
-
-      }else{
-
-        detailContainer.innerHTML = `
-          <div class="loading">
-            Postingan tidak ditemukan
-          </div>
-        `;
-
-      }
-
-    }catch(error){
-
-      console.log(error);
+    }else{
 
       detailContainer.innerHTML = `
         <div class="loading">
-          Gagal memuat postingan
+          Postingan tidak ditemukan
         </div>
       `;
 
     }
 
+  }catch(error){
+
+    console.log(error);
+
+    detailContainer.innerHTML = `
+      <div class="loading">
+        Gagal memuat postingan
+      </div>
+    `;
+
   }
 
+}
+
   // ===============================
-  // LOAD REKOMENDASI RANDOM
+  // LOAD REKOMENDASI
   // ===============================
 
   async function loadRekomendasi(){
@@ -633,19 +931,21 @@
           ...data[id]
         }));
 
-        // HAPUS POST YANG SEDANG DIBUKA
-
+        // HAPUS POST YANG DIBUKA
         posts = posts.filter(
           post => post.id !== postId
         );
 
-        // RANDOM
-
-        posts.sort(() => Math.random() - 0.5);
+        // TERBARU DI ATAS
+        posts.sort((a,b)=>
+          (b.createdAt || 0)
+          -
+          (a.createdAt || 0)
+        );
 
         // AMBIL 5
-
-        posts.slice(0,5).forEach((post)=>{
+        posts.slice(0,5)
+        .forEach((post)=>{
 
           rekomendasiContainer.innerHTML += `
 
@@ -654,16 +954,19 @@
               onclick="bukaPostingan('${post.id}')"
             >
 
-              <img src="${post.gambar}">
+              <img src="${
+                post.gambar ||
+                'https://via.placeholder.com/300'
+              }">
 
               <div class="rekomendasi-info">
 
                 <h3>
-                  ${post.judul}
+                  ${post.judul || "-"}
                 </h3>
 
                 <p>
-                  ${post.tanggal}
+                  ${post.tanggal || "-"}
                 </p>
 
               </div>
@@ -711,12 +1014,35 @@
     // LOOP
 
     if(currentSlide < 0){
-      currentSlide = totalSlide - 1;
+
+      currentSlide =
+        totalSlide - 1;
+
     }
 
     if(currentSlide >= totalSlide){
+
       currentSlide = 0;
+
     }
+
+    wrapper.style.transform =
+      `translateX(-${currentSlide * 100}%)`;
+
+  }
+
+  // ===============================
+  // THUMBNAIL CLICK
+  // ===============================
+
+  window.goToSlide = function(index){
+
+    const wrapper =
+      document.getElementById("sliderWrapper");
+
+    if(!wrapper) return;
+
+    currentSlide = index;
 
     wrapper.style.transform =
       `translateX(-${currentSlide * 100}%)`;
@@ -739,9 +1065,310 @@
   // ===============================
 
   loadDetail();
+
   loadRekomendasi();
 
+
+
+
+
+
+const imageModal =
+  document.getElementById(
+    "imageModal"
+  );
+
+const modalImage =
+  document.getElementById(
+    "modalImage"
+  );
+
+let scale = 1;
+
+// ===============================
+// BUKA FOTO
+// ===============================
+
+window.openImageModal = function(src){
+
+  imageModal.classList.add(
+    "active"
+  );
+
+  modalImage.src = src;
+
+  scale = 1;
+
+  modalImage.style.transform =
+    `scale(${scale})`;
+
+}
+
+// ===============================
+// TUTUP FOTO
+// ===============================
+
+window.closeImageModal = function(){
+
+  imageModal.classList.remove(
+    "active"
+  );
+
+}
+
+// ===============================
+// CLICK BACKGROUND TUTUP
+// ===============================
+
+imageModal.addEventListener(
+  "click",
+  function(e){
+
+    if(
+      e.target === imageModal
+    ){
+
+      closeImageModal();
+
+    }
+
+  }
+);
+
+// ===============================
+// ZOOM SCROLL PC
+// ===============================
+
+modalImage.addEventListener(
+  "wheel",
+  function(e){
+
+    e.preventDefault();
+
+    if(e.deltaY < 0){
+
+      scale += 0.2;
+
+    }else{
+
+      scale -= 0.2;
+
+    }
+
+    // BATAS
+
+    if(scale < 1){
+      scale = 1;
+    }
+
+    if(scale > 6){
+      scale = 6;
+    }
+
+    modalImage.style.transform =
+      `scale(${scale})`;
+
+  }
+);
+
+// ===============================
+// DOUBLE CLICK ZOOM
+// ===============================
+
+modalImage.addEventListener(
+  "dblclick",
+  function(){
+
+    if(scale === 1){
+
+      scale = 2.5;
+
+    }else{
+
+      scale = 1;
+
+    }
+
+    modalImage.style.transform =
+      `scale(${scale})`;
+
+  }
+);
+
+// ===============================
+// PINCH ZOOM HP
+// ===============================
+
+let startDistance = 0;
+
+function getDistance(touches){
+
+  return Math.sqrt(
+
+    Math.pow(
+      touches[0].clientX -
+      touches[1].clientX,
+      2
+    )
+
+    +
+
+    Math.pow(
+      touches[0].clientY -
+      touches[1].clientY,
+      2
+    )
+
+  );
+
+}
+
+modalImage.addEventListener(
+  "touchstart",
+  function(e){
+
+    if(e.touches.length === 2){
+
+      startDistance =
+        getDistance(e.touches);
+
+    }
+
+  }
+);
+
+modalImage.addEventListener(
+  "touchmove",
+  function(e){
+
+    if(e.touches.length === 2){
+
+      e.preventDefault();
+
+      const newDistance =
+        getDistance(e.touches);
+
+      if(newDistance > startDistance){
+
+        scale += 0.03;
+
+      }else{
+
+        scale -= 0.03;
+
+      }
+
+      // LIMIT
+
+      if(scale < 1){
+        scale = 1;
+      }
+
+      if(scale > 6){
+        scale = 6;
+      }
+
+      modalImage.style.transform =
+        `scale(${scale})`;
+
+      startDistance = newDistance;
+
+    }
+
+  },
+  { passive:false }
+);
+
+// ===============================
+// ESC CLOSE
+// ===============================
+
+document.addEventListener(
+  "keydown",
+  function(e){
+
+    if(e.key === "Escape"){
+
+      closeImageModal();
+
+    }
+
+  }
+);
+
+
+
+
+
+
+
+
+
+document.addEventListener('contextmenu', function(e){
+  e.preventDefault(); // disable klik kanan / copy
+});
+
+document.addEventListener('selectstart', function(e){
+  e.preventDefault(); // disable blok teks
+});
+
+document.addEventListener('dragstart', function(e){
+  e.preventDefault(); // disable drag gambar
+});
+
 </script>
+
+
+
+
+
+
+
+
+
+
+<div
+  id="imageModal"
+  class="image-modal"
+>
+
+  <span
+    class="close-modal"
+    onclick="closeImageModal()"
+  >
+    ✕
+  </span>
+
+  <img
+    id="modalImage"
+    class="modal-image"
+  >
+
+</div>
+
+<!-- FOOTER -->
+<footer class="main-footer">
+
+  <div class="footer-top">
+
+    <div class="footer-contact">
+
+      <h3>Kontak</h3>
+
+      <p id="alamat">📍 Loading...</p>
+      <p id="telepon">📞 Loading...</p>
+      <p id="email">✉ Loading...</p>
+
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    © 2026 Paskibra Padang Tualang
+  </div>
+
+</footer>
+
 
 </body>
 </html>

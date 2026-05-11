@@ -2,7 +2,8 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
   <title>Paskibra PDTualang</title>
 
   <style>
@@ -12,6 +13,35 @@
       box-sizing:border-box;
       font-family:Arial, sans-serif;
     }
+
+*{
+  -webkit-tap-highlight-color: transparent; /* hilangkan efek biru klik mobile */
+  user-select: none; /* blok seleksi teks */
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+
+img{
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+    
+
+
+/* hilangkan highlight biru saat klik */
+a, button, div{
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* optional: cegah zoom pinch (mobile) */
+html, body{
+  touch-action: manipulation;
+}
+
+
+
 
     body{
       background:#f5f5f5;
@@ -220,9 +250,74 @@
 
 
 
+
+
+.info-wrapper{
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+  margin-top:20px;
+}
+
+/* CARD */
+.info-card{
+  display:flex;
+  gap:15px;
+  background:linear-gradient(145deg,#ffffff,#f7f7f7);
+  border-radius:18px;
+  padding:15px 15px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.08);
+  transition:0.3s ease;
+  border:1px solid rgba(0,0,0,0.05);
+}
+
+/* HOVER EFFECT */
+.info-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 12px 25px rgba(0,0,0,0.12);
+}
+
+/* ICON BOX */
+.info-icon{
+  width:45px;
+  height:45px;
+  min-width:45px;
+  border-radius:12px;
+  background:#b0ffe5;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+}
+
+/* TEXT */
+.info-content h3{
+  margin:0;
+  font-size:15px;
+  color:#c40000;
+  font-weight:700;
+}
+
+.info-content p{
+  margin-top:5px;
+  font-size:13px;
+  color:#555;
+  line-height:1.5;
+}
+
+
+
+
+
+
+
+
+
+
     /* CONTENT */
     .container{
-      padding:20px;
+      padding:5px;
     }
 
     .hero{
@@ -358,7 +453,7 @@
 
 .banner-item img{
   width:100%;
-  height:220px;
+  height:320px;
   object-fit:cover;
   display:block;
 }
@@ -674,31 +769,46 @@
 
 
 
-    <div class="menu-card">
+<!-- WRAPPER BOX PROFESIONAL -->
+<div class="info-wrapper">
+
+  <div class="info-card">
+    <div class="info-icon">
+      <img src="assets/images/advertisement.png" style="width:28px;height:28px;">
+    </div>
+    <div class="info-content">
       <h3>Informasi Latihan</h3>
       <p>
-        Latihan rutin dilaksanakan setiap hari
-        Sabtu pukul 14.00 WIB.
+        Latihan rutin dilaksanakan setiap hari Sabtu pukul 14.00 WIB.
       </p>
     </div>
+  </div>
 
-    <div class="menu-card">
+  <div class="info-card">
+    <div class="info-icon">
+      <img src="assets/images/search-user.png" style="width:28px;height:28px;">
+    </div>
+    <div class="info-content">
       <h3>Penerimaan Anggota</h3>
       <p>
-        Pendaftaran anggota baru sudah dibuka.
-        Silakan login untuk mendaftar.
+        Pendaftaran anggota baru sudah dibuka. Silakan login untuk mendaftar.
       </p>
     </div>
+  </div>
 
-    <div class="menu-card">
+  <div class="info-card">
+    <div class="info-icon">
+      <img src="assets/images/info.png" style="width:28px;height:28px;">
+    </div>
+    <div class="info-content">
       <h3>Pengumuman</h3>
       <p>
-        Semua pengumuman terbaru akan tampil
-        pada halaman postingan.
+        Semua pengumuman terbaru akan tampil pada halaman postingan.
       </p>
     </div>
-
   </div>
+
+</div>
 
   <!-- BOTTOM NAV -->
   <!-- NAVBAR -->
@@ -795,7 +905,37 @@ const auth = getAuth(app);
 const database = getDatabase(app);
 
 
+const kontakRef = ref(database, "kontak");
 
+// ======================
+// LOAD KONTAK FIREBASE
+// ======================
+async function loadKontak(){
+
+  const snap = await get(kontakRef);
+
+  const defaultData = {
+    alamat: "Padang Tualang, Langkat",
+    telepon: "081234567890",
+    email: "paskibrapadangtualang@gmail.com"
+  };
+
+  // kalau belum ada data → buat dummy otomatis
+  if(!snap.exists()){
+    await set(kontakRef, defaultData);
+    return loadKontak();
+  }
+
+  const data = snap.val();
+
+  const elAlamat = document.getElementById("alamat");
+  const elTelp = document.getElementById("telepon");
+  const elEmail = document.getElementById("email");
+
+  if(elAlamat) elAlamat.innerText = "📍 " + (data.alamat || defaultData.alamat);
+  if(elTelp) elTelp.innerText = "📞 " + (data.telepon || defaultData.telepon);
+  if(elEmail) elEmail.innerText = "✉ " + (data.email || defaultData.email);
+}
 
 
 
@@ -991,7 +1131,7 @@ bannerWrapper.addEventListener(
 
 // LOAD
 loadBanner();
-
+loadKontak();
 // ======================
 // DATA DUMMY FIREBASE
 // JALANKAN SEKALI
@@ -1035,6 +1175,7 @@ async function buatDummyBanner(){
 
     // reload banner
     loadBanner();
+    
 
   }catch(error){
 
@@ -1197,6 +1338,30 @@ window.onclick = function(e){
 
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+document.addEventListener('contextmenu', function(e){
+  e.preventDefault(); // disable klik kanan / copy
+});
+
+document.addEventListener('selectstart', function(e){
+  e.preventDefault(); // disable blok teks
+});
+
+document.addEventListener('dragstart', function(e){
+  e.preventDefault(); // disable drag gambar
+});
+
 </script>
 
 
@@ -1252,26 +1417,18 @@ window.onclick = function(e){
 
     </div>
 
-    <!-- KONTAK -->
-    <div class="footer-contact">
+   <!-- KONTAK -->
+<div class="footer-contact">
 
-      <h3>
-        Kontak
-      </h3>
+  <h3>Kontak</h3>
 
-      <p>
-        📍 Padang Tualang, Langkat
-      </p>
+  <p id="alamat">📍 Loading...</p>
 
-      <p>
-        📞 081*****890
-      </p>
+  <p id="telepon">📞 Loading...</p>
 
-      <p>
-        ✉ paskibrapadangtualang@gmail.com
-      </p>
+  <p id="email">✉ Loading...</p>
 
-    </div>
+</div>
 
   </div>
 

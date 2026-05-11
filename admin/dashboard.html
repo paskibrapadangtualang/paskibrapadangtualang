@@ -1,0 +1,409 @@
+<!-- admin/dashboard.html -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dashboard Admin</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#f1f5f9;
+  display:flex;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+  width:250px;
+  height:100vh;
+  background:#0f172a;
+  color:white;
+  position:fixed;
+  left:0;
+  top:0;
+  padding:20px;
+}
+
+.logo{
+  font-size:25px;
+  font-weight:bold;
+  margin-bottom:30px;
+}
+
+.menu a{
+  display:block;
+  padding:14px;
+  border-radius:10px;
+  margin-bottom:10px;
+  background:#1e293b;
+  color:white;
+  text-decoration:none;
+}
+
+.menu a:hover{
+  background:#2563eb;
+}
+
+/* CONTENT */
+
+.content{
+  margin-left:250px;
+  width:100%;
+  padding:25px;
+}
+
+.topbar{
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  margin-bottom:20px;
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:20px;
+}
+
+.card{
+  background:white;
+  border-radius:15px;
+  padding:25px;
+}
+
+.card h3{
+  color:#666;
+  margin-bottom:10px;
+}
+
+.card h1{
+  font-size:35px;
+  color:#2563eb;
+}
+
+.admin-box{
+  margin-top:20px;
+  background:white;
+  border-radius:15px;
+  padding:20px;
+}
+
+.admin-box img{
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  object-fit:cover;
+  margin-bottom:10px;
+}
+
+.logout{
+  margin-top:20px;
+  padding:12px 20px;
+  border:none;
+  border-radius:10px;
+  background:red;
+  color:white;
+  cursor:pointer;
+}
+
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<div class="logo">
+ADMIN PANEL
+</div>
+
+<div class="menu">
+
+<a href="dashboard.html">
+Dashboard
+</a>
+
+<a href="user.html">
+Data User
+</a>
+
+
+<a href="status.html">
+Status user
+</a>
+
+
+<a href="absen.html">
+data absensi
+</a>
+
+<a href="postinganadmin.html">
+Postingan
+</a>
+
+<a href="camtpurnaplatih.html">
+PELATIPURCAM
+</a>
+
+<a href="contact.html">
+contact
+</a>
+
+</div>
+
+</div>
+
+<!-- CONTENT -->
+
+<div class="content">
+
+<div class="topbar">
+
+<h2>
+Selamat Datang Admin
+</h2>
+
+<p>
+Dashboard Firebase Paskibra
+</p>
+
+</div>
+
+<!-- CARD -->
+
+<div class="cards">
+
+<div class="card">
+<h3>Total User</h3>
+<h1 id="totalUsers">0</h1>
+</div>
+
+<div class="card">
+<h3>Total Postingan</h3>
+<h1 id="totalPostingan">0</h1>
+</div>
+
+<div class="card">
+<h3>Total Banner</h3>
+<h1 id="totalBanner">0</h1>
+</div>
+
+<div class="card">
+<h3>Total Info</h3>
+<h1 id="totalInfo">0</h1>
+</div>
+
+</div>
+
+<!-- ADMIN -->
+
+<div class="admin-box">
+
+<h2>Data Admin</h2>
+
+<br>
+
+<p>
+<b>Nama:</b>
+<span id="adminNama">-</span>
+</p>
+
+<br>
+
+<p>
+<b>Email:</b>
+<span id="adminEmail">-</span>
+</p>
+
+<br>
+
+<p>
+<b>Role:</b>
+<span id="adminRole">-</span>
+</p>
+
+<button class="logout" onclick="logoutAdmin()">
+Logout
+</button>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  get
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+// FIREBASE CONFIG
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b",
+  measurementId: "G-1KGNVS3MRX"
+
+};
+
+// INIT
+
+const app =
+  initializeApp(firebaseConfig);
+
+const db =
+  getDatabase(app);
+
+// CEK LOGIN ADMIN
+
+if(
+  localStorage.getItem("adminLogin")
+  !== "true"
+){
+
+  window.location.href =
+    "index.html";
+
+}
+
+// AMBIL ADMIN DATA
+
+const adminData =
+  JSON.parse(
+    localStorage.getItem("adminData")
+  );
+
+document.getElementById(
+  "adminNama"
+).innerText =
+  adminData.nama || "-";
+
+document.getElementById(
+  "adminEmail"
+).innerText =
+  adminData.email || "-";
+
+document.getElementById(
+  "adminRole"
+).innerText =
+  adminData.role || "-";
+
+// TOTAL USERS
+
+const usersSnapshot =
+  await get(
+    ref(db, "users")
+  );
+
+if(usersSnapshot.exists()){
+
+  document.getElementById(
+    "totalUsers"
+  ).innerText =
+    Object.keys(
+      usersSnapshot.val()
+    ).length;
+
+}
+
+// TOTAL POSTINGAN
+
+const postinganSnapshot =
+  await get(
+    ref(db, "postingan")
+  );
+
+if(postinganSnapshot.exists()){
+
+  document.getElementById(
+    "totalPostingan"
+  ).innerText =
+    Object.keys(
+      postinganSnapshot.val()
+    ).length;
+
+}
+
+// TOTAL BANNER
+
+const bannerSnapshot =
+  await get(
+    ref(db, "banner")
+  );
+
+if(bannerSnapshot.exists()){
+
+  document.getElementById(
+    "totalBanner"
+  ).innerText =
+    Object.keys(
+      bannerSnapshot.val()
+    ).length;
+
+}
+
+// TOTAL INFO
+
+const infoSnapshot =
+  await get(
+    ref(db, "info")
+  );
+
+if(infoSnapshot.exists()){
+
+  document.getElementById(
+    "totalInfo"
+  ).innerText =
+    Object.keys(
+      infoSnapshot.val()
+    ).length;
+
+}
+
+// LOGOUT
+
+window.logoutAdmin = function(){
+
+  localStorage.removeItem(
+    "adminLogin"
+  );
+
+  localStorage.removeItem(
+    "adminUID"
+  );
+
+  localStorage.removeItem(
+    "adminData"
+  );
+
+  window.location.href =
+    "index.html";
+
+}
+
+</script>
+
+</body>
+</html>
