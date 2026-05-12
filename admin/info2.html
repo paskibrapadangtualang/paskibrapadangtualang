@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Info Purna Admin</title>
+
+<style>
+body{
+  font-family:Arial;
+  margin:0;
+  background:#f5f5f5;
+}
+
+header{
+  background:#c40000;
+  color:white;
+  padding:15px;
+  text-align:center;
+  font-weight:bold;
+}
+
+.container{
+  padding:15px;
+}
+
+.card{
+  background:white;
+  padding:15px;
+  border-radius:12px;
+  margin-bottom:15px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+input, textarea{
+  width:100%;
+  padding:10px;
+  margin-top:8px;
+  margin-bottom:10px;
+  border:1px solid #ddd;
+  border-radius:8px;
+  outline:none;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  background:#c40000;
+  color:white;
+  border:none;
+  border-radius:8px;
+  font-weight:bold;
+}
+
+.info-card{
+  background:white;
+  padding:15px;
+  border-radius:12px;
+  margin-top:10px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+.info-card h3{
+  margin:0 0 5px 0;
+}
+
+.info-card p{
+  margin:0 0 10px 0;
+}
+
+small{
+  color:#777;
+  display:block;
+  margin-bottom:10px;
+}
+
+/* tombol hapus */
+.hapus-btn{
+  background:#222;
+  margin-top:10px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  INFO PURNA ADMIN
+</header>
+
+<div class="container">
+
+  <!-- FORM -->
+  <div class="card">
+    <h3>Upload Info</h3>
+
+    <input type="text" id="judul" placeholder="Judul">
+    <textarea id="deskripsi" placeholder="Deskripsi"></textarea>
+
+    <button onclick="uploadInfo()">Upload</button>
+  </div>
+
+  <!-- LIST -->
+  <div id="listInfo"></div>
+
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { 
+  getAuth, 
+  onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import { 
+  getDatabase, 
+  ref, 
+  get, 
+  push, 
+  set, 
+  remove, 
+  onValue 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+let adminData = null;
+
+// ================= LOGIN ADMIN =================
+onAuthStateChanged(auth, async (user) => {
+
+  if(!user){
+    window.location.href = "index.html";
+    return;
+  }
+
+  const snap = await get(ref(db, "purna/" + user.uid));
+
+  if(snap.exists()){
+    adminData = snap.val();
+  }
+
+});
+
+// ================= UPLOAD =================
+window.uploadInfo = async function(){
+
+  const judul = document.getElementById("judul").value;
+  const deskripsi = document.getElementById("deskripsi").value;
+
+  if(!adminData){
+    alert("Admin belum login");
+    return;
+  }
+
+  if(!judul || !deskripsi){
+    alert("Isi semua data");
+    return;
+  }
+
+  const newRef = push(ref(db, "info_purna"));
+
+  await set(newRef, {
+    judul,
+    deskripsi,
+    waktu: Date.now(),
+    admin: {
+      uid: auth.currentUser.uid,
+      nama: adminData.namaPurna,
+      foto: adminData.foto
+    }
+  });
+
+  document.getElementById("judul").value = "";
+  document.getElementById("deskripsi").value = "";
+
+  alert("Upload berhasil");
+};
+
+// ================= TAMPIL DATA =================
+const listInfo = document.getElementById("listInfo");
+
+onValue(ref(db, "info_purna"), (snapshot) => {
+
+  listInfo.innerHTML = "";
+
+  const data = snapshot.val();
+  if(!data) return;
+
+  Object.entries(data).reverse().forEach(([key, item]) => {
+
+    listInfo.innerHTML += `
+      <div class="info-card">
+        <h3>${item.judul}</h3>
+        <p>${item.deskripsi}</p>
+
+        <small>
+          👤 ${item.admin?.nama || "Admin"} • ${new Date(item.waktu).toLocaleString()}
+        </small>
+
+        <button class="hapus-btn" onclick="hapusInfo('${key}')">
+          Hapus
+        </button>
+      </div>
+    `;
+  });
+
+});
+
+// ================= HAPUS =================
+window.hapusInfo = async function(id){
+
+  if(!confirm("Yakin mau hapus ini?")) return;
+
+  try{
+    await remove(ref(db, "info_purna/" + id));
+    alert("Berhasil dihapus");
+  }catch(err){
+    alert("Gagal hapus: " + err.message);
+  }
+
+};
+
+</script>
+
+</body>
+</html>

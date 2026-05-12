@@ -1,9 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <title>Info Hari Ini</title>
 
 <style>
@@ -12,37 +14,32 @@
   margin:0;
   padding:0;
   box-sizing:border-box;
-  font-family:Arial, sans-serif;
+  font-family:Arial,sans-serif;
 }
-
 
 *{
-  -webkit-tap-highlight-color: transparent; /* hilangkan efek biru klik mobile */
-  user-select: none; /* blok seleksi teks */
-  -webkit-user-select: none;
-  -ms-user-select: none;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+  -webkit-user-select:none;
+  -ms-user-select:none;
 }
-
 
 img{
-  -webkit-user-drag: none;
-  -webkit-user-select: none;
-  user-select: none;
-}
-    
-
-
-/* hilangkan highlight biru saat klik */
-a, button, div{
-  -webkit-tap-highlight-color: transparent;
+  -webkit-user-drag:none;
+  -webkit-user-select:none;
+  user-select:none;
 }
 
-/* optional: cegah zoom pinch (mobile) */
-html, body{
-  touch-action: manipulation;
+a,
+button,
+div{
+  -webkit-tap-highlight-color:transparent;
 }
 
-
+html,
+body{
+  touch-action:manipulation;
+}
 
 body{
   background:#f5f5f5;
@@ -74,7 +71,7 @@ header{
   padding:85px 15px 20px;
 }
 
-/* CHAT BOX */
+/* CHAT */
 
 .chat-box{
   display:flex;
@@ -82,51 +79,69 @@ header{
   gap:15px;
 }
 
-/* CHAT ITEM */
-
 .chat-item{
   display:flex;
   align-items:flex-start;
   gap:10px;
 }
 
-/* FOTO ADMIN */
-
 .chat-avatar{
-  width:45px;
-  height:45px;
+  width:48px;
+  height:48px;
   border-radius:50%;
   object-fit:cover;
   background:#ddd;
+  border:2px solid #fff;
+  box-shadow:0 2px 5px rgba(0,0,0,0.1);
 }
-
-/* BUBBLE */
 
 .chat-bubble{
   background:white;
   padding:14px;
   border-radius:15px;
-  max-width:85%;
+  width:100%;
   box-shadow:0 2px 5px rgba(0,0,0,0.08);
+}
+
+.chat-top{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:8px;
+  flex-wrap:wrap;
 }
 
 .chat-title{
   font-size:15px;
   font-weight:bold;
   color:#c40000;
-  margin-bottom:8px;
+}
+
+.role-badge{
+  font-size:11px;
+  background:#c40000;
+  color:white;
+  padding:4px 8px;
+  border-radius:30px;
 }
 
 .chat-message{
   font-size:14px;
   color:#444;
-  line-height:1.5;
-  margin-bottom:10px;
+  line-height:1.6;
+  word-break:break-word;
+}
+
+.chat-image{
+  width:100%;
+  margin-top:10px;
+  border-radius:12px;
 }
 
 .chat-date{
-  font-size:12px;
+  font-size:11px;
   color:#888;
+  margin-top:10px;
   text-align:right;
 }
 
@@ -187,9 +202,8 @@ header{
 <div class="container">
 
   <div
-    class="chat-box"
-    id="chatBox"
-  >
+  class="chat-box"
+  id="chatBox">
 
     <div class="loading">
       Loading pesan...
@@ -228,12 +242,14 @@ from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getDatabase,
   ref,
-  get,
-  set
+  onValue,
+  get
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
+// ======================
 // FIREBASE CONFIG
+// ======================
 
 const firebaseConfig = {
 
@@ -247,65 +263,15 @@ const firebaseConfig = {
 
 };
 
+// ======================
 // INIT
-
-const app = initializeApp(firebaseConfig);
-
-const database = getDatabase(app);
-
-// ======================
-// AUTO BUAT INFO DUMMY
 // ======================
 
-async function buatInfoDummy(){
+const app =
+initializeApp(firebaseConfig);
 
-  const infoRef =
-    ref(database, "info");
-
-  const snapshot =
-    await get(infoRef);
-
-  // JIKA BELUM ADA INFO
-
-  if(!snapshot.exists()){
-
-    await set(infoRef, {
-
-      info1: {
-
-        judul:
-          "Latihan Perdana",
-
-        isi:
-          "Seluruh anggota wajib hadir jam 07:00 WIB di lapangan utama.",
-
-        tanggal:
-          "14 Juli 2026"
-
-      },
-
-      info2: {
-
-        judul:
-          "Pengumuman Seragam",
-
-        isi:
-          "Gunakan seragam lengkap dan sepatu hitam saat latihan.",
-
-        tanggal:
-          "15 Juli 2026"
-
-      }
-
-    });
-
-    console.log(
-      "Info dummy berhasil dibuat"
-    );
-
-  }
-
-}
+const database =
+getDatabase(app);
 
 // ======================
 // LOAD INFO
@@ -318,95 +284,250 @@ async function loadInfo(){
       "chatBox"
     );
 
-  const snapshot =
-    await get(
-      ref(database, "info")
-    );
+  const infoRef =
+    ref(database, "info");
 
-  // TIDAK ADA INFO
+  onValue(infoRef, async(snapshot)=>{
 
-  if(!snapshot.exists()){
+    if(!snapshot.exists()){
 
-    chatBox.innerHTML = `
-      <div class="loading">
-        Belum ada informasi
-      </div>
-    `;
+      chatBox.innerHTML = `
+        <div class="loading">
+          Belum ada informasi
+        </div>
+      `;
 
-    return;
+      return;
 
-  }
+    }
 
-  const data =
-    Object.values(snapshot.val());
+    // ======================
+    // AMBIL DATA
+    // ======================
 
-  // TERBARU DI ATAS
+    const rawData =
+      Object.values(snapshot.val());
 
-  data.reverse();
+    // ======================
+    // FILTER CHAT
+    // HAPUS GABUNG PURNA
+    // ======================
 
-  let html = "";
+    const data =
+      rawData.filter(item => {
 
-  data.forEach((item)=>{
+        return item.type !== "gabung-purna";
 
-    html += `
+      });
+
+    // ======================
+    // JIKA KOSONG
+    // ======================
+
+    if(data.length === 0){
+
+      chatBox.innerHTML = `
+        <div class="loading">
+          Belum ada chat
+        </div>
+      `;
+
+      return;
+
+    }
+
+    // ======================
+    // CHAT TERBARU DI BAWAH
+    // ======================
+
+    let html = "";
+
+    for(const item of data){
+
+      // ======================
+      // DEFAULT
+      // ======================
+
+      let nama =
+        item.nama ||
+        "User";
+
+      let foto =
+        item.foto ||
+        "assets/images/RI.webp";
+
+      let role =
+        "Admin";
+
+      // ======================
+      // JIKA PURNA
+      // ======================
+
+      if(
+        item.role === "purna" ||
+        item.type === "chat-purna"
+      ){
+
+        role = "Purna";
+
+        // ======================
+        // AMBIL FOTO TERBARU
+        // ======================
+
+        if(item.uid){
+
+          try{
+
+            const userSnap =
+              await get(
+                ref(
+                  database,
+                  "purna/" + item.uid
+                )
+              );
+
+            if(userSnap.exists()){
+
+              const userData =
+                userSnap.val();
+
+              nama =
+                userData.namaPurna ||
+                nama;
+
+              foto =
+                userData.foto ||
+                foto;
+
+            }
+
+          }catch(error){
+
+            console.log(error);
+
+          }
+
+        }
+
+      }
+
+      // ======================
+      // HTML CHAT
+      // ======================
+
+      html += `
 
       <div class="chat-item">
 
         <img
-          src="assets/images/RI.webp"
-          class="chat-avatar"
-        >
+        src="${foto}"
+        class="chat-avatar">
 
         <div class="chat-bubble">
 
-          <div class="chat-title">
-            ${item.judul}
+          <div class="chat-top">
+
+            <div class="chat-title">
+              ${nama}
+            </div>
+
+            <div class="role-badge">
+              ${role}
+            </div>
+
           </div>
 
           <div class="chat-message">
-            ${item.isi}
+
+            ${item.isi || "-"}
+
           </div>
 
+          ${
+            item.gambar
+            ?
+            `
+            <img
+            src="${item.gambar}"
+            class="chat-image">
+            `
+            :
+            ""
+          }
+
           <div class="chat-date">
-            ${item.tanggal}
+
+            ${item.tanggal || ""}
+
           </div>
 
         </div>
 
       </div>
 
-    `;
+      `;
+
+    }
+
+    // ======================
+    // TAMPILKAN
+    // ======================
+
+    chatBox.innerHTML = html;
+
+    // ======================
+    // AUTO SCROLL
+    // ======================
+
+    setTimeout(()=>{
+
+      window.scrollTo({
+
+        top:document.body.scrollHeight,
+
+        behavior:"smooth"
+
+      });
+
+    },200);
 
   });
 
-  chatBox.innerHTML = html;
-
 }
-
-// JALANKAN
-
-await buatInfoDummy();
 
 loadInfo();
 
+// ======================
+// DISABLE COPY
+// ======================
 
+document.addEventListener(
+  "contextmenu",
+  function(e){
 
+    e.preventDefault();
 
+  }
+);
 
-document.addEventListener('contextmenu', function(e){
-  e.preventDefault(); // disable klik kanan / copy
-});
+document.addEventListener(
+  "selectstart",
+  function(e){
 
-document.addEventListener('selectstart', function(e){
-  e.preventDefault(); // disable blok teks
-});
+    e.preventDefault();
 
-document.addEventListener('dragstart', function(e){
-  e.preventDefault(); // disable drag gambar
-});
+  }
+);
 
+document.addEventListener(
+  "dragstart",
+  function(e){
+
+    e.preventDefault();
+
+  }
+);
 
 </script>
-
 </body>
 </html>

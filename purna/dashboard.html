@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dashboard Purna</title>
+
+<style>
+
+body{
+  font-family:Arial;
+  background:#f5f5f5;
+  margin:0;
+}
+
+header{
+  background:#c40000;
+  color:white;
+  padding:15px;
+  text-align:center;
+  font-weight:bold;
+}
+
+.menu{
+  padding:20px;
+}
+
+.card{
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  margin-bottom:15px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.1);
+}
+
+a{
+  text-decoration:none;
+  color:#333;
+}
+
+/* tombol logout */
+.logout-btn{
+  margin:20px;
+  display:block;
+  text-align:center;
+  background:#222;
+  color:white;
+  padding:12px;
+  border-radius:12px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.logout-btn:active{
+  transform:scale(0.98);
+}
+
+</style>
+</head>
+<body>
+
+<header>
+  DASHBOARD PURNA
+</header>
+
+<div class="menu">
+
+  <a href="infopurna.html">
+    <div class="card">
+      Info Purna
+    </div>
+  </a>
+
+  <a href="info2.html">
+    <div class="card">
+      Postingan informasi
+    </div>
+  </a>
+
+</div>
+
+<!-- Tombol Logout -->
+<div class="logout-btn" onclick="logout()">
+  Logout
+</div>
+
+<script>
+function logout(){
+  // hapus session login
+  localStorage.removeItem("adminData");
+  localStorage.removeItem("session");
+  
+  // arahkan ke halaman login (ubah kalau beda)
+  window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>

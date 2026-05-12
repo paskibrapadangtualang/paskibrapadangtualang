@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Info Purna</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#f5f5f5;
+  padding-top:70px;
+  padding-bottom:90px;
+}
+
+/* HEADER */
+
+header{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:60px;
+  background:#c40000;
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-weight:bold;
+  font-size:18px;
+  z-index:1000;
+}
+
+/* CHAT */
+
+.chat-container{
+  padding:15px;
+}
+
+.chat-item{
+  display:flex;
+  gap:10px;
+  margin-bottom:15px;
+}
+
+.chat-avatar{
+  width:45px;
+  height:45px;
+  border-radius:50%;
+  object-fit:cover;
+}
+
+.chat-bubble{
+  background:white;
+  padding:12px;
+  border-radius:15px;
+  width:100%;
+  box-shadow:0 2px 5px rgba(0,0,0,0.08);
+}
+
+.chat-name{
+  font-weight:bold;
+  color:#c40000;
+  margin-bottom:6px;
+}
+
+.chat-message{
+  font-size:14px;
+  color:#444;
+  margin-bottom:8px;
+  line-height:1.5;
+}
+
+.chat-image{
+  width:100%;
+  border-radius:12px;
+  margin-top:10px;
+}
+
+.chat-date{
+  font-size:11px;
+  color:#888;
+  margin-top:8px;
+}
+
+.delete-btn{
+  margin-top:10px;
+  background:#ff0000;
+  color:white;
+  border:none;
+  padding:8px 12px;
+  border-radius:8px;
+  font-size:12px;
+  cursor:pointer;
+}
+
+/* INPUT */
+
+.chat-input-box{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  background:white;
+  padding:10px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  box-shadow:0 -2px 5px rgba(0,0,0,0.1);
+}
+
+.chat-input{
+  flex:1;
+  padding:12px;
+  border:1px solid #ccc;
+  border-radius:30px;
+  outline:none;
+}
+
+.send-btn{
+  background:#c40000;
+  color:white;
+  border:none;
+  padding:12px 18px;
+  border-radius:30px;
+  cursor:pointer;
+}
+
+.file-input{
+  width:40px;
+}
+
+.loading{
+  text-align:center;
+  margin-top:30px;
+  color:#777;
+}
+
+</style>
+</head>
+<body>
+
+<header>
+  INFO PURNA
+</header>
+
+<!-- CHAT -->
+<div
+class="chat-container"
+id="chatContainer">
+
+  <div class="loading">
+    Loading chat...
+  </div>
+
+</div>
+
+<!-- INPUT -->
+<div class="chat-input-box">
+
+  <input
+  type="file"
+  id="imageInput"
+  class="file-input"
+  accept="image/*">
+
+  <input
+  type="text"
+  id="messageInput"
+  class="chat-input"
+  placeholder="Tulis pesan...">
+
+  <button
+  class="send-btn"
+  onclick="sendMessage()">
+
+    Kirim
+
+  </button>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getAuth,
+  onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+  getDatabase,
+  ref,
+  push,
+  onValue,
+  remove,
+  get
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+
+};
+
+const CLOUD_NAME =
+"djxlbemky";
+
+const UPLOAD_PRESET =
+"uploadgambar";
+
+const app =
+initializeApp(firebaseConfig);
+
+const auth =
+getAuth(app);
+
+const db =
+getDatabase(app);
+
+let currentUser = null;
+
+onAuthStateChanged(auth, async(user)=>{
+
+  if(!user){
+
+    window.location.href =
+      "index.html";
+
+    return;
+
+  }
+
+  currentUser = user;
+
+  loadChat();
+
+});
+
+// ======================
+// LOAD CHAT
+// ======================
+
+function loadChat(){
+
+  const chatRef =
+    ref(db, "info");
+
+  onValue(chatRef, async(snapshot)=>{
+
+    const container =
+      document.getElementById(
+        "chatContainer"
+      );
+
+    if(!snapshot.exists()){
+
+      container.innerHTML = `
+        <div class="loading">
+          Belum ada chat
+        </div>
+      `;
+
+      return;
+
+    }
+
+    const data =
+      Object.entries(snapshot.val());
+
+
+    let html = "";
+
+    for(const [key,item] of data){
+
+      let tombolHapus = "";
+
+      if(
+        item.uid === currentUser.uid
+      ){
+
+        tombolHapus = `
+          <button
+          class="delete-btn"
+          onclick="deleteChat('${key}')">
+
+            Hapus
+
+          </button>
+        `;
+
+      }
+
+      html += `
+
+      <div class="chat-item">
+
+        <img
+        src="assets/images/RI.webp"
+        class="chat-avatar">
+
+        <div class="chat-bubble">
+
+          <div class="chat-name">
+            ${item.nama || "Purna"}
+          </div>
+
+          <div class="chat-message">
+            ${item.isi || ""}
+          </div>
+
+          ${
+            item.gambar
+            ?
+            `
+            <img
+            src="${item.gambar}"
+            class="chat-image">
+            `
+            :
+            ""
+          }
+
+          <div class="chat-date">
+            ${item.tanggal || ""}
+          </div>
+
+          ${tombolHapus}
+
+        </div>
+
+      </div>
+
+      `;
+
+    }
+
+container.innerHTML = html;
+
+// AUTO SCROLL KE BAWAH
+
+window.scrollTo({
+
+  top:document.body.scrollHeight,
+
+  behavior:"smooth"
+
+});
+});
+}
+
+// ======================
+// KIRIM PESAN
+// ======================
+
+window.sendMessage =
+async function(){
+
+  const input =
+    document.getElementById(
+      "messageInput"
+    );
+
+  const imageFile =
+    document.getElementById(
+      "imageInput"
+    ).files[0];
+
+  const text =
+    input.value;
+
+  if(
+    text === "" &&
+    !imageFile
+  ){
+
+    return;
+
+  }
+
+  let imageUrl = "";
+
+  // ======================
+  // UPLOAD GAMBAR
+  // ======================
+
+  if(imageFile){
+
+    const formData =
+      new FormData();
+
+    formData.append(
+      "file",
+      imageFile
+    );
+
+    formData.append(
+      "upload_preset",
+      UPLOAD_PRESET
+    );
+
+    const response =
+      await fetch(
+        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+        {
+          method:"POST",
+          body:formData
+        }
+      );
+
+    const data =
+      await response.json();
+
+    imageUrl =
+      data.secure_url;
+
+  }
+
+  // ======================
+  // AMBIL DATA PURNA
+  // ======================
+
+  const userSnapshot =
+    await get(
+      ref(
+        db,
+        "purna/" + currentUser.uid
+      )
+    );
+
+  const userData =
+    userSnapshot.val();
+
+  // ======================
+  // KIRIM CHAT
+  // ======================
+
+  const tanggal =
+    new Date().toLocaleString(
+      "id-ID"
+    );
+
+  await push(
+    ref(db, "info"),
+    {
+
+      uid:currentUser.uid,
+
+      nama:
+        userData.namaPurna,
+
+      isi:text,
+
+      gambar:imageUrl,
+
+      tanggal:tanggal,
+
+      type:"chat-purna"
+
+    }
+  );
+
+  input.value = "";
+
+  document.getElementById(
+    "imageInput"
+  ).value = "";
+
+}
+
+// ======================
+// HAPUS CHAT
+// ======================
+
+window.deleteChat =
+async function(id){
+
+  const yakin =
+    confirm(
+      "Hapus pesan ini?"
+    );
+
+  if(!yakin) return;
+
+  await remove(
+    ref(db, "info/" + id)
+  );
+
+}
+
+</script>
+
+</body>
+</html>

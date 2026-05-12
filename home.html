@@ -774,46 +774,13 @@ html, body{
 
 
 
+
 <!-- WRAPPER BOX PROFESIONAL -->
-<div class="info-wrapper">
-
-  <div class="info-card">
-    <div class="info-icon">
-      <img src="assets/images/advertisement.png" style="width:28px;height:28px;">
-    </div>
-    <div class="info-content">
-      <h3>Informasi Latihan</h3>
-      <p>
-        Latihan rutin dilaksanakan setiap hari Sabtu pukul 14.00 WIB.
-      </p>
-    </div>
-  </div>
-
-  <div class="info-card">
-    <div class="info-icon">
-      <img src="assets/images/search-user.png" style="width:28px;height:28px;">
-    </div>
-    <div class="info-content">
-      <h3>Penerimaan Anggota</h3>
-      <p>
-        Pendaftaran anggota baru sudah dibuka. Silakan login untuk mendaftar.
-      </p>
-    </div>
-  </div>
-
-  <div class="info-card">
-    <div class="info-icon">
-      <img src="assets/images/info.png" style="width:28px;height:28px;">
-    </div>
-    <div class="info-content">
-      <h3>Pengumuman</h3>
-      <p>
-        Semua pengumuman terbaru akan tampil pada halaman postingan.
-      </p>
-    </div>
-  </div>
-
+<div class="info-wrapper" id="infoWrapper">
+  <!-- isi dari firebase -->
 </div>
+
+
 
   <!-- BOTTOM NAV -->
   <!-- NAVBAR -->
@@ -877,6 +844,7 @@ from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
   getDatabase,
+  onValue,
   ref,
   get,
   set
@@ -898,9 +866,6 @@ const firebaseConfig = {
 };
 
 
-
-
-
 // INIT
 
 const app = initializeApp(firebaseConfig);
@@ -909,8 +874,78 @@ const auth = getAuth(app);
 
 const database = getDatabase(app);
 
-
 const kontakRef = ref(database, "kontak");
+
+
+
+
+
+// ======================
+// INFO WRAPPER
+// ======================
+const infoWrapper = document.getElementById("infoWrapper");
+
+// ICON AUTO
+function getIcon(title){
+
+  const t = (title || "").toLowerCase();
+
+  if(t.includes("latihan")){
+    return "assets/images/advertisement.png";
+  }
+
+  if(t.includes("anggota") || t.includes("pendaftaran")){
+    return "assets/images/search-user.png";
+  }
+
+  return "assets/images/info.png";
+}
+
+// ======================
+// LOAD INFO FIREBASE
+// ======================
+function loadInfo(){
+
+  onValue(ref(database, "info_purna"), (snapshot)=>{
+
+    infoWrapper.innerHTML = "";
+
+    const data = snapshot.val();
+
+    if(!data){
+      infoWrapper.innerHTML = "";
+      return;
+    }
+
+    Object.values(data)
+    .reverse()
+    .forEach(item=>{
+
+      infoWrapper.innerHTML += `
+        <div class="info-card">
+
+          <div class="info-icon">
+            <img src="${getIcon(item.judul)}" style="width:28px;height:28px;">
+          </div>
+
+          <div class="info-content">
+            <h3>${item.judul}</h3>
+            <p>${item.deskripsi}</p>
+          </div>
+
+        </div>
+      `;
+
+    });
+
+  });
+
+}
+
+loadInfo();
+
+
+
 
 // ======================
 // LOAD KONTAK FIREBASE
@@ -958,6 +993,8 @@ async function loadKontak(){
     `;
   }
 }
+
+
 
 
 
