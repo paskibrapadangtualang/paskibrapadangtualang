@@ -44,7 +44,7 @@ html, body{
 
 
     body{
-      background:#f5f5f5;
+      background:#8e8e8e;
       padding-top:70px;
       padding-bottom:70px;
     }
@@ -572,7 +572,7 @@ html, body{
   margin-top:10px;
   font-size:12px;
   font-weight:700;
-  color:#333;
+  color:#ffffff;
   letter-spacing:0.5px;
 }
 
@@ -594,6 +594,61 @@ html, body{
   color:#c40000;
 }
 
+
+
+
+
+/* HEADER INFO */
+/* HEADER INFO */
+/* HEADER INFO */
+/* BOX UTAMA (gabung header + isi) */
+.info-box{
+  margin:15px;
+  border-radius:12px;
+  overflow:hidden; /* biar nyatu */
+  box-shadow:0 3px 10px rgba(0,0,0,0.15);
+}
+
+/* HEADER */
+.info-header{
+  display:flex;
+  align-items:center;
+  gap:10px;
+
+  background:linear-gradient(90deg, #263163, #2cc36c);
+  padding:8px 12px;
+}
+
+/* LOGO */
+.info-logo{
+  width:50px;
+  height:50px;
+  object-fit:contain;
+}
+
+/* PEMISAH */
+.info-arrow{
+  color:#fff;
+  font-size:40px;
+  font-weight:bold;
+  opacity:0.9;
+}
+
+/* TITLE */
+.info-title{
+  color:#fff;
+  font-weight:bold;
+  font-size:14px;
+  text-transform:uppercase;
+}
+
+/* ISI CONTENT */
+.info-content{
+  background:#fff;
+  padding:12px;
+  font-size:14px;
+  color:#333;
+}
   </style>
 </head>
 <body>
@@ -766,18 +821,18 @@ html, body{
 
 
 
+<div class="info-box">
 
+  <div class="info-header">
+    <img src="assets/images/informasi2.png" class="info-logo">
+    <div class="info-arrow">|</div>
+    <div class="info-title">PENGUMUMAN HARI INI</div>
+  </div>
 
+  <div class="info-content" id="infoWrapper">
+    Loading...
+  </div>
 
-
-
-
-
-
-
-<!-- WRAPPER BOX PROFESIONAL -->
-<div class="info-wrapper" id="infoWrapper">
-  <!-- isi dari firebase -->
 </div>
 
 
@@ -904,47 +959,65 @@ function getIcon(title){
 // ======================
 // LOAD INFO FIREBASE
 // ======================
-function loadInfo(){
+function loadInfo() {
 
-  onValue(ref(database, "info_purna"), (snapshot)=>{
+  onValue(ref(database, "info_purna"), (snapshot) => {
 
     infoWrapper.innerHTML = "";
 
     const data = snapshot.val();
 
-    if(!data){
-      infoWrapper.innerHTML = "";
+    if (!data) {
       return;
     }
 
     Object.values(data)
-    .reverse()
-    .forEach(item=>{
+      .reverse()
+      .forEach((item) => {
 
-      infoWrapper.innerHTML += `
-        <div class="info-card">
+        // ======================
+        // RAPIKAN DESKRIPSI
+        // ======================
+        const desc = (item.deskripsi || "-")
+          .replace(/\\n/g, "\n")   // fix newline dari database
+          .trim();
 
-          <div class="info-icon">
-            <img src="${getIcon(item.judul)}" style="width:28px;height:28px;">
+        infoWrapper.innerHTML += `
+          <div class="info-card">
+
+            <div class="info-icon">
+              <img 
+                src="${getIcon(item.judul)}" 
+                style="width:28px; height:28px;"
+              >
+            </div>
+
+            <div class="info-content">
+
+              <h3>${item.judul}</h3>
+
+              <p style="
+                white-space: pre-line;
+                line-height: 1.8;
+                color: #444;
+                font-size: 15px;
+                margin-top: 10px;
+              ">
+                ${desc}
+              </p>
+
+            </div>
+
           </div>
+        `;
 
-          <div class="info-content">
-            <h3>${item.judul}</h3>
-            <p>${item.deskripsi}</p>
-          </div>
-
-        </div>
-      `;
-
-    });
+      });
 
   });
 
 }
 
 loadInfo();
-
-
 
 
 // ======================

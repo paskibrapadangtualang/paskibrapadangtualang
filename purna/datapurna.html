@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Purna</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#f5f5f5;
+  padding:20px;
+}
+
+.card{
+  max-width:420px;
+  margin:20px auto;
+  background:#fff;
+  border-radius:15px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.1);
+  overflow:hidden;
+}
+
+.header{
+  background:#c40000;
+  color:#fff;
+  text-align:center;
+  padding:15px;
+  font-weight:bold;
+}
+
+.profile{
+  text-align:center;
+  padding:20px;
+}
+
+.profile img{
+  width:120px;
+  height:120px;
+  border-radius:50%;
+  object-fit:cover;
+  border:3px solid #c40000;
+}
+
+.info{
+  padding:15px;
+}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  padding:10px 0;
+  border-bottom:1px solid #eee;
+  font-size:14px;
+}
+
+.label{
+  color:#777;
+}
+
+.value{
+  font-weight:bold;
+  color:#333;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+  <div class="header">
+    DATA PURNA
+  </div>
+
+  <div class="profile">
+    <img id="foto" src="" alt="Foto Purna">
+    <h3 id="nama">-</h3>
+    <p id="email">-</p>
+  </div>
+
+  <div class="info">
+
+    <div class="row">
+      <div class="label">Asal Sekolah</div>
+      <div class="value" id="asal">-</div>
+    </div>
+
+    <div class="row">
+      <div class="label">Jenis Kelamin</div>
+      <div class="value" id="jk">-</div>
+    </div>
+
+    <div class="row">
+      <div class="label">Role</div>
+      <div class="value" id="role">-</div>
+    </div>
+
+  </div>
+
+</div>
+
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+  getDatabase,
+  ref,
+  get
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+
+// ================= FIREBASE =================
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+
+// ================= CEK LOGIN =================
+onAuthStateChanged(auth, async (user) => {
+
+  if (!user) {
+    window.location.href = "index.html";
+    return;
+  }
+
+  const snap = await get(ref(db, "purna/" + user.uid));
+
+  if (!snap.exists()) {
+    alert("Data purna tidak ditemukan");
+    window.location.href = "index.html";
+    return;
+  }
+
+  const data = snap.val();
+
+  document.getElementById("foto").src = data.foto;
+  document.getElementById("nama").innerText = data.namaPurna;
+  document.getElementById("email").innerText = data.email;
+  document.getElementById("asal").innerText = data.asalSekolah;
+  document.getElementById("jk").innerText = data.jenisKelamin;
+  document.getElementById("role").innerText = data.role;
+
+});
+
+</script>
+
+</body>
+</html>

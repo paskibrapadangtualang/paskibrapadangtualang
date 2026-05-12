@@ -117,28 +117,53 @@ header{
   display:flex;
   gap:10px;
   align-items:center;
-  box-shadow:0 -2px 5px rgba(0,0,0,0.1);
+  box-shadow:0 -2px 8px rgba(0,0,0,0.1);
+  z-index:1000;
 }
 
+/* ICON UPLOAD */
+.file-icon{
+  width:45px;
+  height:45px;
+  object-fit:cover;
+  border-radius:50%;
+  
+  cursor:pointer;
+  transition:0.2s;
+  background:white;
+}
+
+/* efek klik hover */
+.file-icon:hover{
+  transform:scale(1.1);
+  box-shadow:0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* input chat */
 .chat-input{
   flex:1;
-  padding:12px;
-  border:1px solid #ccc;
-  border-radius:30px;
+  padding:12px 15px;
+  border:1px solid #ddd;
+  border-radius:25px;
   outline:none;
+  font-size:14px;
 }
 
+/* tombol kirim */
 .send-btn{
   background:#c40000;
   color:white;
   border:none;
   padding:12px 18px;
-  border-radius:30px;
+  border-radius:25px;
   cursor:pointer;
+  font-weight:bold;
+  transition:0.2s;
 }
 
-.file-input{
-  width:40px;
+.send-btn:hover{
+  background:#a00000;
+  transform:scale(1.05);
 }
 
 .loading{
@@ -146,6 +171,9 @@ header{
   margin-top:30px;
   color:#777;
 }
+
+
+
 
 </style>
 </head>
@@ -156,9 +184,7 @@ header{
 </header>
 
 <!-- CHAT -->
-<div
-class="chat-container"
-id="chatContainer">
+<div class="chat-container" id="chatContainer">
 
   <div class="loading">
     Loading chat...
@@ -169,21 +195,29 @@ id="chatContainer">
 <!-- INPUT -->
 <div class="chat-input-box">
 
+  <!-- INPUT GAMBAR (FIX) -->
+  <img
+  src="assets/images/im_cs_image.png"
+  id="uploadIcon"
+  class="file-icon"
+  onclick="document.getElementById('imageInput').click()">
+
   <input
   type="file"
   id="imageInput"
-  class="file-input"
-  accept="image/*">
+  accept="image/*"
+  hidden>
+
 
   <input
-  type="text"
-  id="messageInput"
-  class="chat-input"
-  placeholder="Tulis pesan...">
+    type="text"
+    id="messageInput"
+    class="chat-input"
+    placeholder="Tulis pesan...">
 
   <button
-  class="send-btn"
-  onclick="sendMessage()">
+    class="send-btn"
+    onclick="sendMessage()">
 
     Kirim
 
