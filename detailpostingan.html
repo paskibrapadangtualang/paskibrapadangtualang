@@ -483,19 +483,20 @@ html, body{
 
   <div class="wrapper">
 
-    <!-- DETAIL -->
+<!-- DETAIL -->
 
-    <div class="detail-card">
+<div class="detail-card">
 
-      <div id="detailContainer">
+  <div id="detailContainer">
 
-        <div class="loading">
-          Loading postingan...
-        </div>
-
-      </div>
-
+    <div class="loading">
+      Loading postingan...
     </div>
+
+  </div>
+
+</div>
+
 
     <!-- SIDEBAR -->
 
@@ -519,7 +520,55 @@ html, body{
 
 </div>
 
+<!-- IKLAN -->
+<div
+  id="iklanContainer"
+  style="
+    margin-top:20px;
+    background:white;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    padding:15px;
+  "
+>
 
+  <div style="
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:15px;
+  ">
+
+    <img
+      src="assets/images/advertisement.png"
+      style="
+        width:28px;
+        height:28px;
+        object-fit:contain;
+      "
+    >
+
+    <h2 style="
+      font-size:20px;
+      color:#c40000;
+    ">
+      Iklan & Informasi
+    </h2>
+
+  </div>
+
+  <!-- LIST IKLAN -->
+  <div
+    id="iklanList"
+    style="
+      display:flex;
+      flex-direction:column;
+      gap:20px;
+    "
+  ></div>
+
+</div>
 
 
 
@@ -1298,7 +1347,185 @@ document.addEventListener(
 
 
 
+// ===============================
+// LOAD IKLAN
+// ===============================
+async function loadIklan(){
 
+  const iklanContainer =
+    document.getElementById("iklanContainer");
+
+  try{
+
+    const iklanRef =
+      ref(database, "iklan");
+
+    const snap =
+      await get(iklanRef);
+
+    // =========================
+    // DUMMY DATA
+    // =========================
+    const dummyIklan = {
+
+      iklan1:{
+        judul:"Pendaftaran Paskibra 2026",
+        deskripsi:"Pendaftaran anggota baru Paskibra Kecamatan Padang Tualang telah dibuka untuk seluruh siswa SMA/SMK sederajat.",
+        alamat:"Padang Tualang, Langkat",
+        gambarList:{
+          img1:"https://picsum.photos/600/400?1",
+          img2:"https://picsum.photos/600/400?2",
+          img3:"https://picsum.photos/600/400?3"
+        },
+        createdAt:Date.now()
+      },
+
+      iklan2:{
+        judul:"Event Kemerdekaan RI",
+        deskripsi:"Ayo ikut memeriahkan kegiatan Dirgahayu Republik Indonesia bersama Paskibra.",
+        alamat:"Lapangan Kecamatan Padang Tualang",
+        gambarList:{
+          img1:"https://picsum.photos/600/400?4",
+          img2:"https://picsum.photos/600/400?5"
+        },
+        createdAt:Date.now()-1000
+      }
+
+    };
+
+    // JIKA BELUM ADA
+    if(!snap.exists()){
+
+      await set(
+        iklanRef,
+        dummyIklan
+      );
+
+      return loadIklan();
+    }
+
+    const data = snap.val();
+
+    let items =
+      Object.keys(data).map(id => ({
+        id,
+        ...data[id]
+      }));
+
+    // TERBARU DI ATAS
+    items.sort((a,b)=>
+      (b.createdAt || 0)
+      -
+      (a.createdAt || 0)
+    );
+
+    iklanContainer.innerHTML = "";
+
+    items.forEach((item)=>{
+
+      // MAX 5 FOTO
+      let fotos = [];
+
+      if(item.gambarList){
+
+        fotos =
+          Object.values(
+            item.gambarList
+          ).slice(0,5);
+
+      }
+
+      iklanContainer.innerHTML += `
+
+        <div style="
+          background:#fff;
+          border-radius:20px;
+          overflow:hidden;
+          margin-bottom:25px;
+          box-shadow:0 4px 12px rgba(0,0,0,0.08);
+        ">
+
+          <!-- FOTO -->
+          <div style="
+            display:flex;
+            gap:10px;
+            overflow-x:auto;
+            padding:15px;
+          ">
+
+            ${fotos.map(foto => `
+
+              <img
+                src="${foto}"
+                style="
+                  width:220px;
+                  height:150px;
+                  object-fit:cover;
+                  border-radius:15px;
+                  flex-shrink:0;
+                "
+              >
+
+            `).join("")}
+
+          </div>
+
+          <!-- CONTENT -->
+          <div style="
+            padding:20px;
+          ">
+
+            <h3 style="
+              color:#c40000;
+              margin-bottom:12px;
+              font-size:22px;
+            ">
+              ${item.judul || '-'}
+            </h3>
+
+            <p style="
+              color:#555;
+              line-height:1.8;
+              margin-bottom:15px;
+            ">
+              ${item.deskripsi || '-'}
+            </p>
+
+            <div style="
+              background:#f5f5f5;
+              padding:12px;
+              border-radius:12px;
+              font-size:14px;
+              color:#444;
+              font-weight:bold;
+            ">
+              📍 ${item.alamat || '-'}
+            </div>
+
+          </div>
+
+        </div>
+
+      `;
+
+    });
+
+  }catch(error){
+
+    console.log(error);
+
+    iklanContainer.innerHTML = `
+      <div class="loading">
+        Gagal memuat iklan
+      </div>
+    `;
+
+  }
+
+}
+
+// LOAD IKLAN
+loadIklan();
 
 
 

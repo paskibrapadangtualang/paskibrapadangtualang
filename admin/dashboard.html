@@ -160,6 +160,18 @@ PELATIPURCAM
 contact
 </a>
 
+<a href="uploadyt.html">
+upload youtube
+</a>
+
+<a href="banner.html">
+banner sampul
+</a>
+
+<a href="iklan.html">
+Atur Iklan
+</a>
+
 </div>
 
 </div>
@@ -202,6 +214,23 @@ Dashboard Firebase Paskibra
 <div class="card">
 <h3>Total Info</h3>
 <h1 id="totalInfo">0</h1>
+</div>
+
+
+<div class="card">
+<h3>Total iklan</h3>
+<h1 id="totaliklan">0</h1>
+</div>
+
+<div class="card">
+<h3>Total diterima</h3>
+<h1 id="totalterima">0</h1>
+</div>
+
+
+<div class="card">
+<h3>Total ditolak</h3>
+<h1 id="totalDitolak">0</h1>
 </div>
 
 </div>
@@ -381,6 +410,105 @@ if(infoSnapshot.exists()){
     ).length;
 
 }
+
+
+
+// TOTAL IKLAN
+
+const iklanSnapshot =
+  await get(
+    ref(db, "iklan")
+  );
+
+if(iklanSnapshot.exists()){
+
+  document.getElementById(
+    "totaliklan"
+  ).innerText =
+    Object.keys(
+      iklanSnapshot.val()
+    ).length;
+
+}else{
+
+  document.getElementById(
+    "totaliklan"
+  ).innerText = "0";
+
+}
+
+
+
+
+// TOTAL DITERIMA
+
+// TOTAL DITERIMA
+
+let totalDiterima = 0;
+
+if(usersSnapshot.exists()){
+
+  const usersData =
+    usersSnapshot.val();
+
+  for(const id in usersData){
+
+    if(
+      usersData[id]
+      .statusPenerimaan ===
+      "Diterima"
+    ){
+
+      totalDiterima++;
+
+    }
+
+  }
+
+}
+
+document.getElementById(
+  "totalterima"
+).innerText =
+  totalDiterima;
+
+
+
+// TOTAL DITOLAK
+
+let totalDitolak = 0;
+
+if(usersSnapshot.exists()){
+
+  const usersData =
+    usersSnapshot.val();
+
+  for(const id in usersData){
+
+    if(
+      usersData[id]
+      .statusPenerimaan ===
+      "Ditolak"
+    ){
+
+      totalDitolak++;
+
+    }
+
+  }
+
+}
+
+document.getElementById(
+  "totalDitolak"
+).innerText =
+  totalDitolak;
+
+
+
+
+
+
 
 // LOGOUT
 
