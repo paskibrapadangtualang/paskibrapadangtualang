@@ -429,7 +429,12 @@ html, body{
 
 
 
-
+.icon-kontak{
+  width:18px;
+  height:18px;
+  vertical-align:middle;
+  margin-right:6px;
+}
 
 
 
@@ -708,35 +713,55 @@ window.openYoutube = function(url){
 loadYoutube();
 
 
-
+// ======================
 // LOAD KONTAK FOOTER
-async function loadKontakFooter(){
+// ======================
+// ======================
+// LOAD KONTAK FOOTER
+// ======================
+async function loadKontak() {
 
-  const snap = await get(kontakRef);
+  try {
 
-  const defaultData = {
-    alamat: "Padang Tualang, Langkat",
-    telepon: "081234567890",
-    email: "paskibrapadangtualang@gmail.com"
-  };
+    const snap = await get(kontakRef);
 
-  if(!snap.exists()){
-    await set(kontakRef, defaultData);
-    return loadKontakFooter();
+    const defaultData = {
+      alamat: "Padang Tualang, Langkat",
+      telepon: "081234567890",
+      email: "paskibrapadangtualang@gmail.com"
+    };
+
+    if (!snap.exists()) {
+      await set(kontakRef, defaultData);
+      return loadKontak();
+    }
+
+    const data = snap.val();
+
+    document.getElementById("alamat").innerHTML = `
+      <img src="assets/images/lokasi 17 (1).png" class="icon-kontak">
+      ${data.alamat}
+    `;
+
+    document.getElementById("telepon").innerHTML = `
+      <img src="assets/images/whatsapp.png" class="icon-kontak">
+      ${data.telepon}
+    `;
+
+    document.getElementById("email").innerHTML = `
+      <img src="assets/images/gmail.png" class="icon-kontak">
+      ${data.email}
+    `;
+
+  } catch (err) {
+    console.log(err);
   }
 
-  const data = snap.val();
-
-  const elAlamat = document.getElementById("alamat");
-  const elTelp = document.getElementById("telepon");
-  const elEmail = document.getElementById("email");
-
-  if(elAlamat) elAlamat.innerText = "📍 " + data.alamat;
-  if(elTelp) elTelp.innerText = "📞 " + data.telepon;
-  if(elEmail) elEmail.innerText = "✉ " + data.email;
 }
 
-loadKontakFooter();
+// PANGGIL FUNCTION
+loadKontak();
+
 
   // ===============================
   // AMBIL ID URL
@@ -1578,15 +1603,27 @@ document.addEventListener('dragstart', function(e){
 
   <div class="footer-top">
 
-    <div class="footer-contact">
+    <!-- KONTAK -->
+<div class="footer-contact">
 
-      <h3>Kontak</h3>
+  <h3>Kontak</h3>
 
-      <p id="alamat">📍 Loading...</p>
-      <p id="telepon">📞 Loading...</p>
-      <p id="email">✉ Loading...</p>
+  <p id="alamat">
+    <img src="assets/images/lokasi 17 (1).png" class="icon-kontak">
+    Loading...
+  </p>
 
-    </div>
+  <p id="telepon">
+    <img src="assets/images/whatsapp.png" class="icon-kontak">
+    Loading...
+  </p>
+
+  <p id="email">
+    <img src="assets/images/gmail.png" class="icon-kontak">
+    Loading...
+  </p>
+</div>
+</div>
 
   </div>
 
