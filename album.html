@@ -41,7 +41,30 @@ html, body{
   touch-action: manipulation;
 }
 
+.header-title{
+  padding:10px;
+  background:#fff;
+  border-radius:12px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.08);
+}
 
+.logo{
+  width:40px;
+  height:40px;
+  object-fit:contain;
+}
+
+/* biar tetap bagus di HP */
+@media(max-width:600px){
+  .logo{
+    width:52px;
+    height:52px;
+  }
+
+  h2{
+    font-size:16px;
+  }
+}
 
 
 
@@ -117,7 +140,10 @@ h2{
 </head>
 <body>
 
-<h2>📸 Album Foto Paskibra</h2>
+<div class="header-title">
+  <img src="assets/images/cloud_storage.png" alt="Logo" class="logo">
+  <h2>Album Foto Paskibra</h2>
+</div>
 
 <div id="album" class="grid">
   <p>Loading...</p>
@@ -191,12 +217,13 @@ onValue(ref(db,"postingan"), (snapshot)=>{
 
   });
 
-  if(semuaGambar.length === 0){
-    album.innerHTML = "<p>Tidak ada gambar</p>";
-    return;
-  }
+ if(semuaGambar.length === 0){
+  album.innerHTML = "<p>Tidak ada gambar</p>";
+  return;
+}
 
-  semuaGambar.forEach((img)=>{
+// 🔥 TERBARU DI ATAS
+semuaGambar.reverse().forEach((img)=>{
 
     album.innerHTML += `
       <div class="card">
