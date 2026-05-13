@@ -78,6 +78,34 @@
       border-radius:10px;
       margin:15px 0;
     }
+
+
+
+
+    .hero{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin-top:10px;
+  margin-bottom:10px;
+}
+
+.hero img{
+  width:100%;
+  max-width:700px;   /* batas di desktop */
+  height:auto;
+  object-fit:contain;
+  border-radius:12px;
+}
+
+/* khusus HP biar lebih pas */
+@media (max-width:600px){
+  .hero img{
+    max-width:100%;
+    padding:10px;
+  }
+}
   </style>
 </head>
 
@@ -92,6 +120,15 @@
       Paskibra Kecamatan Padang Tualang sedang melakukan pembaruan sistem.
     </p>
   </div>
+
+
+
+<!-- HERO IMAGE MAINTENANCE -->
+<div class="hero">
+  <img src="assets/images/maintenance.png" alt="Maintenance" />
+</div>
+
+
 
   <!-- GAMBAR BESAR MAINTENANCE -->
   <div class="center">
