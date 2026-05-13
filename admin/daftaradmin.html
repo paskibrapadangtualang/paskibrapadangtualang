@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Daftar Admin</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#0f172a;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+
+.box{
+  width:350px;
+  background:#fff;
+  padding:30px;
+  border-radius:15px;
+}
+
+h2{
+  text-align:center;
+  margin-bottom:25px;
+}
+
+input,
+select{
+  width:100%;
+  padding:14px;
+  margin-bottom:15px;
+  border-radius:10px;
+  border:1px solid #ccc;
+  outline:none;
+}
+
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:10px;
+  background:#2563eb;
+  color:#fff;
+  font-size:16px;
+  cursor:pointer;
+}
+
+button:hover{
+  opacity:0.9;
+}
+
+a{
+  display:block;
+  text-align:center;
+  margin-top:15px;
+  text-decoration:none;
+}
+
+.upload-box{
+  margin-bottom:15px;
+}
+
+.upload-btn{
+  background:#e5e7eb;
+  color:#111827;
+  padding:12px;
+  border-radius:10px;
+  text-align:center;
+  cursor:pointer;
+  border:2px dashed #cbd5e1;
+}
+
+.upload-btn img{
+  width:20px;
+  vertical-align:middle;
+  margin-right:8px;
+}
+
+#foto{
+  display:none;
+}
+
+.preview{
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  object-fit:cover;
+  display:none;
+  margin:10px auto;
+  border:3px solid #2563eb;
+}
+
+.loading{
+  display:none;
+  text-align:center;
+  margin-top:15px;
+  color:#2563eb;
+}
+
+</style>
+</head>
+<body>
+
+<div class="box">
+
+<h2>DAFTAR ADMIN</h2>
+
+<input
+type="text"
+id="nama"
+placeholder="Nama admin">
+
+<input
+type="email"
+id="email"
+placeholder="Email admin">
+
+<input
+type="password"
+id="password"
+placeholder="Password">
+
+<input
+type="text"
+id="whatsapp"
+placeholder="Whatsapp aktif">
+
+<select id="jabatan">
+
+<option value="">
+Pilih status sebagai
+</option>
+
+<option value="bendahara">
+Bendahara
+</option>
+
+<option value="pelatih">
+Pelatih
+</option>
+
+<option value="tim kepercayaan">
+Tim Kepercayaan
+</option>
+
+</select>
+
+<div class="upload-box">
+
+<label for="foto">
+
+<div class="upload-btn">
+
+<img src="assets/images/im_cs_image.png">
+
+Upload Foto Admin
+
+</div>
+
+</label>
+
+<input
+type="file"
+id="foto"
+accept="image/*">
+
+<img
+id="preview"
+class="preview">
+
+</div>
+
+<button onclick="registerAdmin()">
+Daftar Admin
+</button>
+
+<div class="loading" id="loading">
+Mengupload foto...
+</div>
+
+<a href="index.html">
+Login Admin
+</a>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getAuth,
+  createUserWithEmailAndPassword
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+  getDatabase,
+  ref,
+  set
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+// CONFIG FIREBASE
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+
+};
+
+// CLOUDINARY
+
+const CLOUD_NAME = "djxlbemky";
+
+const UPLOAD_PRESET = "uploadgambar";
+
+// INIT
+
+const app =
+  initializeApp(firebaseConfig);
+
+const auth =
+  getAuth(app);
+
+const db =
+  getDatabase(app);
+
+// PREVIEW FOTO
+
+const fotoInput =
+  document.getElementById("foto");
+
+const preview =
+  document.getElementById("preview");
+
+fotoInput.addEventListener("change", ()=>{
+
+  const file =
+    fotoInput.files[0];
+
+  if(file){
+
+    preview.src =
+      URL.createObjectURL(file);
+
+    preview.style.display =
+      "block";
+
+  }
+
+});
+
+// REGISTER ADMIN
+
+window.registerAdmin = async function(){
+
+  const nama =
+    document.getElementById("nama").value;
+
+  const email =
+    document.getElementById("email").value;
+
+  const password =
+    document.getElementById("password").value;
+
+  const whatsapp =
+    document.getElementById("whatsapp").value;
+
+  const jabatan =
+    document.getElementById("jabatan").value;
+
+  const foto =
+    fotoInput.files[0];
+
+  const loading =
+    document.getElementById("loading");
+
+  if(
+    nama === "" ||
+    email === "" ||
+    password === "" ||
+    whatsapp === "" ||
+    jabatan === "" ||
+    !foto
+  ){
+
+    alert("Lengkapi semua data");
+
+    return;
+
+  }
+
+  try{
+
+    loading.style.display =
+      "block";
+
+    // REGISTER AUTH
+
+    const userCredential =
+      await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+    const user =
+      userCredential.user;
+
+    // UPLOAD FOTO CLOUDINARY
+
+    const formData =
+      new FormData();
+
+    formData.append(
+      "file",
+      foto
+    );
+
+    formData.append(
+      "upload_preset",
+      UPLOAD_PRESET
+    );
+
+    const cloudinaryResponse =
+      await fetch(
+        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+        {
+          method:"POST",
+          body:formData
+        }
+      );
+
+    const cloudinaryData =
+      await cloudinaryResponse.json();
+
+    const fotoUrl =
+      cloudinaryData.secure_url;
+
+    // SIMPAN FIREBASE
+
+    await set(
+      ref(db, "admin/" + user.uid),
+      {
+
+        uid: user.uid,
+
+        nama: nama,
+
+        email: email,
+
+        whatsapp: whatsapp,
+
+        jabatan: jabatan,
+
+        foto: fotoUrl,
+
+        role: "admin2",
+
+        status: "pending",
+
+        createdAt: Date.now()
+
+      }
+    );
+
+    loading.style.display =
+      "none";
+
+    alert(
+      "Pendaftaran berhasil, tunggu persetujuan admin utama"
+    );
+
+    window.location.href =
+      "index.html";
+
+  }catch(error){
+
+    loading.style.display =
+      "none";
+
+    alert(error.message);
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>

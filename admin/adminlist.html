@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Daftar Admin</title>
+
+<style>
+
+body{
+  font-family:Arial,sans-serif;
+  background:#f5f5f5;
+  padding:20px;
+}
+
+h2{
+  margin-bottom:20px;
+}
+
+.card{
+  background:#fff;
+  padding:20px;
+  border-radius:20px;
+  margin-bottom:20px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+.top{
+  display:flex;
+  align-items:center;
+  gap:15px;
+  margin-bottom:15px;
+}
+
+.foto{
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  object-fit:cover;
+  border:3px solid #2563eb;
+}
+
+.nama{
+  font-size:20px;
+  font-weight:bold;
+  margin-bottom:5px;
+}
+
+.info{
+  margin-bottom:6px;
+  color:#444;
+  font-size:14px;
+}
+
+.status{
+  display:inline-block;
+  padding:6px 12px;
+  border-radius:20px;
+  font-size:13px;
+  font-weight:bold;
+  margin-top:5px;
+}
+
+.pending{
+  background:#fef3c7;
+  color:#92400e;
+}
+
+.approved{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.ditolak{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.button-group{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:15px;
+}
+
+button{
+  padding:10px 15px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  color:white;
+  font-size:14px;
+}
+
+.setuju{
+  background:green;
+}
+
+.tolak{
+  background:red;
+}
+
+.hapus{
+  background:#111827;
+}
+
+</style>
+</head>
+<body>
+
+<h2>Daftar Admin</h2>
+
+<div id="listAdmin"></div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getAuth,
+  onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+  getDatabase,
+  ref,
+  onValue,
+  update,
+  remove
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+
+};
+
+const app =
+  initializeApp(firebaseConfig);
+
+  const auth =
+  getAuth(app);
+
+  const db =
+  getDatabase(app);
+
+const listAdmin =
+  document.getElementById("listAdmin");
+
+
+  onAuthStateChanged(auth, async(user)=>{
+
+  // BELUM LOGIN
+
+  if(!user){
+
+    alert("Silahkan login");
+
+    window.location.href =
+      "index.html";
+
+    return;
+
+  }
+
+  // AMBIL DATA ADMIN
+
+  const adminRef =
+    ref(db, "admin/" + user.uid);
+
+  onValue(adminRef, (snapshot)=>{
+
+    // JIKA BUKAN ADMIN
+
+    if(!snapshot.exists()){
+
+      alert("Akses ditolak");
+
+      window.location.href =
+        "dashboard.html";
+
+      return;
+
+    }
+
+    const adminData =
+      snapshot.val();
+
+    // JIKA BUKAN SUPERADMIN
+
+    if(adminData.role !== "superadmin"){
+
+      alert(
+        "Hanya admin utama yang bisa mengakses halaman ini"
+      );
+
+      window.location.href =
+        "dashboard.html";
+
+      return;
+
+    }
+
+    // JIKA SUPERADMIN
+    // LOAD DATA ADMIN
+
+    loadAdmin();
+
+  });
+
+});
+
+function loadAdmin(){
+
+  onValue(ref(db, "admin"), (snapshot)=>{
+
+    listAdmin.innerHTML = "";
+
+    const data = snapshot.val();
+
+    for(const uid in data){
+
+      const item = data[uid];
+
+      if(item.role === "superadmin"){
+        continue;
+      }
+
+      let statusClass = "";
+
+      if(item.status === "pending"){
+        statusClass = "pending";
+      }
+
+      if(item.status === "approved"){
+        statusClass = "approved";
+      }
+
+      if(item.status === "ditolak"){
+        statusClass = "ditolak";
+      }
+
+      listAdmin.innerHTML += `
+
+      <div class="card">
+
+        <div class="top">
+
+          <img
+          src="${item.foto}"
+          class="foto">
+
+          <div>
+
+            <div class="nama">
+            ${item.nama}
+            </div>
+
+            <div class="info">
+            📧 ${item.email}
+            </div>
+
+            <div class="info">
+            📱 ${item.whatsapp}
+            </div>
+
+            <div class="info">
+            👤 ${item.jabatan}
+            </div>
+
+            <div class="status ${statusClass}">
+            ${item.status}
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="button-group">
+
+          <button
+          class="setuju"
+          onclick="setujuAdmin('${uid}')">
+
+          Setujui
+
+          </button>
+
+          <button
+          class="tolak"
+          onclick="tolakAdmin('${uid}')">
+
+          Tolak
+
+          </button>
+
+          <button
+          class="hapus"
+          onclick="hapusAdmin('${uid}')">
+
+          Hapus
+
+          </button>
+
+        </div>
+
+      </div>
+
+      `;
+
+    }
+
+  });
+
+}
+
+// SETUJUI
+
+window.setujuAdmin = async function(uid){
+
+  await update(
+    ref(db, "admin/" + uid),
+    {
+      status:"approved"
+    }
+  );
+
+  alert("Admin disetujui");
+
+}
+
+// TOLAK
+
+window.tolakAdmin = async function(uid){
+
+  await update(
+    ref(db, "admin/" + uid),
+    {
+      status:"ditolak"
+    }
+  );
+
+  alert("Admin ditolak");
+
+}
+
+// HAPUS
+
+window.hapusAdmin = async function(uid){
+
+  const konfirmasi =
+    confirm(
+      "Yakin ingin menghapus admin ini?"
+    );
+
+  if(!konfirmasi) return;
+
+  try{
+
+    await remove(
+      ref(db, "admin/" + uid)
+    );
+
+    alert(
+      "Admin berhasil dihapus"
+    );
+
+  }catch(error){
+
+    alert(
+      "Gagal menghapus admin"
+    );
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>

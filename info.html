@@ -236,14 +236,25 @@ header{
 <!-- FIREBASE -->
 <script type="module">
 
+// ======================
+// FIREBASE
+// ======================
+
 import { initializeApp }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getAuth,
+  onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
   getDatabase,
   ref,
   onValue,
-  get
+  get,
+  update
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
@@ -272,6 +283,23 @@ initializeApp(firebaseConfig);
 
 const database =
 getDatabase(app);
+
+const auth =
+getAuth(app);
+
+let currentUser = null;
+
+// ======================
+// CEK LOGIN
+// ======================
+
+onAuthStateChanged(auth, (user)=>{
+
+  currentUser = user;
+
+  loadInfo();
+
+});
 
 // ======================
 // LOAD INFO
@@ -302,23 +330,24 @@ async function loadInfo(){
     }
 
     // ======================
-    // AMBIL DATA
-    // ======================
-
-    const rawData =
-      Object.values(snapshot.val());
-
-    // ======================
     // FILTER CHAT
-    // HAPUS GABUNG PURNA
     // ======================
 
-    const data =
-      rawData.filter(item => {
+   const data =
+  Object.entries(snapshot.val())
+  .filter(([key,item]) => {
 
-        return item.type !== "gabung-purna";
+    // ❌ HAPUS DATA KOSONG / SUDAH DIDELETE
+    if (!item) return false;
 
-      });
+    if (!item.isi && !item.gambar) return false;
+
+    if (!item.type) return false;
+
+    // filter lama kamu tetap jalan
+    return item.type !== "gabung-purna";
+
+  });
 
     // ======================
     // JIKA KOSONG
@@ -337,12 +366,171 @@ async function loadInfo(){
     }
 
     // ======================
-    // CHAT TERBARU DI BAWAH
+    // TERBARU DI BAWAH
     // ======================
+
+    data.reverse();
 
     let html = "";
 
-    for(const item of data){
+    // ======================
+    // AMBIL DATA VIEWER
+    // ======================
+
+    let viewerData = {
+
+      nama : "User",
+      foto : "",
+      role : "user"
+
+    };
+
+    if(currentUser){
+
+      // USERS
+
+      const userSnap =
+        await get(
+          ref(
+            database,
+            "users/" + currentUser.uid
+          )
+        );
+
+      if(userSnap.exists()){
+
+        const userData =
+          userSnap.val();
+
+        viewerData = {
+
+          nama :
+            userData.namaLengkap ||
+            userData.nama ||
+            "User",
+
+          foto :
+            userData.fotoSelfie ||
+            userData.foto ||
+            "",
+
+          role : "user"
+
+        };
+
+      }
+
+      // ADMIN
+
+      const adminSnap =
+        await get(
+          ref(
+            database,
+            "admin/" + currentUser.uid
+          )
+        );
+
+      if(adminSnap.exists()){
+
+        const adminData =
+          adminSnap.val();
+
+        viewerData = {
+
+          nama :
+            adminData.nama ||
+            "Admin",
+
+          foto :
+            adminData.foto ||
+            "",
+
+          role : "admin"
+
+        };
+
+      }
+
+      // PURNA
+
+      const purnaSnap =
+        await get(
+          ref(
+            database,
+            "purna/" + currentUser.uid
+          )
+        );
+
+      if(purnaSnap.exists()){
+
+        const purnaData =
+          purnaSnap.val();
+
+        viewerData = {
+
+          nama :
+            purnaData.namaPurna ||
+            "Purna",
+
+          foto :
+            purnaData.foto ||
+            "",
+
+          role : "purna"
+
+        };
+
+      }
+
+    }
+
+    // ======================
+    // LOOP CHAT
+    // ======================
+
+    for(const [key,item] of data){
+
+      // ======================
+      // AUTO VIEW
+      // ======================
+
+      if(currentUser){
+
+        try{
+
+          await update(
+            ref(
+              database,
+              "info/" + key + "/views"
+            ),
+            {
+
+              [currentUser.uid]:{
+
+                nama :
+                  viewerData.nama,
+
+                foto :
+                  viewerData.foto,
+
+                role :
+                  viewerData.role,
+
+                waktu :
+                  Date.now()
+
+              }
+
+            }
+          );
+
+        }catch(error){
+
+          console.log(error);
+
+        }
+
+      }
 
       // ======================
       // DEFAULT
@@ -370,15 +558,11 @@ async function loadInfo(){
 
         role = "Purna";
 
-        // ======================
-        // AMBIL FOTO TERBARU
-        // ======================
-
         if(item.uid){
 
           try{
 
-            const userSnap =
+            const purnaSnap =
               await get(
                 ref(
                   database,
@@ -386,17 +570,17 @@ async function loadInfo(){
                 )
               );
 
-            if(userSnap.exists()){
+            if(purnaSnap.exists()){
 
-              const userData =
-                userSnap.val();
+              const purnaData =
+                purnaSnap.val();
 
               nama =
-                userData.namaPurna ||
+                purnaData.namaPurna ||
                 nama;
 
               foto =
-                userData.foto ||
+                purnaData.foto ||
                 foto;
 
             }
@@ -408,6 +592,19 @@ async function loadInfo(){
           }
 
         }
+
+      }
+
+      // ======================
+      // JIKA USER
+      // ======================
+
+      if(
+        item.role === "user" ||
+        item.type === "chat-user"
+      ){
+
+        role = "User";
 
       }
 

@@ -1,3 +1,13 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>View Purna</title>
 
 <style>
 
@@ -8,84 +18,27 @@
   padding:0;
   box-sizing:border-box;
   font-family:'Poppins', sans-serif;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+  -webkit-user-select:none;
 }
 
 body{
   background:#f5f5f5;
+  touch-action:manipulation;
 }
-
-
-
-
-
-*{
-  -webkit-tap-highlight-color: transparent; /* hilangkan efek biru klik mobile */
-  user-select: none; /* blok seleksi teks */
-  -webkit-user-select: none;
-  -ms-user-select: none;
-}
-
 
 img{
-  -webkit-user-drag: none;
-  -webkit-user-select: none;
-  user-select: none;
+  -webkit-user-drag:none;
 }
-    
-
-
-/* hilangkan highlight biru saat klik */
-a, button, div{
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* optional: cegah zoom pinch (mobile) */
-html, body{
-  touch-action: manipulation;
-}
-
-
-
-
 
 @keyframes spin{
-
   100%{
     transform:rotate(360deg);
   }
-
 }
-
-*{
-  -webkit-tap-highlight-color: transparent; /* hilangkan efek biru klik mobile */
-  user-select: none; /* blok seleksi teks */
-  -webkit-user-select: none;
-  -ms-user-select: none;
-}
-
-
-img{
-  -webkit-user-drag: none;
-  -webkit-user-select: none;
-  user-select: none;
-}
-    
-
-
-/* hilangkan highlight biru saat klik */
-a, button, div{
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* optional: cegah zoom pinch (mobile) */
-html, body{
-  touch-action: manipulation;
-}
-
-
 
 @keyframes zoomIn{
-
   from{
     transform:scale(0.7);
     opacity:0;
@@ -95,12 +48,12 @@ html, body{
     transform:scale(1);
     opacity:1;
   }
-
 }
 
 </style>
+</head>
 
-
+<body>
 
 <div id="profileContainer">
 
@@ -112,7 +65,6 @@ html, body{
     flex-direction:column;
   ">
 
-    <!-- SPINNER -->
     <div style="
       width:55px;
       height:55px;
@@ -135,39 +87,34 @@ html, body{
 
 </div>
 
-
-
-
-<!-- MODAL ZOOM FOTO -->
+<!-- MODAL FOTO -->
 
 <div
-  id="zoomModal"
-  style="
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.9);
-    display:none;
-    justify-content:center;
-    align-items:center;
-    z-index:99999;
-    padding:20px;
-  "
-  onclick="closeZoom()"
->
+id="zoomModal"
+style="
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.9);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:99999;
+  padding:20px;
+"
+onclick="closeZoom()">
 
-  <img
-    id="zoomImage"
-    style="
-      max-width:100%;
-      max-height:100%;
-      border-radius:20px;
-      object-fit:contain;
-      animation:zoomIn 0.3s ease;
-    "
-  >
+<img
+id="zoomImage"
+style="
+  max-width:100%;
+  max-height:100%;
+  border-radius:20px;
+  object-fit:contain;
+  animation:zoomIn 0.3s ease;
+">
 
 </div>
 
@@ -183,7 +130,7 @@ import {
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-// FIREBASE CONFIG
+// ================= FIREBASE =================
 
 const firebaseConfig = {
 
@@ -197,13 +144,11 @@ const firebaseConfig = {
 
 };
 
-// INIT
-
 const app = initializeApp(firebaseConfig);
 
-const database = getDatabase(app);
+const db = getDatabase(app);
 
-// AMBIL ID URL
+// ================= AMBIL UID =================
 
 const urlParams =
   new URLSearchParams(
@@ -213,28 +158,110 @@ const urlParams =
 const userId =
   urlParams.get("id");
 
-// CONTAINER
+// ================= CONTAINER =================
 
 const profileContainer =
   document.getElementById(
     "profileContainer"
   );
 
-// LOAD PROFILE
+// ================= SENSOR EMAIL =================
 
-async function loadProfile(){
+function sensorEmail(email){
+
+  if(!email || !email.includes("@")){
+    return "-";
+  }
+
+  const parts = email.split("@");
+
+  const nama = parts[0];
+  const domain = parts[1];
+
+  if(nama.length <= 3){
+    return nama[0] + "***@" + domain;
+  }
+
+  const depan = nama.substring(0,2);
+
+  const belakang =
+    nama.substring(
+      nama.length - 1
+    );
+
+  const sensor =
+    "*".repeat(
+      nama.length - 3
+    );
+
+  return `${depan}${sensor}${belakang}@${domain}`;
+
+}
+
+// ================= LOAD PROFILE =================
+
+
+ async function loadProfile(){
 
   try{
 
     const snapshot = await get(
-      ref(database, "users/" + userId)
+      ref(db, "purna/" + userId)
     );
 
     if(snapshot.exists()){
 
       const data = snapshot.val();
 
-profileContainer.innerHTML = `
+      // ======================
+      // FIX DATA UNDEFINED
+      // ======================
+
+      const foto =
+        data.foto ||
+        "assets/images/user.png";
+
+      const nama =
+        data.namaPurna ||
+        data.nama ||
+        "Nama belum diisi";
+
+      const jabatan =
+        data.jabatan ||
+        "Anggota Purna";
+
+      const sekolah =
+        data.asalSekolah ||
+        "-";
+
+      const jk =
+        data.jenisKelamin ||
+        "-";
+
+      const email =
+        sensorEmail(
+          data.email || ""
+        );
+
+      const tujuan =
+        data.tujuan &&
+        data.tujuan.trim() !== ""
+        ? data.tujuan
+        : "Belum mengisi tujuan";
+
+      const visi =
+        data.visi &&
+        data.visi.trim() !== ""
+        ? data.visi
+        : "Belum mengisi visi";
+
+      const misi =
+        data.misi &&
+        data.misi.trim() !== ""
+        ? data.misi
+        : "Belum mengisi misi";
+
+      profileContainer.innerHTML = `
 
 <div style="
   padding:20px;
@@ -248,55 +275,63 @@ profileContainer.innerHTML = `
   ">
 
     <!-- HEADER -->
+
     <div style="
       background:linear-gradient(135deg,#c40000,#ff3b3b);
-      height:140px;
+      height:160px;
       position:relative;
     ">
 
       <!-- FOTO -->
+
       <div style="
         position:absolute;
         left:50%;
-        bottom:-55px;
+        bottom:-60px;
         transform:translateX(-50%);
       ">
 
         <img
-  src="${data.fotoSelfie || 'assets/images/user.png'}"
-  onclick="zoomFoto('${data.fotoSelfie || 'assets/images/user.png'}')"
-  style="
-    width:120px;
-    height:120px;
-    border-radius:50%;
-    object-fit:cover;
-    border:5px solid white;
-    box-shadow:0 5px 15px rgba(0,0,0,0.2);
-    background:white;
-    cursor:pointer;
-  "
->
+        src="${foto}"
+
+        onclick="zoomFoto('${foto}')"
+
+        style="
+          width:130px;
+          height:130px;
+          border-radius:50%;
+          object-fit:cover;
+          border:5px solid white;
+          box-shadow:0 5px 15px rgba(0,0,0,0.2);
+          background:white;
+          cursor:pointer;
+        ">
 
       </div>
 
     </div>
 
     <!-- CONTENT -->
+
     <div style="
-      padding:75px 22px 25px;
+      padding:80px 22px 25px;
     ">
 
       <!-- NAMA -->
+
       <h2 style="
         text-align:center;
-        font-size:24px;
+        font-size:25px;
         color:#222;
-        margin-bottom:8px;
+        margin-bottom:10px;
       ">
-        ${data.namaLengkap || '-'}
+
+        ${nama}
+
       </h2>
 
-      <!-- STATUS -->
+      <!-- JABATAN -->
+
       <div style="
         text-align:center;
         margin-bottom:25px;
@@ -310,19 +345,23 @@ profileContainer.innerHTML = `
           font-size:13px;
           font-weight:bold;
         ">
-          Angkatan ${data.angkatanTahun || data.tahunPaskibra || '-'}
+
+          ${jabatan}
+
         </span>
 
       </div>
 
-      <!-- CARD DATA -->
+      <!-- DATA -->
+
       <div style="
         display:flex;
         flex-direction:column;
         gap:15px;
       ">
 
-        <!-- ITEM -->
+        <!-- SEKOLAH -->
+
         <div style="
           background:#f8f8f8;
           padding:15px;
@@ -342,12 +381,13 @@ profileContainer.innerHTML = `
             font-weight:bold;
             color:#222;
           ">
-            ${data.asalSekolah || '-'}
+            ${sekolah}
           </div>
 
         </div>
 
-        <!-- ITEM -->
+        <!-- JK -->
+
         <div style="
           background:#f8f8f8;
           padding:15px;
@@ -359,7 +399,7 @@ profileContainer.innerHTML = `
             color:#888;
             margin-bottom:5px;
           ">
-            Nomor Pendaftaran
+            Jenis Kelamin
           </div>
 
           <div style="
@@ -367,12 +407,13 @@ profileContainer.innerHTML = `
             font-weight:bold;
             color:#222;
           ">
-            ${data.nomorPendaftaran || '-'}
+            ${jk}
           </div>
 
         </div>
 
-        <!-- ITEM -->
+        <!-- EMAIL -->
+
         <div style="
           background:#f8f8f8;
           padding:15px;
@@ -384,24 +425,22 @@ profileContainer.innerHTML = `
             color:#888;
             margin-bottom:5px;
           ">
-            Nomor HP
+            Email
           </div>
 
           <div style="
             font-size:16px;
             font-weight:bold;
             color:#222;
+            word-break:break-word;
           ">
-            ${
-              data.nomorHp
-              ? data.nomorHp.substring(0,4) + "******"
-              : '-'
-            }
+            ${email}
           </div>
 
         </div>
 
-        <!-- ITEM -->
+        <!-- TUJUAN -->
+
         <div style="
           background:#f8f8f8;
           padding:15px;
@@ -413,19 +452,82 @@ profileContainer.innerHTML = `
             color:#888;
             margin-bottom:5px;
           ">
-            Alamat
+            Tujuan
           </div>
 
           <div style="
-            font-size:16px;
-            font-weight:bold;
+            font-size:15px;
             color:#222;
+            line-height:1.6;
           ">
-            ${
-              data.alamat
-              ? data.alamat.substring(0,2) + "***********" + data.alamat.slice(-2)
-              : '-'
-            }
+            ${tujuan}
+          </div>
+
+        </div>
+
+        <!-- VISI MISI -->
+
+        <div style="
+          display:flex;
+          gap:12px;
+        ">
+
+          <!-- VISI -->
+
+          <div style="
+            flex:1;
+            background:#f8f8f8;
+            padding:15px;
+            border-radius:18px;
+          ">
+
+            <div style="
+              color:#c40000;
+              font-weight:bold;
+              margin-bottom:8px;
+              text-align:center;
+            ">
+              VISI
+            </div>
+
+            <div style="
+              font-size:14px;
+              line-height:1.6;
+              color:#444;
+              text-align:center;
+            ">
+              ${visi}
+            </div>
+
+          </div>
+
+          <!-- MISI -->
+
+          <div style="
+            flex:1;
+            background:#f8f8f8;
+            padding:15px;
+            border-radius:18px;
+          ">
+
+            <div style="
+              color:#c40000;
+              font-weight:bold;
+              margin-bottom:8px;
+              text-align:center;
+            ">
+              MISI
+            </div>
+
+            <div style="
+              font-size:14px;
+              line-height:1.6;
+              color:#444;
+              text-align:center;
+            ">
+              ${misi}
+            </div>
+
           </div>
 
         </div>
@@ -443,9 +545,17 @@ profileContainer.innerHTML = `
     }else{
 
       profileContainer.innerHTML = `
-        <div>
-          Data user tidak ditemukan
-        </div>
+
+      <div style="
+        text-align:center;
+        padding:60px 20px;
+        color:#666;
+      ">
+
+        Data purna tidak ditemukan
+
+      </div>
+
       `;
 
     }
@@ -455,29 +565,24 @@ profileContainer.innerHTML = `
     console.log(error);
 
     profileContainer.innerHTML = `
-      <div>
-        Gagal memuat profile
-      </div>
+
+    <div style="
+      text-align:center;
+      padding:60px 20px;
+      color:red;
+    ">
+
+      Gagal memuat profile
+
+    </div>
+
     `;
 
   }
 
 }
 
-// JALANKAN
-
-loadProfile();
-
-
-
-
-
-
-
-
-
-
-
+// ================= ZOOM FOTO =================
 
 window.zoomFoto = function(src){
 
@@ -499,28 +604,34 @@ window.closeZoom = function(){
 
 }
 
+// ================= LOAD =================
 
+loadProfile();
 
+// ================= DISABLE COPY =================
 
+document.addEventListener(
+  "contextmenu",
+  (e)=>{
+    e.preventDefault();
+  }
+);
 
+document.addEventListener(
+  "selectstart",
+  (e)=>{
+    e.preventDefault();
+  }
+);
 
-
-
-
-
-
-document.addEventListener('contextmenu', function(e){
-  e.preventDefault(); // disable klik kanan / copy
-});
-
-document.addEventListener('selectstart', function(e){
-  e.preventDefault(); // disable blok teks
-});
-
-document.addEventListener('dragstart', function(e){
-  e.preventDefault(); // disable drag gambar
-});
-
-
+document.addEventListener(
+  "dragstart",
+  (e)=>{
+    e.preventDefault();
+  }
+);
 
 </script>
+
+</body>
+</html>

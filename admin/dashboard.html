@@ -32,12 +32,22 @@ body{
   left:0;
   top:0;
   padding:20px;
+
+  overflow-y:auto;
+  overflow-x:hidden;
+
+  padding-bottom:100px;
 }
 
 .logo{
   font-size:25px;
   font-weight:bold;
   margin-bottom:30px;
+}
+
+.menu{
+  display:flex;
+  flex-direction:column;
 }
 
 .menu a{
@@ -48,10 +58,23 @@ body{
   background:#1e293b;
   color:white;
   text-decoration:none;
+
+  transition:0.2s;
 }
 
 .menu a:hover{
   background:#2563eb;
+}
+
+/* SCROLLBAR */
+
+.sidebar::-webkit-scrollbar{
+  width:5px;
+}
+
+.sidebar::-webkit-scrollbar-thumb{
+  background:#334155;
+  border-radius:10px;
 }
 
 /* CONTENT */
@@ -138,9 +161,17 @@ Dashboard
 Data User
 </a>
 
+<a href="datapurna.html">
+Data purna
+</a>
+
 
 <a href="status.html">
 Status user
+</a>
+
+<a href="chatAdmin.html">
+Chat global
 </a>
 
 
@@ -176,6 +207,10 @@ banner sampul
 Atur Iklan
 </a>
 
+<a href="adminlist.html">
+DAFTAR ADMIN
+</a>
+
 </div>
 
 </div>
@@ -186,12 +221,12 @@ Atur Iklan
 
 <div class="topbar">
 
-<h2>
-Selamat Datang Admin
+<h2 id="welcomeText">
+  Selamat Datang Admin
 </h2>
 
 <p>
-Dashboard Firebase Paskibra
+Dashboard Paskibra
 </p>
 
 </div>
@@ -329,9 +364,29 @@ const adminData =
   );
 
 document.getElementById(
+  "welcomeText"
+).innerHTML = `
+
+Selamat Datang Admin
+<br>
+
+<span style="
+  color:#2563eb;
+  font-weight:bold;
+">
+
+${adminData.nama || "Admin"}
+
+</span>
+
+`;
+
+document.getElementById(
   "adminNama"
 ).innerText =
   adminData.nama || "-";
+
+
 
 document.getElementById(
   "adminEmail"

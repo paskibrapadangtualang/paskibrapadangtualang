@@ -200,6 +200,43 @@ h2{
     <input type="text" id="asalSekolah">
   </div>
 
+
+  <div class="input-group">
+  <label>Jabatan</label>
+
+  <input
+    type="text"
+    id="jabatan"
+    placeholder="Contoh: Purna Senior">
+</div>
+
+<div class="input-group">
+  <label>Tujuan</label>
+
+  <input
+    type="text"
+    id="tujuan"
+    placeholder="Masukkan tujuan">
+</div>
+
+<div class="input-group">
+  <label>Visi</label>
+
+  <input
+    type="text"
+    id="visi"
+    placeholder="Masukkan visi">
+</div>
+
+<div class="input-group">
+  <label>Misi</label>
+
+  <input
+    type="text"
+    id="misi"
+    placeholder="Masukkan misi">
+</div>
+
   <div class="input-group">
     <label>Jenis Kelamin</label>
 
@@ -310,7 +347,19 @@ window.registerPurna = async () => {
   const namaPurna = document.getElementById("namaPurna").value;
   const asalSekolah = document.getElementById("asalSekolah").value;
   const jenisKelamin = document.getElementById("jenisKelamin").value;
+  const jabatan =
+  document.getElementById("jabatan").value;
+
+const tujuan =
+  document.getElementById("tujuan").value;
+
+const visi =
+  document.getElementById("visi").value;
+
+const misi =
+  document.getElementById("misi").value;
   const fotoFile = document.getElementById("fotoPurna").files[0];
+  
 
   if (!email || !password || !confirmPassword || !namaPurna || !asalSekolah) {
     alert("Lengkapi semua data");
@@ -347,15 +396,31 @@ window.registerPurna = async () => {
     const user = userCredential.user;
 
     // save to DB (KHUSUS PURNA)
-    await set(ref(db, "purna/" + user.uid), {
-      uid: user.uid,
-      namaPurna,
-      asalSekolah,
-      jenisKelamin,
-      email,
-      foto: fotoUrl,
-      role: "purna"
-    });
+await set(ref(db, "purna/" + user.uid), {
+
+  uid: user.uid,
+
+  namaPurna,
+
+  asalSekolah,
+
+  jenisKelamin,
+
+  email,
+
+  foto: fotoUrl,
+
+  jabatan,
+
+  tujuan,
+
+  visi,
+
+  misi,
+
+  role: "purna"
+
+});
 
     alert("Pendaftaran berhasil");
     window.location.href = "dashboard.html";

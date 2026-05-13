@@ -17,8 +17,8 @@
 }
 
 body{
-  background:#0f172a;
-  height:100vh;
+  background:url('assets/images/RI.webp') center center / cover no-repeat;
+  min-height:100vh;
   display:flex;
   justify-content:center;
   align-items:center;
@@ -26,14 +26,14 @@ body{
 
 .login-box{
   width:350px;
-  background:#fff;
+  background:#d6d6d6;
   padding:30px;
   border-radius:15px;
 }
 
 h2{
   text-align:center;
-  margin-bottom:25px;
+  margin-bottom:5px;
 }
 
 input{
@@ -54,6 +54,7 @@ button{
   color:white;
   font-size:16px;
   cursor:pointer;
+  margin-bottom:10px;
 }
 
 button:hover{
@@ -67,13 +68,110 @@ button:hover{
   color:#2563eb;
 }
 
+.menu{
+  margin-top:15px;
+  text-align:center;
+}
+
+.menu a{
+  display:block;
+  margin-top:10px;
+  color:#2563eb;
+  text-decoration:none;
+  font-size:14px;
+}
+
+.menu a:hover{
+  text-decoration:underline;
+}
+
+.reset-btn{
+  background:#f59e0b;
+}
+
+
+.logo-box{
+  text-align:center;
+  margin-bottom:25px;
+}
+
+.logo-img{
+  width:90px;
+  height:90px;
+  object-fit:contain;
+  margin-bottom:12px;
+}
+
+.logo-box h2{
+  color:#8f8f8f;
+  font-size:28px;
+  font-weight:bold;
+  letter-spacing:1px;
+  border-radius: 10px;
+}
+
+
+
+.shine-text{
+  position:relative;
+  display:inline-block;
+  color:white;
+  font-size:28px;
+  font-weight:bold;
+  letter-spacing:1px;
+  overflow:hidden;
+}
+
+/* EFEK MENGILAT */
+.shine-text::after{
+  content:"";
+  position:absolute;
+  top:0;
+  left:-75%;
+  width:50%;
+  height:100%;
+
+  background:linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.9),
+    transparent
+  );
+
+  transform:skewX(-25deg);
+
+  animation:shine 2.5s infinite;
+}
+
+@keyframes shine{
+
+  0%{
+    left:-75%;
+  }
+
+  100%{
+    left:130%;
+  }
+
+}
 </style>
 </head>
 <body>
 
 <div class="login-box">
 
-<h2>ADMIN PANEL</h2>
+<div class="logo-box">
+
+  <img
+    src="assets/images/RI.webp"
+    class="logo-img"
+  >
+
+  <h2 class="shine-text">
+  ADMIN PANEL
+</h2>
+
+</div>
 
 <input
   type="email"
@@ -91,8 +189,24 @@ button:hover{
 Login Admin
 </button>
 
+<button
+class="reset-btn"
+onclick="resetPassword()">
+
+Atur Ulang Password
+
+</button>
+
 <div class="loading" id="loading">
 Memproses login...
+</div>
+
+<div class="menu">
+
+<a href="daftaradmin.html">
+Daftar Akun Admin
+</a>
+
 </div>
 
 </div>
@@ -106,7 +220,8 @@ from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
   getAuth,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
@@ -200,6 +315,37 @@ window.loginAdmin = async function(){
 
     }
 
+    const adminData =
+      snapshot.val();
+
+    // STATUS PENDING
+
+    if(adminData.status === "pending"){
+
+      loading.style.display = "none";
+
+      alert(
+        "Akun ini belum disetujui oleh admin utama untuk login"
+      );
+
+      return;
+
+    }
+
+    // STATUS DITOLAK
+
+    if(adminData.status === "ditolak"){
+
+      loading.style.display = "none";
+
+      alert(
+        "Akun anda ditolak oleh admin utama"
+      );
+
+      return;
+
+    }
+
     // SIMPAN SESSION
 
     localStorage.setItem(
@@ -228,6 +374,44 @@ window.loginAdmin = async function(){
 
     alert(
       "Email atau password salah"
+    );
+
+  }
+
+}
+
+// RESET PASSWORD
+
+window.resetPassword = async function(){
+
+  const email =
+    document.getElementById("email").value;
+
+  if(email === ""){
+
+    alert(
+      "Masukkan email terlebih dahulu"
+    );
+
+    return;
+
+  }
+
+  try{
+
+    await sendPasswordResetEmail(
+      auth,
+      email
+    );
+
+    alert(
+      "Link reset password berhasil dikirim ke email"
+    );
+
+  }catch(error){
+
+    alert(
+      "Gagal mengirim reset password"
     );
 
   }

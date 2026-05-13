@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Data Purna</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#f5f5f5;
+  padding:20px;
+}
+
+.header{
+  margin-bottom:25px;
+}
+
+.header h2{
+  color:#111827;
+  margin-bottom:5px;
+}
+
+.header p{
+  color:#666;
+  font-size:14px;
+}
+
+.search-box{
+  margin-bottom:25px;
+}
+
+.search-box input{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:15px;
+  outline:none;
+  background:white;
+  box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+.card{
+  background:white;
+  border-radius:20px;
+  padding:20px;
+  margin-bottom:20px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+.top{
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+
+.foto{
+  width:85px;
+  height:85px;
+  border-radius:50%;
+  object-fit:cover;
+  border:3px solid #c40000;
+}
+
+.nama{
+  font-size:20px;
+  font-weight:bold;
+  margin-bottom:6px;
+  color:#111827;
+}
+
+.info{
+  font-size:14px;
+  color:#555;
+  margin-bottom:5px;
+}
+
+.badge{
+  display:inline-block;
+  background:#c40000;
+  color:white;
+  padding:5px 12px;
+  border-radius:20px;
+  font-size:12px;
+  margin-top:8px;
+}
+
+.button-group{
+  display:flex;
+  gap:10px;
+  margin-top:18px;
+  flex-wrap:wrap;
+}
+
+button{
+  border:none;
+  padding:10px 15px;
+  border-radius:10px;
+  cursor:pointer;
+  color:white;
+  font-size:14px;
+}
+
+.detail-btn{
+  background:#2563eb;
+}
+
+.hapus-btn{
+  background:#dc2626;
+}
+
+.loading{
+  text-align:center;
+  margin-top:50px;
+  color:#666;
+}
+
+.empty{
+  text-align:center;
+  margin-top:50px;
+  color:#888;
+}
+
+.modal{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.6);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+  padding:20px;
+}
+
+.modal-box{
+  width:100%;
+  max-width:400px;
+  background:white;
+  border-radius:20px;
+  padding:25px;
+}
+
+.modal-box h3{
+  margin-bottom:20px;
+}
+
+.modal-foto{
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  object-fit:cover;
+  display:block;
+  margin:auto;
+  margin-bottom:20px;
+  border:4px solid #c40000;
+}
+
+.close-btn{
+  width:100%;
+  margin-top:20px;
+  background:#111827;
+}
+
+</style>
+</head>
+<body>
+
+<div class="header">
+
+<h2>Data Purna</h2>
+
+<p>
+Semua data anggota purna paskibra
+</p>
+
+</div>
+
+<div class="search-box">
+
+<input
+type="text"
+id="searchInput"
+placeholder="Cari nama purna...">
+
+</div>
+
+<div id="listPurna">
+
+<div class="loading">
+Loading data...
+</div>
+
+</div>
+
+<!-- MODAL DETAIL -->
+
+<div
+class="modal"
+id="detailModal">
+
+<div class="modal-box">
+
+<img
+id="detailFoto"
+class="modal-foto">
+
+<h3 id="detailNama"></h3>
+
+<p id="detailEmail"></p>
+<br>
+
+<p id="detailSekolah"></p>
+<br>
+
+<p id="detailKelamin"></p>
+<br>
+
+<p id="detailUid"></p>
+
+<button
+class="close-btn"
+onclick="closeModal()">
+
+Tutup
+
+</button>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getAuth,
+  onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+  getDatabase,
+  ref,
+  onValue,
+  remove,
+  get
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+// ======================
+// FIREBASE
+// ======================
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+
+};
+
+const app =
+initializeApp(firebaseConfig);
+
+const auth =
+getAuth(app);
+
+const db =
+getDatabase(app);
+
+const listPurna =
+document.getElementById(
+  "listPurna"
+);
+
+let semuaData = [];
+
+// ======================
+// CEK LOGIN ADMIN
+// ======================
+
+onAuthStateChanged(auth, async(user)=>{
+
+  if(!user){
+
+    alert("Silahkan login");
+
+    window.location.href =
+      "index.html";
+
+    return;
+
+  }
+
+  const adminSnap =
+    await get(
+      ref(db, "admin/" + user.uid)
+    );
+
+  // HANYA ADMIN
+
+  if(!adminSnap.exists()){
+
+    alert(
+      "Hanya admin yang bisa akses"
+    );
+
+    window.location.href =
+      "../index.html";
+
+    return;
+
+  }
+
+  // LOAD DATA
+
+  loadPurna();
+
+});
+
+// ======================
+// LOAD DATA PURNA
+// ======================
+
+function loadPurna(){
+
+  onValue(
+    ref(db, "purna"),
+    (snapshot)=>{
+
+      if(!snapshot.exists()){
+
+        listPurna.innerHTML = `
+
+        <div class="empty">
+        Belum ada data purna
+        </div>
+
+        `;
+
+        return;
+
+      }
+
+      semuaData =
+        Object.entries(
+          snapshot.val()
+        );
+
+      renderPurna(
+        semuaData
+      );
+
+    }
+  );
+
+}
+
+// ======================
+// RENDER DATA
+// ======================
+
+function renderPurna(data){
+
+  let html = "";
+
+  data.forEach(([uid,item])=>{
+
+    html += `
+
+    <div class="card">
+
+      <div class="top">
+
+        <img
+        src="${item.foto}"
+        class="foto">
+
+        <div>
+
+          <div class="nama">
+          ${item.namaPurna}
+          </div>
+
+          <div class="info">
+          📧 ${item.email}
+          </div>
+
+          <div class="info">
+          🏫 ${item.asalSekolah}
+          </div>
+
+          <div class="info">
+          👤 ${item.jenisKelamin}
+          </div>
+
+          <div class="badge">
+          PURNA
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="button-group">
+
+        <button
+        class="detail-btn"
+        onclick="lihatDetail('${uid}')">
+
+        Detail
+
+        </button>
+
+        <button
+        class="hapus-btn"
+        onclick="hapusPurna('${uid}')">
+
+        Hapus
+
+        </button>
+
+      </div>
+
+    </div>
+
+    `;
+
+  });
+
+  listPurna.innerHTML =
+    html;
+
+}
+
+// ======================
+// SEARCH
+// ======================
+
+document
+.getElementById(
+  "searchInput"
+)
+.addEventListener(
+  "input",
+  function(){
+
+    const keyword =
+      this.value.toLowerCase();
+
+    const hasil =
+      semuaData.filter(
+        ([uid,item])=>
+
+        item.namaPurna
+        .toLowerCase()
+        .includes(keyword)
+
+      );
+
+    renderPurna(hasil);
+
+  }
+);
+
+// ======================
+// DETAIL
+// ======================
+
+window.lihatDetail =
+function(uid){
+
+  const data =
+    semuaData.find(
+      item => item[0] === uid
+    );
+
+  if(!data) return;
+
+  const item =
+    data[1];
+
+  document.getElementById(
+    "detailFoto"
+  ).src =
+    item.foto;
+
+  document.getElementById(
+    "detailNama"
+  ).innerHTML =
+    item.namaPurna;
+
+  document.getElementById(
+    "detailEmail"
+  ).innerHTML =
+    "📧 " + item.email;
+
+  document.getElementById(
+    "detailSekolah"
+  ).innerHTML =
+    "🏫 " + item.asalSekolah;
+
+  document.getElementById(
+    "detailKelamin"
+  ).innerHTML =
+    "👤 " + item.jenisKelamin;
+
+  document.getElementById(
+    "detailUid"
+  ).innerHTML =
+    "🆔 " + item.uid;
+
+  document.getElementById(
+    "detailModal"
+  ).style.display =
+    "flex";
+
+}
+
+// ======================
+// CLOSE MODAL
+// ======================
+
+window.closeModal =
+function(){
+
+  document.getElementById(
+    "detailModal"
+  ).style.display =
+    "none";
+
+}
+
+// ======================
+// HAPUS DATA
+// ======================
+
+window.hapusPurna =
+async function(uid){
+
+  const yakin =
+    confirm(
+      "Yakin ingin menghapus data purna ini?"
+    );
+
+  if(!yakin) return;
+
+  try{
+
+    await remove(
+      ref(db, "purna/" + uid)
+    );
+
+    alert(
+      "Data berhasil dihapus"
+    );
+
+  }catch(error){
+
+    alert(
+      "Gagal menghapus data"
+    );
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>

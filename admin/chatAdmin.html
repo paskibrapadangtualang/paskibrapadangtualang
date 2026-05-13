@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Chat Global Admin</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#f5f5f5;
+  padding-top:70px;
+  padding-bottom:90px;
+}
+
+/* HEADER */
+
+header{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:60px;
+  background:#0f172a;
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-weight:bold;
+  font-size:18px;
+  z-index:1000;
+}
+
+/* title tengah */
+.header-title{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+}
+
+/* tombol hapus */
+.delete-all-btn{
+  position:absolute;
+  right:15px;
+  background:#dc2626;
+  color:white;
+  border:none;
+  padding:8px 12px;
+  border-radius:10px;
+  font-size:12px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.delete-all-btn:hover{
+  background:#b91c1c;
+}
+/* CHAT */
+
+.chat-container{
+  padding:15px;
+}
+
+.chat-item{
+  display:flex;
+  gap:10px;
+  margin-bottom:15px;
+}
+
+.chat-avatar{
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  object-fit:cover;
+  border:2px solid #2563eb;
+}
+
+.chat-bubble{
+  background:white;
+  padding:12px;
+  border-radius:15px;
+  width:100%;
+  box-shadow:0 2px 5px rgba(0,0,0,0.08);
+}
+
+.chat-name{
+  font-weight:bold;
+  color:#2563eb;
+  margin-bottom:3px;
+  font-size:15px;
+}
+
+.chat-role{
+  font-size:12px;
+  color:#666;
+  margin-bottom:8px;
+}
+
+.chat-message{
+  font-size:14px;
+  color:#444;
+  line-height:1.5;
+}
+
+.chat-image{
+  width:100%;
+  border-radius:12px;
+  margin-top:10px;
+}
+
+.chat-date{
+  font-size:11px;
+  color:#888;
+  margin-top:8px;
+}
+
+.admin-badge{
+  display:inline-block;
+  background:#2563eb;
+  color:white;
+  font-size:10px;
+  padding:3px 8px;
+  border-radius:20px;
+  margin-left:5px;
+}
+
+.delete-btn{
+  margin-top:10px;
+  background:#dc2626;
+  color:white;
+  border:none;
+  padding:8px 12px;
+  border-radius:8px;
+  font-size:12px;
+  cursor:pointer;
+}
+
+/* INPUT */
+
+.chat-input-box{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  background:white;
+  padding:10px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  box-shadow:0 -2px 8px rgba(0,0,0,0.1);
+  z-index:1000;
+}
+
+.file-icon{
+  width:45px;
+  height:45px;
+  object-fit:cover;
+  border-radius:50%;
+  cursor:pointer;
+}
+
+.chat-input{
+  flex:1;
+  padding:12px 15px;
+  border:1px solid #ddd;
+  border-radius:25px;
+  outline:none;
+  font-size:14px;
+}
+
+.send-btn{
+  background:#2563eb;
+  color:white;
+  border:none;
+  padding:12px 18px;
+  border-radius:25px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.loading{
+  text-align:center;
+  margin-top:30px;
+  color:#777;
+}
+
+
+.view-btn{
+    position: relative;
+    z-index: 10;
+  margin-top:10px;
+  pointer-events: auto;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  background:#f1f5f9;
+  border:none;
+  padding:8px 12px;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.view-btn:hover{
+  background:#dbeafe;
+}
+
+/* MODAL */
+
+.modal-view{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.6);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:99999;
+}
+
+
+.modal-content{
+  width:90%;
+  max-width:400px;
+  background:white;
+  border-radius:20px;
+  padding:20px;
+  max-height:70vh;
+  overflow-y:auto;
+}
+
+.viewer-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 0;
+  border-bottom:1px solid #eee;
+}
+
+.viewer-item img{
+  width:45px;
+  height:45px;
+  border-radius:50%;
+  object-fit:cover;
+}
+
+.close-modal{
+  margin-top:15px;
+  width:100%;
+  padding:12px;
+  border:none;
+  background:#dc2626;
+  color:white;
+  border-radius:12px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+</style>
+</head>
+<body>
+
+<header>
+
+<div class="header-title">
+CHAT GLOBAL ADMIN
+</div>
+
+<button
+class="delete-all-btn"
+onclick="hapusSemuaChat()">
+
+Hapus Semua
+
+</button>
+
+</header>
+
+<!-- CHAT -->
+
+<div
+class="chat-container"
+id="chatContainer">
+
+<div class="loading">
+Loading chat...
+</div>
+
+</div>
+
+<!-- INPUT -->
+
+<div class="chat-input-box">
+
+<img
+src="assets/images/im_cs_image.png"
+class="file-icon"
+onclick="document.getElementById('imageInput').click()">
+
+<input
+type="file"
+id="imageInput"
+accept="image/*"
+hidden>
+
+<input
+type="text"
+id="messageInput"
+class="chat-input"
+placeholder="Tulis pesan admin...">
+
+<button
+class="send-btn"
+onclick="sendMessage()">
+
+Kirim
+
+</button>
+
+</div>
+
+<!-- MODAL VIEW -->
+
+<div
+id="viewModal"
+class="modal-view">
+
+  <div class="modal-content">
+
+    <h3>
+      Sudah Melihat
+    </h3>
+
+    <br>
+
+    <div id="viewerList">
+
+    </div>
+
+    <button
+    class="close-modal"
+    onclick="closeViewerModal()">
+
+    Tutup
+
+    </button>
+
+  </div>
+
+</div>
+
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getDatabase, ref, push, onValue, remove, get, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+// ======================
+// FIREBASE CONFIG
+// ======================
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+};
+
+// ======================
+// INIT
+// ======================
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+let currentUser = null;
+
+// ======================
+// LOGIN
+// ======================
+
+onAuthStateChanged(auth, async (user) => {
+
+  if (!user) {
+    window.location.href = "index.html";
+    return;
+  }
+
+  currentUser = user;
+  loadChat();
+
+});
+
+// ======================
+// LOAD CHAT (FIX STABIL)
+// ======================
+
+function loadChat() {
+
+  const chatRef = ref(db, "info");
+
+  let renderTimeout;
+
+  onValue(chatRef, (snapshot) => {
+
+    clearTimeout(renderTimeout);
+
+    renderTimeout = setTimeout(() => {
+      renderChat(snapshot);
+    }, 70);
+
+  });
+
+}
+
+// ======================
+// RENDER CHAT (FIX UTAMA)
+// ======================
+
+async function renderChat(snapshot) {
+
+  const container = document.getElementById("chatContainer");
+
+  if (!snapshot.exists()) {
+    container.innerHTML = `<div class="loading">Belum ada chat</div>`;
+    return;
+  }
+
+  // ambil user info
+  let viewerData = { nama: "User", foto: "", role: "user" };
+
+  const adminSnap = await get(ref(db, "admin/" + currentUser.uid));
+  const userSnap = await get(ref(db, "users/" + currentUser.uid));
+
+  if (adminSnap.exists()) {
+    const a = adminSnap.val();
+    viewerData = {
+      nama: a.nama || "Admin",
+      foto: a.foto || "",
+      role: "admin"
+    };
+  } else if (userSnap.exists()) {
+    const u = userSnap.val();
+    viewerData = {
+      nama: u.namaLengkap || u.nama || "User",
+      foto: u.fotoSelfie || u.foto || "",
+      role: "user"
+    };
+  }
+
+  const data = Object.entries(snapshot.val());
+
+  let html = "";
+
+  for (const [key, item] of data) {
+
+    if (item.type !== "chat-admin") continue;
+
+    // ======================
+    // FIX VIEW (NO WAIT / NO BLOCK)
+    // ======================
+
+    update(ref(db, "info/" + key + "/views"), {
+      [currentUser.uid]: {
+        nama: viewerData.nama,
+        foto: viewerData.foto,
+        role: viewerData.role,
+        waktu: Date.now()
+      }
+    });
+
+    let tombolHapus = "";
+
+    if (item.uid === currentUser.uid) {
+      tombolHapus = `
+        <button class="delete-btn" onclick="deleteChat('${key}')">
+          Hapus
+        </button>
+      `;
+    }
+
+    html += `
+      <div class="chat-item">
+
+        <img src="${item.foto || 'assets/images/RI.webp'}" class="chat-avatar">
+
+        <div class="chat-bubble">
+
+          <div class="chat-name">
+            ${item.nama || "Admin"}
+            <span class="admin-badge">ADMIN</span>
+          </div>
+
+          <div class="chat-role">
+            ${item.jabatan || ""} • ${item.role || ""}
+          </div>
+
+          <div class="chat-message">
+            ${item.isi || ""}
+          </div>
+
+          ${item.gambar ? `<img src="${item.gambar}" class="chat-image">` : ""}
+
+          <div class="chat-date">
+            ${item.tanggal || ""}
+          </div>
+
+          <button class="view-btn" onclick="lihatViewer('${key}')">
+            👁 ${item.views ? Object.keys(item.views).length : 0}
+          </button>
+
+          ${tombolHapus}
+
+        </div>
+
+      </div>
+    `;
+  }
+
+  container.innerHTML = html || `<div class="loading">Belum ada chat admin</div>`;
+
+  window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+}
+
+
+
+function formatWaktuView(waktu) {
+  const now = new Date();
+  const date = new Date(waktu);
+
+  // clone tanpa merusak jam asli
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const target = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+  const diffTime = today - target;
+  const diffDay = diffTime / (1000 * 60 * 60 * 24);
+
+  const jam = date.getHours().toString().padStart(2, "0");
+  const menit = date.getMinutes().toString().padStart(2, "0");
+  const waktuJam = `${jam}.${menit} WIB`;
+
+  if (diffDay === 0) return `Hari ini pukul ${waktuJam}`;
+  if (diffDay === 1) return `Kemarin pukul ${waktuJam}`;
+
+  const tgl = date.getDate().toString().padStart(2, "0");
+  const bulan = date.toLocaleString("id-ID", { month: "short" });
+  const tahun = date.getFullYear();
+
+  return `${tgl} ${bulan} ${tahun} pukul ${waktuJam}`;
+}
+
+
+// ======================
+// SEND MESSAGE (TETAP)
+// ======================
+
+window.sendMessage = async function () {
+
+  const input = document.getElementById("messageInput");
+  const imageInput = document.getElementById("imageInput");
+
+  const imageFile = imageInput.files[0];
+  const text = input.value.trim();
+
+  if (text === "" && !imageFile) {
+    alert("Tulis pesan atau pilih gambar");
+    return;
+  }
+
+  let imageUrl = "";
+
+  if (imageFile) {
+
+    try {
+
+      const formData = new FormData();
+      formData.append("file", imageFile);
+      formData.append("upload_preset", "uploadgambar");
+
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/djxlbemky/image/upload`,
+        { method: "POST", body: formData }
+      );
+
+      const data = await res.json();
+      imageUrl = data.secure_url;
+
+    } catch (e) {
+      alert("Upload gagal");
+      return;
+    }
+
+  }
+
+  const adminSnap = await get(ref(db, "admin/" + currentUser.uid));
+
+  if (!adminSnap.exists()) {
+    alert("Data admin tidak ditemukan");
+    return;
+  }
+
+  const adminData = adminSnap.val();
+
+  await push(ref(db, "info"), {
+    uid: currentUser.uid,
+    nama: adminData.nama,
+    foto: adminData.foto || "",
+    jabatan: adminData.jabatan || "",
+    role: adminData.role || "admin",
+    status: adminData.status || "",
+    isi: text,
+    gambar: imageUrl,
+    tanggal: new Date().toLocaleString("id-ID"),
+    type: "chat-admin"
+  });
+
+  input.value = "";
+  imageInput.value = "";
+
+};
+
+// ======================
+// DELETE CHAT
+// ======================
+
+window.deleteChat = async function (id) {
+  if (!confirm("Hapus pesan ini?")) return;
+  await remove(ref(db, "info/" + id));
+};
+
+// ======================
+// HAPUS SEMUA
+// ======================
+
+window.hapusSemuaChat = async function () {
+  if (!confirm("Yakin ingin menghapus semua chat global?")) return;
+  await remove(ref(db, "info"));
+  alert("Semua chat berhasil dihapus");
+};
+
+// ======================
+// LIHAT VIEWER
+// ======================
+
+window.lihatViewer = async function (id) {
+
+  const snap = await get(ref(db, "info/" + id + "/views"));
+  const viewerList = document.getElementById("viewerList");
+
+  if (!snap.exists()) {
+    viewerList.innerHTML = "Belum ada yang melihat";
+  } else {
+
+    viewerList.innerHTML = Object.values(snap.val()).map(v => `
+  <div class="viewer-item">
+    <img src="${v.foto || 'assets/images/user.png'}">
+
+    <div style="flex:1">
+      <div style="font-weight:bold">
+        ${v.nama}
+      </div>
+
+      <div style="font-size:12px;color:#666">
+        ${formatWaktuView(v.waktu)}
+      </div>
+    </div>
+  </div>
+`).join("");
+
+  }
+
+  document.getElementById("viewModal").style.display = "flex";
+};
+
+// ======================
+// CLOSE MODAL
+// ======================
+
+window.closeViewerModal = function () {
+  document.getElementById("viewModal").style.display = "none";
+};
+
+</script>
+</body>
+</html>
