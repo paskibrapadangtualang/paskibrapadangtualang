@@ -1662,8 +1662,15 @@ document.addEventListener('dragstart', function(e){
         </p>
 
         <div class="app-rating">
-          ★ 4.9 • Gratis • Aplikasi
-        </div>
+
+  ★ 4.9 • Gratis • Aplikasi
+
+  <span class="playstore-badge">
+    <img src="assets/images/google-play.png">
+    Google Play
+  </span>
+
+</div>
 
       </div>
 
@@ -1850,6 +1857,30 @@ body{
   font-size:13px;
   color:#0f9d58;
   font-weight:bold;
+
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.playstore-badge{
+  display:flex;
+  align-items:center;
+  gap:6px;
+
+  background:#f1f1f1;
+  padding:5px 10px;
+  border-radius:12px;
+
+  font-size:12px;
+  color:#333;
+}
+
+.playstore-badge img{
+  width:16px;
+  height:16px;
+  border-radius:4px;
 }
 
 .app-preview{
