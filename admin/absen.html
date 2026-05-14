@@ -357,9 +357,67 @@ Dashboard Absensi Admin
 
 </div>
 
+
+<!-- SETTING ABSEN -->
+<!-- SETTING ABSEN -->
+<div class="filter-box">
+
+  <h3 style="margin-bottom:15px;">Setting Waktu Absen</h3>
+
+  <div class="filter-grid">
+
+    <!-- JAM BUKA -->
+<div>
+  <label>Jam Buka Absen</label>
+  <select id="jamBuka"></select>
+</div>
+
+    <!-- JAM TUTUP -->
+<div>
+  <label>Jam Tutup Absen</label>
+  <select id="jamTutup"></select>
+</div>
+    <!-- BUTTON -->
+    <div style="display:flex;align-items:end;">
+      <button onclick="simpanSettingAbsen()" style="
+        width:100%;
+        padding:13px;
+        border:none;
+        border-radius:12px;
+        background:#2563eb;
+        color:white;
+        cursor:pointer;
+        font-weight:bold;
+        transition:0.2s;
+      " onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+        Simpan Setting
+      </button>
+    </div>
+
+  </div>
+</div>
+
+
+
+
 <!-- DATA ABSEN -->
 
 <div id="absenList"></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!-- MODAL -->
 
@@ -399,14 +457,14 @@ from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getDatabase,
   ref,
-  get
+  get,
+  set,
+  onValue
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 // FIREBASE
-
 const firebaseConfig = {
-
   apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
   authDomain: "paskibra2026-300eb.firebaseapp.com",
   databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
@@ -414,465 +472,458 @@ const firebaseConfig = {
   storageBucket: "paskibra2026-300eb.firebasestorage.app",
   messagingSenderId: "937469132434",
   appId: "1:937469132434:web:d1924e1160350000d1b04b"
-
 };
 
-// INIT
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-const app =
-  initializeApp(firebaseConfig);
+/* =========================
+   ELEMENT SETTING ABSEN
+========================= */
+const jamBuka = document.getElementById("jamBuka");
+const jamTutup = document.getElementById("jamTutup");
 
-const db =
-  getDatabase(app);
+/* =========================
+   ELEMENT DATA ABSEN
+========================= */
+const absenList = document.getElementById("absenList");
+const searchInput = document.getElementById("searchInput");
+const filterTanggal = document.getElementById("filterTanggal");
+const filterBulan = document.getElementById("filterBulan");
+const titikContainer = document.getElementById("titikContainer");
 
-// ELEMENT
-
-const absenList =
-  document.getElementById(
-    "absenList"
-  );
-
-const searchInput =
-  document.getElementById(
-    "searchInput"
-  );
-
-const filterTanggal =
-  document.getElementById(
-    "filterTanggal"
-  );
-
-const filterBulan =
-  document.getElementById(
-    "filterBulan"
-  );
-
-const titikContainer =
-  document.getElementById(
-    "titikContainer"
-  );
-
-// DATA
-
+/* =========================
+   DATA GLOBAL
+========================= */
 let semuaData = [];
-
 let semuaUsers = [];
-
 let userHadir = [];
-
 let userBelum = [];
 
+/* =========================
+   ISI JAM 00 - 23
+========================= */
+/* =========================
+   ISI JAM + MENIT DETAIL (00:00 - 23:59)
+   TANPA HAPUS LOGIC LAIN
+========================= */
+function isiJam() {
+
+  // penting: jangan hapus struktur lain
+  jamBuka.innerHTML = "";
+  jamTutup.innerHTML = "";
+
+  for (let h = 0; h < 24; h++) {
+
+    const jam = String(h).padStart(2, "0");
+
+    for (let m = 0; m < 60; m++) {
+
+      const menit = String(m).padStart(2, "0");
+
+      const value = `${jam}.${menit}`; // contoh 17.20
+
+      const opt1 = document.createElement("option");
+      opt1.value = value;
+      opt1.textContent = value;
+
+      const opt2 = opt1.cloneNode(true);
+
+      jamBuka.appendChild(opt1);
+      jamTutup.appendChild(opt2);
+    }
+  }
+}
+
+/* =========================
+   LOAD SETTING FIREBASE
+========================= */
+function loadSettingAbsen() {
+  onValue(ref(db, "settings/absen"), (snap) => {
+    const data = snap.val();
+
+    if (!data) return;
+
+    jamBuka.value = data.buka || "";
+    jamTutup.value = data.tutup || "";
+  });
+}
+
+/* =========================
+   SIMPAN SETTING ABSEN
+========================= */
+window.simpanSettingAbsen = function () {
+
+  const buka = jamBuka.value;
+  const tutup = jamTutup.value;
+
+  if (!buka || !tutup) {
+    alert("Jam buka dan tutup wajib diisi!");
+    return;
+  }
+
+ const timeBuka = parseFloat(buka);
+const timeTutup = parseFloat(tutup);
+
+if (timeBuka >= timeTutup) {
+  alert("Jam buka harus lebih kecil dari jam tutup!");
+  return;
+}
+
+  set(ref(db, "settings/absen"), {
+    buka,
+    tutup,
+    aktif: true,
+    updatedAt: Date.now()
+  })
+  .then(() => {
+    alert("Setting absen berhasil disimpan");
+  })
+  .catch((err) => {
+    alert("Gagal menyimpan setting: " + err.message);
+  });
+};
+
+/* =========================
+   NORMALIZE DATE
+========================= */
+function normalizeDate(dateStr) {
+
+  if (!dateStr) return "-";
+
+  const d = new Date(dateStr);
+
+  if (!isNaN(d)) {
+    const day = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
+  return dateStr;
+}
+
+isiJam();
+loadSettingAbsen();
+
+// ======================
+// TODAY (opsional kalau nanti dipakai)
+// ======================
+function getTodayDate() {
+  const now = new Date();
+  const wib = new Date(
+    now.toLocaleString("en-US", { timeZone: "Asia/Jakarta" })
+  );
+  return wib.toLocaleDateString("id-ID");
+}
+
+// ======================
 // LOAD DATA
+// ======================
+async function loadAbsensi() {
 
-async function loadAbsensi(){
-
-  absenList.innerHTML =
-    `<div class="kosong">Loading...</div>`;
+  absenList.innerHTML = `<div class="kosong">Loading...</div>`;
 
   semuaData = [];
 
-  const usersSnapshot =
-    await get(
-      ref(db, "users")
-    );
+  const usersSnapshot = await get(ref(db, "users"));
+  const absenSnapshot = await get(ref(db, "absensi"));
 
-  const absenSnapshot =
-    await get(
-      ref(db, "absensi")
-    );
+  const users = usersSnapshot.val() || {};
+  const absensi = absenSnapshot.val() || {};
 
-  const users =
-    usersSnapshot.val() || {};
+  semuaUsers = Object.keys(users).map((uid) => ({
+    uid,
+    nama: users[uid].namaLengkap || "-",
+    email: users[uid].email || "-",
+    foto: users[uid].fotoSelfie || ""
+  }));
 
-  const absensi =
-    absenSnapshot.val() || {};
+  const tanggalSet = new Set();
 
-  semuaUsers =
-    Object.keys(users).map((uid)=>({
+  Object.keys(absensi).forEach((uid) => {
 
-      uid: uid,
+    const dataUser = absensi[uid];
+    const userData = users[uid] || {};
 
-      nama:
-        users[uid].namaLengkap || "-",
+    Object.keys(dataUser).forEach((key) => {
 
-      email:
-        users[uid].email || "-",
+  const item = dataUser[key];
 
-      foto:
-        users[uid].fotoSelfie || ""
+      const tgl = normalizeDate(item.tanggal);
 
-    }));
+      tanggalSet.add(tgl);
 
-  const tanggalSet =
-    new Set();
-
-  Object.keys(absensi).forEach((uid)=>{
-
-    const dataUser =
-      absensi[uid];
-
-    const userData =
-      users[uid] || {};
-
-    Object.values(dataUser)
-    .forEach((item)=>{
-
-      tanggalSet.add(
-        item.tanggal
-      );
-
-      semuaData.push({
-
-        uid: uid,
-
-        nama:
-          item.nama || "-",
-
-        email:
-          item.email || "-",
-
-        tanggal:
-          item.tanggal || "-",
-
-        jam:
-          item.jam || "-",
-
-        status:
-          item.status || "-",
-
-        foto:
-          userData.fotoSelfie || ""
-
-      });
+     semuaData.push({
+  key, // 🔥 PENTING UNTUK HAPUS
+  uid,
+  nama: item.nama || "-",
+  email: item.email || "-",
+  tanggal: tgl,
+  jam: item.jam || "-",
+  status: item.status || "-",
+  foto: userData.fotoSelfie || ""
+});
 
     });
 
   });
 
-  // FILTER TANGGAL
+  // RESET DROPDOWN BIAR TIDAK NUNMPUK
+  filterTanggal.innerHTML = `<option value="">Semua Tanggal</option>`;
 
-  [...tanggalSet]
-  .sort()
-  .forEach((tgl)=>{
-
+  [...tanggalSet].sort().forEach((tgl) => {
     filterTanggal.innerHTML += `
-
-      <option value="${tgl}">
-        ${tgl}
-      </option>
-
+      <option value="${tgl}">${tgl}</option>
     `;
-
   });
 
   renderData();
-
 }
 
-// RENDER
+// ======================
+// RENDER DATA
+// ======================
+function renderData() {
 
-function renderData(){
+  const cari = searchInput.value.toLowerCase();
+  const filterTgl = filterTanggal.value;
+  const filterBln = filterBulan.value;
 
-  const cari =
-    searchInput.value
-    .toLowerCase();
+  let hasil = semuaData.filter((item) => {
 
-  const tanggal =
-    filterTanggal.value;
+    const cocokCari =
+      item.nama.toLowerCase().includes(cari) ||
+      item.email.toLowerCase().includes(cari);
 
-  const bulan =
-    filterBulan.value;
+    const cocokTanggal =
+      filterTgl === "" || item.tanggal === filterTgl;
 
-  let hasil =
-    semuaData.filter((item)=>{
+    let cocokBulan = true;
 
-      const cocokCari =
+    if (filterBln !== "") {
+      const split = item.tanggal.split("/");
+      const bulan = split[1] || "";
+      cocokBulan = bulan === filterBln;
+    }
 
-        item.nama
-        .toLowerCase()
-        .includes(cari)
-
-        ||
-
-        item.email
-        .toLowerCase()
-        .includes(cari);
-
-      const cocokTanggal =
-
-        tanggal === ""
-        ||
-
-        item.tanggal === tanggal;
-
-      let cocokBulan =
-        true;
-
-      if(bulan !== ""){
-
-        const split =
-          item.tanggal.split("/");
-
-        const bulanData =
-          split[1];
-
-        cocokBulan =
-          bulanData === bulan;
-
-      }
-
-      return (
-        cocokCari &&
-        cocokTanggal &&
-        cocokBulan
-      );
-
-    });
+    return cocokCari && cocokTanggal && cocokBulan;
+  });
 
   hasil.reverse();
 
-  // USER HADIR
+  // HADIR
 
-  userHadir = [];
+// ======================
+// MONITOR HADIR (GLOBAL, BUKAN HASIL FILTER)
+// ======================
+// ======================
+// MONITOR HADIR (GLOBAL, BUKAN HASIL FILTER)
+// ======================
+const hadirSet = new Set();
 
-  hasil.forEach((item)=>{
+semuaData.forEach((item) => {
+  hadirSet.add(item.uid);
+});
 
-    const ada =
-      userHadir.find(
-        x => x.uid === item.uid
-      );
+userHadir = semuaUsers.filter(user =>
+  hadirSet.has(user.uid)
+);
 
-    if(!ada){
+// ======================
+// MONITOR BELUM (SEMUA USER - HADIR)
+// ======================
+userBelum = semuaUsers.filter(user =>
+  !hadirSet.has(user.uid)
+);
 
-      userHadir.push(item);
+// ======================
+// MONITOR BELUM (SEMUA USER - HADIR)
+// ======================
+userBelum = semuaUsers.filter(user =>
+  !hadirSet.has(user.uid)
+);
 
-    }
 
-  });
 
-  // USER BELUM
 
-  userBelum =
-    semuaUsers.filter((user)=>{
 
-      return !userHadir.find(
-        hadir =>
-        hadir.uid === user.uid
-      );
 
-    });
+
+
+
+
+
 
   // STATS
-
-  document.getElementById(
-    "totalUser"
-  ).innerText =
-    semuaUsers.length;
-
-  document.getElementById(
-    "totalHadir"
-  ).innerText =
-    userHadir.length;
-
-  document.getElementById(
-    "totalBelum"
-  ).innerText =
-    userBelum.length;
+  document.getElementById("totalUser").innerText = semuaUsers.length;
+  document.getElementById("totalHadir").innerText = userHadir.length;
+  document.getElementById("totalBelum").innerText = userBelum.length;
 
   // TITIK
-
   titikContainer.innerHTML = "";
 
-  userHadir.forEach((item)=>{
+// TITIK
+titikContainer.innerHTML = "";
 
-    titikContainer.innerHTML += `
+// TITIK HADIR (BISA DIKLIK)
+userHadir.forEach((item) => {
 
-      <div
-        class="titik hijau"
-        title="${item.nama}"
-        onclick="showModal('hadir')"
-      ></div>
+  const div = document.createElement("div");
+  div.className = "titik hijau";
+  div.title = item.nama;
 
-    `;
-
+  div.addEventListener("click", () => {
+    alert(
+      "SUDAH ABSEN\n\n" +
+      "Nama: " + item.nama + "\n" +
+      "Email: " + item.email + "\n" +
+      "Tanggal: " + item.tanggal
+    );
   });
 
-  userBelum.forEach((item)=>{
+  titikContainer.appendChild(div);
+});
 
-    titikContainer.innerHTML += `
+// TITIK BELUM (BISA DIKLIK)
+userBelum.forEach((item) => {
 
-      <div
-        class="titik merah"
-        title="${item.nama}"
-        onclick="showModal('belum')"
-      ></div>
+  const div = document.createElement("div");
+  div.className = "titik merah";
+  div.title = item.nama;
 
-    `;
-
+  div.addEventListener("click", () => {
+    alert(
+      "BELUM ABSEN\n\n" +
+      "Nama: " + item.nama + "\n" +
+      "Email: " + item.email
+    );
   });
 
-  // DATA KOSONG
-
-  if(hasil.length === 0){
-
-    absenList.innerHTML =
-      `<div class="kosong">Data tidak ditemukan</div>`;
-
+  titikContainer.appendChild(div);
+});
+  // EMPTY
+  if (hasil.length === 0) {
+    absenList.innerHTML = `<div class="kosong">Data tidak ditemukan</div>`;
     return;
-
   }
 
   // CARD
-
   let html = "";
 
-  hasil.forEach((item)=>{
+  hasil.forEach((item) => {
 
-    html += `
+html += `
+  <div class="absen-card">
 
-    <div class="absen-card">
+    <img src="${item.foto}">
 
-      <img src="${item.foto}">
+    <p><b>Nama:</b> ${item.nama}</p>
+    <p><b>Email:</b> ${item.email}</p>
+    <p><b>Tanggal:</b> ${item.tanggal}</p>
+    <p><b>Jam:</b> ${item.jam}</p>
 
-      <p>
-        <b>Nama:</b>
-        ${item.nama}
-      </p>
+    <div class="status">${item.status}</div>
 
-      <p>
-        <b>Email:</b>
-        ${item.email}
-      </p>
+    <button onclick="hapusAbsen('${item.uid}','${item.key}')" 
+      style="
+        margin-top:10px;
+        background:red;
+        color:white;
+        border:none;
+        padding:8px 12px;
+        border-radius:10px;
+        cursor:pointer;
+        width:100%;
+      ">
+      🗑 Hapus Absen
+    </button>
 
-      <p>
-        <b>Tanggal:</b>
-        ${item.tanggal}
-      </p>
-
-      <p>
-        <b>Jam:</b>
-        ${item.jam}
-      </p>
-
-      <div class="status">
-        ${item.status}
-      </div>
-
-    </div>
-
-    `;
-
+  </div>
+`;
   });
 
-  absenList.innerHTML =
-    html;
-
+  absenList.innerHTML = html;
 }
 
+// ======================
 // MODAL
+// ======================
+window.showModal = function (type) {
 
-window.showModal = function(type){
+  const modal = document.getElementById("modalUser");
+  const modalContent = document.getElementById("modalContent");
+  const modalTitle = document.getElementById("modalTitle");
 
-  const modal =
-    document.getElementById(
-      "modalUser"
-    );
+  modal.style.display = "flex";
 
-  const modalContent =
-    document.getElementById(
-      "modalContent"
-    );
+  let data = type === "hadir" ? userHadir : userBelum;
 
-  const modalTitle =
-    document.getElementById(
-      "modalTitle"
-    );
-
-  modal.style.display =
-    "flex";
-
-  let data = [];
-
-  if(type === "hadir"){
-
-    modalTitle.innerText =
-      "User Sudah Absen";
-
-    data = userHadir;
-
-  }else{
-
-    modalTitle.innerText =
-      "User Belum Absen";
-
-    data = userBelum;
-
-  }
+  modalTitle.innerText =
+    type === "hadir"
+      ? "User Sudah Absen"
+      : "User Belum Absen";
 
   let html = "";
 
-  data.forEach((item)=>{
+  data.forEach((item) => {
 
     html += `
-
       <div class="user-item">
 
         <img src="${item.foto}">
 
         <div>
-
-          <h4>
-            ${item.nama}
-          </h4>
-
-          <p>
-            ${item.email}
-          </p>
-
+          <h4>${item.nama}</h4>
+          <p>${item.email}</p>
         </div>
 
       </div>
-
     `;
-
   });
 
-  modalContent.innerHTML =
-    html;
+  modalContent.innerHTML = html;
+};
 
-}
 
-// TUTUP MODAL
 
-window.tutupModal = function(){
+window.hapusAbsen = async function (uid, key) {
+  if (!confirm("Yakin mau hapus data absen ini?")) return;
 
-  document.getElementById(
-    "modalUser"
-  ).style.display =
-    "none";
+  try {
+    // delete specific record
+    await set(ref(db, `absensi/${uid}/${key}`), null);
 
-}
+    alert("✅ Data absen berhasil dihapus");
 
-// FILTER EVENT
+    loadAbsensi(); // refresh semua data
+  } catch (err) {
+    alert("❌ Gagal hapus: " + err.message);
+  }
+};
 
-searchInput.addEventListener(
-  "input",
-  renderData
-);
 
-filterTanggal.addEventListener(
-  "change",
-  renderData
-);
 
-filterBulan.addEventListener(
-  "change",
-  renderData
-);
+// ======================
+// CLOSE MODAL
+// ======================
+window.tutupModal = function () {
+  document.getElementById("modalUser").style.display = "none";
+};
 
-// LOAD
+// ======================
+// EVENT FILTER (AMAN)
+// ======================
+searchInput.addEventListener("input", renderData);
+filterTanggal.addEventListener("change", renderData);
+filterBulan.addEventListener("change", renderData);
 
+// ======================
+// INIT LOAD
+// ======================
 loadAbsensi();
+
+loadSettingAbsen();
 
 </script>
 

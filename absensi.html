@@ -1,434 +1,323 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-
-<title>Absensi Paskibra</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Absensi User</title>
 
 <style>
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Arial, sans-serif;
-}
-
 body{
-  background:#f5f5f5;
+  font-family:Arial;
+  background:#f1f5f9;
   padding:20px;
+  padding-top:70px;
 }
 
-
-
-
-
-*{
-  -webkit-tap-highlight-color: transparent; /* hilangkan efek biru klik mobile */
-  user-select: none; /* blok seleksi teks */
-  -webkit-user-select: none;
-  -ms-user-select: none;
-}
-
-
-img{
-  -webkit-user-drag: none;
-  -webkit-user-select: none;
-  user-select: none;
-}
-    
-
-
-/* hilangkan highlight biru saat klik */
-a, button, div{
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* optional: cegah zoom pinch (mobile) */
-html, body{
-  touch-action: manipulation;
-}
-
-
-
-
-.container{
-  padding:20px;
-}
-
-.absensi-card{
-  background:white;
-  border-radius:25px;
-  padding:25px;
-  box-shadow:0 5px 20px rgba(0,0,0,0.08);
-}
-
-.absensi-header{
-  display:flex;
-  align-items:center;
-  gap:15px;
-  margin-bottom:25px;
-}
-
-.absensi-icon{
-  width:60px;
-  height:60px;
-  object-fit:contain;
-  background:#c40000;
-  padding:12px;
-  border-radius:18px;
-  
-  
-}
-
-.absensi-header h2{
-  color:#c40000;
-  font-size:22px;
-  margin-bottom:4px;
-}
-
-.absensi-header p{
-  color:#777;
-  font-size:14px;
-}
-
-.status-box{
-  background:#f7f7f7;
-  border-radius:18px;
-  padding:18px;
-  margin-bottom:25px;
-}
-
-.status-item{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+.card{
+  background:#d0e2ff;
+  padding:15px;
+  border-radius:12px;
   margin-bottom:15px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.05);
 }
 
-.status-item:last-child{
-  margin-bottom:0;
-}
-
-.label{
-  color:#666;
-  font-size:14px;
-  font-weight:bold;
-}
-
-.value{
-  font-size:14px;
-  font-weight:bold;
-  color:#222;
-}
-
-.status-active{
-  color:#2ecc71;
-}
-
-.absen-btn{
+button{
   width:100%;
-  height:55px;
+  padding:12px;
   border:none;
-  border-radius:18px;
-  background:#c40000;
-  color:white;
-  font-size:16px;
+  border-radius:10px;
+  background:#009a00;
+  color:#fff;
   font-weight:bold;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
   cursor:pointer;
-  transition:0.3s;
 }
 
-.absen-btn:hover{
-  transform:scale(1.02);
-}
-
-.absen-btn img{
-  width:22px;
-  height:22px;
-  object-fit:contain;
-  filter:brightness(0)
-  invert(1);
-}
-
-.absen-btn:disabled{
+button:disabled{
   background:#999;
   cursor:not-allowed;
 }
 
-.loading{
-  position:fixed;
-  top:0;
-  left:0;
+#statusAbsen{
+  margin-top:10px;
+  font-weight:bold;
+}
+
+select{
   width:100%;
-  height:100%;
-  background:rgba(255,255,255,0.9);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  z-index:9999;
-}
-
-.spinner{
-  width:50px;
-  height:50px;
-  border:5px solid #ddd;
-  border-top:5px solid #c40000;
-  border-radius:50%;
-  animation:spin 1s linear infinite;
-}
-
-@keyframes spin{
-  100%{
-    transform:rotate(360deg);
-  }
-}
-
-.alert{
-  position:fixed;
-  top:20px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#c40000;
-  color:white;
-  padding:12px 20px;
+  padding:10px;
   border-radius:10px;
-  display:none;
-  z-index:99999;
+  margin-top:10px;
+}
+
+.history-item{
+  padding:10px;
+  border-bottom:1px solid #eee;
 }
 
 
 
-.history-card{
-  margin-top:20px;
-  background:white;
-  border-radius:25px;
-  padding:20px;
-  box-shadow:0 5px 20px rgba(0,0,0,0.08);
+
+
+/* ================= ALERT POPUP ================= */
+#alertBox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.6);
+  z-index: 9999;
+}
+
+.alert-content {
+  background: #fff;
+  padding: 25px;
+  border-radius: 15px;
+  text-align: center;
+  width: 90%;
+  max-width: 350px;
+  animation: pop .3s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+@keyframes pop {
+  from { transform: scale(0.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.alert-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #22c55e;
+  margin-bottom: 10px;
+}
+
+.alert-text {
+  font-size: 14px;
+  color: #444;
+  line-height: 1.5;
+}
+
+.warning-box {
+  margin-top: 10px;
+  padding: 12px;
+  background: #fff3cd;
+  border-left: 5px solid #f59e0b;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #7c5a00;
+}
+
+
+
+.total-box{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:linear-gradient(135deg,#2563eb,#1e40af);
+  padding:5px 15px;
+  border-radius:14px;
+  color:#fff;
+  box-shadow:0 8px 20px rgba(0,0,0,0.15);
+  margin-top:10px;
+  margin-bottom:15px;
+  animation: fadeIn .3s ease;
+}
+
+.total-icon{
+  font-size:26px;
+  background:rgba(255,255,255,0.15);
+  padding:10px;
+  border-radius:12px;
+}
+
+.total-title{
+  font-size:13px;
+  opacity:0.9;
+}
+
+.total-value{
+  font-size:16px;
+  font-weight:bold;
+}
+
+@keyframes fadeIn{
+  from{transform:translateY(10px);opacity:0;}
+  to{transform:translateY(0);opacity:1;}
+}
+
+
+
+
+.history-box{
+  background:#ffffff;
+  border-radius:16px;
+  padding:15px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.08);
+  margin-top:15px;
+  overflow:hidden;
 }
 
 .history-header{
+  font-size:14px;
+  font-weight:bold;
+  color:#2563eb;
+  margin-bottom:10px;
   display:flex;
   align-items:center;
-  gap:15px;
-  margin-bottom:20px;
+  gap:6px;
 }
 
-.history-icon{
-  width:55px;
-  height:55px;
-  object-fit:contain;
-  background:#c40000;
-  padding:12px;
-  border-radius:15px;
-}
-
-.history-header h2{
-  color:#c40000;
-  font-size:20px;
-  margin-bottom:4px;
-}
-
-.history-header p{
-  color:#777;
-  font-size:13px;
-}
-
-/* BOX SCROLL */
-
-.history-scroll{
-  max-height:350px;
+.history-content{
+  max-height:300px;
   overflow-y:auto;
   padding-right:5px;
 }
 
-/* SCROLLBAR */
-
-.history-scroll::-webkit-scrollbar{
-  width:5px;
+/* ITEM HISTORY */
+.history-item{
+  background:#f8fafc;
+  padding:12px;
+  border-radius:12px;
+  margin-bottom:10px;
+  border-left:4px solid #2563eb;
+  transition:0.2s;
 }
 
-.history-scroll::-webkit-scrollbar-thumb{
-  background:#c40000;
-  border-radius:10px;
+.history-item:hover{
+  transform:scale(1.02);
+  background:#eef2ff;
 }
-
-.loading-history{
-  text-align:center;
-  color:#777;
-  padding:20px;
-}
-
-
-
 </style>
 </head>
+
 <body>
 
-<div class="loading" id="loadingBox">
-  <div class="spinner"></div>
-</div>
+<!-- HEADER BEKU -->
+<div style="
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  z-index:9999;
+  background:linear-gradient(135deg,#2563eb,#1e40af);
+  color:white;
+  padding:15px 20px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.2);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+">
 
-<div class="alert" id="alertBox"></div>
-
-<div class="container">
-
-  <!-- CARD ABSENSI -->
-  <div class="card absensi-card">
-
-    <!-- HEADER -->
-    <div class="absensi-header">
-
-      <img
-        src="assets/images/fingerprint.png"
-        class="absensi-icon"
-      >
-
-      <div>
-
-        <h2>
-          ABSENSI PASKIBRA
-        </h2>
-
-        <p>
-          Sistem Kehadiran Digital
-        </p>
-
-      </div>
-
-    </div>
-
-    <!-- STATUS -->
-    <div class="status-box">
-
-      <div class="status-item">
-
-        <span class="label">
-          Status Absen
-        </span>
-
-        <span
-          id="statusAbsen"
-          class="value status-active"
-        >
-          Mengecek...
-        </span>
-
-      </div>
-
-      <div class="status-item">
-
-        <span class="label">
-          Cooldown
-        </span>
-
-<span
-  id="cooldownText"
-  class="value"
->
-  Loading...
-</span>
-
-      </div>
-
-    </div>
-
-    <!-- BUTTON -->
-    <button
-      class="absen-btn"
-      id="absenBtn"
-      onclick="absen()"
-    >
-
-      <img
-        src="assets/images/fingerprint.png"
-      >
-
-      <span>
-        ABSEN SEKARANG
-      </span>
-
-    </button>
-
+  <div style="font-weight:bold; font-size:16px;">
+  ABSENSI SAYA
   </div>
 
 </div>
 
 
+<div class="card">
+  <h3>ABSENSI USER</h3>
+  <button id="btnAbsen" onclick="absenSekarang()">Absen Sekarang</button>
+  <div id="statusAbsen"></div>
+</div>
 
-<!-- HISTORY ABSEN -->
+<div class="card">
+  <h3>Filter History Bulan</h3>
+  <select id="filterBulanHistory">
+    <option value="">Semua Bulan</option>
+    <option value="01">Januari</option>
+    <option value="02">Februari</option>
+    <option value="03">Maret</option>
+    <option value="04">April</option>
+    <option value="05">Mei</option>
+    <option value="06">Juni</option>
+    <option value="07">Juli</option>
+    <option value="08">Agustus</option>
+    <option value="09">September</option>
+    <option value="10">Oktober</option>
+    <option value="11">November</option>
+    <option value="12">Desember</option>
+  </select>
 
-<div class="card history-card">
+  <div class="total-box">
+  <div class="total-icon">📊</div>
+  <div class="total-info">
+    <div class="total-title">Total Absen</div>
+    <div class="total-value" id="totalAbsen">0</div>
+  </div>
+</div>
 
+  <div class="history-box">
   <div class="history-header">
-
-    <img
-      src="assets/images/Formulirrr.png"
-      class="history-icon"
-    >
-
-    <div>
-
-      <h2>
-        History Absen
-      </h2>
-
-      <p>
-        Riwayat kehadiran terbaru
-      </p>
-
-    </div>
-
+    📜 Riwayat Absensi
   </div>
 
-  <!-- BOX SCROLL -->
-  <div
-    id="historyAbsen"
-    class="history-scroll"
-  >
+  <div id="historyAbsen" class="history-content"></div>
+</div>
+</div>
+<!-- FOOTER -->
+<div style="
+  margin-top:30px;
+  background:#c3c3c387;
+  color:#002bb2;
+  padding:25px;
+  border-radius:20px;
+  text-align:center;
+  box-shadow:0 10px 25px rgba(0,0,0,0.15);
+">
 
-    <p class="loading-history">
-      Loading...
-    </p>
+  <h3 style="margin-bottom:8px; letter-spacing:0.5px;">
+    SISTEM ABSENSI DIGITAL
+  </h3>
 
+  <p style="color:#000000; font-size:14px; line-height:1.6;">
+    Aplikasi ini digunakan untuk pencatatan kehadiran secara real-time<br>
+    Semua data tersimpan otomatis dan diawasi oleh admin.
+  </p>
+
+  <div style="margin-top:15px; font-size:13px; color:#94a3b8;">
+    © 2026 admin @ilham Absensi System • All Rights Reserved
   </div>
 
 </div>
+
+
+
+<div id="alertBox">
+  <div class="alert-content">
+    <div class="alert-title">✅ ABSEN BERHASIL</div>
+    <div class="alert-text" id="alertText"></div>
+
+    <div class="warning-box">
+      ⚠ Jika sudah absen harap jangan absen lagi.  
+      Mohon membaca ketentuan yang berlaku.
+    </div>
+  </div>
+</div>
+
 
 <script type="module">
 
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getDatabase,
+  ref,
+  push,
+  set,
+  onValue,
+  get
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 import {
   getAuth,
   onAuthStateChanged
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-import {
-  getDatabase,
-  ref,
-  get,
-  push,
-  set,
-  serverTimestamp
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-// ======================
-// FIREBASE CONFIG
-// ======================
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
-
   apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
   authDomain: "paskibra2026-300eb.firebaseapp.com",
   databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
@@ -436,631 +325,326 @@ const firebaseConfig = {
   storageBucket: "paskibra2026-300eb.firebasestorage.app",
   messagingSenderId: "937469132434",
   appId: "1:937469132434:web:d1924e1160350000d1b04b"
-
 };
 
-// ======================
-// INIT FIREBASE
-// ======================
-
 const app = initializeApp(firebaseConfig);
-
+const db = getDatabase(app);
 const auth = getAuth(app);
 
-const database = getDatabase(app);
+// ELEMENT
+const btnAbsen = document.getElementById("btnAbsen");
+const statusAbsen = document.getElementById("statusAbsen");
+const historyAbsen = document.getElementById("historyAbsen");
+const filterBulanHistory = document.getElementById("filterBulanHistory");
+const totalAbsen = document.getElementById("totalAbsen");
 
-// ======================
-// AUTO CREATE SETTINGS
-// ======================
+// USER LOGIN
+let currentUser = null;
 
-async function buatSettingAbsensi(){
+// ADMIN SETTING
+let setting = {
+  aktif: false,
+  buka: "00.00",
+  tutup: "23.59"
+};
 
-  const settingRef =
-    ref(database, "settings/absensi");
+/* =========================
+   GLOBAL STATUS USER
+========================= */
+let userStatus = null;
 
-  const snapshot =
-    await get(settingRef);
+/* =========================
+   AUTH WAJIB LOGIN + CEK STATUS PENERIMAAN
+========================= */
+onAuthStateChanged(auth, async (user) => {
 
-  if(!snapshot.exists()){
-
-    await set(settingRef, {
-
-      status: true,
-
-      jamMulai: "00:00",
-
-      jamSelesai: "23:59",
-
-      cooldownMenit: 1
-
-    });
-
+  if (!user) {
+    btnAbsen.disabled = true;
+    btnAbsen.innerText = "LOGIN DULU UNTUK ABSEN";
+    statusAbsen.innerHTML = "❌ Anda belum login";
+    currentUser = null;
+    userStatus = null;
+    return;
   }
 
-}
+  currentUser = user;
 
-buatSettingAbsensi();
+  try {
+    const snap = await get(ref(db, "users/" + user.uid));
 
-// ======================
-// ALERT
-// ======================
+    if (snap.exists()) {
+      const data = snap.val();
 
-function showAlert(text){
+      // 🔥 PAKAI FIELD INI
+      userStatus = data.statusPenerimaan ?? null;
 
-  const alertBox =
-    document.getElementById(
-      "alertBox"
-    );
+    } else {
+      userStatus = null;
+    }
 
-  alertBox.innerText = text;
+  } catch (e) {
+    userStatus = null;
+  }
 
-  alertBox.style.display = "block";
+  // ❌ BLOCK TOTAL JIKA BUKAN DITERIMA
+  if (userStatus !== "Diterima") {
 
-  setTimeout(()=>{
+    btnAbsen.disabled = true;
+    btnAbsen.innerText = "ABSEN KAMU DITOLAK";
 
-    alertBox.style.display = "none";
-
-  },3000);
-
-}
-
-// ======================
-// LOADING
-// ======================
-
-function showLoading(){
-
-  document.getElementById(
-    "loadingBox"
-  ).style.display = "flex";
-
-}
-
-function hideLoading(){
-
-  document.getElementById(
-    "loadingBox"
-  ).style.display = "none";
-
-}
-
-// ======================
-// TIMER
-// ======================
-
-function startCooldownTimer(duration){
-
-  let timer = duration;
-
-  const cooldownText =
-    document.getElementById(
-      "cooldownText"
-    );
-
-  const interval =
-    setInterval(()=>{
-
-      const menit =
-        Math.floor(timer / 60);
-
-      const detik =
-        timer % 60;
-
-      const formatDetik =
-        detik < 10
-        ? "0" + detik
-        : detik;
-
-      cooldownText.innerText =
-        menit +
-        "m " +
-        formatDetik +
-        "d";
-
-      timer--;
-
-      if(timer < 0){
-
-        clearInterval(interval);
-
-        cooldownText.innerText =
-          "Siap";
-
-        document.getElementById(
-          "statusAbsen"
-        ).innerText =
-          "Boleh absen";
-
-        document.getElementById(
-          "absenBtn"
-        ).disabled = false;
-
-      }
-
-    },1000);
-
-}
-
-// ======================
-// CEK LOGIN
-// ======================
-
-onAuthStateChanged(auth, async(user)=>{
-
-  if(!user){
-
-    window.location.href =
-      "akun.html";
+    statusAbsen.innerHTML = `
+  <div style="padding:14px;border-radius:12px;background:#f5f7ff;border:1px solid #dbe3ff;">
+    <div style="font-weight:600;color:#1f2a44;margin-bottom:6px;">
+      Status Penerimaan: <b>${userStatus || "Tidak ada data"}</b>
+    </div>
+    <div style="color:#ff0b0b;line-height:1.6; font-size:11px;">
+      Akses absensi tidak tersedia karena akun Anda tidak termasuk dalam daftar peserta yang diterima.
+    </div>
+  </div>
+`;
 
     return;
-
   }
 
-  cekStatusAbsen(user.uid);
+  statusAbsen.innerHTML = "✅ Login sebagai: " + user.email;
 
-  loadHistoryAbsen(user.uid);
-
+  loadHistory();
+  updateButton();
 });
 
-// ======================
-// CEK STATUS ABSEN
-// ======================
+/* =========================
+   AMBIL SETTING ADMIN
+========================= */
+onValue(ref(db, "settings/absen"), (snap) => {
+  const data = snap.val() || {};
 
-async function cekStatusAbsen(uid){
+  setting = {
+    aktif: data.aktif ?? false,
+    buka: data.buka ?? "00.00",
+    tutup: data.tutup ?? "23.59"
+  };
 
-  const settingSnapshot =
-    await get(
-      ref(database, "settings/absensi")
-    );
+  updateButton();
+});
 
-  if(!settingSnapshot.exists()){
-
-    showAlert(
-      "Setting absensi belum dibuat"
-    );
-
-    return;
-
-  }
-
-  const setting =
-    settingSnapshot.val();
-
-  // ABSENSI OFF
-
-  if(!setting.status){
-
-    document.getElementById(
-      "statusAbsen"
-    ).innerText =
-      "Absensi ditutup";
-
-    document.getElementById(
-      "cooldownText"
-    ).innerText =
-      "OFF";
-
-    document.getElementById(
-      "absenBtn"
-    ).disabled = true;
-
-    return;
-
-  }
-
-  const snapshot =
-    await get(
-      ref(database, "absensi/" + uid)
-    );
-
-  if(snapshot.exists()){
-
-    const data =
-      Object.values(snapshot.val());
-
-    const terakhir =
-      data[data.length - 1];
-
-    const sekarang =
-      Date.now();
-
-    const selisih =
-      sekarang -
-      terakhir.timestamp;
-
-    const cooldown =
-      setting.cooldownMenit *
-      60 *
-      1000;
-
-    // MASIH COOLDOWN
-
-    if(selisih < cooldown){
-
-      const sisaDetik =
-        Math.ceil(
-          (cooldown - selisih)
-          / 1000
-        );
-
-      document.getElementById(
-        "statusAbsen"
-      ).innerText =
-        "Masih cooldown";
-
-      document.getElementById(
-        "absenBtn"
-      ).disabled = true;
-
-      startCooldownTimer(
-        sisaDetik
-      );
-
-    }else{
-
-      document.getElementById(
-        "statusAbsen"
-      ).innerText =
-        "Boleh absen";
-
-      document.getElementById(
-        "cooldownText"
-      ).innerText =
-        setting.cooldownMenit +
-        " Menit";
-
-      document.getElementById(
-        "absenBtn"
-      ).disabled = false;
-
-    }
-
-  }else{
-
-    document.getElementById(
-      "statusAbsen"
-    ).innerText =
-      "Belum pernah absen";
-
-    document.getElementById(
-      "cooldownText"
-    ).innerText =
-      setting.cooldownMenit +
-      " Menit";
-
-    document.getElementById(
-      "absenBtn"
-    ).disabled = false;
-
-  }
-
+/* =========================
+   TIME
+========================= */
+function nowTime() {
+  const d = new Date();
+  const h = String(d.getHours()).padStart(2, "0");
+  const m = String(d.getMinutes()).padStart(2, "0");
+  return parseFloat(`${h}.${m}`);
 }
 
-// ======================
-// ABSEN
-// ======================
+function toNum(v) {
+  return parseFloat(v);
+}
 
-window.absen = async function(){
+/* =========================
+   BUTTON CONTROL
+========================= */
+function updateButton() {
 
-  const user =
-    auth.currentUser;
+  if (!currentUser) return;
 
-  if(!user){
-
-    showAlert(
-      "Harus login"
-    );
-
+  // ❌ BLOCK JIKA TIDAK DITERIMA
+  if (userStatus !== "Diterima") {
+    btnAbsen.disabled = true;
+    btnAbsen.innerText = "❌ TIDAK DIIZINKAN";
     return;
-
   }
 
-  showLoading();
+  const now = nowTime();
+  const buka = toNum(setting.buka);
+  const tutup = toNum(setting.tutup);
 
-  try{
+  if (!setting.aktif) {
+    btnAbsen.disabled = true;
+    btnAbsen.innerText = "ABSENSI DITUTUP ADMIN";
+    return;
+  }
 
-    const settingSnapshot =
-      await get(
-        ref(database, "settings/absensi")
-      );
+  if (now < buka || now > tutup) {
+    btnAbsen.disabled = true;
+    btnAbsen.innerText = `DITUTUP (${setting.buka} - ${setting.tutup})`;
+    return;
+  }
 
-    const setting =
-      settingSnapshot.val();
+  btnAbsen.disabled = false;
+  btnAbsen.innerText = "Absen Sekarang";
+}
 
-    // ABSENSI OFF
+/* =========================
+   ABSEN
+========================= */
+window.absenSekarang = async function () {
 
-    if(!setting.status){
+  // 🔥 FINAL SECURITY CHECK
+  if (userStatus !== "Diterima") {
+    alert("❌ Akses ditolak! Status kamu bukan Diterima.");
+    return;
+  }
 
-      hideLoading();
+  if (!currentUser) {
+    alert("Silakan login terlebih dahulu!");
+    return;
+  }
 
-      showAlert(
-        "Absensi sedang ditutup"
-      );
+  const now = nowTime();
+  const buka = toNum(setting.buka);
+  const tutup = toNum(setting.tutup);
 
-      return;
+  if (!setting.aktif || now < buka || now > tutup) {
+    alert("Absensi tidak tersedia!");
+    return;
+  }
 
-    }
+  btnAbsen.disabled = true;
+  btnAbsen.innerText = "Loading...";
 
-    const now =
-      new Date();
+  setTimeout(async () => {
 
-    const jamSekarang =
-      now
-      .toTimeString()
-      .slice(0,5);
+    const userSnap = await get(ref(db, "users/" + currentUser.uid));
+    const userData = userSnap.val() || {};
 
-    // CEK JAM
+    const namaFix =
+      userData.nama && userData.nama !== "-"
+        ? userData.nama
+        : currentUser.email.split("@")[0];
 
-    if(
+    const sekolahFix =
+      userData.sekolah && userData.sekolah !== "-"
+        ? userData.sekolah
+        : "Belum diisi";
 
-      jamSekarang <
-      setting.jamMulai ||
+    const lokasiFix =
+      userData.lokasi && userData.lokasi !== "-"
+        ? userData.lokasi
+        : "Belum diisi";
 
-      jamSekarang >
-      setting.jamSelesai
+    const nowDate = new Date();
 
-    ){
-
-      hideLoading();
-
-      showAlert(
-        "Belum masuk jam absensi"
-      );
-
-      return;
-
-    }
-
-    // USER DATA
-
-    const userSnapshot =
-      await get(
-        ref(
-          database,
-          "users/" + user.uid
-        )
-      );
-
-    const userData =
-      userSnapshot.val();
-
-    // DATA ABSEN
-
-    const dataAbsen = {
-
-      nama:
-        userData.namaLengkap,
-
-      email:
-        userData.email,
-
-      tanggal:
-        now.toLocaleDateString(
-          "id-ID"
-        ),
-
-      jam:
-        now.toLocaleTimeString(
-          "id-ID"
-        ),
-
-      timestamp:
-        Date.now(),
-
-      serverTime:
-        serverTimestamp(),
-
-      status:
-        "Hadir"
-
+    const data = {
+      uid: currentUser.uid,
+      nama: namaFix,
+      email: currentUser.email,
+      sekolah: sekolahFix,
+      lokasi: lokasiFix,
+      status: "Hadir",
+      tanggal: nowDate.toLocaleDateString("id-ID"),
+      jam: nowDate.toLocaleTimeString("id-ID"),
+      bulan: String(nowDate.getMonth() + 1).padStart(2, "0")
     };
 
-    // SIMPAN ABSEN
+    try {
+      await push(ref(db, "absensi/" + currentUser.uid), data);
 
-    const absenRef =
-      push(
-        ref(
-          database,
-          "absensi/" + user.uid
-        )
-      );
+      showAlert(`
+        Kamu sudah tercatat sebagai <b>Hadir</b><br>
+        Nama: <b>${namaFix}</b><br>
+        Jam: <b>${nowDate.toLocaleTimeString("id-ID")}</b>
+      `);
 
-    await set(
-      absenRef,
-      dataAbsen
-    );
+      statusAbsen.innerHTML = "✔ Absen berhasil disimpan";
 
-    // TOTAL ABSEN
-
-    const totalRef =
-      ref(
-        database,
-        "users/" +
-        user.uid +
-        "/totalAbsen"
-      );
-
-    const totalSnapshot =
-      await get(totalRef);
-
-    let totalAbsen = 0;
-
-    if(totalSnapshot.exists()){
-
-      totalAbsen =
-        totalSnapshot.val();
-
+    } catch (e) {
+      statusAbsen.innerHTML = "❌ Gagal: " + e.message;
     }
 
-    totalAbsen++;
+    updateButton();
+    loadHistory();
 
-    await set(
-      totalRef,
-      totalAbsen
-    );
+  }, 1200);
+};
 
-    hideLoading();
+/* =========================
+   HISTORY
+========================= */
+async function loadHistory() {
 
-    showAlert(
-      "Absen berhasil"
-    );
+  if (!currentUser) return;
 
-    document.getElementById(
-      "absenBtn"
-    ).disabled = true;
+  const snap = await get(ref(db, "absensi/" + currentUser.uid));
+  const data = snap.val() || {};
 
-    document.getElementById(
-      "statusAbsen"
-    ).innerText =
-      "Masih cooldown";
-
-    // START TIMER
-
-    startCooldownTimer(
-      setting.cooldownMenit * 60
-    );
-
-    // REFRESH HISTORY
-
-    loadHistoryAbsen(
-      user.uid
-    );
-
-  }catch(error){
-
-    console.log(error);
-
-    hideLoading();
-
-    showAlert(
-      error.message
-    );
-
-  }
-
-}
-
-// ======================
-// HISTORY ABSEN
-// ======================
-
-async function loadHistoryAbsen(uid){
-
-  const historyBox =
-    document.getElementById(
-      "historyAbsen"
-    );
-
-  const snapshot =
-    await get(
-      ref(database, "absensi/" + uid)
-    );
-
-  if(!snapshot.exists()){
-
-    historyBox.innerHTML = `
-      <p
-        style="
-          text-align:center;
-          color:#777;
-        "
-      >
-        Belum ada history absen
-      </p>
-    `;
-
-    return;
-
-  }
-
-  const data =
-    Object.values(snapshot.val());
-
-  data.reverse();
+  const filterBulan = filterBulanHistory.value;
 
   let html = "";
+  let total = 0;
 
-  data.forEach((item)=>{
+  Object.values(data).reverse().forEach(item => {
+
+    if (filterBulan && item.bulan !== filterBulan) return;
+
+    total++;
 
     html += `
-
-      <div
-        style="
-          background:#f5f5f5;
-          padding:12px;
-          border-radius:12px;
-          margin-bottom:10px;
-        "
-      >
-
-        <div
-          style="
-            font-weight:bold;
-            color:#c40000;
-            margin-bottom:8px;
-            font-size:16px;
-          "
-        >
-          👤 ${item.nama}
-        </div>
-
-        <div
-          style="
-            font-size:14px;
-            color:#555;
-            margin-bottom:4px;
-          "
-        >
-          📌 Status :
-          ${item.status}
-        </div>
-
-        <div
-          style="
-            font-size:14px;
-            color:#555;
-            margin-bottom:4px;
-          "
-        >
-          📅 ${item.tanggal}
-        </div>
-
-        <div
-          style="
-            font-size:14px;
-            color:#555;
-          "
-        >
-          🕒 ${item.jam}
-        </div>
-
+      <div class="history-item">
+        <b>${item.tanggal}</b> - ${item.jam}<br>
+        ${item.nama} | ${item.email}<br>
+        ${item.sekolah} | ${item.lokasi}
       </div>
-
     `;
-
   });
 
-  historyBox.innerHTML = html;
-
+  totalAbsen.innerText = "Total Absen: " + total;
+  historyAbsen.innerHTML = html || "<p>Tidak ada data</p>";
 }
 
+/* =========================
+   FILTER
+========================= */
+filterBulanHistory.addEventListener("change", loadHistory);
 
 
 
 
-document.addEventListener('contextmenu', function(e){
-  e.preventDefault(); // disable klik kanan / copy
-});
-
-document.addEventListener('selectstart', function(e){
-  e.preventDefault(); // disable blok teks
-});
-
-document.addEventListener('dragstart', function(e){
-  e.preventDefault(); // disable drag gambar
-});
 
 
+
+
+
+
+
+
+
+
+
+
+let cooldownActive = false;
+
+function showAlert(message) {
+
+  // kalau masih cooldown
+  if (cooldownActive) return;
+
+  cooldownActive = true;
+
+  const box = document.getElementById("alertBox");
+  const text = document.getElementById("alertText");
+
+  box.style.display = "flex";
+
+  let timeLeft = 60; // 1 menit
+
+  text.innerHTML = message + `<br><br>⏳ Tunggu ${timeLeft} detik`;
+
+  const interval = setInterval(() => {
+
+    timeLeft--;
+
+    text.innerHTML = message + `<br><br>⏳ Tunggu ${timeLeft} detik`;
+
+    if (timeLeft <= 0) {
+      clearInterval(interval);
+      box.style.display = "none";
+      cooldownActive = false;
+    }
+
+  }, 1000);
+}
 </script>
+
 </body>
 </html>

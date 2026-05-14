@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Control Absensi</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#f5f5f5;
+  padding:20px;
+}
+
+.card{
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  max-width:500px;
+  margin:auto;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+h2{
+  color:#c40000;
+}
+
+input, select{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border-radius:10px;
+  border:1px solid #ddd;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.on{
+  background:#22c55e;
+  color:white;
+}
+
+.off{
+  background:#ef4444;
+  color:white;
+}
+
+.save{
+  background:#2563eb;
+  color:white;
+  margin-top:10px;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+
+  <h2>CONTROL ABSENSI</h2>
+
+  <label>Status Absensi</label>
+  <select id="status">
+    <option value="true">AKTIF</option>
+    <option value="false">NONAKTIF</option>
+  </select>
+
+  <label>Jam Mulai (WIB)</label>
+  <input type="time" id="jamMulai">
+
+  <label>Jam Selesai (WIB)</label>
+  <input type="time" id="jamSelesai">
+
+  <button class="save" onclick="saveSetting()">
+    SIMPAN SETTING
+  </button>
+
+  <button class="on" onclick="setOn()">ONKAN ABSEN</button>
+  <button class="off" onclick="setOff()">OFFKAN ABSEN</button>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+async function loadSetting(){
+
+  const snap = await get(ref(db, "settings/absensi"));
+
+  if(snap.exists()){
+    const data = snap.val();
+
+    document.getElementById("status").value = String(data.status);
+    document.getElementById("jamMulai").value = data.jamMulai || "";
+    document.getElementById("jamSelesai").value = data.jamSelesai || "";
+  }
+}
+
+window.saveSetting = async function(){
+
+  const status = document.getElementById("status").value === "true";
+  const jamMulai = document.getElementById("jamMulai").value;
+  const jamSelesai = document.getElementById("jamSelesai").value;
+
+  if(!jamMulai || !jamSelesai){
+    alert("Jam belum diisi");
+    return;
+  }
+
+  await set(ref(db, "settings/absensi"), {
+    status,
+    jamMulai,
+    jamSelesai,
+    cooldownMenit: 1
+  });
+
+  alert("Setting berhasil disimpan");
+};
+
+window.setOn = async function(){
+
+  const snap = await get(ref(db, "settings/absensi"));
+
+  await set(ref(db, "settings/absensi"), {
+    ...(snap.val() || {}),
+    status: true
+  });
+
+  alert("ABSENSI AKTIF");
+};
+
+window.setOff = async function(){
+
+  const snap = await get(ref(db, "settings/absensi"));
+
+  await set(ref(db, "settings/absensi"), {
+    ...(snap.val() || {}),
+    status: false
+  });
+
+  alert("ABSENSI NONAKTIF");
+};
+
+loadSetting();
+
+</script>
+
+</body>
+</html>
