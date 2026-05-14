@@ -976,31 +976,39 @@ onMessage(messaging, (payload) => {
 
   console.log("Foreground message:", payload);
 
-  alert(
-    payload.notification.title + "\n" +
-    payload.notification.body
-  );
+  const title = payload?.notification?.title || "Notifikasi";
+  const body = payload?.notification?.body || "";
+
+  alert(title + "\n" + body);
+
+  // 🔥 klik notif → buka detail posting
+  if (payload?.data?.url) {
+    window.location.href = payload.data.url;
+  }
 
 });
+
 
 async function initFCM(reg) {
 
   try {
 
     const permission = await Notification.requestPermission();
-    if (permission !== "granted") return;
+
+    if (permission !== "granted") {
+      console.log("Notifikasi ditolak");
+      return;
+    }
 
     const token = await getToken(messaging, {
-
       vapidKey: "BFwt-3gLYLA7J4ARceOiNhhTaneTxpVnUmPj5fQqE5-7wk-LPJvB0KuMz2KewMwl8fSHeu3Cev3ddCXy-MHT1Vc",
-
       serviceWorkerRegistration: reg
     });
 
     console.log("FCM TOKEN:", token);
 
     await set(ref(database, "fcm_tokens/" + token), {
-      token,
+      token: token,
       createdAt: Date.now()
     });
 
@@ -1010,12 +1018,27 @@ async function initFCM(reg) {
 }
 
 
-navigator.serviceWorker.register("./sw.js")
-  .then((reg) => {
-    console.log("SW READY");
+// REGISTER SERVICE WORKER + INIT FCM
+if ("serviceWorker" in navigator) {
 
-    initFCM(reg); // kirim registration ke FCM
-  });
+  navigator.serviceWorker.register("./sw.js")
+    .then((reg) => {
+
+      console.log("SW READY");
+
+      return navigator.serviceWorker.register("./firebase-messaging-sw.js")
+        .then(() => {
+
+          initFCM(reg);
+
+        });
+
+    })
+    .catch((err) => {
+      console.log("SW ERROR:", err);
+    });
+
+}
 
 
 

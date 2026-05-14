@@ -496,51 +496,47 @@ async function(){
 
     // DATA POSTINGAN
 
-    const postRef =
-      push(
-        ref(db,"postingan")
-      );
+   // DATA POSTINGAN
+// =======================
+// DATA POSTINGAN
+// =======================
 
-    await set(postRef,{
+const postRef = push(ref(db, "postingan"));
 
-      judul:judul,
+await set(postRef, {
+  judul: judul,
+  deskripsi: deskripsi,
+  gambar: fotoList[0],
+  gambarList: fotoList,
+  tanggal: tanggal,
+  createdAt: Date.now()
+});
 
-      deskripsi:deskripsi,
+// 🔥 OPTIONAL: trigger notif realtime (tanpa server key)
+await set(ref(db, "notif"), {
+  title: "📢 Postingan Baru",
+  body: judul,
+  url: "detailpostingan.html?id=" + postRef.key,
+  time: Date.now()
+});
 
-      gambar:
-        fotoList[0],
+alert("Postingan berhasil dibuat");
 
-      gambarList:
-        fotoList,
+// =======================
+// RESET FORM
+// =======================
+// RESET
+document.getElementById("judul").value = "";
+document.getElementById("deskripsi").value = "";
+fotoInput.value = "";
+previewBox.innerHTML = "";
 
-      tanggal:tanggal,
+// RELOAD
+loadPostingan();
 
-      createdAt:
-        Date.now()
 
-    });
 
-    alert(
-      "Postingan berhasil dibuat"
-    );
 
-    // RESET
-
-    document.getElementById(
-      "judul"
-    ).value = "";
-
-    document.getElementById(
-      "deskripsi"
-    ).value = "";
-
-    fotoInput.value = "";
-
-    previewBox.innerHTML = "";
-
-    // RELOAD
-
-    loadPostingan();
 
   }catch(error){
 
@@ -556,6 +552,43 @@ async function(){
     "none";
 
 }
+
+
+
+
+async function sendNotification(title, body, postId) {
+
+  
+
+  await fetch("https://fcm.googleapis.com/fcm/send", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "key=" + SERVER_KEY
+    },
+    body: JSON.stringify({
+      to: "/topics/all",
+
+      notification: {
+        title: title,
+        body: body
+      },
+
+      data: {
+        postId: postId,
+        url: "detailpostingan.html?id=" + postId
+      }
+    })
+  });
+
+}
+
+
+
+
+
+
+
 
 // LOAD POSTINGAN
 

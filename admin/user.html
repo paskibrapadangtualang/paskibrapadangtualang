@@ -151,6 +151,40 @@ const db =
 const userList =
   document.getElementById("userList");
 
+
+
+
+
+
+let lastNotifTime = 0;
+
+Notification.requestPermission();
+
+onValue(ref(db, "notif"), (snap) => {
+  const data = snap.val();
+  if (!data) return;
+
+  // 🔥 anti spam (hindari notif berulang)
+  if (data.time && data.time === lastNotifTime) return;
+  lastNotifTime = data.time;
+
+  // cek permission
+  if (Notification.permission !== "granted") return;
+
+  const notif = new Notification(data.title || "Notifikasi", {
+    body: data.body || "",
+    icon: "/assets/images/launchericon-192x192.png"
+  });
+
+  // klik notif → buka link
+  notif.onclick = () => {
+    if (data.url) {
+      window.location.href = data.url;
+    }
+  };
+});
+
+
 // AMBIL DATA USER
 
 onValue(

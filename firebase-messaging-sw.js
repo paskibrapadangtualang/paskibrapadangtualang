@@ -11,14 +11,42 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
+// BACKGROUND NOTIF
 messaging.onBackgroundMessage((payload) => {
   console.log("Background message:", payload);
 
-  self.registration.showNotification(
-    payload.notification.title,
-    {
-      body: payload.notification.body,
-      icon: "/assets/images/launchericon-192x192.png"
+  const title = payload?.notification?.title || "Notifikasi";
+  const body = payload?.notification?.body || "";
+
+  const url = payload?.data?.url || "/home.html";
+
+  self.registration.showNotification(title, {
+    body: body,
+    icon: "/assets/images/launchericon-192x192.png",
+    data: {
+      url: url
     }
+  });
+});
+
+// KLIK NOTIF → BUKA HALAMAN
+self.addEventListener("notificationclick", function (event) {
+  event.notification.close();
+
+  const url = event.notification.data?.url;
+
+  event.waitUntil(
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
+
+      for (const client of clientList) {
+        if (client.url.includes(url) && "focus" in client) {
+          return client.focus();
+        }
+      }
+
+      if (clients.openWindow) {
+        return clients.openWindow(url);
+      }
+    })
   );
 });
