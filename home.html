@@ -918,6 +918,15 @@ html, body{
 import { initializeApp }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
+
+import {
+  getMessaging,
+  getToken,
+  onMessage
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
+
+
+
 import {
   getAuth,
   onAuthStateChanged,
@@ -957,8 +966,68 @@ const auth = getAuth(app);
 
 const database = getDatabase(app);
 
+const messaging = getMessaging(app);
+
 const kontakRef = ref(database, "kontak");
 
+
+
+onMessage(messaging, (payload) => {
+
+  console.log("Foreground message:", payload);
+
+  alert(
+    payload.notification.title + "\n" +
+    payload.notification.body
+  );
+
+});
+
+async function initFCM() {
+
+  try {
+
+    const permission = await Notification.requestPermission();
+
+    if (permission !== "granted") {
+      console.log("Notifikasi ditolak");
+      return;
+    }
+
+    const token = await getToken(messaging, {
+      vapidKey: "BFwt-3gLYLA7J4ARceOiNhhTaneTxpVnUmPj5fQqE5-7wk-LPJvB0KuMz2KewMwl8fSHeu3Cev3ddCXy-MHT1Vc"
+    });
+
+    console.log("FCM TOKEN:", token);
+    // simpan ke Firebase Realtime Database
+    await set(ref(database, "fcm_tokens/" + token), {
+      token: token,
+      createdAt: Date.now()
+    });
+
+  } catch (err) {
+    console.log("FCM ERROR:", err);
+  }
+
+}
+
+initFCM();
+
+
+
+if ("serviceWorker" in navigator) {
+
+  navigator.serviceWorker.register("./sw.js");
+
+  navigator.serviceWorker.register("./firebase-messaging-sw.js")
+    .then(() => {
+      console.log("FCM SW READY");
+      initFCM();
+    });
+
+} else {
+  initFCM();
+}
 
 
 
