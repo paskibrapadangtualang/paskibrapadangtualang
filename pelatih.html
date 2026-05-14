@@ -62,9 +62,23 @@ h2{
 
 /* HEADER */
 .header{
-  background:linear-gradient(135deg,#c40000,#ff4d4d);
-  padding:20px;
-  text-align:center;
+  position: relative;
+  background: url("assets/images/lemparpeci.jpg") no-repeat center center;
+  background-size: cover;
+  padding: 20px;
+  text-align: center;
+  color: white;
+}
+
+.header::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+}
+
+.header > *{
+  position: relative;
 }
 
 .header img{
