@@ -1741,6 +1741,10 @@ document.addEventListener('dragstart', function(e){
 </div>
 
 
+<div class="image-viewer" id="imageViewer">
+  <img id="viewerImg">
+</div>
+
 <style>
 
 
@@ -1787,8 +1791,10 @@ body{
   max-width:420px;
   max-height:88vh;
   overflow-y:auto;
+
   background:#fff;
   border-radius:28px;
+
   animation:popupShow .35s ease;
   box-shadow:0 15px 45px rgba(0,0,0,0.25);
 }
@@ -1805,10 +1811,18 @@ body{
 }
 
 .install-top{
+  position:sticky;
+  top:0;
+  z-index:20;
+
   display:flex;
   gap:15px;
   padding:18px;
+
   align-items:center;
+
+  background:#fff;
+  border-bottom:1px solid #eee;
 }
 
 
@@ -1928,6 +1942,28 @@ body{
   transition:.2s;
 }
 
+
+.image-viewer{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.92);
+
+  display:none;
+  align-items:center;
+  justify-content:center;
+
+  z-index:999999;
+  padding:20px;
+}
+
+.image-viewer img{
+  width:100%;
+  max-width:500px;
+  max-height:90vh;
+  object-fit:contain;
+  border-radius:18px;
+}
+
 </style>
 
 
@@ -2007,6 +2043,35 @@ installBtn.onclick = async () => {
     }
 
   }, 80);
+
+};
+
+
+
+
+const viewer =
+  document.getElementById('imageViewer');
+
+const viewerImg =
+  document.getElementById('viewerImg');
+
+document
+  .querySelectorAll('.app-preview img')
+  .forEach(img => {
+
+    img.onclick = () => {
+
+      viewer.style.display = 'flex';
+
+      viewerImg.src = img.src;
+
+    };
+
+});
+
+viewer.onclick = () => {
+
+  viewer.style.display = 'none';
 
 };
 
