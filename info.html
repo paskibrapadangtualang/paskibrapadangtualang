@@ -355,11 +355,27 @@ async function loadInfo(){
 
     if(data.length === 0){
 
-      chatBox.innerHTML = `
-        <div class="loading">
-          Belum ada chat
-        </div>
-      `;
+chatBox.innerHTML = `
+  <div class="loading" style="text-align:center; line-height:1.6;">
+
+    <img src="assets/images/advertisement.png" 
+         style="
+           width:140px;
+           height:auto;
+           margin-bottom:12px;
+           border-radius:12px;
+         ">
+
+    <div style="font-weight:bold; font-size:15px;">
+      Selamat datang di menu pesan informasi~
+    </div>
+
+    <div style="font-size:13px; color:#777; margin-top:5px;">
+      saat ini belum ada pesan informasi terbaru!
+    </div>
+
+  </div>
+`;
 
       return;
 
