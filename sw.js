@@ -37,35 +37,46 @@ const urlsToCache = [
 
 
 // INSTALL
-self.addEventListener("install", (event) => {
+self.addEventListener("fetch", (event) => {
 
-  console.log("INSTALL DIMULAI");
+  // ✅ FILTER WAJIB (INI LETAKNYA DI PALING ATAS)
+  if (
+    !event.request.url.startsWith("http") ||
+    event.request.url.includes("firebase") ||
+    event.request.url.includes("googleapis") ||
+    event.request.url.includes("gstatic")
+  ) {
+    return;
+  }
 
-  self.skipWaiting();
+  event.respondWith(
+    caches.match(event.request)
+    .then((cachedResponse) => {
 
-  event.waitUntil(
+      if (cachedResponse) {
+        return cachedResponse;
+      }
 
-    caches.open(CACHE_NAME)
-    .then((cache) => {
+      return fetch(event.request)
+      .then((networkResponse) => {
 
-      console.log("CACHE BERHASIL DIBUKA");
+        return caches.open(CACHE_NAME)
+        .then((cache) => {
 
-      return cache.addAll(urlsToCache)
+          if (event.request.url.startsWith(self.location.origin)) {
+            cache.put(event.request, networkResponse.clone());
+          }
 
-      .then(() => {
-
-        console.log("SEMUA FILE BERHASIL DI CACHE");
+          return networkResponse;
+        });
 
       })
 
-      .catch((err) => {
-
-        console.error("CACHE GAGAL:", err);
-
+      .catch(() => {
+        return caches.match("./home.html");
       });
 
     })
-
   );
 
 });
@@ -112,56 +123,42 @@ self.addEventListener("activate", (event) => {
 // FETCH
 self.addEventListener("fetch", (event) => {
 
-  event.respondWith(
+  // ❌ JANGAN CACHE REQUEST NON-GET
+  if (event.request.method !== "GET") {
+    return;
+  }
 
+  event.respondWith(
     caches.match(event.request)
     .then((cachedResponse) => {
 
-      // JIKA ADA DI CACHE
       if (cachedResponse) {
-
-        console.log("AMBIL DARI CACHE:",
-        event.request.url);
-
         return cachedResponse;
-
       }
 
-      // FETCH INTERNET
       return fetch(event.request)
-
       .then((networkResponse) => {
 
-        // SIMPAN KE CACHE
         return caches.open(CACHE_NAME)
-
         .then((cache) => {
 
-          cache.put(
-            event.request,
-            networkResponse.clone()
-          );
-
-          console.log("SIMPAN CACHE:",
-          event.request.url);
+          // ✅ hanya cache GET + same origin
+          if (
+            event.request.url.startsWith(self.location.origin)
+          ) {
+            cache.put(event.request, networkResponse.clone());
+          }
 
           return networkResponse;
-
         });
 
       })
 
-      .catch((err) => {
-
-        console.error("FETCH ERROR:", err);
-
-        // FALLBACK OFFLINE
+      .catch(() => {
         return caches.match("./home.html");
-
       });
 
     })
-
   );
 
 });

@@ -5,7 +5,6 @@ firebase.initializeApp({
   apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
   authDomain: "paskibra2026-300eb.firebaseapp.com",
   projectId: "paskibra2026-300eb",
-  storageBucket: "paskibra2026-300eb.firebasestorage.app",
   messagingSenderId: "937469132434",
   appId: "1:937469132434:web:d1924e1160350000d1b04b"
 });
@@ -13,6 +12,8 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
+  console.log("Background message:", payload);
+
   self.registration.showNotification(
     payload.notification.title,
     {
