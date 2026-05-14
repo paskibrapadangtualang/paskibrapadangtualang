@@ -3,8 +3,8 @@
   "short_name": "Patul",
   "start_url": "./home.html",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "background_color": "#c40000",
+  "theme_color": "#c40000",
   "orientation": "portrait",
   "icons": [
     {
