@@ -520,6 +520,18 @@ await set(ref(db, "notif"), {
   time: Date.now()
 });
 
+
+// =======================
+// PUSH NOTIFICATION
+// =======================
+
+await sendNotification(
+  "📢 Postingan Baru",
+  judul,
+  postRef.key
+);
+
+
 alert("Postingan berhasil dibuat");
 
 // =======================
@@ -558,34 +570,45 @@ loadPostingan();
 
 async function sendNotification(title, body, postId) {
 
-  
+  try {
 
-  await fetch("https://fcm.googleapis.com/fcm/send", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "key=" + SERVER_KEY
-    },
-    body: JSON.stringify({
-      to: "/topics/all",
+    await fetch(
+      "https://script.google.com/macros/s/AKfycbzNNEF_BEvpOrhoTUZ3e4_oKuA_jrjDMM_z27Nhpu1I0-ibJA6xc83miDMnxTM6sUwpOg/exec",
+      {
+        method: "POST",
 
-      notification: {
-        title: title,
-        body: body
-      },
+        headers: {
+          "Content-Type": "application/json"
+        },
 
-      data: {
-        postId: postId,
-        url: "detailpostingan.html?id=" + postId
+        body: JSON.stringify({
+
+          title: title,
+
+          body: body,
+
+          postId: postId,
+
+          url:
+            "detailpostingan.html?id=" +
+            postId
+
+        })
+
       }
-    })
-  });
+    );
+
+    console.log(
+      "Notif berhasil dikirim"
+    );
+
+  } catch (err) {
+
+    console.error(err);
+
+  }
 
 }
-
-
-
-
 
 
 

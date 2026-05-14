@@ -939,6 +939,7 @@ import {
   onValue,
   ref,
   get,
+  push,
   set
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -1016,6 +1017,8 @@ async function initFCM(reg) {
     console.log("FCM ERROR:", err);
   }
 }
+
+console.log("TOKEN DISIMPAN");
 
 
 // REGISTER SERVICE WORKER + INIT FCM

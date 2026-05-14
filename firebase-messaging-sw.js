@@ -11,42 +11,88 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-// BACKGROUND NOTIF
+
+// ===============================
+// BACKGROUND NOTIFICATION
+// ===============================
+
 messaging.onBackgroundMessage((payload) => {
-  console.log("Background message:", payload);
 
-  const title = payload?.notification?.title || "Notifikasi";
-  const body = payload?.notification?.body || "";
+  console.log("BACKGROUND MESSAGE:", payload);
 
-  const url = payload?.data?.url || "/home.html";
+  const title =
+    payload?.notification?.title || "Postingan Baru";
+
+  const body =
+    payload?.notification?.body || "";
+
+  const postId =
+    payload?.data?.postId || "";
+
+  const url =
+    payload?.data?.url ||
+    "/detailpostingan.html?id=" + postId;
 
   self.registration.showNotification(title, {
     body: body,
+
     icon: "/assets/images/launchericon-192x192.png",
+
+    badge: "/assets/images/launchericon-192x192.png",
+
     data: {
-      url: url
+      url: url,
+      postId: postId
     }
+
   });
+
 });
 
-// KLIK NOTIF → BUKA HALAMAN
-self.addEventListener("notificationclick", function (event) {
-  event.notification.close();
 
-  const url = event.notification.data?.url;
+// ===============================
+// CLICK NOTIFICATION
+// ===============================
 
-  event.waitUntil(
-    clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
+self.addEventListener(
+  "notificationclick",
+  function(event) {
 
-      for (const client of clientList) {
-        if (client.url.includes(url) && "focus" in client) {
-          return client.focus();
+    event.notification.close();
+
+    const url =
+      event.notification.data?.url ||
+      "/home.html";
+
+    event.waitUntil(
+
+      clients.matchAll({
+        type: "window",
+        includeUncontrolled: true
+      }).then((clientList) => {
+
+        for (const client of clientList) {
+
+          if ("focus" in client) {
+
+            client.navigate(url);
+
+            return client.focus();
+
+          }
+
         }
-      }
 
-      if (clients.openWindow) {
-        return clients.openWindow(url);
-      }
-    })
-  );
-});
+        if (clients.openWindow) {
+
+          return clients.openWindow(url);
+
+        }
+
+      })
+
+    );
+
+  }
+
+);
