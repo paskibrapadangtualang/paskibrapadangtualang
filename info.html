@@ -289,18 +289,188 @@ getAuth(app);
 
 let currentUser = null;
 
+
+
+
+
+
+
+
 // ======================
-// CEK LOGIN
+// CEK LOGIN + VALIDASI STATUS
 // ======================
 
-onAuthStateChanged(auth, (user)=>{
+onAuthStateChanged(auth, async(user)=>{
+
+  // ======================
+  // BELUM LOGIN
+  // ======================
+
+  if(!user){
+
+    document.body.innerHTML = `
+      <div style="
+        height:100vh;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        flex-direction:column;
+        background:#f5f5f5;
+        padding:20px;
+        text-align:center;
+      ">
+
+        <img src="assets/images/locked.png"
+        style="
+          width:120px;
+          margin-bottom:15px;
+        ">
+
+        <h2 style="color:#c40000;">
+          AKSES DITOLAK
+        </h2>
+
+        <p style="
+          color:#555;
+          margin-top:10px;
+          line-height:1.6;
+          font-size:14px;
+        ">
+          Kamu harus login terlebih dahulu
+          untuk membuka halaman ini.
+        </p>
+
+      </div>
+    `;
+
+    return;
+
+  }
 
   currentUser = user;
 
-  loadInfo();
+  try{
+
+    // ======================
+    // AMBIL DATA USER
+    // ======================
+
+    const userSnap = await get(
+      ref(database, "users/" + user.uid)
+    );
+
+    // ======================
+    // JIKA DATA TIDAK ADA
+    // ======================
+
+    if(!userSnap.exists()){
+
+      forceBlocked(
+        "Data akun tidak ditemukan"
+      );
+
+      return;
+
+    }
+
+    const userData = userSnap.val();
+
+    const status =
+  userData.statusPenerimaan ?? "Belum ada status";
+
+    // ======================
+    // HANYA DITERIMA
+    // ======================
+
+    if(status !== "Diterima"){
+
+      forceBlocked(status);
+
+      return;
+
+    }
+
+    // ======================
+    // LOLOS
+    // ======================
+
+    loadInfo();
+
+  }catch(error){
+
+    console.log(error);
+
+    forceBlocked(
+      "Terjadi kesalahan sistem"
+    );
+
+  }
 
 });
 
+
+// ======================
+// HALAMAN BLOKIR
+// ======================
+
+function forceBlocked(status){
+
+  const finalStatus = status?.toString()?.trim() || "Tidak diketahui";
+
+  document.body.innerHTML = `
+
+    <div style="
+      height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      background:#f5f5f5;
+      padding:20px;
+      text-align:center;
+    ">
+
+      <img src="assets/images/banned_icon.png"
+      style="width:130px;margin-bottom:18px;">
+
+      <h2 style="color:#c40000;margin-bottom:10px;">
+        AKSES TIDAK DIIZINKAN
+      </h2>
+
+      <div style="
+        background:white;
+        padding:15px;
+        border-radius:14px;
+        width:100%;
+        max-width:330px;
+      ">
+
+        <div style="font-size:14px;color:#444;line-height:1.7;">
+
+          STATUS AKUN KAMU :
+          <br><br>
+
+          <b style="
+            color:#c40000;
+            font-size:18px;
+          ">
+            ${finalStatus}
+          </b>
+
+          <br><br>
+
+          Halaman ini hanya dapat diakses oleh peserta yang sudah diterima admin.
+
+        </div>
+
+      </div>
+
+    </div>
+
+  `;
+
+  throw new Error("BLOCKED");
+}
 // ======================
 // LOAD INFO
 // ======================
