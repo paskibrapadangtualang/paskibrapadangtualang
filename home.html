@@ -983,52 +983,39 @@ onMessage(messaging, (payload) => {
 
 });
 
-async function initFCM() {
+async function initFCM(reg) {
 
   try {
 
     const permission = await Notification.requestPermission();
-
-    if (permission !== "granted") {
-      console.log("Notifikasi ditolak");
-      return;
-    }
+    if (permission !== "granted") return;
 
     const token = await getToken(messaging, {
-      vapidKey: "BFwt-3gLYLA7J4ARceOiNhhTaneTxpVnUmPj5fQqE5-7wk-LPJvB0KuMz2KewMwl8fSHeu3Cev3ddCXy-MHT1Vc"
+
+      vapidKey: "BFwt-3gLYLA7J4ARceOiNhhTaneTxpVnUmPj5fQqE5-7wk-LPJvB0KuMz2KewMwl8fSHeu3Cev3ddCXy-MHT1Vc",
+
+      serviceWorkerRegistration: reg
     });
 
     console.log("FCM TOKEN:", token);
-    // simpan ke Firebase Realtime Database
+
     await set(ref(database, "fcm_tokens/" + token), {
-      token: token,
+      token,
       createdAt: Date.now()
     });
 
   } catch (err) {
     console.log("FCM ERROR:", err);
   }
-
 }
 
-initFCM();
 
+navigator.serviceWorker.register("./sw.js")
+  .then((reg) => {
+    console.log("SW READY");
 
-
-if ("serviceWorker" in navigator) {
-
-  navigator.serviceWorker.register("./sw.js");
-
-  navigator.serviceWorker.register("./firebase-messaging-sw.js")
-    .then(() => {
-      console.log("FCM SW READY");
-      initFCM();
-    });
-
-} else {
-  initFCM();
-}
-
+    initFCM(reg); // kirim registration ke FCM
+  });
 
 
 
