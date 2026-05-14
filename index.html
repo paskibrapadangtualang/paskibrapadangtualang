@@ -2,9 +2,198 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=home.html">
-  <title>Paskibra Padang Tualang</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Paskibra Patul</title>
+
+  <!-- PWA -->
+
+<meta name="theme-color" content="#000000">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Patul">
+
+  <!-- ICON -->
+
+
+<link rel="manifest" href="manifest.json">
+
+<link rel="apple-touch-icon"
+href="assets/images/launchericon-192x192.png">
+
+<link rel="icon"
+type="image/png"
+href="assets/images/launchericon-192x192.png">
+
+
+
+
+
+
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    body{
+      width:100%;
+      height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#000;
+      color:#fff;
+      font-family:Arial,sans-serif;
+      overflow:hidden;
+    }
+
+    .loading-box{
+      text-align:center;
+    }
+
+    .loader{
+      width:55px;
+      height:55px;
+      border:5px solid rgba(255,255,255,0.2);
+      border-top:5px solid #fff;
+      border-radius:50%;
+      animation:spin 1s linear infinite;
+      margin:auto;
+      margin-bottom:15px;
+    }
+
+    @keyframes spin{
+      100%{
+        transform:rotate(360deg);
+      }
+    }
+
+    .text{
+      font-size:17px;
+      letter-spacing:1px;
+    }
+  </style>
 </head>
+
 <body>
+
+  <div class="loading-box">
+    <div class="loader"></div>
+    <div class="text">Loading Paskibra Patul...</div>
+  </div>
+
+  <!-- SERVICE WORKER -->
+<script>
+
+console.log("INDEX HTML BERHASIL DIMUAT");
+
+
+// TEST MANIFEST
+fetch("manifest.json")
+.then(res => {
+
+  console.log("MANIFEST STATUS:", res.status);
+
+  return res.text();
+
+})
+.then(data => {
+
+  console.log("MANIFEST ISI:", data);
+
+})
+.catch(err => {
+
+  console.error("MANIFEST ERROR:", err);
+
+});
+
+
+
+// TEST ICON
+const img = new Image();
+
+img.onload = () => {
+
+  console.log("ICON BERHASIL DIBACA");
+
+};
+
+img.onerror = () => {
+
+  console.error("ICON GAGAL DIBACA");
+
+};
+
+img.src = "assets/images/launchericon-192x192.png";
+
+
+
+
+// TEST SW FILE
+fetch("sw.js")
+.then(res => {
+
+  console.log("SW STATUS:", res.status);
+
+  return res.text();
+
+})
+.then(data => {
+
+  console.log("SW FILE TERBACA");
+
+})
+.catch(err => {
+
+  console.error("SW FILE ERROR:", err);
+
+});
+
+
+
+
+// REGISTER SW
+if ("serviceWorker" in navigator) {
+
+  console.log("BROWSER SUPPORT SW");
+
+  window.addEventListener("load", async () => {
+
+    try {
+
+      const reg = await navigator.serviceWorker.register("sw.js");
+
+      console.log("SW REGISTER BERHASIL:", reg);
+
+    } catch(err){
+
+      console.error("SW REGISTER GAGAL:", err);
+
+    }
+
+  });
+
+} else {
+
+  console.error("BROWSER TIDAK SUPPORT SW");
+
+}
+
+
+
+// REDIRECT
+setTimeout(() => {
+
+  window.location.href = "home.html";
+
+}, 5000);
+
+</script>
+
 </body>
 </html>
