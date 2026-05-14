@@ -1968,16 +1968,44 @@ body{
 
 
 <script>
-
+if (isPWA()) {
+  document.getElementById('installPopup').style.display = 'none';
+}
 let deferredPrompt;
 
+// DETEKSI SUDAH PWA / STANDALONE
+function isPWA() {
+  return (
+    window.matchMedia('(display-mode: standalone)').matches ||
+    window.navigator.standalone === true
+  );
+}
+
+// CEK SEBELUM TAMPIL
 window.addEventListener('beforeinstallprompt', (e) => {
+
+  if (isPWA()) return;
+
+  if (localStorage.getItem('pwaInstalled') === 'true') return;
 
   e.preventDefault();
 
   deferredPrompt = e;
 
   document.getElementById('installPopup').style.display = 'flex';
+
+});
+
+
+
+// DETEKSI SUDAH INSTALL
+window.addEventListener('appinstalled', () => {
+
+  localStorage.setItem('pwaInstalled', 'true');
+
+  document.getElementById('installPopup').style.display = 'none';
+
+  deferredPrompt = null;
 
 });
 
