@@ -291,21 +291,26 @@ const db =
 
 
 
+    // =========================
+// CHECK LOGIN GATE
+// =========================
 
+// =========================
+// PROTECT PAGE (WAJIB LOGIN)
+// =========================
 
+const uid = localStorage.getItem("adminUID");
 
-/* CEK LOGIN ADMIN */
-const isAdmin = localStorage.getItem("isAdmin");
+const adminRef = ref(db, "admin/" + uid);
+const snapshot = await get(adminRef);
 
-if (!isAdmin) {
-    alert("Maaf, menu tidak dapat diakses. Login dulu sebagai admin.");
+if (!snapshot.exists()) {
+    alert("Akses ditolak!");
     window.location.href = "index.html";
 }
 
 
 
-localStorage.setItem("isAdmin", "true");
-window.location.href = "admin.html";
 
 
 /* ELEMENT */
