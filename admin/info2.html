@@ -140,15 +140,37 @@ let adminData = null;
 // ================= LOGIN ADMIN =================
 onAuthStateChanged(auth, async (user) => {
 
+  // BELUM LOGIN
   if(!user){
     window.location.href = "index.html";
     return;
   }
 
-  const snap = await get(ref(db, "purna/" + user.uid));
+  try{
 
-  if(snap.exists()){
-    adminData = snap.val();
+    // AMBIL DATA ADMIN
+    const snap = await get(ref(db, "admin/" + user.uid));
+
+    // JIKA ADMIN ADA
+    if(snap.exists()){
+
+      adminData = snap.val();
+
+      console.log("Admin berhasil dimuat");
+      console.log(adminData);
+
+    }else{
+
+      alert("Akun bukan admin");
+      window.location.href = "index.html";
+
+    }
+
+  }catch(err){
+
+    console.error(err);
+    alert("Gagal mengambil data admin");
+
   }
 
 });
@@ -156,65 +178,146 @@ onAuthStateChanged(auth, async (user) => {
 // ================= UPLOAD =================
 window.uploadInfo = async function(){
 
-  const judul = document.getElementById("judul").value;
-  const deskripsi = document.getElementById("deskripsi").value;
+  try{
 
-  if(!adminData){
-    alert("Admin belum login");
-    return;
-  }
+    // AMBIL INPUT
+    const judul =
+      document.getElementById("judul").value.trim();
 
-  if(!judul || !deskripsi){
-    alert("Isi semua data");
-    return;
-  }
+    const deskripsi =
+      document.getElementById("deskripsi").value.trim();
 
-  const newRef = push(ref(db, "info_purna"));
+    // CEK LOGIN FIREBASE
+    const user = auth.currentUser;
 
-  await set(newRef, {
-    judul,
-    deskripsi,
-    waktu: Date.now(),
-    admin: {
-      uid: auth.currentUser.uid,
-      nama: adminData.namaPurna,
-      foto: adminData.foto
+    if(!user){
+
+      alert("Session login habis");
+      window.location.href = "index.html";
+      return;
+
     }
-  });
 
-  document.getElementById("judul").value = "";
-  document.getElementById("deskripsi").value = "";
+    // CEK DATA ADMIN
+    if(adminData === null){
 
-  alert("Upload berhasil");
+      alert("Data admin masih dimuat, tunggu sebentar...");
+      return;
+
+    }
+
+    // VALIDASI INPUT
+    if(judul === "" || deskripsi === ""){
+
+      alert("Isi semua data");
+      return;
+
+    }
+
+    // BUAT ID BARU
+    const newRef =
+      push(ref(db, "info_purna"));
+
+    // SIMPAN DATABASE
+    await set(newRef, {
+
+      judul,
+      deskripsi,
+
+      waktu: Date.now(),
+
+      admin: {
+
+        uid: user.uid,
+
+        nama:
+          adminData.nama ||
+          adminData.namaAdmin ||
+          "Admin",
+
+        foto:
+          adminData.foto || ""
+
+      }
+
+    });
+
+    // RESET FORM
+    document.getElementById("judul").value = "";
+    document.getElementById("deskripsi").value = "";
+
+    alert("Upload berhasil");
+
+  }catch(err){
+
+    console.error(err);
+
+    alert(
+      "Gagal upload: " + err.message
+    );
+
+  }
+
 };
 
 // ================= TAMPIL DATA =================
-const listInfo = document.getElementById("listInfo");
+const listInfo =
+  document.getElementById("listInfo");
 
 onValue(ref(db, "info_purna"), (snapshot) => {
 
   listInfo.innerHTML = "";
 
   const data = snapshot.val();
-  if(!data) return;
 
-  Object.entries(data).reverse().forEach(([key, item]) => {
+  if(!data){
 
-    listInfo.innerHTML += `
+    listInfo.innerHTML = `
       <div class="info-card">
-        <h3>${item.judul}</h3>
-        <p>${item.deskripsi}</p>
-
-        <small>
-          👤 ${item.admin?.nama || "Admin"} • ${new Date(item.waktu).toLocaleString()}
-        </small>
-
-        <button class="hapus-btn" onclick="hapusInfo('${key}')">
-          Hapus
-        </button>
+        Belum ada info
       </div>
     `;
-  });
+
+    return;
+
+  }
+
+  Object
+    .entries(data)
+    .reverse()
+    .forEach(([key, item]) => {
+
+      listInfo.innerHTML += `
+
+        <div class="info-card">
+
+          <h3>
+            ${item.judul || "-"}
+          </h3>
+
+          <p>
+            ${item.deskripsi || "-"}
+          </p>
+
+          <small>
+            👤 ${item.admin?.nama || "Admin"}
+            •
+            ${new Date(item.waktu).toLocaleString("id-ID")}
+          </small>
+
+          <button
+            class="hapus-btn"
+            onclick="hapusInfo('${key}')">
+
+            Hapus
+
+          </button>
+
+        </div>
+
+      `;
+
+    });
 
 });
 
