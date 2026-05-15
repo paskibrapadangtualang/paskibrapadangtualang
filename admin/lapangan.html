@@ -259,7 +259,8 @@ import {
     ref,
     push,
     onValue,
-    remove
+    remove,
+    get
 
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -291,24 +292,46 @@ const db =
 
 
 
-    // =========================
-// CHECK LOGIN GATE
-// =========================
-
 // =========================
 // PROTECT PAGE (WAJIB LOGIN)
 // =========================
 
-const uid = localStorage.getItem("adminUID");
+const isLogin =
+    localStorage.getItem("adminLogin");
 
-const adminRef = ref(db, "admin/" + uid);
-const snapshot = await get(adminRef);
+const uid =
+    localStorage.getItem("adminUID");
 
-if (!snapshot.exists()) {
-    alert("Akses ditolak!");
+// JIKA BELUM LOGIN
+
+if(isLogin !== "true" || !uid){
+
+    alert("Silahkan login admin dulu");
+
     window.location.href = "index.html";
+
 }
 
+// CEK UID ADMIN DI DATABASE
+
+const adminRef =
+    ref(db, "admin/" + uid);
+
+const snapshot =
+    await get(adminRef);
+
+// JIKA UID TIDAK ADA
+
+if(!snapshot.exists()){
+
+    localStorage.clear();
+
+    alert("Akses ditolak!");
+
+    window.location.href =
+        "index.html";
+
+}
 
 
 
