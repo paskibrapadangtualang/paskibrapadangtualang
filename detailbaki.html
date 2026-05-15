@@ -1,0 +1,494 @@
+<!-- detailbaki.html -->
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<title>Detail Baki</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+
+    background:#0f3d2e;
+
+    padding:20px;
+
+    color:white;
+
+}
+
+/* BACK */
+
+.back{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    margin-bottom:20px;
+
+    color:white;
+
+    text-decoration:none;
+
+    font-weight:600;
+
+    font-size:15px;
+
+}
+
+/* CARD */
+
+.card{
+
+    background:white;
+
+    border-radius:26px;
+
+    overflow:hidden;
+
+    max-width:520px;
+
+    margin:auto;
+
+    color:#111;
+
+    box-shadow:
+      0 10px 30px rgba(0,0,0,0.3);
+
+}
+
+/* IMAGE */
+
+.card img{
+
+    width:100%;
+
+    height:340px;
+
+    object-fit:cover;
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+}
+
+.card img:hover{
+
+    transform:scale(1.03);
+
+}
+
+/* CONTENT */
+
+.content{
+
+    padding:22px;
+
+}
+
+/* BADGE */
+
+.badge{
+
+    display:inline-block;
+
+    background:#c40000;
+
+    color:white;
+
+    padding:8px 15px;
+
+    border-radius:999px;
+
+    font-size:11px;
+
+    font-weight:600;
+
+    margin-bottom:16px;
+
+}
+
+/* NAME */
+
+h2{
+
+    font-size:28px;
+
+    margin-bottom:18px;
+
+    color:#111827;
+
+}
+
+/* BOX */
+
+.box{
+
+    background:#f5f7fb;
+
+    border-radius:16px;
+
+    padding:14px;
+
+    margin-bottom:14px;
+
+    border:1px solid #e7ebf0;
+
+}
+
+/* LABEL */
+
+.label{
+
+    font-size:11px;
+
+    color:#6b7280;
+
+    font-weight:600;
+
+    margin-bottom:5px;
+
+    letter-spacing:1px;
+
+}
+
+/* VALUE */
+
+.value{
+
+    font-size:15px;
+
+    font-weight:600;
+
+    color:#111827;
+
+    line-height:1.5;
+
+}
+
+/* PREVIEW */
+
+.preview-box{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,0.92);
+
+    display:none;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:99999;
+
+    padding:20px;
+
+    animation:fadePreview 0.3s ease;
+
+}
+
+/* PREVIEW IMG */
+
+.preview-box img{
+
+    max-width:95%;
+
+    max-height:92vh;
+
+    border-radius:24px;
+
+    box-shadow:
+      0 0 40px rgba(255,255,255,0.15);
+
+    animation:zoomIn 0.3s ease;
+
+}
+
+/* CLOSE */
+
+.close-preview{
+
+    position:absolute;
+
+    top:20px;
+
+    right:28px;
+
+    font-size:42px;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-weight:300;
+
+}
+
+/* ANIMATION */
+
+@keyframes fadePreview{
+
+    from{
+        opacity:0;
+    }
+
+    to{
+        opacity:1;
+    }
+
+}
+
+@keyframes zoomIn{
+
+    from{
+        opacity:0;
+        transform:scale(0.85);
+    }
+
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
+
+}
+
+</style>
+</head>
+<body>
+
+<a href="baki.html" class="back">
+    Kembali
+</a>
+
+<div class="card" id="detailCard"></div>
+
+<!-- PREVIEW -->
+
+<div class="preview-box" id="previewBox">
+
+    <span
+      class="close-preview"
+      onclick="tutupPreview()"
+    >
+        ×
+    </span>
+
+    <img id="previewImage">
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+    getDatabase,
+    ref,
+    get
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* CONFIG */
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+
+};
+
+/* INIT */
+
+const app =
+  initializeApp(firebaseConfig);
+
+const db =
+  getDatabase(app);
+
+/* PARAM */
+
+const params =
+  new URLSearchParams(window.location.search);
+
+const id =
+  params.get("id");
+
+const detailCard =
+  document.getElementById("detailCard");
+
+
+
+
+
+/* SENSOR TANGGAL */
+
+function sensorTanggal(tanggal){
+
+    if(!tanggal) return "-";
+
+    return tanggal
+
+      /* SENSOR BULAN */
+
+      .replace(/[A-Za-z]+/, (bulan)=>{
+
+          return bulan.charAt(0) + "***";
+
+      })
+
+      /* SENSOR TAHUN */
+
+      .replace(/\d{4}$/, "20**");
+
+}
+
+
+  /* GET DATA */
+
+get(ref(db, "baki/" + id))
+.then((snapshot)=>{
+
+    const data =
+      snapshot.val();
+
+    detailCard.innerHTML =
+    `
+    <img
+      src="${data.gambar}"
+      onclick="lihatFoto('${data.gambar}')"
+    >
+
+    <div class="content">
+
+        <div class="badge">
+            ${data.jabatan}
+        </div>
+
+        <h2>
+            ${data.nama}
+        </h2>
+
+        <div class="box">
+
+            <div class="label">
+                TAHUN
+            </div>
+
+            <div class="value">
+                ${data.tahun}
+            </div>
+
+        </div>
+
+<div class="box">
+
+    <div class="label">
+        TANGGAL LAHIR
+    </div>
+
+    <div class="value">
+        ${sensorTanggal(data.lahir)}
+    </div>
+
+</div>
+
+        <div class="box">
+
+            <div class="label">
+                ASAL SEKOLAH
+            </div>
+
+            <div class="value">
+                ${data.sekolah}
+            </div>
+
+        </div>
+
+        <div class="box">
+
+            <div class="label">
+                ANAK DARI
+            </div>
+
+            <div class="value">
+                ${data.anak}
+            </div>
+
+        </div>
+
+    </div>
+    `;
+
+});
+
+/* PREVIEW FOTO */
+
+window.lihatFoto = function(src){
+
+    document.getElementById(
+      "previewBox"
+    ).style.display = "flex";
+
+    document.getElementById(
+      "previewImage"
+    ).src = src;
+
+}
+
+/* TUTUP */
+
+window.tutupPreview = function(){
+
+    document.getElementById(
+      "previewBox"
+    ).style.display = "none";
+
+}
+
+/* KLIK BG */
+
+document.getElementById(
+  "previewBox"
+).addEventListener("click", function(e){
+
+    if(e.target.id === "previewBox"){
+
+        tutupPreview();
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>

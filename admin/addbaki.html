@@ -1,0 +1,502 @@
+<!-- admin/adbaki.html -->
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Baki</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+
+    background:#0f3d2e;
+
+    padding:20px;
+
+    color:white;
+
+}
+
+/* BOX */
+
+.box{
+
+    max-width:600px;
+
+    margin:auto;
+
+    background:white;
+
+    padding:25px;
+
+    border-radius:24px;
+
+    box-shadow:
+      0 8px 25px rgba(0,0,0,0.25);
+
+}
+
+/* TITLE */
+
+h2{
+
+    color:#111;
+
+    margin-bottom:20px;
+
+    font-size:28px;
+
+}
+
+/* INPUT */
+
+input,
+select{
+
+    width:100%;
+
+    padding:15px;
+
+    border-radius:14px;
+
+    border:1px solid #ddd;
+
+    margin-bottom:15px;
+
+    outline:none;
+
+    font-size:14px;
+
+}
+
+/* BUTTON */
+
+button{
+
+    width:100%;
+
+    padding:15px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:#16a34a;
+
+    color:white;
+
+    font-size:16px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+}
+
+button:hover{
+
+    transform:translateY(-2px);
+
+}
+
+/* MONITOR */
+
+.monitor{
+
+    max-width:600px;
+
+    margin:40px auto 0;
+
+}
+
+/* CARD */
+
+.monitor-item{
+
+    background:white;
+
+    color:#111;
+
+    border-radius:24px;
+
+    overflow:hidden;
+
+    margin-bottom:20px;
+
+    box-shadow:
+      0 6px 18px rgba(0,0,0,0.2);
+
+    transition:0.3s;
+
+}
+
+.monitor-item:hover{
+
+    transform:translateY(-4px);
+
+}
+
+/* IMG */
+
+.monitor-item img{
+
+    width:100%;
+
+    height:260px;
+
+    object-fit:cover;
+
+}
+
+/* CONTENT */
+
+.monitor-content{
+
+    padding:20px;
+
+}
+
+.monitor-content h3{
+
+    font-size:24px;
+
+    margin-bottom:15px;
+
+}
+
+/* INFO BOX */
+
+.info-box{
+
+    background:#f5f7fb;
+
+    border-radius:14px;
+
+    padding:12px;
+
+    margin-bottom:12px;
+
+}
+
+.label{
+
+    font-size:11px;
+
+    color:#6b7280;
+
+    font-weight:600;
+
+    margin-bottom:5px;
+
+}
+
+.value{
+
+    font-size:15px;
+
+    font-weight:600;
+
+    color:#111827;
+
+}
+
+/* DELETE */
+
+.delete-btn{
+
+    background:#dc2626;
+
+    margin-top:15px;
+
+}
+
+</style>
+</head>
+<body>
+
+<div class="box">
+
+    <h2>Tambah Data Baki</h2>
+
+    <input
+      type="text"
+      id="gambar"
+      placeholder="INPUT GAMBAR CLOUDINARY URL"
+    >
+
+    <input
+      type="text"
+      id="nama"
+      placeholder="NAMA"
+    >
+
+    <input
+      type="text"
+      id="tahun"
+      placeholder="TAHUN"
+    >
+
+    <input
+      type="text"
+      id="lahir"
+      placeholder="TANGGAL LAHIR"
+    >
+
+    <input
+      type="text"
+      id="sekolah"
+      placeholder="ASAL SEKOLAH"
+    >
+
+    <select id="jabatan">
+
+        <option value="BAKI PENURUNAN">
+            BAKI PENURUNAN
+        </option>
+
+        <option value="BAKI PENAIKAN">
+            BAKI PENAIKAN
+        </option>
+
+    </select>
+
+    <input
+      type="text"
+      id="anak"
+      placeholder="Anak dari"
+    >
+
+    <button onclick="tambahBaki()">
+        Tambah Data
+    </button>
+
+</div>
+
+<!-- MONITOR -->
+
+<div class="monitor" id="monitor"></div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+
+    getDatabase,
+    ref,
+    push,
+    onValue,
+    remove
+
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* CONFIG */
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+
+};
+
+/* INIT */
+
+const app =
+  initializeApp(firebaseConfig);
+
+const db =
+  getDatabase(app);
+
+
+
+
+if(
+  localStorage.getItem("adminLogin")
+  !== "true"
+){
+
+    alert("Login admin dulu");
+
+    window.location.href =
+      "admin/index.html";
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+const monitor =
+  document.getElementById("monitor");
+
+/* TAMBAH */
+
+window.tambahBaki = async function(){
+
+    const data = {
+
+        gambar:
+          document.getElementById("gambar").value,
+
+        nama:
+          document.getElementById("nama").value,
+
+        tahun:
+          document.getElementById("tahun").value,
+
+        lahir:
+          document.getElementById("lahir").value,
+
+        sekolah:
+          document.getElementById("sekolah").value,
+
+        jabatan:
+          document.getElementById("jabatan").value,
+
+        anak:
+          document.getElementById("anak").value
+
+    };
+
+    if(data.nama === ""){
+
+        alert("Isi nama");
+
+        return;
+
+    }
+
+    await push(
+      ref(db, "baki"),
+      data
+    );
+
+    alert("Data berhasil ditambahkan");
+
+    document.getElementById("gambar").value = "";
+    document.getElementById("nama").value = "";
+    document.getElementById("tahun").value = "";
+    document.getElementById("lahir").value = "";
+    document.getElementById("sekolah").value = "";
+    document.getElementById("anak").value = "";
+
+}
+
+/* MONITOR */
+
+onValue(ref(db, "baki"), (snapshot)=>{
+
+    monitor.innerHTML = "";
+
+    snapshot.forEach((child)=>{
+
+        const id =
+          child.key;
+
+        const data =
+          child.val();
+
+        monitor.innerHTML +=
+        `
+        <div class="monitor-item">
+
+            <img src="${data.gambar}">
+
+            <div class="monitor-content">
+
+                <h3>
+                    ${data.nama}
+                </h3>
+
+                <div class="info-box">
+
+                    <div class="label">
+                        JABATAN
+                    </div>
+
+                    <div class="value">
+                        ${data.jabatan}
+                    </div>
+
+                </div>
+
+                <div class="info-box">
+
+                    <div class="label">
+                        SEKOLAH
+                    </div>
+
+                    <div class="value">
+                        ${data.sekolah}
+                    </div>
+
+                </div>
+
+                <button
+                  class="delete-btn"
+                  onclick="hapusData('${id}')"
+                >
+                    Hapus
+                </button>
+
+            </div>
+
+        </div>
+        `;
+
+    });
+
+});
+
+/* HAPUS */
+
+window.hapusData = async function(id){
+
+    const yakin =
+      confirm("Hapus data ?");
+
+    if(!yakin) return;
+
+    await remove(
+      ref(db, "baki/" + id)
+    );
+
+}
+
+</script>
+
+</body>
+</html>

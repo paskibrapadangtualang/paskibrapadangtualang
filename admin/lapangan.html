@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Lapangan</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#0f3d2e;
+    padding:20px;
+    color:white;
+}
+
+/* BOX */
+
+.box{
+    max-width:550px;
+    margin:auto;
+    background:white;
+    padding:25px;
+    border-radius:20px;
+
+    box-shadow:
+      0 8px 25px rgba(0,0,0,0.25);
+}
+
+h2{
+    color:#111;
+    margin-bottom:20px;
+}
+
+/* INPUT */
+
+input[type="text"]{
+
+    width:100%;
+    padding:15px;
+
+    border-radius:12px;
+    border:1px solid #ccc;
+
+    margin-bottom:15px;
+
+    outline:none;
+}
+
+/* BUTTON */
+
+button{
+
+    width:100%;
+    padding:15px;
+
+    border:none;
+    border-radius:12px;
+
+    background:#16a34a;
+    color:white;
+
+    font-size:16px;
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:0.3s;
+}
+
+button:hover{
+    opacity:0.9;
+}
+
+/* CHECKBOX */
+
+.checkbox-box{
+
+    margin-top:18px;
+
+    color:#111;
+
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    font-size:14px;
+    font-weight:bold;
+}
+
+/* MONITOR */
+
+.monitor{
+
+    margin-top:35px;
+
+    background:
+      rgba(255,255,255,0.08);
+
+    border:
+      1px solid rgba(255,255,255,0.1);
+
+    border-radius:20px;
+
+    padding:20px;
+
+    backdrop-filter:blur(10px);
+}
+
+.monitor h3{
+
+    margin-bottom:20px;
+
+    font-size:22px;
+    color:#ffd700;
+}
+
+/* ITEM */
+
+.monitor-item{
+
+    background:white;
+
+    color:#111;
+
+    padding:18px;
+
+    border-radius:16px;
+
+    margin-bottom:15px;
+
+    position:relative;
+
+    animation:fadeIn 0.4s ease;
+}
+
+/* BADGE */
+
+.badge{
+
+    display:inline-block;
+
+    background:#c40000;
+
+    color:white;
+
+    font-size:11px;
+    font-weight:bold;
+
+    padding:
+      7px 12px;
+
+    border-radius:999px;
+
+    margin-bottom:12px;
+
+    letter-spacing:1px;
+}
+
+/* HAPUS */
+
+.delete-btn{
+
+    position:absolute;
+
+    right:15px;
+    top:15px;
+
+    background:#dc2626;
+
+    width:auto;
+
+    padding:
+      8px 12px;
+
+    font-size:12px;
+
+    border-radius:10px;
+}
+
+/* ANIMASI */
+
+@keyframes fadeIn{
+
+    from{
+        opacity:0;
+        transform:translateY(10px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+}
+
+</style>
+</head>
+<body>
+
+<!-- FORM -->
+
+<div class="box">
+
+    <h2>Tambah Lapangan</h2>
+
+    <input
+        type="text"
+        id="namaLapangan"
+        placeholder="Masukkan nama lapangan"
+    >
+
+    <button onclick="tambahLapangan()">
+        Tambah Lapangan
+    </button>
+
+    <div class="checkbox-box">
+
+        <input
+          type="checkbox"
+          id="lokasiAktif"
+        >
+
+        <label for="lokasiAktif">
+            Jadikan lokasi aktif pengibaran tahun ini
+        </label>
+
+    </div>
+
+</div>
+
+<!-- MONITOR -->
+
+<div class="monitor">
+
+    <h3>
+        MONITOR LAPANGAN
+    </h3>
+
+    <div id="monitorList"></div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+
+    getDatabase,
+    ref,
+    push,
+    onValue,
+    remove
+
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* CONFIG */
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+
+};
+
+/* INIT */
+
+const app =
+    initializeApp(firebaseConfig);
+
+const db =
+    getDatabase(app);
+
+
+
+
+
+
+
+
+
+/* CEK LOGIN ADMIN */
+const isAdmin = localStorage.getItem("isAdmin");
+
+if (!isAdmin) {
+    alert("Maaf, menu tidak dapat diakses. Login dulu sebagai admin.");
+    window.location.href = "index.html";
+}
+
+
+
+localStorage.setItem("isAdmin", "true");
+window.location.href = "admin.html";
+
+
+/* ELEMENT */
+
+const monitorList =
+    document.getElementById("monitorList");
+
+/* TAMBAH */
+
+window.tambahLapangan = async function(){
+
+    const nama =
+        document.getElementById("namaLapangan").value;
+
+    const aktif =
+        document.getElementById("lokasiAktif").checked;
+
+    if(nama === ""){
+
+        alert("Isi nama lapangan");
+
+        return;
+
+    }
+
+    /* JIKA ADA LOKASI AKTIF BARU */
+
+    if(aktif){
+
+        const snapRef =
+            ref(db, "lapangan");
+
+        onValue(snapRef, (snapshot)=>{
+
+            snapshot.forEach((child)=>{
+
+                const id =
+                    child.key;
+
+                const data =
+                    child.val();
+
+                if(data.lokasiAktif){
+
+                    fetch(
+                      `${firebaseConfig.databaseURL}/lapangan/${id}.json`,
+                      {
+                        method:"PATCH",
+                        headers:{
+                          "Content-Type":"application/json"
+                        },
+                        body:JSON.stringify({
+                          lokasiAktif:false
+                        })
+                      }
+                    );
+
+                }
+
+            });
+
+        }, {
+            onlyOnce:true
+        });
+
+    }
+
+    await push(
+        ref(db, "lapangan"),
+        {
+            nama:nama,
+            lokasiAktif:aktif
+        }
+    );
+
+    alert("Lapangan berhasil ditambahkan");
+
+    document.getElementById("namaLapangan").value = "";
+
+    document.getElementById("lokasiAktif").checked = false;
+
+}
+
+/* MONITOR REALTIME */
+
+onValue(ref(db, "lapangan"), (snapshot)=>{
+
+    monitorList.innerHTML = "";
+
+    snapshot.forEach((child)=>{
+
+        const id =
+            child.key;
+
+        const data =
+            child.val();
+
+        const aktifBadge =
+            data.lokasiAktif
+            ?
+            `
+            <div class="badge">
+                📍 LOKASI AKTIF PENGIBARAN
+            </div>
+            `
+            :
+            "";
+
+        monitorList.innerHTML +=
+        `
+        <div class="monitor-item">
+
+            ${aktifBadge}
+
+            <strong>
+                ${data.nama}
+            </strong>
+
+            <button
+              class="delete-btn"
+              onclick="hapusLapangan('${id}')"
+            >
+              Hapus
+            </button>
+
+        </div>
+        `;
+
+    });
+
+});
+
+/* HAPUS */
+
+window.hapusLapangan = async function(id){
+
+    const yakin =
+        confirm("Hapus lapangan ini ?");
+
+    if(!yakin) return;
+
+    await remove(
+        ref(db, "lapangan/" + id)
+    );
+
+}
+
+</script>
+
+</body>
+</html>

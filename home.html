@@ -481,7 +481,7 @@ html, body{
 
 .banner-item img{
   width:100%;
-  height:320px;
+  height:230px;
   object-fit:cover;
   display:block;
 }
@@ -557,19 +557,30 @@ html, body{
 
 /* MENU ICON */
 
+/* MENU ICON */
+
 .menu-icon-wrapper{
   display:flex;
-  justify-content:space-between;
-  gap:5px;
+  gap:15px;
   margin:20px;
+
+  overflow-x:auto;
+  scroll-behavior:smooth;
+  padding-bottom:10px;
+}
+
+/* Hilangkan scrollbar */
+.menu-icon-wrapper::-webkit-scrollbar{
+  display:none;
 }
 
 .menu-icon-card{
-  flex:1;
+  min-width:85px;
   text-decoration:none;
   display:flex;
   flex-direction:column;
   align-items:center;
+  flex-shrink:0;
 }
 
 .menu-icon-bg{
@@ -586,10 +597,10 @@ html, body{
 }
 
 .menu-icon-bg img{
-  width:38px;
-  height:38px;
+  width:60px;
+  height:60px;
   object-fit:contain;
-  border-radius: 10px;
+  border-radius:10px;
 }
 
 .menu-icon-card span{
@@ -598,6 +609,7 @@ html, body{
   font-weight:700;
   color:#ffffff;
   letter-spacing:0.5px;
+  text-align:center;
 }
 
 /* EFEK */
@@ -617,7 +629,6 @@ html, body{
 .menu-icon-card:hover span{
   color:#c40000;
 }
-
 
 
 
@@ -795,7 +806,7 @@ html, body{
   <a href="camat.html" class="menu-icon-card">
 
     <div class="menu-icon-bg">
-      <img src="assets/images/logo langkat.png">
+      <img src="assets/images/langkat.png">
     </div>
 
     <span>
@@ -808,7 +819,7 @@ html, body{
   <a href="pelatih.html" class="menu-icon-card">
 
     <div class="menu-icon-bg">
-      <img src="assets/images/RI.webp">
+      <img src="assets/images/pembina-preview.png">
     </div>
 
     <span>
@@ -821,7 +832,7 @@ html, body{
   <a href="purna.html" class="menu-icon-card">
 
     <div class="menu-icon-bg">
-      <img src="assets/images/RI.webp">
+      <img src="assets/images/Logo paskib.png">
     </div>
 
     <span>
@@ -830,11 +841,59 @@ html, body{
 
   </a>
 
+    <!-- danton -->
+  <a href="danton.html" class="menu-icon-card">
+
+    <div class="menu-icon-bg">
+      <img src="assets/images/DANTON.png">
+    </div>
+
+    <span>
+      DANTON
+    </span>
+
+  </a>
+
+
+
+    <!-- ALBUM -->
+  <a href="baki.html" class="menu-icon-card">
+
+    <div class="menu-icon-bg">
+      <img src="assets/images/baki2.png">
+    </div>
+
+    <span>
+      BAKI
+    </span>
+
+  </a>
+
+
+
+
+    <!-- ALBUM -->
+  <a href="lapangan.html" class="menu-icon-card">
+
+    <div class="menu-icon-bg">
+      <img src="assets/images/Peta lampangan.png">
+    </div>
+
+    <span>
+      LAPANGAN
+    </span>
+
+  </a>
+
+
+
+
+  
   <!-- ALBUM -->
   <a href="album.html" class="menu-icon-card">
 
     <div class="menu-icon-bg">
-      <img src="assets/images/prestasi.png">
+      <img src="assets/images/pngwing.com (4).png">
     </div>
 
     <span>
@@ -842,6 +901,8 @@ html, body{
     </span>
 
   </a>
+
+
 
 </div>
 
@@ -1048,7 +1109,11 @@ if ("serviceWorker" in navigator) {
 // ======================
 // INFO WRAPPER
 // ======================
-const infoWrapper = document.getElementById("infoWrapper");
+// ======================
+// INFO WRAPPER
+// ======================
+const infoWrapper =
+  document.getElementById("infoWrapper");
 
 // ICON AUTO
 function getIcon(title){
@@ -1067,9 +1132,30 @@ function getIcon(title){
 }
 
 // ======================
+// POTONG DESKRIPSI
+// ======================
+function shortText(text, max = 80){
+
+  if(!text) return "-";
+
+  const clean =
+    text
+      .replace(/\\n/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+  if(clean.length <= max){
+    return clean;
+  }
+
+  return clean.substring(0, max) + "...";
+
+}
+
+// ======================
 // LOAD INFO FIREBASE
 // ======================
-function loadInfo() {
+function loadInfo(){
 
   onValue(ref(database, "info_purna"), (snapshot) => {
 
@@ -1077,48 +1163,52 @@ function loadInfo() {
 
     const data = snapshot.val();
 
-    if (!data) {
+    if(!data){
       return;
     }
 
-    Object.values(data)
+    Object.entries(data)
       .reverse()
-      .forEach((item) => {
+      .forEach(([key, item]) => {
 
-        // ======================
-        // RAPIKAN DESKRIPSI
-        // ======================
-        const desc = (item.deskripsi || "-")
-          .replace(/\\n/g, "\n")   // fix newline dari database
-          .trim();
+        // DESKRIPSI SINGKAT
+        const shortDesc =
+          shortText(item.deskripsi, 90);
 
         infoWrapper.innerHTML += `
-          <div class="info-card">
+
+          <div 
+            class="info-card"
+            onclick="bukaInfo('${key}')"
+            style="cursor:pointer;">
 
             <div class="info-icon">
-              <img 
-                src="${getIcon(item.judul)}" 
-                style="width:28px; height:28px;"
-              >
+
+              <img
+                src="${getIcon(item.judul)}"
+                style="width:28px;height:28px;">
+
             </div>
 
             <div class="info-content">
 
-              <h3>${item.judul}</h3>
+              <h3>
+                ${item.judul || "-"}
+              </h3>
 
               <p style="
-                white-space: pre-line;
-                line-height: 1.8;
-                color: #444;
-                font-size: 15px;
-                margin-top: 10px;
+                line-height:1.6;
+                color:#444;
+                font-size:14px;
+                margin-top:8px;
               ">
-                ${desc}
+                ${shortDesc}
               </p>
 
             </div>
 
           </div>
+
         `;
 
       });
@@ -1127,6 +1217,17 @@ function loadInfo() {
 
 }
 
+// ======================
+// BUKA HALAMAN FULL
+// ======================
+window.bukaInfo = function(id){
+
+  window.location.href =
+    `infoWrapperfull.html?id=${id}`;
+
+}
+
+// START
 loadInfo();
 
 
