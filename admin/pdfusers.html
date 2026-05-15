@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Export Users</title>
+
+<style>
+body{
+  font-family: Arial;
+  color: white;
+  padding: 20px;
+
+  background:
+    linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+    url("assets/images/lockpdf.png") no-repeat center center;
+
+  background-size: cover;
+}
+
+
+
+body, html{
+  margin:0;
+  padding:0;
+  height:100%;
+}
+button{
+  padding:12px 18px;
+  border:none;
+  border-radius:8px;
+  background:#c40000;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+/* MODAL */
+#exportPanel{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.6); /* overlay gelap */
+  overflow:auto;
+  z-index:9999;
+}
+
+.modal-box{
+  background:white;
+  color:black;
+  width:100%;
+  min-height:100vh;   /* 🔥 FULL LAYAR */
+  margin:0;
+  padding:20px;
+  border-radius:0;    /* ❗ jangan rounded biar full layar */
+  box-sizing:border-box;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
+}
+
+th,td{
+  border:1px solid #ddd;
+  padding:8px;
+  font-size:13px;
+  text-align:left;
+}
+
+img{
+  width:60px;
+  height:60px;
+  object-fit:cover;
+  border-radius:6px;
+}
+
+
+#yearList button.active{
+  background:#007b1a !important;
+  color:white !important;
+  font-weight:bold;
+}
+
+
+
+
+
+
+.legal-warning{
+  background: rgba(0,0,0,0.6);
+  border: 2px solid #ff0000;
+  color: white;
+
+  margin: 60px auto 40px auto;
+
+  max-width: 320px;   /* 🔥 ini yang penting */
+  width: 100%;
+
+  padding: 18px;
+  border-radius: 10px;
+
+  text-align: center;
+  line-height: 1.6;
+
+  box-shadow: 0 0 25px rgba(255,0,0,0.4);
+
+  animation: pulseWarning 1.2s infinite;
+}
+
+.legal-warning .title{
+  font-weight: 900;
+  font-size: 18px;
+  color: #ff3b3b;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+
+.legal-warning p{
+  font-size: 14px;
+  opacity: 0.9;
+  margin-bottom: 10px;
+}
+
+.legal-warning .footer{
+  margin-top: 10px;
+  font-weight: 900;
+  color: #ff3b3b;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+/* efek tegas (bukan lebay blink cepat) */
+@keyframes pulseWarning{
+  0%   { box-shadow: 0 0 10px rgba(255,0,0,0.3); transform: scale(1); }
+  50%  { box-shadow: 0 0 35px rgba(255,0,0,0.7); transform: scale(1.01); }
+  100% { box-shadow: 0 0 10px rgba(255,0,0,0.3); transform: scale(1); }
+}
+
+
+
+
+.btn-export{
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+  color: white;
+
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+
+  font-weight: 600;
+  font-size: 14px;
+
+  cursor: pointer;
+
+  box-shadow: 0 6px 15px rgba(34, 197, 94, 0.3);
+
+  transition: all 0.3s ease;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* hover effect */
+.btn-export:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(34, 197, 94, 0.4);
+}
+
+/* klik effect */
+.btn-export:active{
+  transform: scale(0.97);
+}
+
+
+
+
+
+.security-footer{
+  margin-top: 60px;
+  padding: 20px;
+
+  text-align: center;
+
+  background: rgba(0,0,0,0.5);
+  border-top: 2px solid #22c55e;
+
+  color: white;
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.security-title{
+  font-weight: 800;
+  color: #22c55e;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+
+.security-footer .warning{
+  color: #ff4d4d;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.security-footer .copyright{
+  margin-top: 12px;
+  opacity: 0.7;
+  font-size: 12px;
+}
+
+
+</style>
+</head>
+
+<body>
+
+
+  <div id="app" style="display:none;">
+
+<div style="text-align:center; margin-top:20px;">
+  <h2>EXPORT USERS ONLY</h2>
+
+<button class="btn-export" onclick="openExport()">
+  Download Data Peserta
+</button>
+</div>
+
+<div id="exportPanel">
+
+  <div class="modal-box">
+
+    <h2 style="text-align:center">DATA USERS AKUN</h2>
+
+    <div style="margin:10px 0; text-align:center;">
+  <h3>Pilih Tahun Angkatan</h3>
+  <div id="yearList" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;"></div>
+</div>
+
+    <button onclick="downloadPDF()" 
+style="background:#1f8f3a;color:white;">
+  ⬇ Download PDF
+</button>
+    <button onclick="closeExport()">Tutup</button>
+
+    <div id="preview"></div>
+
+  </div>
+
+</div>
+
+</div>
+
+
+
+
+
+<div class="legal-warning">
+  <div class="title">⚠ PERINGATAN HUKUM RESMI ⚠</div>
+
+  <p>
+    Dilarang keras mengakses, mengambil, menyalin, menyimpan,
+    atau menyebarkan data tanpa izin pemilik sistem.
+  </p>
+
+  <p>
+    Setiap aktivitas ilegal seperti peretasan, pencurian data,
+    atau penyalahgunaan sistem akan <b>dicatat dan ditindak secara hukum</b>
+    sesuai <b>Undang-Undang Informasi dan Transaksi Elektronik (UU ITE)</b>.
+  </p>
+
+  <p>
+    Sistem ini dilengkapi keamanan dan monitoring aktif 24 jam.
+  </p>
+
+  <div class="footer">
+    AKSES TANPA IZIN = TINDAKAN PIDANA
+  </div>
+</div>
+
+
+
+
+<footer class="security-footer">
+  <div class="security-title">🔒 SECURITY NOTICE</div>
+
+  <p>
+    Sistem ini dilindungi oleh mekanisme keamanan aktif 24 jam.
+    Semua aktivitas pengguna dicatat dan dipantau secara otomatis.
+  </p>
+
+  <p class="warning">
+    Dilarang keras mengakses, memodifikasi, atau menyalahgunakan data tanpa izin.
+    Pelanggaran akan ditindak sesuai hukum yang berlaku (UU ITE).
+  </p>
+
+  <div class="copyright">
+    © 2026 Paskibra System • All Rights Reserved
+  </div>
+</footer>
+
+<!-- jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- AutoTable plugin (WAJIB kalau pakai autoTable) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+
+
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, get } 
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* ================= FIREBASE ================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b",
+  measurementId: "G-1KGNVS3MRX"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const usersRef = ref(db, "users");
+
+/* ================= SECURITY GUARD ================= */
+const adminLogin = localStorage.getItem("adminLogin");
+
+if (adminLogin !== "true") {
+  alert("Silakan login sebagai admin terlebih dahulu");
+  window.location.href = "index.html";
+} else {
+  document.getElementById("app").style.display = "block";
+}
+
+
+
+
+
+
+/* ================= DATA ================= */
+let allUsers = [];
+let selectedYear = null;
+
+
+function generateYearButtons(){
+
+  const container = document.getElementById("yearList");
+  container.innerHTML = "";
+
+  const years = [...new Set(allUsers.map(u => u.angkatanTahun))];
+
+  years.sort();
+
+  // tombol ALL
+  const allBtn = document.createElement("button");
+  allBtn.innerText = "SEMUA";
+  allBtn.onclick = () => {
+    selectedYear = null;
+    highlightYear();
+  };
+  container.appendChild(allBtn);
+
+  years.forEach(year => {
+
+    const btn = document.createElement("button");
+    btn.innerText = year;
+
+    btn.onclick = () => {
+      selectedYear = year;
+      highlightYear();
+    };
+
+    btn.onclick = () => {
+  selectedYear = year;
+  highlightYear();
+};
+
+
+allBtn.onclick = () => {
+  selectedYear = null;
+  highlightYear();
+};
+
+    container.appendChild(btn);
+  });
+}
+
+function highlightYear(){
+
+  const buttons = document.querySelectorAll("#yearList button");
+
+  buttons.forEach(btn => {
+    btn.classList.remove("active");
+  });
+
+  buttons.forEach(btn => {
+    if(
+      (selectedYear === null && btn.innerText === "SEMUA") ||
+      btn.innerText === selectedYear
+    ){
+      btn.classList.add("active");
+    }
+  });
+}
+
+/* ================= OPEN ================= */
+window.openExport = async function(){
+  document.getElementById("exportPanel").style.display = "block";
+  await loadUsers();
+}
+
+/* ================= CLOSE ================= */
+window.closeExport = function(){
+  document.getElementById("exportPanel").style.display = "none";
+}
+
+/* ================= LOAD USERS ONLY ================= */
+async function loadUsers(){
+
+  const container = document.getElementById("preview");
+  container.innerHTML = "Loading...";
+
+  const snap = await get(usersRef);
+
+  allUsers = [];
+
+  let html = `
+  <table>
+    <tr>
+      <th>Foto</th>
+      <th>Nama</th>
+      <th>Email</th>
+      <th>Angkatan</th>
+      <th>Sekolah</th>
+      <th>Tgl Lahir</th>
+      <th>Umur</th>
+      <th>HP</th>
+      <th>WA</th>
+      <th>Nama Ibu</th>
+      <th>No Pendaftaran</th>
+      <th>Tinggi</th>
+      <th>Alamat</th>
+      <th>Status</th>
+    </tr>
+  `;
+
+  snap.forEach((child) => {
+
+    const d = child.val();
+
+    allUsers.push(d);
+
+    html += `
+      <tr>
+        <td><img src="${d.fotoSelfie || ''}"></td>
+        <td>${d.namaLengkap || ''}</td>
+        <td>${d.email || ''}</td>
+        <td>${d.angkatanTahun || ''}</td>
+        <td>${d.asalSekolah || ''}</td>
+        <td>${d.tanggalLahir || ''}</td>
+        <td>${d.umur || ''}</td>
+        <td>${d.nomorHp || ''}</td>
+        <td>${d.nomorWa || ''}</td>
+        <td>${d.namaIbu || ''}</td>
+        <td>${d.nomorPendaftaran || ''}</td>
+        <td>${d.tinggiBadan || ''}</td>
+        <td>${d.alamat || ''}</td>
+        <td>${d.statusPenerimaan || ''}</td>
+      </tr>
+    `;
+  });
+
+  html += "</table>";
+generateYearButtons();
+  container.innerHTML = html;
+}
+
+/* ================= PDF (NO FOTO) ================= */
+window.downloadPDF = function(){
+
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF("l","mm","a4");
+
+  pdf.setFontSize(14);
+
+const title = selectedYear
+  ? `DATA CALON PASKIBRA PADANG TUALANG TAHUN ${selectedYear}`
+  : "DATA CALON PASKIBRA PADANG TUALANG SEMUA TAHUN";
+
+  pdf.text(title, 14, 15);
+
+  const filtered = selectedYear
+    ? allUsers.filter(u => u.angkatanTahun == selectedYear)
+    : allUsers;
+
+  const rows = filtered.map((u, i) => [
+    i + 1,
+    u.namaLengkap || "",
+    u.email || "",
+    u.angkatanTahun || "",
+    u.asalSekolah || "",
+    u.tanggalLahir || "",
+    u.umur || "",
+    u.nomorHp || "",
+    u.nomorWa || "",
+    u.namaIbu || "",
+    u.nomorPendaftaran || "",
+    u.tinggiBadan || "",
+    u.alamat || "",
+    u.statusPenerimaan || ""
+  ]);
+
+  pdf.autoTable({
+    startY: 20,
+    head: [[
+      "No","Nama","Email","Angkatan","Sekolah",
+      "Tgl Lahir","Umur","HP","WA","Nama Ibu",
+      "No Pendaftaran","Tinggi","Alamat","Status"
+    ]],
+    body: rows,
+    styles: {
+      fontSize: 6,
+      cellPadding: 2
+    },
+    headStyles: {
+      fillColor: [196, 0, 0]
+    }
+  });
+
+  pdf.save("data-calon-paskibra-" + (selectedYear || "semua") + ".pdf");
+};
+
+</script>
+
+</body>
+</html>
