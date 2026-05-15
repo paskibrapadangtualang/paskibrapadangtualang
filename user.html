@@ -147,7 +147,7 @@ html, body{
     }
 
     .profile-card{
-      background:white;
+      background:#cccccc;
       border-radius:15px;
       padding:20px;
       text-align:center;
@@ -355,6 +355,50 @@ html, body{
   object-fit:cover;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+#fotoProfile{
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  object-fit:cover;
+  cursor:pointer;
+}
+
+/* modal */
+#imageModal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgb(126 126 126 / 76%);
+  justify-content:center;
+  align-items:center;
+  z-index:999999;
+}
+
+/* 🔥 HAPUS BORDER + STYLE THUMBNAIL TOTAL */
+#previewImg{
+  max-width:none;
+  max-height:none;
+  width:auto;
+  height:auto;
+  transform: scale(1.8);
+}
+
+
+
+
+
+
   </style>
 </head>
 <body>
@@ -417,7 +461,17 @@ html, body{
     <!-- PROFILE -->
     <div class="profile-card">
 
-      <img id="fotoProfile" src="" alt="Foto Profile">
+<img id="fotoProfile" src="" alt="Foto Profile">
+
+<div id="imageModal">
+  <img id="previewImg">
+</div>
+
+
+
+
+
+
 
       <h2 id="namaUser">Loading...</h2>
 
@@ -1296,6 +1350,31 @@ window.onclick = function(e){
 
 }
 
+
+
+
+
+
+
+
+
+
+window.addEventListener("load", () => {
+
+  const fotoProfile = document.getElementById("fotoProfile");
+  const modal = document.getElementById("imageModal");
+  const previewImg = document.getElementById("previewImg");
+
+  fotoProfile.onclick = function () {
+    previewImg.src = this.src; // ambil original image
+    modal.style.display = "flex";
+  };
+
+  modal.onclick = function () {
+    modal.style.display = "none";
+  };
+
+});
 
 
 
