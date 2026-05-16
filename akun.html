@@ -517,7 +517,15 @@ html, body{
   </div>
 
 
-
+<!-- JENIS KELAMIN -->
+<div class="input-group">
+  <label>Jenis Kelamin</label>
+  <select id="jenisKelamin">
+    <option value="">-- Pilih Jenis Kelamin --</option>
+    <option value="Laki-laki">Laki-laki</option>
+    <option value="Perempuan">Perempuan</option>
+  </select>
+</div>
 
       <div class="input-group">
         <label>Tanggal Lahir</label>
@@ -999,6 +1007,10 @@ window.register = async function(){
   const asalSekolah =
     document.getElementById("asalSekolah").value;
 
+const jenisKelamin =
+  document.getElementById("jenisKelamin").value;
+
+
   const tanggalLahir =
     document.getElementById("tanggalLahir").value;
 
@@ -1043,6 +1055,11 @@ window.register = async function(){
     return;
 
   }
+
+  if(!jenisKelamin){
+  showAlert("Jenis kelamin wajib dipilih!");
+  return;
+}
 
   // VALIDASI FOTO
 
@@ -1113,6 +1130,8 @@ window.register = async function(){
         angkatanTahun: angkatanTahun,
 
         asalSekolah: asalSekolah,
+        
+        jenisKelamin: jenisKelamin,
 
         tanggalLahir: tanggalLahir,
 

@@ -668,6 +668,15 @@ html, body{
 </div>
 
 
+<div class="data-item">
+  <b>Jenis kelamin :</b>
+  <span id="jenisKelamin">-</span>
+</div>
+
+
+
+
+
   <div class="data-item">
     <strong>Tanggal Lahir</strong>
     <span id="dataTanggalLahir"></span>
@@ -1167,6 +1176,10 @@ if(
 
 document.getElementById("asalSekolah").innerText =
   data.asalSekolah || "-";
+
+
+  document.getElementById("jenisKelamin").innerText =
+  data.jenisKelamin || "-";
 
           document.getElementById("dataTanggalLahir").innerText =
             data.tanggalLahir;

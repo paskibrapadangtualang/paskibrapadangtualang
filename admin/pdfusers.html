@@ -361,7 +361,26 @@ function generateYearButtons(){
   const container = document.getElementById("yearList");
   container.innerHTML = "";
 
-  const years = [...new Set(allUsers.map(u => u.angkatanTahun))];
+
+
+const currentYear = new Date().getFullYear();
+const startYear = 2023;
+const endYear = currentYear + 2;
+
+// tahun dari database
+const dbYears = allUsers.map(u => u.angkatanTahun);
+
+// tahun otomatis
+const autoYears = [];
+for (let y = startYear; y <= endYear; y++) {
+  autoYears.push(y.toString());
+}
+
+// gabungkan + hapus duplikat
+const years = [...new Set([...dbYears, ...autoYears])].sort();
+
+
+
 
   years.sort();
 
@@ -380,14 +399,11 @@ function generateYearButtons(){
     btn.innerText = year;
 
     btn.onclick = () => {
-      selectedYear = year;
-      highlightYear();
-    };
-
-    btn.onclick = () => {
   selectedYear = year;
   highlightYear();
 };
+
+
 
 
 allBtn.onclick = () => {
@@ -416,6 +432,14 @@ function highlightYear(){
     }
   });
 }
+
+
+
+
+
+
+
+
 
 /* ================= OPEN ================= */
 window.openExport = async function(){
@@ -454,15 +478,26 @@ async function loadUsers(){
       <th>No Pendaftaran</th>
       <th>Tinggi</th>
       <th>Alamat</th>
+      <th>Jenis Kelamin</th>
       <th>Status</th>
     </tr>
   `;
 
+  allUsers.sort((a, b) => {
+  return (a.namaLengkap || "").localeCompare(b.namaLengkap || "");
+});
+
   snap.forEach((child) => {
+
+    allUsers.sort((a, b) =>
+  (a.namaLengkap || "").localeCompare(b.namaLengkap || "")
+);
 
     const d = child.val();
 
-    allUsers.push(d);
+if ((d.statusPenerimaan || "").toLowerCase() === "diterima") {
+  allUsers.push(d);
+}
 
     html += `
       <tr>
@@ -478,8 +513,9 @@ async function loadUsers(){
         <td>${d.namaIbu || ''}</td>
         <td>${d.nomorPendaftaran || ''}</td>
         <td>${d.tinggiBadan || ''}</td>
-        <td>${d.alamat || ''}</td>
-        <td>${d.statusPenerimaan || ''}</td>
+<td>${d.alamat || ''}</td>
+<td>${d.jenisKelamin || ''}</td>
+<td>${d.statusPenerimaan || ''}</td>
       </tr>
     `;
   });
@@ -497,51 +533,76 @@ window.downloadPDF = function(){
 
   pdf.setFontSize(14);
 
-const title = selectedYear
-  ? `DATA CALON PASKIBRA PADANG TUALANG TAHUN ${selectedYear}`
-  : "DATA CALON PASKIBRA PADANG TUALANG SEMUA TAHUN";
+  const title = selectedYear
+    ? `DATA CALON PASKIBRA PADANG TUALANG Tahun ${selectedYear}`
+    : "SEMUA DATA CALON PASKIBRA PADANG TUALANG";
 
   pdf.text(title, 14, 15);
 
-  const filtered = selectedYear
-    ? allUsers.filter(u => u.angkatanTahun == selectedYear)
-    : allUsers;
+  let filtered = selectedYear
+  ? allUsers.filter(u => u.angkatanTahun == selectedYear)
+  : allUsers;
 
-  const rows = filtered.map((u, i) => [
-    i + 1,
-    u.namaLengkap || "",
-    u.email || "",
-    u.angkatanTahun || "",
-    u.asalSekolah || "",
-    u.tanggalLahir || "",
-    u.umur || "",
-    u.nomorHp || "",
-    u.nomorWa || "",
-    u.namaIbu || "",
-    u.nomorPendaftaran || "",
-    u.tinggiBadan || "",
-    u.alamat || "",
-    u.statusPenerimaan || ""
-  ]);
+// SORT A-Z
+filtered.sort((a,b)=>
+  (a.namaLengkap||"").localeCompare(b.namaLengkap||"")
+);
+
+// PISAH
+const laki = filtered.filter(u => (u.jenisKelamin || "").toLowerCase() === "laki-laki");
+const perempuan = filtered.filter(u => (u.jenisKelamin || "").toLowerCase() === "perempuan");
+
+  function buildRows(data){
+    return data.map((u, i) => [
+      i + 1,
+      u.namaLengkap || "",
+      u.email || "",
+      u.angkatanTahun || "",
+      u.asalSekolah || "",
+      u.tanggalLahir || "",
+      u.umur || "",
+      u.nomorHp || "",
+      u.nomorWa || "",
+      u.namaIbu || "",
+      u.nomorPendaftaran || "",
+      u.tinggiBadan || "",
+      u.jenisKelamin || "",
+      u.alamat || "",
+      u.statusPenerimaan || ""
+    ]);
+  }
+
+  pdf.text("LAKI-LAKI", 14, 25);
+
+  pdf.autoTable({
+    startY: 30,
+    head: [[
+      "No","Nama","Email","Angkatan","Sekolah",
+      "Tgl Lahir","Umur","HP","WA",
+      "Nama Ibu","No Pendaftaran","Tinggi",
+      "JK","Alamat","Status"
+    ]],
+    body: buildRows(laki),
+    styles: { fontSize: 6 }
+  });
+
+  pdf.addPage();
+
+  pdf.text("PEREMPUAN", 14, 15);
 
   pdf.autoTable({
     startY: 20,
     head: [[
       "No","Nama","Email","Angkatan","Sekolah",
-      "Tgl Lahir","Umur","HP","WA","Nama Ibu",
-      "No Pendaftaran","Tinggi","Alamat","Status"
+      "Tgl Lahir","Umur","HP","WA",
+      "Nama Ibu","No Pendaftaran","Tinggi",
+      "JK","Alamat","Status"
     ]],
-    body: rows,
-    styles: {
-      fontSize: 6,
-      cellPadding: 2
-    },
-    headStyles: {
-      fillColor: [196, 0, 0]
-    }
+    body: buildRows(perempuan),
+    styles: { fontSize: 6 }
   });
 
-  pdf.save("data-calon-paskibra-" + (selectedYear || "semua") + ".pdf");
+  pdf.save("paskibra-" + (selectedYear || "semua") + ".pdf");
 };
 
 </script>
