@@ -407,6 +407,17 @@ html, body{
 }
 
 
+.login-logo{
+  width:90px;
+  height:90px;
+
+  object-fit:contain;
+
+  display:block;
+
+  margin:0 auto 15px auto;
+}
+
   </style>
 </head>
 <body>
@@ -475,23 +486,30 @@ html, body{
 
   <div class="container">
 
-    <!-- LOGIN -->
-    <div class="card" id="loginBox">
-      <h2>Login</h2>
+ <!-- LOGIN -->
+<div class="card" id="loginBox">
 
-      <div class="input-group">
-        <label>Email</label>
-        <input type="email" id="loginEmail" placeholder="Masukkan email">
-      </div>
+  <!-- GAMBAR -->
+  <img 
+    src="assets/images/launchericon-512x512.png" 
+    class="login-logo"
+  >
 
-      <div class="input-group">
-        <label>Password</label>
-        <input type="password" id="loginPassword" placeholder="Masukkan password">
-      </div>
+  <h2>Login</h2>
 
-      <button class="btn" onclick="login()">
-        Login
-      </button>
+  <div class="input-group">
+    <label>Email</label>
+    <input type="email" id="loginEmail" placeholder="Masukkan email">
+  </div>
+
+  <div class="input-group">
+    <label>Password</label>
+    <input type="password" id="loginPassword" placeholder="Masukkan password">
+  </div>
+
+  <button class="btn" onclick="login()">
+    Login
+  </button>
 
       <div class="switch-text">
 
