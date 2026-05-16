@@ -157,6 +157,22 @@ button:hover{
   gap:10px;
 }
 
+#historyBox::-webkit-scrollbar{
+  width:6px;
+}
+
+#historyBox::-webkit-scrollbar-thumb{
+  background:#cbd5e1;
+  border-radius:10px;
+}
+
+#historyBox::-webkit-scrollbar-track{
+  background:transparent;
+}
+
+
+
+
 #historyBox .user-item{
   border-radius:16px;
   background:#b0ffd7;
@@ -258,11 +274,133 @@ button:hover{
   background:#ddd;
   border-radius:20px;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+#imagePreviewModal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.85);
+  z-index:9999999;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  backdrop-filter:blur(5px);
+}
+
+#imagePreviewModal img{
+  max-width:95%;
+  max-height:90vh;
+  border-radius:20px;
+  object-fit:contain;
+  box-shadow:0 10px 40px rgba(0,0,0,0.4);
+}
 </style>
 
 </head>
 
 <body>
+
+
+
+
+
+  <!-- POPUP TARIK -->
+<div id="popupTarik" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+z-index:999999;
+align-items:center;
+justify-content:center;
+padding:20px;
+">
+
+  <div style="
+  background:white;
+  width:100%;
+  max-width:380px;
+  border-radius:26px;
+  padding:22px;
+  ">
+
+    <h2 style="
+    margin-bottom:18px;
+    color:#111827;
+    ">
+      Tarik Uang Kas
+    </h2>
+
+    <input
+      type="number"
+      id="nominalTarik"
+      placeholder="Total ditarik"
+      style="
+      width:100%;
+      padding:14px;
+      border:1px solid #ddd;
+      border-radius:14px;
+      margin-bottom:14px;
+      "
+    >
+
+    <textarea
+      id="alasanTarik"
+      placeholder="Alasan penarikan..."
+      style="
+      width:100%;
+      height:110px;
+      padding:14px;
+      border:1px solid #ddd;
+      border-radius:14px;
+      resize:none;
+      "
+    ></textarea>
+
+    <button onclick="submitTarik()" style="
+    width:100%;
+    padding:14px;
+    margin-top:16px;
+    border:none;
+    border-radius:14px;
+    background:#c40000;
+    color:white;
+    font-weight:700;
+    ">
+      Tarik Sekarang
+    </button>
+
+    <button onclick="closeTarikPopup()" style="
+    width:100%;
+    padding:14px;
+    margin-top:10px;
+    border:none;
+    border-radius:14px;
+    background:#e5e7eb;
+    color:#111827;
+    font-weight:700;
+    ">
+      Batal
+    </button>
+
+  </div>
+
+</div>
+
 
 
 
@@ -486,15 +624,183 @@ Simpan Pembayaran
 
 
 
-
 <!-- HISTORY -->
 <div class="card">
 
-<h3>History Pembayaran</h3>
+  <h3>History Pembayaran</h3>
 
-<div id="historyBox"></div>
+  <div 
+    id="historyBox"
+    style="
+      max-height:400px;
+      overflow-y:auto;
+      padding-right:6px;
+    "
+  ></div>
 
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="card" style="
+padding:20px;
+border-radius:24px;
+background:linear-gradient(135deg,#ffffff,#f8fafc);
+box-shadow:0 6px 25px rgba(0,0,0,0.06);
+border:1px solid #eef2f7;
+margin-top:15px;
+">
+
+  <!-- HEADER -->
+  <div style="
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:18px;
+  ">
+
+    <div>
+
+      <div style="
+      font-size:22px;
+      font-weight:800;
+      color:#111827;
+      ">
+        💰 KAS GLOBAL
+      </div>
+
+      <div style="
+      font-size:13px;
+      color:#6b7280;
+      margin-top:4px;
+      ">
+        Total saldo seluruh uang cash
+      </div>
+
+    </div>
+
+    <div style="
+    width:55px;
+    height:55px;
+    border-radius:18px;
+    background:linear-gradient(135deg,#16a34a,#22c55e);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:26px;
+    color:white;
+    box-shadow:0 4px 18px rgba(34,197,94,0.3);
+    ">
+      💵
+    </div>
+
+  </div>
+
+  <!-- TOTAL -->
+  <div id="saldoGlobal" style="
+  font-size:34px;
+  font-weight:800;
+  color:#111827;
+  margin-bottom:18px;
+  ">
+    Rp 0
+  </div>
+
+
+
+
+  <div style="
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-top:10px;
+">
+
+  <div style="
+  background:#f0fdf4;
+  padding:12px;
+  border-radius:14px;
+  text-align:center;
+  ">
+    <div style="font-size:12px;color:#166534;">Pemasukan</div>
+    <div id="totalMasuk" style="font-weight:800;color:#16a34a;">Rp 0</div>
+  </div>
+
+  <div style="
+  background:#fef2f2;
+  padding:12px;
+  border-radius:14px;
+  text-align:center;
+  ">
+    <div style="font-size:12px;color:#991b1b;">Penarikan</div>
+    <div id="totalKeluar" style="font-weight:800;color:#dc2626;">Rp 0</div>
+  </div>
+
+</div>
+
+
+
+
+<div class="card" style="
+margin-top:15px;
+padding:20px;
+border-radius:24px;
+background:#fff;
+box-shadow:0 6px 25px rgba(0,0,0,0.06);
+">
+
+
+
+
+
+  <!-- BUTTON TARIK -->
+  <button id="btnTarik" onclick="openTarikPopup()" style="
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:16px;
+  background:linear-gradient(135deg,#c40000,#ff3b3b);
+  color:white;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+  display:none;
+  ">
+    💸 Tarik Uang Kas
+  </button>
+
+</div>
+
+
+  <div style="
+  font-size:18px;
+  font-weight:800;
+  margin-bottom:10px;
+  ">
+    💸 Penarikan Kas
+  </div>
+
+  <div id="historyTarik"></div>
+
+</div>
+
+
+
+
+
+
 
 
 
@@ -508,13 +814,22 @@ Simpan Pembayaran
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
+  get,
   getDatabase,
   ref,
   onValue,
   push,
+  update,
   set,
   remove
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+import {
+  getAuth,
+  onAuthStateChanged,
+  setPersistence,
+  browserLocalPersistence
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
@@ -528,6 +843,62 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const auth = getAuth(app);
+
+// 🔥 pastikan login tidak hilang setelah refresh
+setPersistence(auth, browserLocalPersistence)
+  .catch((err) => console.error("Persistence error:", err));
+
+const allowedRoles = ["superadmin", "admin", "admin2", "bendahara"];
+
+onAuthStateChanged(auth, (user) => {
+
+  console.log("🔥 AUTH STATE:", user);
+
+  if (!user) {
+    console.log("❌ USER BELUM LOGIN");
+    document.getElementById("btnTarik")?.style.setProperty("display", "none");
+    return;
+  }
+
+  console.log("✅ LOGIN UID:", user.uid);
+
+  const userRef = ref(db, `admin/${user.uid}`);
+
+  onValue(userRef, (snap) => {
+
+    if (!snap.exists()) {
+      console.log("❌ DATA ADMIN TIDAK DITEMUKAN DI UID INI");
+      document.getElementById("btnTarik")?.style.setProperty("display", "none");
+      return;
+    }
+
+    const data = snap.val();
+    console.log("📦 DATA ADMIN:", data);
+
+    // 🔥 FIX: aman dari undefined + case insensitive
+    const role = String(data?.role || "").trim().toLowerCase();
+
+    console.log("🎯 ROLE FINAL:", role);
+
+    const btn = document.getElementById("btnTarik");
+    if (!btn) return;
+
+    if (allowedRoles.includes(role)) {
+      btn.style.display = "block";
+      console.log("🟢 ACCESS GRANTED");
+    } else {
+      btn.style.display = "none";
+      console.log("🔴 ACCESS DENIED");
+    }
+
+  });
+
+});
+
+console.log("⚡ AUTH READY:", auth);
+
+
 
 
 window.openDetailPopup = function(data, hari){
@@ -834,19 +1205,51 @@ window.loadGlobalData = function(){
 
     const users = snap.val() || {};
 
-    Object.keys(users).forEach(uid => {
+Object.keys(users).forEach(uid => {
 
-      const u = users[uid];
-      const cash = u.cash?.[bulan]?.[hari];
+  const u = users[uid];
 
-      if(cash && cash.status === "paid"){
-        sudahBayar.push(u.namaLengkap);
-        totalBayar += cash.nominal || 2000;
-      }else{
-        belumBayar.push(u.namaLengkap);
-      }
+const cashHari =
+  u.cash?.[bulan]?.[String(hari)];
 
-    });
+let sudah = false;
+let nominalBayar = 0;
+
+// FORMAT BARU
+if(cashHari && cashHari.status === "paid"){
+
+  sudah = true;
+  nominalBayar = Number(cashHari.nominal || 2000);
+
+}
+
+// FORMAT LAMA
+const semuaCash = u.cash?.[bulan] || {};
+
+Object.values(semuaCash).forEach(item => {
+
+  if(
+    item?.status === "paid" &&
+    Number(item?.hari) === hari
+  ){
+    sudah = true;
+    nominalBayar = Number(item.nominal || 2000);
+  }
+
+});
+
+if(sudah){
+
+  sudahBayar.push(u.namaLengkap);
+  totalBayar += nominalBayar;
+
+}else{
+
+  belumBayar.push(u.namaLengkap);
+
+}
+
+});
 
 document.getElementById("globalResult").innerHTML = `
 
@@ -1037,102 +1440,222 @@ box-shadow:0 4px 18px rgba(0,0,0,0.06);
 };
 
 
-window.openCalendar = function(uid, nama){
+
+
+
+
+
+
+
+
+
+
+
+
+let calendarUnsub = null;
+
+window.refreshCalendar = function (uid, nama) {
 
   document.getElementById("calendarModal").style.display = "block";
   document.getElementById("calName").innerText = nama;
 
   const grid = document.getElementById("calendarGrid");
-  grid.innerHTML = "";
 
-  const totalHari = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+  const now = new Date();
+  const totalHari = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
 
-  const bulan =
-    now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,"0");
+  const bulan = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
 
   const refCash = ref(db, `users/${uid}/cash/${bulan}`);
 
-onValue(refCash, (snap)=>{
-
-  const data = snap.val() || {};
-
-  console.log("CASH LIVE:", data); // DEBUG WAJIB
-
-  for(let i=1;i<=totalHari;i++){
-
-    const div = document.createElement("div");
-
-    if(data[String(i)]?.status === "paid"){
-      div.style.background = "#28a745";
-      div.style.color = "white";
-    }else{
-      div.style.background = "#dc3545";
-      div.style.color = "white";
-    }
-
-div.innerText = i;
-
-div.onclick = ()=>{
-  openDetailPopup(data[String(i)], i);
-};
-
-grid.appendChild(div);
+  // ❌ HAPUS LISTENER LAMA
+  if (calendarUnsub) {
+    calendarUnsub();
+    calendarUnsub = null;
   }
 
-});
+  // ✔ PASANG LISTENER BARU
+  calendarUnsub = onValue(refCash, (snap) => {
+
+    const data = snap.val() || {};
+
+    grid.innerHTML = "";
+
+    for (let i = 1; i <= totalHari; i++) {
+
+      const div = document.createElement("div");
+
+      const item = data[i];
+
+      const isPaid = item && item.status === "paid";
+
+      div.style.background = isPaid ? "#28a745" : "#dc3545";
+      div.style.color = "white";
+      div.style.padding = "10px";
+      div.style.borderRadius = "8px";
+      div.style.textAlign = "center";
+      div.style.cursor = "pointer";
+
+      div.innerText = i;
+
+      div.onclick = () => {
+        openDetailPopup(item || null, i);
+      };
+
+      grid.appendChild(div);
+    }
+
+  });
+
 };
+
+
 window.closeCalendar = function(){
   document.getElementById("calendarModal").style.display = "none";
 }
 
 
 
+function loadHistory(){
 
+  onValue(ref(db, "cashHistory"), (snap)=>{
 
-onValue(ref(db, "cashHistory"), (snap)=>{
+    const data = snap.val() || {};
+    const box = document.getElementById("historyBox");
 
-  const data = snap.val() || {};
-  const box = document.getElementById("historyBox");
+    box.innerHTML = "";
 
-  box.innerHTML = "";
+    // 🔥 kalau kosong
+    if(!Object.keys(data).length){
 
-  Object.keys(data).reverse().forEach(id=>{
-    const d = data[id];
+      box.innerHTML = `
+        <div style="
+          padding:20px;
+          text-align:center;
+          color:#6b7280;
+        ">
+          Belum ada history pembayaran
+        </div>
+      `;
 
-    const div = document.createElement("div");
-    div.className = "user-item";
+      return;
+    }
 
-div.innerHTML = `
-  <b>${d.nama}</b><br>
-  💰 Rp ${d.nominal} (${d.metode})<br>
-  📅 ${d.bulan} - Hari ${d.mulaiHari}<br>
+    Object.keys(data).reverse().forEach(id=>{
 
-<button onclick="hapusHistory('${id}', '${d.userId}', '${d.bulan}', '${d.mulaiHari}', ${d.nominal})" style="
-  margin-top:8px;
-  background:#c40000;
-  color:white;
-  border:none;
-  padding:7px 14px;
-  border-radius:8px;
-  cursor:pointer;
-  width:auto;
-  font-size:12px;
-  font-weight:600;
-">
-  Hapus
-</button>
-`;
+      const d = data[id];
 
-    box.appendChild(div);
+      const foto =
+        users?.[d.userId]?.fotoSelfie ||
+        users?.[d.userId]?.foto ||
+        d?.fotoSelfie ||
+        "assets/images/user.png";
+
+      const div = document.createElement("div");
+      div.className = "user-item";
+
+      div.innerHTML = `
+
+      <div style="
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:10px;
+      ">
+
+        <img
+          src="${foto}"
+
+          onclick="openImagePreview(this.src)"
+
+          onerror="this.src='assets/images/user.png'"
+
+          style="
+            width:60px;
+            height:60px;
+            border-radius:50%;
+            object-fit:cover;
+            border:3px solid #e5e7eb;
+            cursor:pointer;
+            flex-shrink:0;
+          "
+        >
+
+        <div style="
+        flex:1;
+        min-width:0;
+        ">
+
+          <b style="
+          font-size:15px;
+          display:block;
+          color:#111827;
+          ">
+            ${d.nama || "-"}
+          </b>
+
+          <div style="
+          font-size:13px;
+          color:#374151;
+          margin-top:4px;
+          ">
+            💰 Rp ${Number(d.nominal || 0).toLocaleString("id-ID")}
+            (${d.metode || "-"})
+          </div>
+
+          <div style="
+          font-size:12px;
+          color:#6b7280;
+          margin-top:4px;
+          ">
+            📅 ${d.bulan || "-"} - Hari ${d.mulaiHari || "-"}
+          </div>
+
+        </div>
+
+      </div>
+
+      <button
+        onclick="hapusHistory(
+          '${id}',
+          '${d.userId}',
+          '${d.bulan}',
+          '${d.mulaiHari}',
+          ${d.nominal}
+        )"
+
+        style="
+          margin-top:8px;
+          background:#c40000;
+          color:white;
+          border:none;
+          padding:7px 14px;
+          border-radius:8px;
+          cursor:pointer;
+          width:auto;
+          font-size:12px;
+          font-weight:600;
+        "
+      >
+        Hapus
+      </button>
+
+      `;
+
+      box.appendChild(div);
+
+    });
+
   });
 
-});
+}
 
 
 
 let users = {};
 let selectedUserId = "";
 let selectedUserName = "";
+let selectedUserFoto = "";
 
 
 const now = new Date();
@@ -1144,9 +1667,15 @@ document.getElementById("infoBulan").innerText =
 "Bulan: " + bulan + " | Total hari: " + totalHari + " | 2000/hari";
 
 onValue(ref(db, "users"), (snap)=>{
+
   users = snap.val() || {};
+
   renderUser("");
   updateSummary();
+
+  // 🔥 refresh ulang history setelah users siap
+  loadHistory();
+
 });
 
 document.getElementById("searchUser").addEventListener("input",(e)=>{
@@ -1173,16 +1702,23 @@ function renderUser(keyword){
 
 div.onclick = ()=>{
 
+  console.log("FOTO USER:", u);
+
   selectedUserId = uid;
   selectedUserName = u.namaLengkap;
+
+  selectedUserFoto =
+    u.foto ||
+    u.fotoSelfie ||
+    u.photoURL ||
+    "";
 
   document.getElementById("selectedUser").value =
     u.namaLengkap;
 
-  openCalendar(uid, u.namaLengkap);
+  window.refreshCalendar(uid, u.namaLengkap);
 
 };
-
       box.appendChild(div);
     }
   });
@@ -1190,7 +1726,7 @@ div.onclick = ()=>{
 
 console.log("USERS:", users);
 
-window.bayar = function(){
+window.bayar = async function(){
 
   const nominal = Number(document.getElementById("nominal").value);
   const metode = document.getElementById("metode").value;
@@ -1203,7 +1739,7 @@ window.bayar = function(){
   const jumlahHari = Math.ceil(nominal / 2000);
 
   // ambil semua data cash user
-  onValue(ref(db, `users/${selectedUserId}/cash`), (snap)=>{
+  onValue(ref(db, `users/${selectedUserId}/cash`), async (snap)=>{
 
     const semuaCash = snap.val() || {};
 
@@ -1214,7 +1750,7 @@ window.bayar = function(){
       now.getDate() - 1
     );
 
-    // cari tanggal hijau terakhir
+    // cari tanggal terakhir
     Object.keys(semuaCash).forEach(bln=>{
 
       Object.keys(semuaCash[bln] || {}).forEach(h=>{
@@ -1233,56 +1769,71 @@ window.bayar = function(){
 
     });
 
-    // mulai setelah tanggal terakhir
-    const mulaiTanggal = new Date(tanggalTerakhir);
-    mulaiTanggal.setDate(mulaiTanggal.getDate() + 1);
+  // mulai setelah tanggal terakhir
+const mulaiTanggal = new Date(tanggalTerakhir);
+mulaiTanggal.setDate(mulaiTanggal.getDate() + 1);
 
-    // simpan history admin
-    const data = {
-      userId: selectedUserId,
-      nama: selectedUserName,
-      nominal: nominal,
+console.log("FOTO TERSIMPAN:", selectedUserFoto);
+
+
+// simpan history admin
+const data = {
+  userId: selectedUserId,
+  nama: selectedUserName,
+
+  fotoSelfie:
+    users[selectedUserId]?.fotoSelfie || "",
+
+  nominal: nominal,
+  metode: metode,
+
+  bulan:
+    mulaiTanggal.getFullYear() + "-" +
+    String(mulaiTanggal.getMonth()+1).padStart(2,"0"),
+
+  mulaiHari: mulaiTanggal.getDate(),
+  jumlahHari: jumlahHari,
+  waktu: new Date().toLocaleString("id-ID"),
+  tanggalISO: now.toISOString()
+};
+
+push(ref(db,"cashHistory"), data);
+
+
+
+
+
+await refreshCashGlobal();
+
+
+    // =========================
+    // ISI KALENDER USER
+    // =========================
+
+for(let i=0;i<jumlahHari;i++){
+
+  const baseDate = new Date(mulaiTanggal);
+  baseDate.setDate(baseDate.getDate() + i);
+
+  const hariTarget = baseDate.getDate();
+
+  const bulanKeyFix =
+    baseDate.getFullYear() + "-" +
+    String(baseDate.getMonth()+1).padStart(2,"0");
+
+  await set(
+    ref(db, `users/${selectedUserId}/cash/${bulanKeyFix}/${hariTarget}`),
+    {
+      status: "paid",
+      nominal: 2000,
       metode: metode,
-
-      bulan:
-        mulaiTanggal.getFullYear() + "-" +
-        String(mulaiTanggal.getMonth()+1).padStart(2,"0"),
-
-      mulaiHari: mulaiTanggal.getDate(),
-
-      jumlahHari: jumlahHari,
-
-      waktu: new Date().toLocaleString("id-ID"),
-
-      tanggalISO: now.toISOString()
-    };
-
-    push(ref(db,"cashHistory"), data);
-
-    // isi kalender otomatis lanjut
-    for(let i=0;i<jumlahHari;i++){
-
-      const baseDate = new Date(mulaiTanggal);
-
-      baseDate.setDate(baseDate.getDate() + i);
-
-      const hariTarget = baseDate.getDate();
-
-      const bulanKeyFix =
-        baseDate.getFullYear() + "-" +
-        String(baseDate.getMonth()+1).padStart(2,"0");
-
-      set(
-        ref(db, `users/${selectedUserId}/cash/${bulanKeyFix}/${hariTarget}`),
-        {
-          status:"paid",
-          nominal:2000,
-          metode:metode,
-          waktu:new Date().toLocaleString("id-ID")
-        }
-      );
-
+      waktu: new Date().toLocaleString("id-ID")
     }
+  );
+
+}
+
+await window.refreshCalendar(selectedUserId, selectedUserName);
 
     alert("Pembayaran berhasil ditambahkan!");
 
@@ -1291,6 +1842,16 @@ window.bayar = function(){
   });
 
 }
+
+
+
+
+
+
+
+
+
+
 
 
 function updateSummary(){
@@ -1319,7 +1880,284 @@ window.openGlobalCalendar = function(){
 window.closeGlobal = function(){
   document.getElementById("globalModal").style.display = "none";
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+let isUpdatingCash = false; // 👈 TARUH DI LUAR (GLOBAL)
+
+window.refreshCashGlobal = async function () {
+
+  if (isUpdatingCash) return;
+  isUpdatingCash = true;
+
+  try {
+
+    console.log("🔥 refreshCashGlobal DIPANGGIL");
+
+    const snapMasuk = await get(ref(db,"cashHistory"));
+    const snapKeluar = await get(ref(db,"cashPenarikan"));
+
+    const masukData = snapMasuk.val() || {};
+    const keluarData = snapKeluar.val() || {};
+
+    const totalMasuk = Object.values(masukData).reduce((sum, item) => {
+      return sum + Number(item?.nominal || 0);
+    }, 0);
+
+    const totalKeluar = Object.values(keluarData).reduce((sum, item) => {
+      return sum + Number(item?.nominal || 0);
+    }, 0);
+
+    const totalSaldo = totalMasuk - totalKeluar;
+
+    console.log("MASUK TOTAL:", totalMasuk);
+    console.log("KELUAR TOTAL:", totalKeluar);
+
+    await set(ref(db,"cashGlobal"), {
+      totalMasuk,
+      totalKeluar,
+      totalSaldo
+    });
+
+  } finally {
+    isUpdatingCash = false;
+  }
+};
+
+
+// =======================
+// SALDO GLOBAL
+// =======================
+
+onValue(ref(db,"cashGlobal"),(snap)=>{
+
+  const d = snap.val() || {};
+
+  console.log("📊 UPDATE UI CASHGLOBAL");
+
+  document.getElementById("saldoGlobal").innerText =
+    "Rp " + (d.totalSaldo || 0);
+
+  document.getElementById("totalMasuk").innerText =
+    "Rp " + (d.totalMasuk || 0);
+
+  document.getElementById("totalKeluar").innerText =
+    "Rp " + (d.totalKeluar || 0);
+});
+// =======================
+// ADMIN BUTTON
+// =======================
+
+onAuthStateChanged(auth,(user)=>{
+
+  if(!user) return;
+
+onValue(ref(db,"admin/" + user.uid), (snap) => {
+
+  const data = snap.val() || {};
+
+  console.log("USER DATA:", data);
+
+    // GANTI SESUAI ROLE ADMIN
+    if(
+  data.role === "admin" ||
+  data.role === "bendahara" ||
+  data.role === "superadmin"
+){
+
+      document.getElementById(
+        "btnTarik"
+      ).style.display = "block";
+
+    }
+
+  });
+
+});
+
+// =======================
+// POPUP
+// =======================
+
+window.openTarikPopup = function(){
+
+  document.getElementById(
+    "popupTarik"
+  ).style.display = "flex";
+
+}
+
+window.closeTarikPopup = function(){
+
+  document.getElementById(
+    "popupTarik"
+  ).style.display = "none";
+
+}
+
+// =======================
+// SUBMIT TARIK
+// =======================
+window.submitTarik = async function () {
+
+  const nominal = Number(document.getElementById("nominalTarik").value);
+  const alasan = document.getElementById("alasanTarik").value;
+
+  if (!nominal || !alasan) {
+    alert("Lengkapi data");
+    return;
+  }
+
+  const snap = await get(ref(db,"cashGlobal"));
+  const data = snap.val() || {};
+
+  if (nominal > (data.totalSaldo || 0)) {
+    alert("Saldo tidak cukup");
+    return;
+  }
+
+  await push(ref(db,"cashPenarikan"), {
+    nominal,
+    alasan,
+    waktu: new Date().toLocaleString("id-ID")
+  });
+
+  await window.refreshCashGlobal();
+
+  alert("Penarikan berhasil");
+  closeTarikPopup();
+};
+    
+
+
+
+
+
+
+
+onValue(ref(db,"cashPenarikan"),(snap)=>{
+  console.log("BOX:", document.getElementById("historyTarik"));
+
+  const box = document.getElementById("historyTarik");
+
+  if (!box) {
+    console.error("❌ historyTarik tidak ditemukan di DOM");
+    return;
+  }
+
+  const data = snap.val();
+
+  console.log("🔥 DATA PENARIKAN:", data);
+
+  box.innerHTML = "";
+
+  if (!data) {
+    box.innerHTML = "<div style='color:#999'>Belum ada penarikan</div>";
+    return;
+  }
+
+  Object.values(data).reverse().forEach(d=>{
+
+    const div = document.createElement("div");
+
+    div.style = `
+      background:#fff;
+      padding:14px;
+      border-radius:16px;
+      margin-bottom:10px;
+      box-shadow:0 2px 10px rgba(0,0,0,0.05);
+      border:1px solid #eee;
+    `;
+
+    div.innerHTML = `
+      <div style="font-weight:800;color:#111827;">
+        💸 Rp ${d.nominal}
+      </div>
+
+      <div style="font-size:13px;color:#6b7280;margin-top:4px;">
+        📄 ${d.alasan}
+      </div>
+
+      <div style="font-size:11px;color:#9ca3af;margin-top:6px;">
+        🕒 ${d.waktu}
+      </div>
+    `;
+
+    box.appendChild(div);
+
+  });
+
+});
+
+
+await refreshCashGlobal();
+
+await window.refreshCashGlobal();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+window.openImagePreview = function(src){
+
+  document.getElementById("previewImage").src = src;
+
+  document.getElementById(
+    "imagePreviewModal"
+  ).style.display = "flex";
+
+}
+
+window.closeImagePreview = function(){
+
+  document.getElementById(
+    "imagePreviewModal"
+  ).style.display = "none";
+
+}
 </script>
 
+
+
+
+
+<!-- IMAGE PREVIEW -->
+<div id="imagePreviewModal" onclick="closeImagePreview()">
+
+  <img id="previewImage">
+
+</div>
 </body>
 </html>
