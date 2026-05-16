@@ -32,12 +32,25 @@ body{
   background:linear-gradient(135deg,#b80000,#ff2e2e);
   color:white;
   padding:20px;
-  border-radius:22px;
   text-align:center;
   font-size:22px;
   font-weight:700;
-  margin-bottom:18px;
-  box-shadow:0 10px 30px rgba(255,0,0,0.15);
+
+  position:sticky;
+  top:0;
+
+  z-index:9999;
+
+  border-radius:0;
+  box-shadow:none;
+
+  width:calc(100% + 36px);
+
+  margin:
+    -18px
+    0
+    18px
+    -18px;
 }
 
 /* CARD */
@@ -521,7 +534,7 @@ Tutup
 
 <!-- HEADER -->
 <div class="header">
-💰 CASH ADMIN SYSTEM
+CASH ADMIN SYSTEM
 </div>
 
 
@@ -544,7 +557,7 @@ Tutup
 <!-- SUMMARY -->
 <div class="card">
 
-<h3>Summary Sistem</h3>
+<h3>Developer Sistem</h3>
 
 <p id="summary"></p>
 
@@ -552,34 +565,97 @@ Tutup
 
 
 <!-- GLOBAL -->
-<div class="card" style="
-background:linear-gradient(135deg,#2563eb,#3b82f6);
-color:white;
-">
+<div
+  onclick="openGlobalCalendar()"
+  style="
+  background:linear-gradient(135deg,#2563eb,#3b82f6);
+  color:white;
+  padding:22px;
+  border-radius:24px;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 10px 30px rgba(37,99,235,0.25);
+  transition:.2s;
+  "
+  
+  onmouseover="this.style.transform='scale(1.01)'"
+  onmouseout="this.style.transform='scale(1)'"
+>
 
-<h3 style="
-color:white;
-margin-bottom:12px;
-">
-🌍 Global Dashboard
-</h3>
+  <!-- ICON -->
+  <div style="
+  position:absolute;
+  right:-10px;
+  top:-10px;
+  font-size:90px;
+  opacity:.08;
+  ">
+    🌍
+  </div>
 
-<button onclick="openGlobalCalendar()" style="
-background:white;
-color:#2563eb;
-font-weight:700;
-">
-📅 Lihat Pembayaran Hari Ini
-</button>
+  <!-- TOP -->
+  <div style="
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  ">
 
-<p id="globalInfo" style="
-margin-top:12px;
-font-size:13px;
-color:rgba(255,255,255,0.9);
-"></p>
+    <div>
+
+      <div style="
+      font-size:24px;
+      font-weight:800;
+      letter-spacing:.3px;
+      ">
+        Global Dashboard
+      </div>
+
+      <div style="
+      margin-top:6px;
+      font-size:13px;
+      color:rgba(255,255,255,0.85);
+      line-height:1.6;
+      ">
+        Lihat semua pembayaran user
+        berdasarkan tanggal tertentu
+      </div>
+
+    </div>
+
+    <div style="
+    width:60px;
+    height:60px;
+    border-radius:18px;
+    background:rgba(255,255,255,0.15);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+    backdrop-filter:blur(4px);
+    ">
+      📅
+    </div>
+
+  </div>
+
+  <!-- BUTTON STYLE -->
+  <div style="
+  margin-top:18px;
+  background:white;
+  color:#2563eb;
+  padding:14px;
+  border-radius:16px;
+  text-align:center;
+  font-weight:700;
+  font-size:14px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.08);
+  ">
+    Buka Dashboard Pembayaran →
+  </div>
 
 </div>
-
+<br>
 
 
 
@@ -845,6 +921,12 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
+
+let currentAdminName = "";
+let currentAdminRole = "";
+let currentAdminFoto = "";
+let currentAdminUid = "";
+
 // 🔥 pastikan login tidak hilang setelah refresh
 setPersistence(auth, browserLocalPersistence)
   .catch((err) => console.error("Persistence error:", err));
@@ -863,6 +945,9 @@ onAuthStateChanged(auth, (user) => {
 
   console.log("✅ LOGIN UID:", user.uid);
 
+  currentAdminUid = user.uid;
+  
+
   const userRef = ref(db, `admin/${user.uid}`);
 
   onValue(userRef, (snap) => {
@@ -874,6 +959,23 @@ onAuthStateChanged(auth, (user) => {
     }
 
     const data = snap.val();
+
+    currentAdminFoto =
+  data.foto ||
+  data.fotoSelfie ||
+  "";
+
+currentAdminName =
+  data.nama ||
+  data.username ||
+  "Admin";
+
+currentAdminRole =
+  data.role || "-";
+
+  loadHistoryPenarikan();
+
+
     console.log("📦 DATA ADMIN:", data);
 
     // 🔥 FIX: aman dari undefined + case insensitive
@@ -1954,14 +2056,14 @@ onValue(ref(db,"cashGlobal"),(snap)=>{
 
   console.log("📊 UPDATE UI CASHGLOBAL");
 
-  document.getElementById("saldoGlobal").innerText =
-    "Rp " + (d.totalSaldo || 0);
+document.getElementById("saldoGlobal").innerText =
+  "Rp " + Number(d.totalSaldo || 0).toLocaleString("id-ID");
 
-  document.getElementById("totalMasuk").innerText =
-    "Rp " + (d.totalMasuk || 0);
+document.getElementById("totalMasuk").innerText =
+  "Rp " + Number(d.totalMasuk || 0).toLocaleString("id-ID");
 
-  document.getElementById("totalKeluar").innerText =
-    "Rp " + (d.totalKeluar || 0);
+document.getElementById("totalKeluar").innerText =
+  "Rp " + Number(d.totalKeluar || 0).toLocaleString("id-ID");
 });
 // =======================
 // ADMIN BUTTON
@@ -2035,11 +2137,23 @@ window.submitTarik = async function () {
     return;
   }
 
-  await push(ref(db,"cashPenarikan"), {
-    nominal,
-    alasan,
-    waktu: new Date().toLocaleString("id-ID")
-  });
+await push(ref(db,"cashPenarikan"), {
+
+  nominal,
+  alasan,
+
+  adminNama:
+    currentAdminName || "Admin",
+
+  adminRole:
+    currentAdminRole || "-",
+
+  adminFoto:
+  currentAdminFoto || "",
+
+  waktu: new Date().toLocaleString("id-ID")
+
+});
 
   await window.refreshCashGlobal();
 
@@ -2053,61 +2167,164 @@ window.submitTarik = async function () {
 
 
 
+window.loadHistoryPenarikan = function(){
 
-onValue(ref(db,"cashPenarikan"),(snap)=>{
-  console.log("BOX:", document.getElementById("historyTarik"));
+  onValue(ref(db,"cashPenarikan"),(snap)=>{
 
-  const box = document.getElementById("historyTarik");
+    const box = document.getElementById("historyTarik");
 
-  if (!box) {
-    console.error("❌ historyTarik tidak ditemukan di DOM");
-    return;
-  }
+    if (!box) return;
 
-  const data = snap.val();
+    const data = snap.val();
 
-  console.log("🔥 DATA PENARIKAN:", data);
+    box.innerHTML = "";
 
-  box.innerHTML = "";
+    if (!data) {
+      box.innerHTML =
+      "<div style='color:#999'>Belum ada penarikan</div>";
+      return;
+    }
 
-  if (!data) {
-    box.innerHTML = "<div style='color:#999'>Belum ada penarikan</div>";
-    return;
-  }
+    Object.entries(data).reverse().forEach(([id,d])=>{
 
-  Object.values(data).reverse().forEach(d=>{
+      const div = document.createElement("div");
 
-    const div = document.createElement("div");
+      div.style = `
+        background:#fff;
+        padding:14px;
+        border-radius:16px;
+        margin-bottom:10px;
+        box-shadow:0 2px 10px rgba(0,0,0,0.05);
+        border:1px solid #eee;
+      `;
 
-    div.style = `
-      background:#fff;
-      padding:14px;
-      border-radius:16px;
-      margin-bottom:10px;
-      box-shadow:0 2px 10px rgba(0,0,0,0.05);
-      border:1px solid #eee;
-    `;
+      div.innerHTML = `
 
-    div.innerHTML = `
-      <div style="font-weight:800;color:#111827;">
-        💸 Rp ${d.nominal}
+      <!-- NOMINAL -->
+      <div style="
+      font-weight:800;
+      color:#b61919;
+      font-size:18px;
+      ">
+        💸 -Rp ${Number(d.nominal || 0).toLocaleString("en-US")}
       </div>
 
-      <div style="font-size:13px;color:#6b7280;margin-top:4px;">
-        📄 ${d.alasan}
+      <!-- ALASAN -->
+      <div style="
+      font-size:13px;
+      color:#6b7280;
+      margin-top:6px;
+      ">
+        📄 ${d.alasan || "-"}
       </div>
 
-      <div style="font-size:11px;color:#9ca3af;margin-top:6px;">
-        🕒 ${d.waktu}
+      <!-- WAKTU -->
+      <div style="
+      font-size:11px;
+      color:#9ca3af;
+      margin-top:8px;
+      ">
+        🕒 ${d.waktu || "-"}
       </div>
-    `;
 
-    box.appendChild(div);
+      <!-- ADMIN -->
+      <div style="
+      margin-top:10px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background:#f3f4f6;
+      padding:10px;
+      border-radius:14px;
+      ">
+
+       <img
+  src="${
+    d.adminFoto ||
+    'assets/images/user.png'
+  }"
+
+  onclick="openImagePreview(this.src)"
+
+  onerror="this.src='assets/images/user.png'"
+
+  style="
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    object-fit:cover;
+    border:2px solid #e5e7eb;
+    cursor:pointer;
+  "
+>
+
+        <div>
+
+          <div style="
+          font-size:13px;
+          font-weight:700;
+          color:#111827;
+          text-transform:uppercase;
+          ">
+            ${d.adminNama || "ADMIN"}
+          </div>
+
+          <div style="
+          font-size:11px;
+          color:#6b7280;
+          margin-top:2px;
+          ">
+            melakukan penarikan uang kas~
+          </div>
+
+          <div style="
+          font-size:11px;
+          color:#2563eb;
+          margin-top:2px;
+          font-weight:600;
+          ">
+            ${d.adminRole || "-"}
+          </div>
+
+        </div>
+
+      </div>
+
+      ${
+        String(currentAdminRole).toLowerCase() === "superadmin"
+        ? `
+
+        <button
+          onclick="hapusPenarikan('${id}')"
+          style="
+            margin-top:12px;
+            width:100%;
+            border:none;
+            padding:12px;
+            border-radius:12px;
+            background:#dc2626;
+            color:white;
+            font-size:12px;
+            font-weight:700;
+            cursor:pointer;
+          "
+        >
+          🗑 Hapus Riwayat
+        </button>
+
+        `
+        : ""
+      }
+
+      `;
+
+      box.appendChild(div);
+
+    });
 
   });
 
-});
-
+}
 
 await refreshCashGlobal();
 
@@ -2147,6 +2364,41 @@ window.closeImagePreview = function(){
   ).style.display = "none";
 
 }
+
+
+
+window.hapusPenarikan = async function(id){
+
+  if(
+    String(currentAdminRole).toLowerCase() !== "superadmin"
+  ){
+    alert("Akses ditolak");
+    return;
+  }
+
+  const yakin = confirm(
+    "Yakin ingin menghapus riwayat penarikan?"
+  );
+
+  if(!yakin) return;
+
+  try{
+
+    await remove(ref(db, "cashPenarikan/" + id));
+
+    await refreshCashGlobal();
+
+    alert("Riwayat berhasil dihapus");
+
+  }catch(err){
+
+    console.error(err);
+    alert("Gagal menghapus");
+
+  }
+
+}
+
 </script>
 
 
