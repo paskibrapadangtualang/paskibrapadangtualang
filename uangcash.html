@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Uang Cash User</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#f5f5f5;
+  padding:15px;
+}
+
+
+
+*{
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+  outline: none;
+}
+
+input, textarea{
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+img{
+  pointer-events:none;
+  -webkit-user-drag:none;
+}
+
+
+
+.header{
+  background:#c40000;
+  color:white;
+  padding:15px;
+  border-radius:10px;
+  text-align:center;
+  font-weight:bold;
+}
+
+.card{
+  background:white;
+  padding:15px;
+  margin-top:15px;
+  border-radius:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:5px;
+  margin-top:10px;
+}
+
+.day{
+  padding:10px;
+  text-align:center;
+  border-radius:6px;
+  font-size:12px;
+  cursor:pointer;
+}
+
+.green{background:#28a745;color:white;}
+.red{background:#dc3545;color:white;}
+.gray{background:#ccc;color:white;}
+
+.badge{
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:6px;
+  color:white;
+  font-size:12px;
+}
+
+
+@keyframes spinLoading{
+  100%{
+    transform:rotate(360deg);
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+
+
+
+  <!-- LOADING SCREEN -->
+<div id="loadingScreen" style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:white;
+z-index:999999;
+display:flex;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+">
+
+  <div style="
+  width:55px;
+  height:55px;
+  border:5px solid #e5e7eb;
+  border-top:5px solid #c40000;
+  border-radius:50%;
+  animation:spinLoading 1s linear infinite;
+  "></div>
+
+</div>
+
+
+
+
+
+  <div id="popup" style="
+display:none;
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:rgba(0,0,0,0.6);
+z-index:9999;
+">
+
+<div style="
+background:white;
+width:90%;
+max-width:350px;
+margin:80px auto;
+padding:15px;
+border-radius:10px;
+">
+
+<h3>Detail Pembayaran</h3>
+
+<div id="popupContent"></div>
+
+<button onclick="closePopup()" style="
+margin-top:10px;
+width:100%;
+padding:10px;
+background:#c40000;
+color:white;
+border:none;
+border-radius:8px;
+">
+Tutup
+</button>
+
+</div>
+</div>
+
+<div class="header" style="
+position:sticky;
+top:0;
+z-index:999;
+backdrop-filter:blur(14px);
+-webkit-backdrop-filter:blur(14px);
+
+background:rgba(196,0,0,0.92);
+padding:16px 18px;
+border-radius:0 0 24px 24px;
+
+display:flex;
+align-items:center;
+justify-content:center;
+gap:10px;
+
+box-shadow:0 4px 18px rgba(196,0,0,0.18);
+
+font-family:'Poppins',sans-serif;
+font-size:18px;
+font-weight:700;
+letter-spacing:.3px;
+color:white;
+">
+
+<img src="assets/images/tagihan2.png" style="
+width:24px;
+height:24px;
+object-fit:contain;
+
+filter:
+brightness(0)
+invert(1)
+contrast(120%);
+
+opacity:.95;
+">
+
+  <span>UANG CASH SAYA</span>
+
+</div>
+
+
+
+<div class="card" style="
+padding:20px;
+border-radius:24px;
+background:linear-gradient(135deg,#ffffff,#f8fafc);
+box-shadow:0 6px 25px rgba(0,0,0,0.06);
+border:1px solid #eef2f7;
+">
+
+  <!-- HEADER -->
+  <div style="
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:18px;
+  ">
+
+    <div>
+      <div style="
+      font-size:20px;
+      font-weight:700;
+      color:#111827;
+      ">
+        👤 INFO SAYA
+      </div>
+
+      <div style="
+      font-size:13px;
+      color:#6b7280;
+      margin-top:4px;
+      ">
+        Informasi pembayaran cash bulan ini
+      </div>
+    </div>
+
+<div style="
+width:52px;
+height:52px;
+border-radius:16px;
+background:linear-gradient(135deg, #acacac, #000000);
+display:flex;
+align-items:center;
+justify-content:center;
+box-shadow:0 4px 15px rgba(196,0,0,0.2);
+overflow:hidden;
+">
+
+  <img src="assets/images/uang kas.png" style="
+  width:32px;
+  height:32px;
+  object-fit:contain;
+  ">
+
+</div>
+
+  </div>
+
+  <!-- CARD INFO -->
+  <div style="
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+  ">
+
+    <!-- NAMA -->
+    <div style="
+    background:#f9fafb;
+    padding:15px;
+    border-radius:18px;
+    ">
+      <div style="
+      font-size:12px;
+      color:#6b7280;
+      margin-bottom:6px;
+      ">
+        Nama User
+      </div>
+
+      <div id="nama" style="
+      font-size:15px;
+      font-weight:600;
+      color:#111827;
+      ">
+      </div>
+    </div>
+
+    <!-- TOTAL BAYAR -->
+    <div style="
+    background:#f0fdf4;
+    padding:15px;
+    border-radius:18px;
+    ">
+      <div style="
+      font-size:12px;
+      color:#166534;
+      margin-bottom:6px;
+      ">
+        Total Pembayaran
+      </div>
+
+      <div id="totalBayar" style="
+      font-size:16px;
+      font-weight:700;
+      color:#16a34a;
+      ">
+      </div>
+    </div>
+
+    <!-- TUNGGAKAN -->
+    <div style="
+    background:#fef2f2;
+    padding:15px;
+    border-radius:18px;
+    ">
+      <div style="
+      font-size:12px;
+      color:#991b1b;
+      margin-bottom:6px;
+      ">
+        Total Tunggakan
+      </div>
+
+      <div id="totalTunggakan" style="
+      font-size:16px;
+      font-weight:700;
+      color:#dc2626;
+      ">
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<div class="card">
+  <h3>KALENDER BULAN INI</h3>
+  <div class="grid" id="kalender"></div>
+</div>
+
+<div class="card" style="
+padding:20px;
+border-radius:24px;
+background:linear-gradient(135deg,#ffffff,#f8fafc);
+box-shadow:0 6px 25px rgba(0,0,0,0.06);
+border:1px solid #eef2f7;
+">
+
+  <!-- HEADER -->
+  <div style="
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:18px;
+  ">
+
+    <div>
+
+      <div style="
+      font-size:20px;
+      font-weight:700;
+      color:#111827;
+      ">
+        History Pembayaran
+      </div>
+
+      <div style="
+      font-size:13px;
+      color:#6b7280;
+      margin-top:4px;
+      ">
+        Riwayat semua pembayaran cash user
+      </div>
+
+    </div>
+
+    <!-- ICON -->
+    <div style="
+    width:52px;
+    height:52px;
+    border-radius:16px;
+    background:linear-gradient(135deg,#2563eb,#3b82f6);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 4px 15px rgba(37,99,235,0.25);
+    overflow:hidden;
+    ">
+
+      <img src="assets/images/aaq.png" style="
+      width:30px;
+      height:30px;
+      object-fit:contain;
+      ">
+
+    </div>
+
+  </div>
+
+  <!-- LIST HISTORY -->
+  <div id="history" style="
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  "></div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+  getDatabase,
+  ref,
+  onValue
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+
+
+
+window.openPopup = function(data, hari){
+
+  const box =
+    document.getElementById("popupContent");
+
+  if(data){
+
+    box.innerHTML = `
+
+    <div style="
+    background:white;
+    border-radius:22px;
+    padding:18px;
+    position:relative;
+    overflow:hidden;
+    border:1px dashed #d1d5db;
+    box-shadow:0 6px 20px rgba(0,0,0,0.05);
+    ">
+
+      <!-- TOP STRIP -->
+      <div style="
+      position:absolute;
+      top:0;
+      left:0;
+      width:100%;
+      height:6px;
+      background:linear-gradient(90deg,#16a34a,#22c55e);
+      "></div>
+
+      <!-- HEADER -->
+      <div style="
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:16px;
+      ">
+
+        <div style="
+        display:flex;
+        align-items:center;
+        gap:12px;
+        ">
+
+          <!-- ICON -->
+          <div style="
+          width:50px;
+          height:50px;
+          border-radius:16px;
+          background:#f0fdf4;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          overflow:hidden;
+          ">
+
+            <img src="assets/images/bdn.png" style="
+            width:26px;
+            height:26px;
+            object-fit:contain;
+            ">
+
+          </div>
+
+          <!-- TITLE -->
+          <div>
+
+            <div style="
+            font-size:16px;
+            font-weight:700;
+            color:#111827;
+            ">
+              Pembayaran Cash
+            </div>
+
+            <div style="
+            font-size:12px;
+            color:#6b7280;
+            margin-top:2px;
+            ">
+              Detail pembayaran user
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- STATUS -->
+        <div style="
+        background:#dcfce7;
+        color:#15803d;
+        padding:7px 12px;
+        border-radius:999px;
+        font-size:11px;
+        font-weight:700;
+        ">
+          BERHASIL
+        </div>
+
+      </div>
+
+      <!-- AMOUNT -->
+      <div style="
+      text-align:center;
+      margin-bottom:18px;
+      ">
+
+        <div style="
+        font-size:12px;
+        color:#6b7280;
+        margin-bottom:6px;
+        ">
+          Total Pembayaran
+        </div>
+
+        <div style="
+        font-size:28px;
+        font-weight:800;
+        color:#111827;
+        letter-spacing:1px;
+        ">
+          Rp ${data.nominal}
+        </div>
+
+      </div>
+
+      <!-- DASH -->
+      <div style="
+      border-top:1px dashed #d1d5db;
+      margin-bottom:16px;
+      "></div>
+
+      <!-- DETAIL -->
+      <div style="
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      ">
+
+        <!-- HARI -->
+        <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        font-size:13px;
+        ">
+
+          <div style="color:#6b7280;">
+            Hari
+          </div>
+
+          <div style="
+          font-weight:600;
+          color:#111827;
+          ">
+            Hari ${hari}
+          </div>
+
+        </div>
+
+        <!-- METODE -->
+        <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        font-size:13px;
+        ">
+
+          <div style="color:#6b7280;">
+            Metode
+          </div>
+
+          <div style="
+          font-weight:600;
+          color:#111827;
+          text-transform:capitalize;
+          ">
+            ${data.metode}
+          </div>
+
+        </div>
+
+        <!-- STATUS -->
+        <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        font-size:13px;
+        ">
+
+          <div style="color:#6b7280;">
+            Status
+          </div>
+
+          <div style="
+          font-weight:700;
+          color:#16a34a;
+          ">
+            Lunas
+          </div>
+
+        </div>
+
+        <!-- WAKTU -->
+        <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        font-size:13px;
+        ">
+
+          <div style="color:#6b7280;">
+            Waktu
+          </div>
+
+          <div style="
+          font-weight:600;
+          color:#111827;
+          text-align:right;
+          max-width:160px;
+          ">
+            ${data.waktu || "-"}
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- FOOTER -->
+      <div style="
+      margin-top:18px;
+      text-align:center;
+      font-size:11px;
+      color:#9ca3af;
+      ">
+
+        CASH SYSTEM • PASKIBRA
+
+      </div>
+
+    </div>
+
+    `;
+
+  }else{
+
+    box.innerHTML = `
+
+    <div style="
+    text-align:center;
+    padding:25px 10px;
+    ">
+
+      <img src="assets/images/banned_icon.png" style="
+      width:80px;
+      margin-bottom:15px;
+      opacity:.9;
+      ">
+
+      <h3 style="
+      color:#111827;
+      margin-bottom:8px;
+      ">
+        Belum Ada Pembayaran
+      </h3>
+
+      <p style="
+      color:#6b7280;
+      font-size:14px;
+      line-height:1.6;
+      ">
+        Tidak ditemukan pembayaran cash
+        pada hari ${hari}.
+      </p>
+
+    </div>
+
+    `;
+
+  }
+
+  document.getElementById("popup").style.display = "block";
+
+}
+
+
+
+
+window.closePopup = function(){
+  document.getElementById("popup").style.display = "none";
+}
+
+
+
+const now = new Date();
+const bulan =
+  now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,"0");
+const totalHari = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+
+// LOADING PUTIH SAAT CEK LOGIN
+
+document.getElementById("loadingScreen").style.display = "flex";
+
+
+
+// CEK LOGIN
+onAuthStateChanged(auth,(user)=>{
+
+  // BELUM LOGIN
+  if(!user){
+
+    document.body.innerHTML = `
+
+    <div style="
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:#f5f5f5;
+    font-family:Poppins,sans-serif;
+    ">
+
+      <div style="
+      background:white;
+      width:100%;
+      max-width:360px;
+      border-radius:28px;
+      padding:30px 22px;
+      text-align:center;
+      box-shadow:0 10px 30px rgba(0,0,0,0.08);
+      ">
+
+        <img src="assets/images/blocked.png" style="
+        width:95px;
+        margin-bottom:18px;
+        ">
+
+        <h2 style="
+        font-size:22px;
+        color:#111827;
+        margin-bottom:10px;
+        ">
+          Akses Ditolak
+        </h2>
+
+        <p style="
+        font-size:14px;
+        color:#6b7280;
+        line-height:1.7;
+        margin-bottom:22px;
+        ">
+          Kamu harus login melalui halaman akun terlebih dahulu.
+        </p>
+
+        <button onclick="location.href='akun.html'" style="
+        width:100%;
+        padding:14px;
+        border:none;
+        border-radius:16px;
+        background:linear-gradient(135deg,#c40000,#ff3b3b);
+        color:white;
+        font-weight:700;
+        font-size:15px;
+        cursor:pointer;
+        ">
+          Login Sekarang
+        </button>
+
+      </div>
+
+    </div>
+
+    `;
+
+    return;
+  }
+
+  const uid = user.uid;
+
+  // VALIDASI USER
+  onValue(ref(db,"users/"+uid), (snap)=>{
+
+    const data = snap.val();
+
+    // USER TIDAK ADA
+    if(!data){
+
+      document.body.innerHTML = `
+
+      <div style="
+      height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family:Poppins,sans-serif;
+      background:#f5f5f5;
+      ">
+
+        <div style="
+        background:white;
+        padding:30px;
+        border-radius:24px;
+        text-align:center;
+        width:90%;
+        max-width:360px;
+        ">
+
+          <img src="assets/images/blocked.png" style="
+          width:90px;
+          margin-bottom:15px;
+          ">
+
+          <h2 style="
+          color:#111827;
+          ">
+            User Tidak Ditemukan
+          </h2>
+
+        </div>
+
+      </div>
+
+      `;
+
+      return;
+    }
+
+    // BELUM DITERIMA
+    if(data.statusPenerimaan !== "Diterima"){
+
+      document.body.innerHTML = `
+
+      <div style="
+      height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      background:#f5f5f5;
+      font-family:Poppins,sans-serif;
+      ">
+
+        <div style="
+        background:white;
+        width:100%;
+        max-width:360px;
+        border-radius:28px;
+        padding:30px 22px;
+        text-align:center;
+        box-shadow:0 10px 30px rgba(0,0,0,0.08);
+        ">
+
+          <img src="assets/images/banned_icon.png" style="
+          width:95px;
+          margin-bottom:18px;
+          ">
+
+          <h2 style="
+          font-size:22px;
+          color:#111827;
+          margin-bottom:10px;
+          ">
+            Akses Ditolak
+          </h2>
+
+          <p style="
+          font-size:14px;
+          color:#6b7280;
+          line-height:1.7;
+          margin-bottom:20px;
+          ">
+            Akun kamu belum diterima oleh admin Paskibra.
+          </p>
+
+          <div style="
+          background:#fef2f2;
+          color:#dc2626;
+          padding:12px;
+          border-radius:14px;
+          font-size:13px;
+          font-weight:600;
+          ">
+            Status: ${data.statusPenerimaan || "Pending"}
+          </div>
+
+        </div>
+
+      </div>
+
+      `;
+
+      return;
+    }
+
+    // LOLOS AKSES
+// LOLOS AKSES
+document.getElementById("loadingScreen").style.display = "none";
+
+loadUser(uid);
+
+  });
+
+});
+
+function loadUser(uid){
+
+  onValue(ref(db,"users/"+uid),(snap)=>{
+
+    const data = snap.val() || {};
+    const cash = data.cash?.[bulan] || {};
+
+    document.getElementById("nama").innerText =
+      "Nama: " + data.namaLengkap;
+
+    let bayar = 0;
+
+    for(let i in cash){
+      if(cash[i].status === "paid"){
+        bayar += cash[i].nominal || 2000;
+      }
+    }
+
+    const target = totalHari * 2000;
+    const tunggakan = target - bayar;
+
+    document.getElementById("totalBayar").innerText =
+      "Total Bayar: Rp " + bayar;
+
+    document.getElementById("totalTunggakan").innerText =
+      "Tunggakan: Rp " + tunggakan;
+
+    renderKalender(cash);
+
+    renderHistory(uid);
+
+  });
+
+}
+
+function renderKalender(cash){
+
+  const box = document.getElementById("kalender");
+
+  box.innerHTML = "";
+
+  for(let i=1;i<=totalHari;i++){
+
+    const div = document.createElement("div");
+    div.classList.add("day");
+
+    const hariData = cash[String(i)];
+
+    if(hariData && hariData.status === "paid"){
+      div.classList.add("green");
+    } else {
+      div.classList.add("red");
+    }
+
+    div.innerText = i;
+
+    div.onclick = ()=>{
+      openPopup(hariData, i);
+    };
+
+    box.appendChild(div);
+  }
+}
+
+function renderHistory(uid){
+
+  onValue(ref(db,"cashHistory"),(snap)=>{
+
+    const data = snap.val() || {};
+    const box = document.getElementById("history");
+
+    box.innerHTML = "";
+
+    Object.values(data)
+    .filter(d=>d.userId===uid)
+    .reverse()
+    .forEach(d=>{
+
+      const div = document.createElement("div");
+
+div.innerHTML = `
+
+<div style="
+background:white;
+border-radius:22px;
+padding:18px;
+position:relative;
+overflow:hidden;
+border:1px dashed #d1d5db;
+box-shadow:0 6px 20px rgba(0,0,0,0.05);
+">
+
+  <!-- TOP STRIP -->
+  <div style="
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:6px;
+  background:linear-gradient(90deg,#16a34a,#22c55e);
+  "></div>
+
+  <!-- HEADER -->
+  <div style="
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:16px;
+  ">
+
+    <div style="
+    display:flex;
+    align-items:center;
+    gap:12px;
+    ">
+
+      <!-- ICON -->
+      <div style="
+      width:50px;
+      height:50px;
+      border-radius:16px;
+      background:#f0fdf4;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      ">
+
+        <img src="assets/images/bdn.png" style="
+        width:26px;
+        height:26px;
+        object-fit:contain;
+        ">
+
+      </div>
+
+      <!-- TITLE -->
+      <div>
+
+        <div style="
+        font-size:16px;
+        font-weight:700;
+        color:#111827;
+        ">
+          Pembayaran Cash
+        </div>
+
+        <div style="
+        font-size:12px;
+        color:#6b7280;
+        margin-top:2px;
+        ">
+          Transaksi berhasil
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- STATUS -->
+    <div style="
+    background:#dcfce7;
+    color:#15803d;
+    padding:7px 12px;
+    border-radius:999px;
+    font-size:11px;
+    font-weight:700;
+    ">
+      BERHASIL
+    </div>
+
+  </div>
+
+  <!-- AMOUNT -->
+  <div style="
+  text-align:center;
+  margin-bottom:18px;
+  ">
+
+    <div style="
+    font-size:12px;
+    color:#6b7280;
+    margin-bottom:6px;
+    ">
+      Total Pembayaran
+    </div>
+
+    <div style="
+    font-size:28px;
+    font-weight:800;
+    color:#111827;
+    letter-spacing:1px;
+    ">
+      Rp ${d.nominal}
+    </div>
+
+  </div>
+
+  <!-- DASH -->
+  <div style="
+  border-top:1px dashed #d1d5db;
+  margin-bottom:16px;
+  "></div>
+
+  <!-- DETAIL -->
+  <div style="
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  ">
+
+    <!-- METODE -->
+    <div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:13px;
+    ">
+
+      <div style="
+      color:#6b7280;
+      ">
+        Metode
+      </div>
+
+      <div style="
+      font-weight:600;
+      color:#111827;
+      text-transform:capitalize;
+      ">
+        ${d.metode}
+      </div>
+
+    </div>
+
+    <!-- HARI -->
+    <div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:13px;
+    ">
+
+      <div style="
+      color:#6b7280;
+      ">
+        Pembayaran
+      </div>
+
+      <div style="
+      font-weight:600;
+      color:#111827;
+      ">
+        Hari ${d.mulaiHari || d.hari}
+      </div>
+
+    </div>
+
+    <!-- BULAN -->
+    <div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:13px;
+    ">
+
+      <div style="
+      color:#6b7280;
+      ">
+        Bulan
+      </div>
+
+      <div style="
+      font-weight:600;
+      color:#111827;
+      ">
+        ${d.bulan}
+      </div>
+
+    </div>
+
+    <!-- WAKTU -->
+    <div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:13px;
+    ">
+
+      <div style="
+      color:#6b7280;
+      ">
+        Waktu
+      </div>
+
+      <div style="
+      font-weight:600;
+      color:#111827;
+      text-align:right;
+      max-width:160px;
+      ">
+        ${d.waktu || "-"}
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div style="
+  margin-top:18px;
+  text-align:center;
+  font-size:11px;
+  color:#9ca3af;
+  ">
+
+    CASH SYSTEM • PASKIBRA
+
+  </div>
+
+</div>
+
+`;
+
+      box.appendChild(div);
+
+    });
+
+  });
+
+}
+
+
+
+
+
+// ANTI CLICK KANAN
+document.addEventListener("contextmenu", e=>{
+  e.preventDefault();
+});
+
+// ANTI CTRL
+document.addEventListener("keydown", e=>{
+
+  // CTRL + U
+  if(e.ctrlKey && e.key.toLowerCase() === "u"){
+    e.preventDefault();
+  }
+
+  // CTRL + C
+  if(e.ctrlKey && e.key.toLowerCase() === "c"){
+    e.preventDefault();
+  }
+
+  // CTRL + S
+  if(e.ctrlKey && e.key.toLowerCase() === "s"){
+    e.preventDefault();
+  }
+
+  // CTRL + SHIFT + I
+  if(e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i"){
+    e.preventDefault();
+  }
+
+  // F12
+  if(e.key === "F12"){
+    e.preventDefault();
+  }
+
+});
+
+</script>
+
+
+
+
+</body>
+</html>

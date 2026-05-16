@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+
+<!-- GOOGLE FONT -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cash Admin Full System</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+body{
+  background:#f4f6f9;
+  padding:18px;
+  color:#1f2937;
+}
+
+/* HEADER */
+.header{
+  background:linear-gradient(135deg,#b80000,#ff2e2e);
+  color:white;
+  padding:20px;
+  border-radius:22px;
+  text-align:center;
+  font-size:22px;
+  font-weight:700;
+  margin-bottom:18px;
+  box-shadow:0 10px 30px rgba(255,0,0,0.15);
+}
+
+/* CARD */
+.card{
+  background:#ced6ff;
+  padding:18px;
+  border-radius:22px;
+  margin-bottom:18px;
+  box-shadow:0 4px 18px rgba(0,0,0,0.06);
+  border:1px solid #f1f1f1;
+}
+
+.card h3{
+  font-size:17px;
+  margin-bottom:15px;
+  color:#111827;
+}
+
+/* LABEL */
+label{
+  display:block;
+  font-size:13px;
+  font-weight:600;
+  margin-bottom:6px;
+  color:#4b5563;
+}
+
+/* INPUT */
+input,
+select{
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  border:1px solid #e5e7eb;
+  background:#fafafa;
+  font-size:14px;
+  margin-bottom:15px;
+  outline:none;
+  transition:0.2s;
+}
+
+input:focus,
+select:focus{
+  border-color:#c40000;
+  background:white;
+  box-shadow:0 0 0 4px rgba(196,0,0,0.08);
+}
+
+/* BUTTON */
+button{
+  width:100%;
+  border:none;
+  border-radius:16px;
+  padding:14px;
+  background:linear-gradient(135deg,#c40000,#ff3030);
+  color:white;
+  font-weight:600;
+  font-size:14px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+button:hover{
+  transform:translateY(-1px);
+  opacity:0.95;
+}
+
+/* USER LIST */
+.user-list{
+  max-height:220px;
+  overflow:auto;
+  border-radius:16px;
+  border:1px solid #eee;
+  background:#fafafa;
+  margin-bottom:15px;
+}
+
+.user-item{
+  padding:14px;
+  border-bottom:1px solid #eee;
+  transition:0.2s;
+}
+
+.user-item:last-child{
+  border-bottom:none;
+}
+
+.user-item:hover{
+  background:#f3f4f6;
+}
+
+/* INFO */
+.info{
+  background:#fff5f5;
+  color:#c40000;
+  padding:12px;
+  border-radius:14px;
+  font-size:13px;
+  margin-bottom:15px;
+  font-weight:500;
+}
+
+/* SUMMARY */
+#summary,
+#infoBulan{
+  font-size:14px;
+  line-height:1.8;
+  color:#374151;
+}
+
+
+
+
+#historyBox{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+
+#historyBox .user-item{
+  border-radius:16px;
+  background:#b0ffd7;
+  padding:12px;
+  border:none;
+  box-shadow:0 2px 10px rgba(0,0,0,0.04);
+  font-size:12px;
+  line-height:1.6;
+  word-break:break-word;
+}
+
+
+@media(max-width:600px){
+
+  #historyBox{
+    grid-template-columns:1fr;
+  }
+
+}
+
+
+/* MODAL */
+#calendarModal,
+#globalModal{
+  backdrop-filter:blur(5px);
+    overflow-y:auto;
+  padding:20px 0;
+}
+
+
+
+/* MODAL BOX */
+.modal-content{
+  background:white;
+  width:92%;
+  max-width:450px;
+  margin:40px auto;
+  padding:20px;
+  border-radius:24px;
+  box-shadow:0 10px 40px rgba(0,0,0,0.15);
+  animation:popup .2s ease;
+
+  max-height:90vh;
+  overflow-y:auto;
+}
+
+@keyframes popup{
+  from{
+    transform:scale(.95);
+    opacity:0;
+  }
+  to{
+    transform:scale(1);
+    opacity:1;
+  }
+}
+
+.modal-title{
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:15px;
+  color:#111827;
+}
+
+/* CALENDAR */
+#calendarGrid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:8px;
+  margin-top:15px;
+}
+
+#calendarGrid div{
+  aspect-ratio:1/1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:14px;
+  font-size:13px;
+  font-weight:600;
+}
+
+/* GLOBAL RESULT */
+#globalResult{
+  margin-top:18px;
+  background:#fafafa;
+  border-radius:18px;
+  padding:15px;
+  font-size:14px;
+  line-height:1.8;
+}
+
+/* SCROLL */
+::-webkit-scrollbar{
+  width:6px;
+}
+
+::-webkit-scrollbar-thumb{
+  background:#ddd;
+  border-radius:20px;
+}
+</style>
+
+</head>
+
+<body>
+
+
+
+<!-- GLOBAL MODAL -->
+<div id="globalModal" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.45);
+z-index:99999;
+">
+
+<div class="modal-content">
+
+<div class="modal-title" style="
+background:linear-gradient(135deg,#2563eb,#3b82f6);
+color:white;
+padding:14px;
+border-radius:16px;
+text-align:center;
+margin-bottom:15px;
+box-shadow:0 4px 15px rgba(37,99,235,0.25);
+">
+📅 Global Dashboard
+</div>
+
+<label>Pilih Tanggal</label>
+<input type="date" id="globalDate">
+
+<button onclick="loadGlobalData()">
+Lihat Data Pembayaran
+</button>
+
+<div id="globalResult"></div>
+
+<button onclick="closeGlobal()" style="margin-top:15px;">
+Tutup
+</button>
+
+</div>
+</div>
+
+
+
+
+
+<!-- CALENDAR MODAL -->
+<div id="calendarModal" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.45);
+z-index:9999;
+">
+
+<div class="modal-content">
+
+<div class="modal-title" id="calName">
+Kalender User
+</div>
+
+<div id="calendarGrid"></div>
+
+<button onclick="closeCalendar()" style="margin-top:18px;">
+Tutup Kalender
+</button>
+
+</div>
+</div>
+
+
+
+<div id="detailPopup" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.5);
+z-index:999999;
+backdrop-filter:blur(4px);
+">
+
+<div style="
+background:white;
+width:90%;
+max-width:350px;
+margin:80px auto;
+padding:20px;
+border-radius:24px;
+">
+
+<div id="detailContent"></div>
+
+<button onclick="closeDetailPopup()" style="
+margin-top:15px;
+">
+Tutup
+</button>
+
+</div>
+
+</div>
+
+
+
+
+
+
+
+
+<!-- HEADER -->
+<div class="header">
+💰 CASH ADMIN SYSTEM
+</div>
+
+
+
+
+
+<!-- INFO BULAN -->
+<div class="card">
+
+<h3>Informasi Bulan Aktif</h3>
+
+<p id="infoBulan"></p>
+
+</div>
+
+
+
+
+
+<!-- SUMMARY -->
+<div class="card">
+
+<h3>Summary Sistem</h3>
+
+<p id="summary"></p>
+
+</div>
+
+
+<!-- GLOBAL -->
+<div class="card" style="
+background:linear-gradient(135deg,#2563eb,#3b82f6);
+color:white;
+">
+
+<h3 style="
+color:white;
+margin-bottom:12px;
+">
+🌍 Global Dashboard
+</h3>
+
+<button onclick="openGlobalCalendar()" style="
+background:white;
+color:#2563eb;
+font-weight:700;
+">
+📅 Lihat Pembayaran Hari Ini
+</button>
+
+<p id="globalInfo" style="
+margin-top:12px;
+font-size:13px;
+color:rgba(255,255,255,0.9);
+"></p>
+
+</div>
+
+
+
+
+
+
+<!-- FORM -->
+<div class="card">
+
+<h3>Tambah Pembayaran</h3>
+
+<label>Cari User</label>
+<input type="text" id="searchUser" placeholder="Ketik nama user...">
+
+<div class="user-list" id="userList"></div>
+
+<label>User Dipilih</label>
+<input type="text" id="selectedUser" disabled>
+
+<label>Nominal Pembayaran</label>
+<input type="number" id="nominal" value="2000">
+
+<label>Metode Pembayaran</label>
+<select id="metode">
+  <option value="cash">Cash</option>
+  <option value="transfer">Transfer</option>
+</select>
+
+<div class="info">
+Pembayaran otomatis menambah kalender hijau user sesuai jumlah hari.
+</div>
+
+<button onclick="bayar()">
+Simpan Pembayaran
+</button>
+
+</div>
+
+
+
+
+
+
+
+
+
+<!-- HISTORY -->
+<div class="card">
+
+<h3>History Pembayaran</h3>
+
+<div id="historyBox"></div>
+
+</div>
+
+
+
+
+
+
+
+
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getDatabase,
+  ref,
+  onValue,
+  push,
+  set,
+  remove
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+
+window.openDetailPopup = function(data, hari){
+
+  const box = document.getElementById("detailContent");
+
+  if(data){
+
+    box.innerHTML = `
+
+    <div style="
+    background:white;
+    border-radius:22px;
+    padding:18px;
+    position:relative;
+    overflow:hidden;
+    border:1px dashed #d1d5db;
+    box-shadow:0 6px 20px rgba(0,0,0,0.05);
+    ">
+
+      <!-- TOP -->
+      <div style="
+      position:absolute;
+      top:0;
+      left:0;
+      width:100%;
+      height:6px;
+      background:linear-gradient(90deg,#16a34a,#22c55e);
+      "></div>
+
+      <!-- HEADER -->
+      <div style="
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:18px;
+      ">
+
+        <div style="
+        display:flex;
+        align-items:center;
+        gap:12px;
+        ">
+
+          <div style="
+          width:52px;
+          height:52px;
+          border-radius:16px;
+          background:#f0fdf4;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          overflow:hidden;
+          ">
+
+            <img src="assets/images/bdn.png" style="
+            width:26px;
+            height:26px;
+            object-fit:contain;
+            ">
+
+          </div>
+
+          <div>
+
+            <div style="
+            font-size:17px;
+            font-weight:700;
+            color:#111827;
+            ">
+              Pembayaran Cash
+            </div>
+
+            <div style="
+            font-size:12px;
+            color:#6b7280;
+            margin-top:3px;
+            ">
+              Status transaksi berhasil
+            </div>
+
+          </div>
+
+        </div>
+
+        <div style="
+        background:#dcfce7;
+        color:#15803d;
+        padding:7px 12px;
+        border-radius:999px;
+        font-size:11px;
+        font-weight:700;
+        ">
+          BERHASIL
+        </div>
+
+      </div>
+
+      <!-- TOTAL -->
+      <div style="
+      text-align:center;
+      margin-bottom:18px;
+      ">
+
+        <div style="
+        font-size:12px;
+        color:#6b7280;
+        margin-bottom:6px;
+        ">
+          Total Pembayaran
+        </div>
+
+        <div style="
+        font-size:30px;
+        font-weight:800;
+        color:#111827;
+        ">
+          Rp ${data.nominal}
+        </div>
+
+      </div>
+
+      <!-- GARIS -->
+      <div style="
+      border-top:1px dashed #d1d5db;
+      margin-bottom:18px;
+      "></div>
+
+      <!-- DETAIL -->
+      <div style="
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      ">
+
+        <div style="
+        display:flex;
+        justify-content:space-between;
+        font-size:13px;
+        ">
+          <span style="color:#6b7280;">Hari</span>
+          <b>${hari}</b>
+        </div>
+
+        <div style="
+        display:flex;
+        justify-content:space-between;
+        font-size:13px;
+        ">
+          <span style="color:#6b7280;">Metode</span>
+          <b style="text-transform:capitalize;">
+            ${data.metode}
+          </b>
+        </div>
+
+        <div style="
+        display:flex;
+        justify-content:space-between;
+        font-size:13px;
+        ">
+          <span style="color:#6b7280;">Status</span>
+          <b style="color:#16a34a;">
+            Lunas
+          </b>
+        </div>
+
+        <div style="
+        display:flex;
+        justify-content:space-between;
+        gap:15px;
+        font-size:13px;
+        ">
+          <span style="color:#6b7280;">Waktu</span>
+
+          <b style="
+          text-align:right;
+          max-width:160px;
+          ">
+            ${data.waktu || "-"}
+          </b>
+        </div>
+
+      </div>
+
+      <!-- FOOTER -->
+      <div style="
+      margin-top:20px;
+      text-align:center;
+      font-size:11px;
+      color:#9ca3af;
+      ">
+
+        CASH SYSTEM • PASKIBRA
+
+      </div>
+
+    </div>
+
+    `;
+
+  }else{
+
+    box.innerHTML = `
+
+    <div style="
+    text-align:center;
+    padding:30px 10px;
+    ">
+
+      <img src="assets/images/abm.png" style="
+      width:70px;
+      opacity:.7;
+      margin-bottom:15px;
+      ">
+
+      <div style="
+      font-size:18px;
+      font-weight:700;
+      color:#111827;
+      margin-bottom:8px;
+      ">
+        Belum Bayar
+      </div>
+
+      <div style="
+      font-size:13px;
+      color:#6b7280;
+      ">
+        Tidak ada pembayaran pada hari ${hari}
+      </div>
+
+    </div>
+
+    `;
+  }
+
+  document.getElementById("detailPopup").style.display = "block";
+}
+window.closeDetailPopup = function(){
+  document.getElementById("detailPopup").style.display = "none";
+}
+
+
+window.hapusHistory = function(id, userId, bulan, hari, nominal){
+
+  const yakin = confirm("Yakin mau hapus?");
+  if(!yakin) return;
+
+  // hapus history admin
+  remove(ref(db, "cashHistory/" + id));
+
+  const jumlahHari = Math.ceil(nominal / 2000);
+
+  for(let i=0;i<jumlahHari;i++){
+
+    const baseDate = new Date(
+      Number(bulan.split("-")[0]),
+      Number(bulan.split("-")[1]) - 1,
+      Number(hari) + i
+    );
+
+    const hariTarget = baseDate.getDate();
+
+    const bulanFix =
+      baseDate.getFullYear() + "-" +
+      String(baseDate.getMonth()+1).padStart(2,"0");
+
+    const path =
+      `users/${userId}/cash/${bulanFix}/${hariTarget}`;
+
+    remove(ref(db, path));
+  }
+
+  alert("History & kalender berhasil dihapus");
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+window.loadGlobalData = function(){
+
+  const date = new Date(document.getElementById("globalDate").value);
+
+  const hari = date.getDate();
+
+  const bulan =
+    date.getFullYear() + "-" + String(date.getMonth()+1).padStart(2,"0");
+
+  let totalBayar = 0;
+  let sudahBayar = [];
+  let belumBayar = [];
+
+  onValue(ref(db,"users"), (snap)=>{
+
+    const users = snap.val() || {};
+
+    Object.keys(users).forEach(uid => {
+
+      const u = users[uid];
+      const cash = u.cash?.[bulan]?.[hari];
+
+      if(cash && cash.status === "paid"){
+        sudahBayar.push(u.namaLengkap);
+        totalBayar += cash.nominal || 2000;
+      }else{
+        belumBayar.push(u.namaLengkap);
+      }
+
+    });
+
+document.getElementById("globalResult").innerHTML = `
+
+<div style="
+background:#ffffff;
+border-radius:20px;
+padding:16px;
+box-shadow:0 4px 18px rgba(0,0,0,0.06);
+">
+
+  <!-- HEADER -->
+  <div style="
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:18px;
+  ">
+
+    <div>
+      <div style="
+      font-size:18px;
+      font-weight:700;
+      color:#111827;
+      ">
+        📊 Dashboard Pembayaran
+      </div>
+
+      <div style="
+      font-size:13px;
+      color:#6b7280;
+      margin-top:3px;
+      ">
+        Tanggal ${hari}/${bulan}
+      </div>
+    </div>
+
+    <div style="
+    background:#eff6ff;
+    color:#2563eb;
+    padding:8px 29px;
+    border-radius:12px;
+    font-size:13px;
+    font-weight:600;
+    ">
+      IDR${totalBayar}
+    </div>
+
+  </div>
+
+  <!-- SUMMARY -->
+  <div style="
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:18px;
+  ">
+
+    <div style="
+    background:#f0fdf4;
+    padding:14px;
+    border-radius:16px;
+    text-align:center;
+    ">
+      <div style="
+      font-size:22px;
+      font-weight:700;
+      color:#16a34a;
+      ">
+        ${sudahBayar.length}
+      </div>
+
+      <div style="
+      font-size:12px;
+      color:#166534;
+      margin-top:4px;
+      ">
+        Sudah Bayar
+      </div>
+    </div>
+
+    <div style="
+    background:#fef2f2;
+    padding:14px;
+    border-radius:16px;
+    text-align:center;
+    ">
+      <div style="
+      font-size:22px;
+      font-weight:700;
+      color:#dc2626;
+      ">
+        ${belumBayar.length}
+      </div>
+
+      <div style="
+      font-size:12px;
+      color:#991b1b;
+      margin-top:4px;
+      ">
+        Belum Bayar
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SUDAH BAYAR -->
+  <div style="
+  margin-bottom:18px;
+  ">
+
+    <div style="
+    font-size:14px;
+    font-weight:700;
+    color:#16a34a;
+    margin-bottom:10px;
+    ">
+      ✔ Sudah Bayar
+    </div>
+
+    <div style="
+    background:#84dbbb;
+    border-radius:14px;
+    padding:12px;
+    max-height:150px;
+    overflow:auto;
+    font-size:13px;
+    line-height:1.7;
+    ">
+      ${
+        sudahBayar.length
+        ? sudahBayar.map(n=>`
+          <div style="
+          padding:6px 0;
+          border-bottom:1px solid #eee;
+          ">
+            ${n}
+          </div>
+        `).join("")
+        : `<div style="color:#9ca3af;">Belum ada data</div>`
+      }
+    </div>
+
+  </div>
+
+  <!-- BELUM BAYAR -->
+  <div>
+
+    <div style="
+    font-size:14px;
+    font-weight:700;
+    color:#dc2626;
+    margin-bottom:10px;
+    ">
+      ❌ Belum Bayar
+    </div>
+
+    <div style="
+    background:#6d6d6d;
+    color:#ffffff;
+    border-radius:14px;
+    padding:12px;
+    max-height:150px;
+    overflow:auto;
+    font-size:13px;
+    line-height:1.7;
+    ">
+      ${
+        belumBayar.length
+        ? belumBayar.map(n=>`
+          <div style="
+          padding:6px 0;
+          border-bottom:1px solid #eee;
+          ">
+            ${n}
+          </div>
+        `).join("")
+        : `<div style="color:#9ca3af;">Semua sudah bayar</div>`
+      }
+    </div>
+
+  </div>
+
+</div>
+
+`;
+
+  });
+};
+
+
+window.openCalendar = function(uid, nama){
+
+  document.getElementById("calendarModal").style.display = "block";
+  document.getElementById("calName").innerText = nama;
+
+  const grid = document.getElementById("calendarGrid");
+  grid.innerHTML = "";
+
+  const totalHari = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+
+  const bulan =
+    now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,"0");
+
+  const refCash = ref(db, `users/${uid}/cash/${bulan}`);
+
+onValue(refCash, (snap)=>{
+
+  const data = snap.val() || {};
+
+  console.log("CASH LIVE:", data); // DEBUG WAJIB
+
+  for(let i=1;i<=totalHari;i++){
+
+    const div = document.createElement("div");
+
+    if(data[String(i)]?.status === "paid"){
+      div.style.background = "#28a745";
+      div.style.color = "white";
+    }else{
+      div.style.background = "#dc3545";
+      div.style.color = "white";
+    }
+
+div.innerText = i;
+
+div.onclick = ()=>{
+  openDetailPopup(data[String(i)], i);
+};
+
+grid.appendChild(div);
+  }
+
+});
+};
+window.closeCalendar = function(){
+  document.getElementById("calendarModal").style.display = "none";
+}
+
+
+
+
+
+onValue(ref(db, "cashHistory"), (snap)=>{
+
+  const data = snap.val() || {};
+  const box = document.getElementById("historyBox");
+
+  box.innerHTML = "";
+
+  Object.keys(data).reverse().forEach(id=>{
+    const d = data[id];
+
+    const div = document.createElement("div");
+    div.className = "user-item";
+
+div.innerHTML = `
+  <b>${d.nama}</b><br>
+  💰 Rp ${d.nominal} (${d.metode})<br>
+  📅 ${d.bulan} - Hari ${d.mulaiHari}<br>
+
+<button onclick="hapusHistory('${id}', '${d.userId}', '${d.bulan}', '${d.mulaiHari}', ${d.nominal})" style="
+  margin-top:8px;
+  background:#c40000;
+  color:white;
+  border:none;
+  padding:7px 14px;
+  border-radius:8px;
+  cursor:pointer;
+  width:auto;
+  font-size:12px;
+  font-weight:600;
+">
+  Hapus
+</button>
+`;
+
+    box.appendChild(div);
+  });
+
+});
+
+
+
+let users = {};
+let selectedUserId = "";
+let selectedUserName = "";
+
+
+const now = new Date();
+const bulan =
+  now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,"0");
+const totalHari = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+
+document.getElementById("infoBulan").innerText =
+"Bulan: " + bulan + " | Total hari: " + totalHari + " | 2000/hari";
+
+onValue(ref(db, "users"), (snap)=>{
+  users = snap.val() || {};
+  renderUser("");
+  updateSummary();
+});
+
+document.getElementById("searchUser").addEventListener("input",(e)=>{
+  renderUser(e.target.value);
+});
+
+function renderUser(keyword){
+
+  const box = document.getElementById("userList");
+  box.innerHTML = "";
+
+  if(!users) return;
+
+  Object.keys(users).forEach(uid=>{
+    const u = users[uid];
+
+    if(!u || !u.namaLengkap) return;
+
+    if(u.namaLengkap.toLowerCase().includes(keyword.toLowerCase())){
+
+      const div = document.createElement("div");
+      div.className = "user-item";
+      div.innerText = u.namaLengkap;
+
+div.onclick = ()=>{
+
+  selectedUserId = uid;
+  selectedUserName = u.namaLengkap;
+
+  document.getElementById("selectedUser").value =
+    u.namaLengkap;
+
+  openCalendar(uid, u.namaLengkap);
+
+};
+
+      box.appendChild(div);
+    }
+  });
+}
+
+console.log("USERS:", users);
+
+window.bayar = function(){
+
+  const nominal = Number(document.getElementById("nominal").value);
+  const metode = document.getElementById("metode").value;
+
+  if(!selectedUserId){
+    alert("Pilih user!");
+    return;
+  }
+
+  const jumlahHari = Math.ceil(nominal / 2000);
+
+  // ambil semua data cash user
+  onValue(ref(db, `users/${selectedUserId}/cash`), (snap)=>{
+
+    const semuaCash = snap.val() || {};
+
+    // mulai dari hari kemarin
+    let tanggalTerakhir = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() - 1
+    );
+
+    // cari tanggal hijau terakhir
+    Object.keys(semuaCash).forEach(bln=>{
+
+      Object.keys(semuaCash[bln] || {}).forEach(h=>{
+
+        const tgl = new Date(
+          Number(bln.split("-")[0]),
+          Number(bln.split("-")[1]) - 1,
+          Number(h)
+        );
+
+        if(tgl > tanggalTerakhir){
+          tanggalTerakhir = tgl;
+        }
+
+      });
+
+    });
+
+    // mulai setelah tanggal terakhir
+    const mulaiTanggal = new Date(tanggalTerakhir);
+    mulaiTanggal.setDate(mulaiTanggal.getDate() + 1);
+
+    // simpan history admin
+    const data = {
+      userId: selectedUserId,
+      nama: selectedUserName,
+      nominal: nominal,
+      metode: metode,
+
+      bulan:
+        mulaiTanggal.getFullYear() + "-" +
+        String(mulaiTanggal.getMonth()+1).padStart(2,"0"),
+
+      mulaiHari: mulaiTanggal.getDate(),
+
+      jumlahHari: jumlahHari,
+
+      waktu: new Date().toLocaleString("id-ID"),
+
+      tanggalISO: now.toISOString()
+    };
+
+    push(ref(db,"cashHistory"), data);
+
+    // isi kalender otomatis lanjut
+    for(let i=0;i<jumlahHari;i++){
+
+      const baseDate = new Date(mulaiTanggal);
+
+      baseDate.setDate(baseDate.getDate() + i);
+
+      const hariTarget = baseDate.getDate();
+
+      const bulanKeyFix =
+        baseDate.getFullYear() + "-" +
+        String(baseDate.getMonth()+1).padStart(2,"0");
+
+      set(
+        ref(db, `users/${selectedUserId}/cash/${bulanKeyFix}/${hariTarget}`),
+        {
+          status:"paid",
+          nominal:2000,
+          metode:metode,
+          waktu:new Date().toLocaleString("id-ID")
+        }
+      );
+
+    }
+
+    alert("Pembayaran berhasil ditambahkan!");
+
+  }, {
+    onlyOnce:true
+  });
+
+}
+
+
+function updateSummary(){
+
+  let totalUser = Object.keys(users).length;
+
+  document.getElementById("summary").innerHTML =
+  "Total User: " + totalUser + "<br>" +
+  "Sistem Kalender: AKTIF<br>" +
+  "Status: READY CALENDAR";
+}
+
+
+
+
+
+
+window.openGlobalCalendar = function(){
+  document.getElementById("globalModal").style.display = "block";
+
+  // default hari ini
+  document.getElementById("globalDate").valueAsDate = new Date();
+  loadGlobalData();
+}
+
+window.closeGlobal = function(){
+  document.getElementById("globalModal").style.display = "none";
+}
+</script>
+
+</body>
+</html>
