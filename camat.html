@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
@@ -8,75 +9,163 @@
 
 <style>
 body{
-  font-family:Arial;
+  font-family:'Poppins', sans-serif;
   background:#f4f6fb;
-  padding:20px;
+  padding-top:90px;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
 }
 
+
+
+.sticky-header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  width:100%;
+  background:linear-gradient(135deg,#c40000,#c40000);
+  padding:15px 10px;
+  text-align:center;
+  z-index:9999;
+  box-shadow:0 5px 20px rgba(0,0,0,0.2);
+}
+
+/* judul */
+.sticky-header h2{
+  margin:0;
+  color:white;
+  font-size:18px;
+  font-weight:800;
+  letter-spacing:1px;
+}
+
+/* subjudul */
+.sticky-header p{
+  margin:3px 0 0;
+  color:rgba(255,255,255,0.85);
+  font-size:12px;
+}
 
 
 
 *{
-  -webkit-tap-highlight-color: transparent; /* hilangkan efek biru klik mobile */
-  user-select: none; /* blok seleksi teks */
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
   -webkit-user-select: none;
-  -ms-user-select: none;
 }
-
 
 img{
   -webkit-user-drag: none;
-  -webkit-user-select: none;
-  user-select: none;
-}
-    
-
-
-/* hilangkan highlight biru saat klik */
-a, button, div{
-  -webkit-tap-highlight-color: transparent;
 }
 
-/* optional: cegah zoom pinch (mobile) */
-html, body{
-  touch-action: manipulation;
-}
-
-h2{
-  color:#c40000;
-  text-align:center;
-  margin-bottom:20px;
-}
-
+/* HEADER */
 .card{
-  max-width:420px;
-  margin:auto;
-  background:white;
-  border-radius:20px;
+  max-width:450px;
+  margin:20px auto;
+  background:linear-gradient(145deg,#ffffff,#f7f7f7);
+  border-radius:22px;
   overflow:hidden;
-  box-shadow:0 10px 25px rgba(0,0,0,0.1);
+  box-shadow:0 12px 35px rgba(0,0,0,0.12);
+  transition:0.3s;
+  border:1px solid #eee;
 }
 
-/* HEADER FOTO */
+.card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 18px 45px rgba(0,0,0,0.18);
+}
+
 /* HEADER */
 .header{
-  position: relative;
-  background: url("assets/images/lemparpeci.jpg") no-repeat center center;
-  background-size: cover;
-  padding: 20px;
-  text-align: center;
-  color: white;
+  position:relative;
+  height:180px;
+  background:linear-gradient(135deg,#c40000,#ff4d4d);
+  display:flex;
+  justify-content:center;
+  align-items:flex-end;
+  padding-bottom:10px;
+}
+
+/* FOTO */
+.header img{
+  width:120px;
+  height:120px;
+  border-radius:50%;
+  object-fit:cover;
+  border:5px solid white;
+  box-shadow:0 10px 25px rgba(0,0,0,0.25);
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.header img:hover{
+  transform:scale(1.05);
+}
+
+/* CONTENT */
+.content{
+  padding:18px;
+  text-align:center;
+}
+
+/* ROLE BADGE */
+.role{
+  display:inline-block;
+  padding:5px 12px;
+  background:#c40000;
+  color:white;
+  font-size:12px;
+  border-radius:20px;
+  margin-top:12px;
+  font-weight:bold;
+}
+
+/* NAMA */
+h3{
+  margin:8px 0;
+  font-size:20px;
+  color:#222;
+}
+
+
+/* VISI MISI */
+.vm-box{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:12px;
+}
+
+.vm-col{
+  background:#fff;
+  padding:10px;
+  border-radius:12px;
+  box-shadow:0 5px 12px rgba(0,0,0,0.05);
+}
+
+.vm-title{
+  font-size:12px;
+  font-weight:bold;
+  color:#c40000;
+  margin-bottom:5px;
+}
+
+.vm-text{
+  font-size:12px;
+  color:#555;
+  line-height:1.4em;
 }
 
 .header::before{
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,0.4);
 }
 
 .header > *{
-  position: relative;
+  position:relative;
 }
 
 .header img{
@@ -85,95 +174,137 @@ h2{
   border-radius:50%;
   object-fit:cover;
   border:4px solid white;
-  box-shadow:0 5px 15px rgba(0,0,0,0.2);
+  cursor:pointer;
 }
 
-.content{
-  padding:20px;
-}
-
-h3{
-  margin:10px 0 5px;
-  color:#222;
-}
-
-.role{
-  color:#c40000;
-  font-weight:bold;
-  margin-bottom:10px;
-}
-
-.info{
-  font-size:14px;
-  color:#555;
-  line-height:1.6;
-  margin-bottom:10px;
-}
-
-.label{
-  font-weight:bold;
-  color:#111;
-}
+.content{ padding:20px; }
 
 
+h3{ margin:10px 0; }
 
 .info-box{
-  margin:10px 0 15px;
+  margin:10px 0;
   padding:10px;
   background:#f9f9f9;
   border-left:4px solid #c40000;
   border-radius:10px;
-  font-size:14px;
+  font-size:16px;
 }
 
-/* VISI MISI BOX */
 .vm-box{
   display:flex;
-  background:#fff;
   border-radius:15px;
   overflow:hidden;
   box-shadow:0 5px 15px rgba(0,0,0,0.08);
-  margin-top:10px;
 }
 
-/* COLUMN */
-.vm-col{
-  flex:1;
-  padding:12px;
-}
+.vm-col{ flex:1; padding:10px; }
 
-/* TITLE */
 .vm-title{
+  text-align:center;
   font-weight:bold;
   color:#c40000;
-  text-align:center;
-  margin-bottom:8px;
   font-size:13px;
-  letter-spacing:1px;
 }
 
-/* TEXT */
 .vm-text{
-  font-size:13px;
+  font-size:16px;
   color:#555;
-  line-height:1.5;
-  min-height:80px;
 }
 
-/* DIVIDER */
-.vm-divider{
-  width:1px;
-  background:#eee;
+/* ================= MODAL ================= */
+.review-modal,
+.img-modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.85);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+
+.review-content{
+  width:95%;
+  max-width:420px;
+  background:#fff;
+  border-radius:12px;
+  overflow:hidden;
+}
+
+.review-header{
+  background:#c40000;
+  color:#fff;
+  padding:12px;
+  display:flex;
+  justify-content:space-between;
+}
+
+.review-header button{
+  background:none;
+  border:none;
+  color:#fff;
+  font-size:18px;
+  cursor:pointer;
+}
+
+.img-modal{
+  z-index:10000;
+}
+
+.img-modal img{
+  max-width:95%;
+  max-height:95%;
+  object-fit:contain;
 }
 
 
 
+.loader{
+  position:fixed;
+  inset:0;
+  background:#f4f6fb;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  z-index:99999;
+}
+
+.spinner{
+  width:50px;
+  height:50px;
+  border:5px solid #ddd;
+  border-top:5px solid #c40000;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  0%{ transform:rotate(0deg); }
+  100%{ transform:rotate(360deg); }
+}
+
+.loader p{
+  margin-top:10px;
+  color:#666;
+  font-size:13px;
+}
 </style>
 </head>
+
 <body>
 
-<h2>PROFIL CAMAT</h2>
-<div id="content"></div>
+
+
+
+
+<div class="sticky-header">
+  <h2>PROFIL CAMAT</h2>
+  <p>Struktur kepemimpinan</p>
+</div>
+
+  <div id="content"></div>
 
 
 
@@ -181,6 +312,39 @@ h3{
 
 
 
+
+
+
+
+
+
+
+
+<!-- REVIEW MODAL -->
+<div id="reviewModal" class="review-modal">
+  <div class="review-content">
+
+    <div class="review-header">
+      <span>Review Pendaftaran</span>
+      <button onclick="closeReview()">✕</button>
+    </div>
+
+    <div id="reviewBody"></div>
+
+  </div>
+</div>
+
+
+<div id="loader" class="loader">
+  <div class="spinner"></div>
+  <p>Memuat data Camat...</p>
+</div>
+
+
+<!-- IMAGE MODAL -->
+<div id="imgModal" class="img-modal" onclick="closePreview()">
+  <img id="imgModalSrc">
+</div>
 
 <script type="module">
 
@@ -200,102 +364,160 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const path = ref(db,"camat");
+const path = ref(db, "camat");
 
+/* ================= DEFAULT DATA ================= */
+const defaultData = {
+  camat: {
+    nama: "Andi Pratama",
+    jabatan: "Camat Paskibra",
+    visi: "Mewujudkan disiplin dan prestasi tinggi",
+    misi: "Membina generasi tangguh dan berkarakter",
+    tujuan: "Menjadikan Paskibra terbaik di daerah",
+    foto: "https://i.pravatar.cc/300?img=12"
+  },
+  ibuCamat: {
+    nama: "Ibu Siti",
+    jabatan: "Ibu Camat",
+    visi: "Mendukung kegiatan sosial dan keluarga",
+    misi: "Membina masyarakat yang harmonis",
+    tujuan: "Kesejahteraan keluarga Paskibra",
+    foto: "https://i.pravatar.cc/300?img=32"
+  }
+};
+
+/* ================= LOAD ================= */
 async function load(){
 
-  const snap = await get(path);
+  // tampilkan spinner dulu
+  document.getElementById("loader").style.display = "flex";
 
-  const defaultData = {
-    nama:"Andi Pratama",
-    jabatan:"Camat Paskibra",
-    visi:"Mewujudkan disiplin dan prestasi tinggi",
-    misi:"Membina generasi tangguh dan berkarakter",
-    tujuan:"Menjadikan Paskibra terbaik di daerah",
-    foto:"https://i.pravatar.cc/300?img=12"
-  };
+  const camatSnap = await get(ref(db, "camat"));
+  const ibuSnap = await get(ref(db, "ibucamat"));
 
-  // =========================
-  // JIKA KOSONG
-  // =========================
-  if(!snap.exists()){
-    await set(path, defaultData);
-    return load();
+  let html = "";
+
+  // CAMAT
+  if(camatSnap.exists()){
+    const data = camatSnap.val();
+
+    Object.entries(data).forEach(([id, d]) => {
+      html += render(d);
+    });
   }
 
-  const data = snap.val();
+  // IBU CAMAT
+  if(ibuSnap.exists()){
+    const data = ibuSnap.val();
 
-  // =========================
-  // AMBIL DATA PERTAMA (AMAN UNTUK PUSH)
-  // =========================
-  const firstKey = Object.keys(data)[0];
-  let d = data[firstKey];
-
-  // fallback kalau kosong
-  if(!d){
-    d = defaultData;
+    Object.entries(data).forEach(([id, d]) => {
+      html += render(d);
+    });
   }
 
-  document.getElementById("content").innerHTML = `
-  <div class="card">
+  document.getElementById("content").innerHTML = html;
 
-    <div class="header">
-      <img src="${d.foto || defaultData.foto}">
-    </div>
-
-    <div class="content">
-
-      <div class="role">${d.jabatan || "-"}</div>
-      <h3>${d.nama || "-"}</h3>
-
-      <div class="info-box">
-        <b>Tujuan:</b> ${d.tujuan || "-"}
-      </div>
-
-      <div class="vm-box">
-
-        <div class="vm-col">
-          <div class="vm-title">VISI</div>
-          <div class="vm-text">${d.visi || "-"}</div>
-        </div>
-
-        <div class="vm-divider"></div>
-
-        <div class="vm-col">
-          <div class="vm-title">MISI</div>
-          <div class="vm-text">${d.misi || "-"}</div>
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-  `;
+  // hide spinner setelah selesai
+  document.getElementById("loader").style.display = "none";
 }
 
+
+function render(d){
+  return `
+    <div class="card">
+
+      <div class="header">
+        <img src="${d.foto}"
+             onclick="openPreview(this.src)">
+      </div>
+
+      <div class="content">
+
+        <div class="role"> ${d.jabatan}</div>
+        <h3>${d.nama}</h3>
+
+        <div class="info-box">
+          <b>🎯 Tujuan</b><br>
+          ${d.tujuan}
+        </div>
+
+        <div class="vm-box">
+
+          <div class="vm-col">
+            <div class="vm-title">VISI</div>
+            <div class="vm-text">${d.visi}</div>
+          </div>
+
+          <div class="vm-col">
+            <div class="vm-title">MISI</div>
+            <div class="vm-text">${d.misi}</div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  `;
+}
 load();
 
+/* ================= REVIEW ================= */
+window.openReview = function(){
+  const d = window.currentData;
 
-document.addEventListener('contextmenu', function(e){
-  e.preventDefault(); // disable klik kanan / copy
-});
+  document.getElementById("reviewBody").innerHTML = `
+    <div class="card">
 
-document.addEventListener('selectstart', function(e){
-  e.preventDefault(); // disable blok teks
-});
+      <div class="header">
+        <img src="${d.foto}"
+             onclick="openPreview(this.src)">
+      </div>
 
-document.addEventListener('dragstart', function(e){
-  e.preventDefault(); // disable drag gambar
-});
+      <div class="content">
 
+        <div class="role">${d.jabatan}</div>
+        <h3>${d.nama}</h3>
 
+        <div class="info-box">
+          <b>Tujuan:</b> ${d.tujuan}
+        </div>
+
+        <div class="vm-box">
+          <div class="vm-col">
+            <div class="vm-title">VISI</div>
+            <div class="vm-text">${d.visi}</div>
+          </div>
+
+          <div class="vm-col">
+            <div class="vm-title">MISI</div>
+            <div class="vm-text">${d.misi}</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  `;
+
+  document.getElementById("reviewModal").style.display = "flex";
+}
+
+window.closeReview = function(){
+  document.getElementById("reviewModal").style.display = "none";
+}
+
+/* ================= IMAGE PREVIEW ================= */
+window.openPreview = function(src){
+  document.getElementById("imgModalSrc").src = src;
+  document.getElementById("imgModal").style.display = "flex";
+}
+
+window.closePreview = function(){
+  document.getElementById("imgModal").style.display = "none";
+}
 
 </script>
-
-
-
-
 
 </body>
 </html>

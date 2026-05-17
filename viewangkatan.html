@@ -64,6 +64,16 @@ body{
   box-shadow:0 3px 12px rgba(0,0,0,0.1);
 }
 
+.profile-card{
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.profile-card:hover{
+  transform:scale(1.01);
+  box-shadow:0 6px 18px rgba(0,0,0,0.15);
+}
+
 /* FOTO */
 .profile-img{
   width:120px;
@@ -124,6 +134,109 @@ body{
   color:#777;
 }
 
+
+
+
+.status{
+  padding:10px 14px;
+  border-radius:12px;
+  font-weight:600;
+  font-size:13px;
+  display:inline-block;
+  margin-top:8px;
+}
+
+/* warna status */
+.accepted{
+  background:#16a34a;
+  color:#fff;
+}
+
+.pending{
+  background:#f59e0b;
+  color:#fff;
+}
+
+.rejected{
+  background:#dc2626;
+  color:#fff;
+}
+
+
+
+
+
+.review-modal{
+  position:fixed;
+  left:0;
+  bottom:-100%;
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  transition:0.3s;
+  z-index:9999;
+}
+
+.review-modal.active{
+  bottom:0;
+}
+
+.review-content{
+  width:100%;
+  max-width:600px;
+  background:#fff;
+  border-radius:18px 18px 0 0;
+  padding:15px;
+  animation:slideUp 0.3s ease;
+}
+
+@keyframes slideUp{
+  from{ transform:translateY(100%); }
+  to{ transform:translateY(0); }
+}
+
+.review-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-weight:bold;
+  margin-bottom:10px;
+}
+
+.review-header button{
+  border:none;
+  background:#c40000;
+  color:#fff;
+  padding:6px 10px;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+
+
+
+.img-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.9);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.img-modal img {
+  max-width: 95%;
+  max-height: 95%;
+  object-fit: contain; /* ini penting biar FULL tidak kepotong */
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(255,255,255,0.2);
+}
 </style>
 </head>
 <body>
@@ -139,6 +252,28 @@ body{
     <div class="loading">Loading data...</div>
   </div>
 
+</div>
+
+
+
+<!-- REVIEW MODAL -->
+<div id="reviewModal" class="review-modal">
+  <div class="review-content">
+
+    <div class="review-header">
+      <span>Review Pendaftaran</span>
+      <button onclick="closeReview()">✕</button>
+    </div>
+
+    <div id="reviewBody"></div>
+
+  </div>
+</div>
+
+
+
+<div id="imgModal" class="img-modal" onclick="closePreview()">
+  <img id="imgModalSrc">
 </div>
 
 <!-- FIREBASE -->
@@ -160,6 +295,34 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+
+
+function formatStatus(status){
+  if(!status) return "Menunggu Seleksi";
+
+  const s = status.toLowerCase();
+
+  if(s === "diterima") return "Diterima";
+  if(s === "ditolak") return "Ditolak";
+  if(s === "pending") return "Menunggu Seleksi";
+
+  return "Menunggu Seleksi";
+}
+
+function getStatusClass(status){
+  if(!status) return "pending";
+
+  const s = status.toLowerCase();
+
+  if(s === "diterima") return "accepted";
+  if(s === "ditolak") return "rejected";
+
+  return "pending";
+}
+
+
+
+
 
 /* AMBIL ID DARI URL */
 const urlParams = new URLSearchParams(window.location.search);
@@ -183,12 +346,13 @@ async function loadUser(){
 
   const data = snap.val();
 
-  content.innerHTML = `
+ content.innerHTML = `
   
-  <div class="profile-card">
-
+<div class="profile-card" onclick='openReview(${JSON.stringify(data)})'>
     <div class="profile-left">
-      <img class="profile-img" src="${data.fotoSelfie || 'assets/images/user.png'}">
+
+<img class="profile-img" src="${data.fotoSelfie ? data.fotoSelfie : 'assets/images/user.png'}"
+onerror="this.src='assets/images/user.png'">
       <div class="nama">${data.namaLengkap || '-'}</div>
     </div>
 
@@ -208,8 +372,9 @@ async function loadUser(){
           <b>Asal Sekolah:</b> ${data.asalSekolah || '-'}
         </div>
 
-        <div class="info-item">
-          <b>Status:</b> ${data.status || 'Aktif'}
+        <div class="status ${getStatusClass(data.statusPenerimaan)}">
+          Status Penerimaan :
+          <span>${formatStatus(data.statusPenerimaan)}</span>
         </div>
 
       </div>
@@ -218,12 +383,58 @@ async function loadUser(){
 
   </div>
 
-  `;
+`;
+}
+window.openReview = function(data){
+  document.getElementById("reviewModal").classList.add("active");
 
+  const foto = data.fotoSelfie || 'assets/images/user.png';
+
+  document.getElementById("reviewBody").innerHTML = `
+    
+   <img src="${foto}"
+     onerror="this.src='assets/images/user.png'"
+     onclick="openPreview(this.src)"
+     style="
+       width:110px;
+       height:110px;
+       border-radius:50%;
+       object-fit:cover;
+       display:block;
+       margin:10px auto;
+       border:3px solid #c40000;
+       cursor:pointer;
+     ">
+
+    <div class="info-item"><b>Nama:</b> ${data.namaLengkap || '-'}</div>
+    <div class="info-item"><b>Angkatan:</b> ${data.angkatanTahun || '-'}</div>
+    <div class="info-item"><b>Sekolah:</b> ${data.asalSekolah || '-'}</div>
+
+    <div class="status ${getStatusClass(data.statusPenerimaan)}">
+      ${formatStatus(data.statusPenerimaan)}
+    </div>
+  `;
 }
 
+window.closeReview = function(){
+  document.getElementById("reviewModal").classList.remove("active");
+}
 loadUser();
 
+
+
+
+window.openPreview = function (src) {
+  const modal = document.getElementById("imgModal");
+  const img = document.getElementById("imgModalSrc");
+
+  img.src = src;
+  modal.style.display = "flex";
+}
+
+window.closePreview = function () {
+  document.getElementById("imgModal").style.display = "none";
+}
 </script>
 
 </body>

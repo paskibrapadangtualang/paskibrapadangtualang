@@ -24,6 +24,7 @@
 }
 
 body{
+    padding-top:95px;
 
     background:#0f3d2e;
 
@@ -262,13 +263,84 @@ body{
 
 }
 
+
+
+
+/* LOADER */
+.loader{
+  position:fixed;
+  inset:0;
+  background:#0f3d2e;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  z-index:99999;
+  color:white;
+}
+
+.spinner{
+  width:55px;
+  height:55px;
+  border-radius:50%;
+  border:5px solid rgba(255,255,255,0.2);
+  border-top:5px solid #ffffff;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  0%{ transform:rotate(0deg); }
+  100%{ transform:rotate(360deg); }
+}
+
+.loader p{
+  margin-top:12px;
+  font-size:13px;
+  opacity:0.9;
+}
+
+
+.page-header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  width:100%;
+
+  background:rgba(15,61,46,0.92);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+
+  text-align:center;
+
+  font-size:20px;
+  font-weight:800;
+  letter-spacing:1px;
+  color:white;
+
+  padding:18px 10px;
+
+  box-shadow:0 6px 18px rgba(0,0,0,0.25);
+
+  z-index:9999;
+}
+
 </style>
 </head>
 <body>
 
-<div class="title">
+
+<header class="page-header">
     DATA BAKI
+</header>
+
+
+<div id="loader" class="loader">
+  <div class="spinner"></div>
+  <p>Memuat data baki...</p>
 </div>
+
+
 
 <div class="grid" id="listUsers"></div>
 
@@ -313,17 +385,27 @@ const listBaki =
 
 onValue(ref(db, "baki"), (snapshot)=>{
 
+    const loader = document.getElementById("loader");
+
+    // tampilkan loader saat mulai load
+    loader.style.display = "flex";
+
     listBaki.innerHTML = "";
+
+    if(!snapshot.exists()){
+        loader.innerHTML = `
+          <div class="spinner"></div>
+          <p>Data belum tersedia</p>
+        `;
+        return;
+    }
 
     snapshot.forEach((child)=>{
 
-        const data =
-          child.val();
+        const data = child.val();
 
-        listBaki.innerHTML +=
-        `
-        <div
-          class="card"
+        listBaki.innerHTML += `
+        <div class="card"
           onclick="bukaDetail('${child.key}')"
         >
 
@@ -335,32 +417,16 @@ onValue(ref(db, "baki"), (snapshot)=>{
                     ${data.jabatan}
                 </div>
 
-                <h3>
-                    ${data.nama}
-                </h3>
+                <h3>${data.nama}</h3>
 
                 <div class="mini-box">
-
-                    <div class="label">
-                        ANAK DARI
-                    </div>
-
-                    <div class="value">
-                        ${data.anak}
-                    </div>
-
+                    <div class="label">ANAK DARI</div>
+                    <div class="value">${data.anak}</div>
                 </div>
 
                 <div class="mini-box">
-
-                    <div class="label">
-                        SEKOLAH
-                    </div>
-
-                    <div class="value">
-                        ${data.sekolah}
-                    </div>
-
+                    <div class="label">SEKOLAH</div>
+                    <div class="value">${data.sekolah}</div>
                 </div>
 
                 <button class="detail-btn">
@@ -369,10 +435,11 @@ onValue(ref(db, "baki"), (snapshot)=>{
 
             </div>
 
-        </div>
-        `;
-
+        </div>`;
     });
+
+    // sembunyikan loader setelah selesai render
+    loader.style.display = "none";
 
 });
 

@@ -314,7 +314,38 @@ body::after{
 
 
 
+.loader{
+    position:fixed;
+    inset:0;
+    background:#e00000;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    z-index:99999;
+    color:white;
+}
 
+.spinner{
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    border:5px solid rgba(255,255,255,0.25);
+    border-top:5px solid #fff;
+    animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+    0%{ transform:rotate(0deg); }
+    100%{ transform:rotate(360deg); }
+}
+
+.loader p{
+    margin-top:12px;
+    font-size:14px;
+    opacity:0.9;
+    letter-spacing:0.5px;
+}
 
 
 
@@ -336,8 +367,22 @@ body::after{
 </div>
 
 <div class="loading" id="loading">
-    Memuat data lapangan...
+    
 </div>
+
+
+
+
+
+
+<div id="loader" class="loader">
+    <div class="spinner"></div>
+    <p>Memuat data lapangan...</p>
+</div>
+
+
+
+
 
 <script type="module">
 
@@ -397,66 +442,61 @@ DATA AKAN OTOMATIS:
 
 onValue(lapanganRef, (snapshot)=>{
 
+    const loader = document.getElementById("loader");
+
     lapanganList.innerHTML = "";
+
+    // tampilkan loader saat mulai load
+    loader.style.display = "flex";
 
     if(!snapshot.exists()){
 
-        loading.innerHTML =
-            "Belum ada data lapangan";
+        loader.innerHTML = `
+            <div class="spinner"></div>
+            <p>Belum ada data lapangan</p>
+        `;
 
         return;
-
     }
-
-    loading.style.display = "none";
 
     snapshot.forEach((child)=>{
 
-        const data =
-            child.val();
+        const data = child.val();
 
         const aktifClass =
-    data.lokasiAktif
-    ? "active-card"
-    : "";
+            data.lokasiAktif ? "active-card" : "";
 
-const badge =
-    data.lokasiAktif
-    ?
-    `
-    <div class="active-badge">
-        📍 LOKASI PENGIBARAN 2026
-    </div>
-    `
-    :
-    "";
+        const badge =
+            data.lokasiAktif
+            ? `<div class="active-badge">📍 LOKASI PENGIBARAN 2026</div>`
+            : "";
 
-const item =
-`
-<div class="map-item">
+        const item = `
+        <div class="map-item">
 
-    <div class="map-card ${aktifClass}">
+            <div class="map-card ${aktifClass}">
 
-        ${badge}
+                ${badge}
 
-     <div class="lapangan-title">
+                <div class="lapangan-title">
 
-    <span class="active-icon">
-        ${data.lokasiAktif ? "📍" : ""}
-    </span>
+                    <span class="active-icon">
+                        ${data.lokasiAktif ? "📍" : ""}
+                    </span>
 
-    ${data.nama}
+                    ${data.nama}
 
-</div>
+                </div>
 
-    </div>
+            </div>
 
-</div>
-`;
+        </div>`;
 
         lapanganList.innerHTML += item;
-
     });
+
+    // sembunyikan loader setelah data tampil
+    loader.style.display = "none";
 
 });
 

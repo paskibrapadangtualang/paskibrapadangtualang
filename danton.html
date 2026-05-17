@@ -20,43 +20,18 @@
 }
 
 body{
+  background:#0f3d2e;
+  color:white;
 
-    background:#0f3d2e;
+  padding:20px;
+  padding-top:90px; /* untuk header fixed */
 
-    
-    padding:20px;
-
-    color:white;
-    padding-top:10px;
-
+  position:relative;
+  min-height:100vh;
+  overflow-x:hidden;
 }
 
 /* TITLE */
-
-.title{
-
-    position:sticky;
-    top:0;
-    z-index:999;
-
-    text-align:center;
-
-    font-size:30px;
-    font-weight:bold;
-
-    padding:18px;
-
-    margin-bottom:25px;
-
-    background:
-      rgba(15,61,46,0.92);
-
-    backdrop-filter:blur(10px);
-
-    box-shadow:
-      0 4px 12px rgba(0,0,0,0.25);
-
-}
 
 /* GRID */
 
@@ -374,11 +349,74 @@ body{
 
 }
 
+
+
+
+.loader{
+  position:fixed;
+  inset:0;
+  background:#0f3d2e;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  z-index:99999;
+  color:white;
+}
+
+.spinner{
+  width:55px;
+  height:55px;
+  border-radius:50%;
+  border:5px solid rgba(255,255,255,0.2);
+  border-top:5px solid #ffffff;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  0%{ transform:rotate(0deg); }
+  100%{ transform:rotate(360deg); }
+}
+
+.loader p{
+  margin-top:12px;
+  font-size:13px;
+  opacity:0.9;
+}
+
+
+
+
+
+.page-header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  width:100%;
+
+  background:rgba(15,61,46,0.95);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+
+  color:white;
+  text-align:center;
+
+  font-size:18px;
+  font-weight:800;
+  letter-spacing:1px;
+
+  padding:16px 10px;
+
+  box-shadow:0 5px 20px rgba(0,0,0,0.25);
+  z-index:9999;
+}
+
 </style>
 </head>
 <body>
 
-<div class="title">
+<div class="page-header">
     DATA DANTON
 </div>
 
@@ -401,6 +439,14 @@ body{
     <img id="previewImage">
 
 </div>
+
+
+
+<div id="loader" class="loader">
+  <div class="spinner"></div>
+  <p>Memuat data danton...</p>
+</div>
+
 
 <script type="module">
 
@@ -451,15 +497,16 @@ function sensorTanggal(tanggal){
 
 onValue(ref(db, "danton"), (snapshot)=>{
 
+    // 👉 tampilkan spinner
+    document.getElementById("loader").style.display = "flex";
+
     listDanton.innerHTML = "";
 
     snapshot.forEach((child)=>{
 
-        const data =
-          child.val();
+        const data = child.val();
 
-    listDanton.innerHTML +=
-`
+        listDanton.innerHTML += `
 <div 
   class="card"
   onclick="bukaDetail('${child.key}')"
@@ -478,27 +525,13 @@ onValue(ref(db, "danton"), (snapshot)=>{
         </h3>
 
         <div class="mini-box">
-
-            <span class="label">
-                ANAK DARI
-            </span>
-
-            <span class="value">
-                ${data.anak}
-            </span>
-
+            <span class="label">ANAK DARI</span>
+            <span class="value">${data.anak}</span>
         </div>
 
         <div class="mini-box">
-
-            <span class="label">
-                SEKOLAH
-            </span>
-
-            <span class="value">
-                ${data.sekolah}
-            </span>
-
+            <span class="label">SEKOLAH</span>
+            <span class="value">${data.sekolah}</span>
         </div>
 
         <button class="detail-btn">
@@ -509,8 +542,10 @@ onValue(ref(db, "danton"), (snapshot)=>{
 
 </div>
 `;
-
     });
+
+    // 👉 sembunyikan spinner setelah data tampil
+    document.getElementById("loader").style.display = "none";
 
 });
 

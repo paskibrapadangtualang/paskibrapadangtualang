@@ -25,6 +25,9 @@ content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable
 body{
   font-family:Arial;
   padding:20px;
+
+    padding-top:120px;
+
   position:relative;
   min-height:100vh;
   overflow-x:hidden;
@@ -51,6 +54,7 @@ h2{
   position: sticky;
   top: 0;
   z-index: 999;
+  border-radius: 10px;
 
   text-align:center;
   color:#ffffff;
@@ -241,12 +245,71 @@ tbody tr:last-child{
   font-size:15px;
 }
 
+
+
+.loader{
+  position:fixed;
+  inset:0;
+  background:#f4f6fb;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  z-index:99999;
+}
+
+.spinner{
+  width:55px;
+  height:55px;
+  border-radius:50%;
+  border:5px solid #ddd;
+  border-top:5px solid #c40000;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  0%{ transform:rotate(0deg); }
+  100%{ transform:rotate(360deg); }
+}
+
+.loader p{
+  margin-top:12px;
+  font-size:13px;
+  color:#666;
+}
+
+
+
+.page-header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  width:100%;
+
+  background:linear-gradient(135deg,#c40000,#c40000);
+  padding:16px 10px;
+  text-align:center;
+
+  box-shadow:0 5px 20px rgba(0,0,0,0.15);
+  z-index:9999;
+}
+
+.page-header h2{
+  margin:0;
+  color:white;
+  font-size:18px;
+  font-weight:800;
+  letter-spacing:1px;
+}
 </style>
 </head>
 
 <body>
 
-<h2>PURNA PASKIBRA</h2>
+<div class="page-header">
+  <h2>PURNA PASKIBRA</h2>
+</div>
 
 <div id="list" class="wrapper">
 
@@ -254,6 +317,12 @@ tbody tr:last-child{
 Loading data...
 </div>
 
+</div>
+
+
+<div id="loader" class="loader">
+  <div class="spinner"></div>
+  <p>Memuat data purna...</p>
 </div>
 
 <script type="module">
@@ -339,32 +408,25 @@ const list =
 
 onValue(ref(db,"purna"), (snapshot)=>{
 
-  // JIKA KOSONG
+  // 👉 tampilkan spinner
+  document.getElementById("loader").style.display = "flex";
 
   if(!snapshot.exists()){
-
     list.innerHTML = `
-
-    <div class="empty">
-    Data purna belum tersedia
-    </div>
-
+      <div class="empty">
+        Data purna belum tersedia
+      </div>
     `;
 
+    document.getElementById("loader").style.display = "none";
     return;
-
   }
 
-  const data =
-    snapshot.val();
+  const data = snapshot.val();
 
   let html = "";
 
   Object.values(data).forEach((d)=>{
-
-    // =======================
-    // FIX UNDEFINED
-    // =======================
 
     const nama =
       d.namaPurna ||
@@ -392,104 +454,61 @@ onValue(ref(db,"purna"), (snapshot)=>{
       "https://ui-avatars.com/api/?name=Purna";
 
     html += `
-
-<div
-class="card"
+<div class="card"
 onclick="window.location.href='view.html?id=${d.uid}'"
 style="cursor:pointer;">
 
-      <div class="header">
+  <div class="header">
+    <img src="${foto}">
+  </div>
 
-        <img src="${foto}">
+  <div class="content">
 
+    <div class="role">${jabatan}</div>
+    <div class="name">${nama}</div>
+
+    <div class="info-box">
+      <b>Asal Sekolah:</b> ${d.asalSekolah || "-"}
+    </div>
+
+    <div class="info-box">
+      <b>Jenis Kelamin:</b> ${d.jenisKelamin || "-"}
+    </div>
+
+    <div class="info-box">
+      <b>Email:</b> ${sensorEmail(d.email || "")}
+    </div>
+
+    <div class="info-box">
+      <b>Tujuan:</b> ${tujuan}
+    </div>
+
+    <div class="vm-box">
+
+      <div class="vm-col">
+        <div class="vm-title">VISI</div>
+        <div class="vm-text">${visi}</div>
       </div>
 
-      <div class="content">
+      <div class="vm-divider"></div>
 
-        <div class="role">
-
-        ${jabatan}
-
-        </div>
-
-        <div class="name">
-
-        ${nama}
-
-        </div>
-
-        <div class="info-box">
-
-          <b>Asal Sekolah:</b>
-          ${d.asalSekolah || "-"}
-
-        </div>
-
-        <div class="info-box">
-
-          <b>Jenis Kelamin:</b>
-          ${d.jenisKelamin || "-"}
-
-        </div>
-
-        <div class="info-box">
-
-          <b>Email:</b>
-${sensorEmail(d.email || "")}
-
-        </div>
-
-        <div class="info-box">
-
-          <b>Tujuan:</b>
-          ${tujuan}
-
-        </div>
-
-        <div class="vm-box">
-
-          <div class="vm-col">
-
-            <div class="vm-title">
-            VISI
-            </div>
-
-            <div class="vm-text">
-
-            ${visi}
-
-            </div>
-
-          </div>
-
-          <div class="vm-divider"></div>
-
-          <div class="vm-col">
-
-            <div class="vm-title">
-            MISI
-            </div>
-
-            <div class="vm-text">
-
-            ${misi}
-
-            </div>
-
-          </div>
-
-        </div>
-
+      <div class="vm-col">
+        <div class="vm-title">MISI</div>
+        <div class="vm-text">${misi}</div>
       </div>
 
     </div>
 
-    `;
+  </div>
 
+</div>
+    `;
   });
 
   list.innerHTML = html;
 
+  // 👉 sembunyikan spinner setelah selesai render
+  document.getElementById("loader").style.display = "none";
 });
 
 // =======================

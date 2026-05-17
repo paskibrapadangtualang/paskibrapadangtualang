@@ -2,30 +2,32 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Pelatih Paskibra</title>
 
 <style>
 body{
-  font-family:Arial;
-  padding:20px;
+  font-family:'Poppins', sans-serif;
+  padding-top:120px;
   position:relative;
   min-height:100vh;
   overflow-x:hidden;
-  background:url("assets/images/pngwing.com (2).png") center center / cover no-repeat fixed;
-}
 
+  background:url("assets/images/pngwing.com (2).png") center center / cover no-repeat fixed;
+
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
 /* LAYER BLUR GELAP */
 body::before{
   content:"";
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,0.45);
-  backdrop-filter:blur(6px);
-  -webkit-backdrop-filter:blur(6px);
+  background:rgb(190 190 190 / 75%); /* bisa ubah gelap/terang */
   z-index:-1;
 }
-
 
 
 *{
@@ -58,6 +60,7 @@ h2{
   position: sticky;
   top: 0;
   z-index: 999;
+  border-radius: 10px;
 
   text-align:center;
   color:#ffffff;
@@ -185,54 +188,180 @@ tbody tr:last-child{
   color: #ffd46d;
 }
 
+/* ================= INFO BOX ================= */
 .info-box{
-  margin:10px 0;
-  padding:10px;
-  background:#f8f8f8;
+  margin:12px 0;
+  padding:14px 14px;
+  background:linear-gradient(145deg,#ffffff,#f7f7f7);
   border-left:4px solid #c40000;
-  border-radius:10px;
+  border-radius:14px;
   font-size:13px;
+  color:#444;
+  box-shadow:0 6px 18px rgba(0,0,0,0.06);
+  line-height:1.5;
+  transition:0.3s;
 }
 
-/* VISI MISI */
+.info-box:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 25px rgba(0,0,0,0.1);
+}
+
+/* ================= VISI MISI ================= */
 .vm-box{
   display:flex;
-  background:#fff;
-  border-radius:12px;
+  background:linear-gradient(145deg,#ffffff,#fafafa);
+  border-radius:16px;
   overflow:hidden;
-  box-shadow:0 5px 15px rgba(0,0,0,0.06);
+  box-shadow:0 8px 22px rgba(0,0,0,0.07);
+  margin-top:12px;
+  position:relative;
 }
 
+/* kolom */
 .vm-col{
   flex:1;
-  padding:10px;
-}
-
-.vm-title{
+  padding:14px;
   text-align:center;
-  font-weight:bold;
-  color:#c40000;
-  font-size:12px;
-  margin-bottom:5px;
 }
 
+/* judul */
+.vm-title{
+  font-size:11px;
+  font-weight:700;
+  color:#c40000;
+  letter-spacing:1px;
+  margin-bottom:8px;
+  text-transform:uppercase;
+}
+
+/* isi */
 .vm-text{
   font-size:12px;
   color:#555;
-  line-height:1.4;
+  line-height:1.5;
+  padding:0 5px;
 }
 
+/* garis pemisah halus */
 .vm-divider{
   width:1px;
-  background:#eee;
+  background:linear-gradient(to bottom, transparent, #eaeaea, transparent);
 }
+
+
+.img-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.92);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.img-modal img {
+  max-width: 95%;
+  max-height: 95%;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  transform: scale(1);
+  animation: zoomIn 0.2s ease-in-out;
+  user-select: none;
+}
+
+
+
+
+
+
+.page-header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  width:100%;
+
+  background:linear-gradient(135deg,#c40000,#c40000);
+  padding:18px 10px;
+  text-align:center;
+
+  box-shadow:0 5px 20px rgba(0,0,0,0.15);
+  z-index:9999;
+}
+
+.page-header h2{
+  margin:0;
+  color:white;
+  font-size:18px;
+  font-weight:800;
+  letter-spacing:1px;
+}
+
+
+
+.loader{
+  position:fixed;
+  inset:0;
+  background:#f4f6fb;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  z-index:99999;
+}
+
+.spinner{
+  width:55px;
+  height:55px;
+  border-radius:50%;
+  border:5px solid #ddd;
+  border-top:5px solid #c40000;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  0%{ transform:rotate(0deg); }
+  100%{ transform:rotate(360deg); }
+}
+
+.loader p{
+  margin-top:12px;
+  font-size:13px;
+  color:#666;
+  letter-spacing:0.3px;
+}
+
 </style>
 </head>
 
 <body>
 
-<h2>PELATIH PASKIBRA</h2>
+<div class="page-header">
+  <h2>PELATIH PASKIBRA</h2>
+</div>
+
+
+
 <div id="list" class="wrapper"></div>
+
+
+
+
+<div id="imgModal" class="img-modal" onclick="closePreview()">
+  <img id="imgModalSrc">
+</div>
+
+
+<div id="loader" class="loader">
+  <div class="spinner"></div>
+  <p>Memuat data pelatih...</p>
+</div>
 
 <script type="module">
 
@@ -258,6 +387,9 @@ const path = ref(db,"pelatih");
 // LOAD DATA
 // =======================
 async function load(){
+
+  // 👉 tampilkan spinner dulu
+  document.getElementById("loader").style.display = "flex";
 
   const snap = await get(path);
 
@@ -314,48 +446,50 @@ async function load(){
   let html = "";
 
   Object.values(data).forEach(d=>{
-
     html += `
-    <div class="card">
+      <div class="card">
 
-      <div class="header">
-        <img src="${d.foto}">
-      </div>
-
-      <div class="content">
-
-        <div class="role">${d.jabatan}</div>
-        <div class="name">${d.nama}</div>
-
-        <div class="info-box">
-          <b>Tujuan:</b> ${d.tujuan}
+        <div class="header">
+          <img src="${d.foto}"
+               onerror="this.src='assets/images/user.png'"
+               onclick="openPreview(this.src)">
         </div>
 
-        <div class="vm-box">
+        <div class="content">
 
-          <div class="vm-col">
-            <div class="vm-title">VISI</div>
-            <div class="vm-text">${d.visi}</div>
+          <div class="role">${d.jabatan}</div>
+          <div class="name">${d.nama}</div>
+
+          <div class="info-box">
+            <b>Tujuan:</b> ${d.tujuan}
           </div>
 
-          <div class="vm-divider"></div>
+          <div class="vm-box">
 
-          <div class="vm-col">
-            <div class="vm-title">MISI</div>
-            <div class="vm-text">${d.misi}</div>
+            <div class="vm-col">
+              <div class="vm-title">VISI</div>
+              <div class="vm-text">${d.visi}</div>
+            </div>
+
+            <div class="vm-divider"></div>
+
+            <div class="vm-col">
+              <div class="vm-title">MISI</div>
+              <div class="vm-text">${d.misi}</div>
+            </div>
+
           </div>
 
         </div>
 
       </div>
-
-    </div>
     `;
-
   });
 
   document.getElementById("list").innerHTML = html;
 
+  // 👉 sembunyikan spinner setelah data tampil
+  document.getElementById("loader").style.display = "none";
 }
 
 load();
@@ -363,7 +497,14 @@ load();
 
 
 
+window.openPreview = function (src) {
+  document.getElementById("imgModalSrc").src = src;
+  document.getElementById("imgModal").style.display = "flex";
+}
 
+window.closePreview = function () {
+  document.getElementById("imgModal").style.display = "none";
+}
 
 
 

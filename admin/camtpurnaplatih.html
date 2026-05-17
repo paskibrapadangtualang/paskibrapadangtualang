@@ -112,11 +112,12 @@ button{
   <!-- FORM -->
   <div class="form-box">
 
-    <select id="type">
-      <option value="camat">Camat</option>
-      <option value="pelatih">Pelatih</option>
-      <option value="purna">Purna</option>
-    </select>
+<select id="type">
+  <option value="camat">Camat</option>
+  <option value="ibucamat">Ibu Camat</option>
+  <option value="pelatih">Pelatih</option>
+  <option value="purna">Purna</option>
+</select>
 
     <input id="nama" placeholder="Nama">
     <input id="jabatan" placeholder="Jabatan">
@@ -132,13 +133,19 @@ button{
 
   </div>
 
-  <!-- INFO -->
-  <div class="form-box">
-    <h3 style="color:#c40000;">Info Admin</h3>
-    <p>✔ Upload foto</p>
-    <p>✔ Data otomatis </p>
-    <p>✔ Hapus</p>
+<!-- PREVIEW GAMBAR -->
+<div class="form-box">
+  <h3 style="color:#c40000;">Preview Gambar</h3>
+
+  <div id="previewBox" style="
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:10px;
+  ">
+    <p style="color:#999;">Belum ada gambar dipilih</p>
   </div>
+</div>
 
 </div>
 
@@ -148,6 +155,9 @@ button{
   <div class="section-title">📌 CAMAT</div>
   <div class="list" id="camatList"></div>
 
+  <div class="section-title">📌 IBU CAMAT</div>
+  <div class="list" id="ibucamatList"></div>
+
   <div class="section-title">📌 PELATIH</div>
   <div class="list" id="pelatihList"></div>
 
@@ -155,6 +165,50 @@ button{
   <div class="list" id="purnaList"></div>
 
 </div>
+
+
+
+<!-- EDIT MODAL -->
+<div id="editModal" style="
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.6);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+">
+
+  <div style="
+    background:white;
+    padding:15px;
+    border-radius:15px;
+    width:90%;
+    max-width:400px;
+  ">
+
+    <h3 style="color:#c40000;">Edit Data</h3>
+
+    <input id="editNama" placeholder="Nama">
+    <input id="editJabatan" placeholder="Jabatan">
+
+    <textarea id="editVisi" placeholder="Visi"></textarea>
+    <textarea id="editMisi" placeholder="Misi"></textarea>
+    <textarea id="editTujuan" placeholder="Tujuan"></textarea>
+
+    <input type="file" id="editFoto">
+
+    <button onclick="updateData()" style="margin-top:10px;">Update</button>
+    <button onclick="closeEdit()" style="background:black;margin-top:5px;">Tutup</button>
+
+  </div>
+
+</div>
+
+
+
+
+
 
 <script type="module">
 
@@ -173,6 +227,97 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+
+
+const fotoInput = document.getElementById("fotoFile");
+const previewBox = document.getElementById("previewBox");
+
+fotoInput.addEventListener("change", function () {
+  previewBox.innerHTML = "";
+
+  const file = this.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function (e) {
+    previewBox.innerHTML = `
+      <div style="
+        width:100%;
+        text-align:center;
+      ">
+        <img src="${e.target.result}" style="
+          width:100%;
+          max-height:250px;
+          object-fit:contain;
+          border-radius:12px;
+          box-shadow:0 5px 15px rgba(0,0,0,0.2);
+        ">
+        <p style="margin-top:8px;font-size:12px;color:#555;">
+          Preview sebelum upload
+        </p>
+      </div>
+    `;
+  };
+
+  reader.readAsDataURL(file);
+});
+
+
+let editType = "";
+let editId = "";
+let oldFoto = "";
+
+
+window.edit = function(type,id,data){
+
+  editType = type;
+  editId = id;
+  oldFoto = data.foto || "";
+
+  document.getElementById("editNama").value = data.nama || "";
+  document.getElementById("editJabatan").value = data.jabatan || "";
+  document.getElementById("editVisi").value = data.visi || "";
+  document.getElementById("editMisi").value = data.misi || "";
+  document.getElementById("editTujuan").value = data.tujuan || "";
+
+  document.getElementById("editModal").style.display = "flex";
+}
+
+
+window.closeEdit = function(){
+  document.getElementById("editModal").style.display = "none";
+}
+
+
+window.updateData = async function(){
+
+  const nama = document.getElementById("editNama").value;
+  const jabatan = document.getElementById("editJabatan").value;
+  const visi = document.getElementById("editVisi").value;
+  const misi = document.getElementById("editMisi").value;
+  const tujuan = document.getElementById("editTujuan").value;
+  const file = document.getElementById("editFoto").files[0];
+
+  let fotoUrl = oldFoto;
+
+  if(file){
+    fotoUrl = await uploadImage(file);
+  }
+
+  await set(ref(db, editType + "/" + editId), {
+    nama,
+    jabatan,
+    visi,
+    misi,
+    tujuan,
+    foto: fotoUrl
+  });
+
+  alert("Data berhasil diupdate");
+  closeEdit();
+  loadAll();
+}
 
 // =====================
 // CLOUDINARY
@@ -246,7 +391,12 @@ window.del = async function(type,id){
 // =====================
 async function load(type, el){
 
+  console.log("LOAD:", type); // 🔥 DEBUG
+
   const snap = await get(ref(db,type));
+
+  console.log(type, "exists?", snap.exists()); // 🔥 DEBUG
+
   let html = "";
 
   if(snap.exists()){
@@ -255,19 +405,28 @@ async function load(type, el){
 
     Object.entries(data).forEach(([id,d])=>{
 
-      html += `
-      <div class="card">
+     html += `
+<div class="card">
 
-        <img src="${d.foto || ''}">
-        <div class="name">${d.nama || '-'}</div>
-        <div class="role">${d.jabatan || '-'}</div>
+  <img src="${d.foto || ''}">
+  <div class="name">${d.nama || '-'}</div>
+  <div class="role">${d.jabatan || '-'}</div>
 
-        <button class="del" onclick="del('${type}','${id}')">
-          Hapus
-        </button>
+  <button class="del" onclick="del('${type}','${id}')">
+    Hapus
+  </button>
 
-      </div>
-      `;
+  <button onclick='edit("${type}","${id}",${JSON.stringify(d)})'
+    style="
+      background:#007bff;
+      margin-top:5px;
+      font-size:11px;
+    ">
+    Edit
+  </button>
+
+</div>
+`;
     });
   }
 
@@ -279,10 +438,10 @@ async function load(type, el){
 // =====================
 function loadAll(){
   load("camat","camatList");
+  load("ibucamat","ibucamatList");
   load("pelatih","pelatihList");
   load("purna","purnaList");
 }
-
 loadAll();
 
 </script>
