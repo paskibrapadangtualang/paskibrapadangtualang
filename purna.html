@@ -23,9 +23,23 @@ content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable
 }
 
 body{
-  background:#f4f6fb;
+  font-family:Arial;
   padding:20px;
-  touch-action:manipulation;
+  position:relative;
+  min-height:100vh;
+  overflow-x:hidden;
+  background:url("assets/images/pngwing.com (2).png") center center / cover no-repeat fixed;
+}
+
+/* LAYER BLUR GELAP */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.45);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  z-index:-1;
 }
 
 img{
@@ -34,10 +48,18 @@ img{
 }
 
 h2{
+  position: sticky;
+  top: 0;
+  z-index: 999;
+
   text-align:center;
-  color:#c40000;
+  color:#ffffff;
   margin-bottom:20px;
   font-size:24px;
+
+  background:#c40000;
+  padding:12px 0;
+  box-shadow:0 2px 10px rgba(0,0,0,0.08);
 }
 
 /* GRID */
@@ -93,20 +115,74 @@ h2{
 
 .content{
   padding:15px;
+  background: #c40000;
 }
 
 .role{
-  color:#c40000;
-  font-weight:bold;
+  display:inline-block;
+  padding:8px 14px;
+  border-radius:12px;
+  background:linear-gradient(135deg, #e37070, #ff1a1a);
+  color:#fff;
+  font-weight:600;
   font-size:13px;
-  margin-bottom:5px;
+  letter-spacing:0.4px;
+  margin-bottom:8px;
+  box-shadow:0 4px 12px rgba(196,0,0,0.25);
+  border:1px solid rgba(255,255,255,0.15);
 }
 
+/* TABLE PROFESSIONAL */
+.table-wrapper{
+  width:100%;
+  overflow-x:auto;
+  margin-top:12px;
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 4px 20px rgba(0,0,0,0.08);
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:600px;
+  font-size:14px;
+}
+
+thead{
+  background:linear-gradient(135deg,#b30000,#ff1a1a);
+  color:#fff;
+}
+
+thead th{
+  padding:14px;
+  text-align:left;
+  font-weight:600;
+  letter-spacing:0.3px;
+}
+
+tbody tr{
+  border-bottom:1px solid #eee;
+  transition:0.2s;
+}
+
+tbody tr:hover{
+  background:#fff5f5;
+}
+
+tbody td{
+  padding:13px 14px;
+  color:#333;
+}
+
+tbody tr:last-child{
+  border-bottom:none;
+}
 .name{
   font-size:18px;
   font-weight:bold;
   margin-bottom:10px;
-  color:#111;
+  color:#ffeb00;
 }
 
 .info-box{
@@ -170,7 +246,7 @@ h2{
 
 <body>
 
-<h2>DATA PURNA PASKIBRA</h2>
+<h2>PURNA PASKIBRA</h2>
 
 <div id="list" class="wrapper">
 
