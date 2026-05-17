@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+/>
+
+<title>
+Admin Tahapan Seleksi Global
+</title>
+
+<link
+href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+rel="stylesheet"
+/>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+
+  font-family:'Poppins',sans-serif;
+
+  background:
+  linear-gradient(
+    135deg,
+    #0f172a,
+    #111827
+  );
+
+  min-height:100vh;
+
+  padding:20px;
+
+  color:white;
+
+}
+
+.container{
+
+  max-width:550px;
+  margin:auto;
+
+}
+
+.header{
+
+  text-align:center;
+  margin-bottom:25px;
+
+}
+
+.header h1{
+
+  font-size:30px;
+  font-weight:800;
+
+}
+
+.header p{
+
+  margin-top:8px;
+  color:#cbd5e1;
+  font-size:13px;
+  letter-spacing:1px;
+
+}
+
+/* CARD */
+
+.card{
+
+  background:
+  rgba(255,255,255,0.06);
+
+  border:
+  1px solid rgba(255,255,255,0.08);
+
+  backdrop-filter:blur(14px);
+
+  border-radius:28px;
+
+  padding:24px;
+
+  box-shadow:
+  0 10px 40px rgba(0,0,0,0.3);
+
+}
+
+/* STATUS */
+
+.statusBox{
+
+  padding:20px;
+
+  border-radius:22px;
+
+  text-align:center;
+
+  margin-bottom:25px;
+
+  background:
+  linear-gradient(
+    135deg,
+    #facc15,
+    #f59e0b
+  );
+
+  color:#111827;
+
+}
+
+.statusBox h3{
+
+  font-size:13px;
+  letter-spacing:2px;
+
+}
+
+.statusBox h1{
+
+  margin-top:10px;
+  font-size:30px;
+  font-weight:800;
+
+}
+
+/* FORM */
+
+.formTitle{
+
+  margin-bottom:18px;
+
+  font-size:17px;
+  font-weight:700;
+
+}
+
+.checkItem{
+
+  display:flex;
+  align-items:center;
+  gap:14px;
+
+  background:
+  rgba(255,255,255,0.05);
+
+  border:
+  1px solid rgba(255,255,255,0.06);
+
+  padding:18px;
+
+  border-radius:18px;
+
+  margin-bottom:14px;
+
+  transition:.3s;
+
+  cursor:pointer;
+
+}
+
+.checkItem:hover{
+
+  background:
+  rgba(255,255,255,0.08);
+
+}
+
+.checkItem input{
+
+  width:20px;
+  height:20px;
+
+}
+
+.checkItem span{
+
+  font-size:14px;
+  font-weight:500;
+
+}
+
+/* BUTTON */
+
+button{
+
+  width:100%;
+
+  border:none;
+
+  padding:16px;
+
+  border-radius:18px;
+
+  margin-top:20px;
+
+  background:
+  linear-gradient(
+    135deg,
+    #16a34a,
+    #22c55e
+  );
+
+  color:white;
+
+  font-size:15px;
+  font-weight:700;
+
+  cursor:pointer;
+
+  transition:.3s;
+
+}
+
+button:hover{
+
+  transform:translateY(-2px);
+
+}
+
+/* SUCCESS */
+
+.success{
+
+  margin-top:18px;
+
+  text-align:center;
+
+  font-size:13px;
+
+  color:#4ade80;
+
+  display:none;
+
+}
+
+.infoBox{
+
+  margin-top:22px;
+
+  background:
+  rgba(255,255,255,0.05);
+
+  border-radius:18px;
+
+  padding:18px;
+
+  line-height:1.8;
+
+  font-size:13px;
+
+  color:#d1d5db;
+
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+
+  <div class="header">
+
+    <h1>
+      ADMIN SELEKSI
+    </h1>
+
+    <p>
+      PASKIBRA PADANG TUALANG
+    </p>
+
+  </div>
+
+  <!-- CARD -->
+
+  <div class="card">
+
+    <!-- STATUS -->
+
+    <div class="statusBox">
+
+      <h3>
+        TAHAP SELEKSI SAAT INI
+      </h3>
+
+      <h1 id="statusText">
+        LOADING...
+      </h1>
+
+    </div>
+
+    <!-- FORM -->
+
+<div class="formTitle">
+
+  Tahapan Seleksi Global
+
+</div>
+
+<!-- ADMINISTRASI -->
+
+<label class="checkItem">
+
+  <input
+    type="radio"
+    name="tahap"
+    value="administrasi"
+    id="administrasi"
+  >
+
+  <span>
+    Seleksi Administrasi
+  </span>
+
+</label>
+
+<!-- WAWASAN -->
+
+<label class="checkItem">
+
+  <input
+    type="radio"
+    name="tahap"
+    value="wawasan"
+    id="wawasan"
+  >
+
+  <span>
+    Tes Wawasan Kebangsaan
+  </span>
+
+</label>
+
+<!-- FISIK -->
+
+<label class="checkItem">
+
+  <input
+    type="radio"
+    name="tahap"
+    value="fisikMental"
+    id="fisikMental"
+  >
+
+  <span>
+    Tes Fisik & Mental
+  </span>
+
+</label>
+
+<!-- KEPRIBADIAN -->
+
+<label class="checkItem">
+
+  <input
+    type="radio"
+    name="tahap"
+    value="kepribadian"
+    id="kepribadian"
+  >
+
+  <span>
+    Tes Kepribadian
+  </span>
+
+</label>
+
+<!-- KESEHATAN & PARADE -->
+
+<label class="checkItem">
+
+  <input
+    type="radio"
+    name="tahap"
+    value="karantina"
+    id="karantina"
+  >
+
+  <span>
+    Seleksi Kesehatan dan Parade
+  </span>
+
+</label>
+
+<!-- PBB -->
+
+<label class="checkItem">
+
+  <input
+    type="radio"
+    name="tahap"
+    value="pengukuhan"
+    id="pengukuhan"
+  >
+
+  <span>
+    PBB
+  </span>
+
+</label>
+
+<!-- VERIFIKASI -->
+
+<label class="checkItem">
+
+  <input
+    type="radio"
+    name="tahap"
+    value="verifikasi"
+    id="verifikasi"
+  >
+
+  <span>
+    Verifikasi Akhir Panitia
+  </span>
+
+</label>
+
+
+
+    <!-- BUTTON -->
+
+    <button id="saveBtn">
+
+      Simpan Tahap Seleksi
+
+    </button>
+
+    <!-- SUCCESS -->
+
+    <div
+      class="success"
+      id="successText"
+    >
+
+      Tahapan global berhasil diperbarui
+
+    </div>
+
+    <!-- INFO -->
+
+    <div class="infoBox">
+
+      Saat admin mengubah tahap seleksi,
+      seluruh peserta di halaman
+      <b>statussaya.html</b>
+      otomatis melihat tahapan terbaru
+      secara realtime.
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- FIREBASE -->
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+
+  getDatabase,
+  ref,
+  get,
+  set
+
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* =========================
+FIREBASE CONFIG
+========================= */
+
+const firebaseConfig = {
+
+  apiKey:
+  "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+
+  authDomain:
+  "paskibra2026-300eb.firebaseapp.com",
+
+  databaseURL:
+  "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+
+  projectId:
+  "paskibra2026-300eb",
+
+  storageBucket:
+  "paskibra2026-300eb.firebasestorage.app",
+
+  messagingSenderId:
+  "937469132434",
+
+  appId:
+  "1:937469132434:web:d1924e1160350000d1b04b"
+
+};
+
+/* =========================
+INIT FIREBASE
+========================= */
+
+const app =
+initializeApp(firebaseConfig);
+
+const database =
+getDatabase(app);
+
+/* =========================
+UPDATE STATUS TEXT
+========================= */
+
+function updateStatusText(tahap){
+
+  const tahapMap = {
+
+    administrasi:
+    "Seleksi Administrasi",
+
+    wawasan:
+    "Tes Wawasan Kebangsaan",
+
+    fisikMental:
+    "Tes Fisik & Mental",
+
+    kepribadian:
+    "Tes Kepribadian",
+
+    karantina:
+    "Seleksi Kesehatan dan Parade",
+
+    pengukuhan:
+    "PBB",
+
+    verifikasi:
+    "Verifikasi Akhir Panitia"
+
+  };
+
+  document.getElementById(
+    "statusText"
+  ).innerText =
+  tahapMap[tahap] ||
+  "Seleksi Administrasi";
+
+}
+
+/* =========================
+LOAD GLOBAL TAHAP
+========================= */
+
+async function loadGlobalTahap(){
+
+  try{
+
+    const snapshot =
+    await get(
+      ref(
+        database,
+        "globalSeleksi"
+      )
+    );
+
+    // DEFAULT
+
+    let tahap =
+    "administrasi";
+
+    // JIKA ADA DATA
+
+    if(snapshot.exists()){
+
+      const data =
+      snapshot.val();
+
+      tahap =
+      data.tahap ||
+      "administrasi";
+
+    }
+
+    // CHECK RADIO
+
+    const radio =
+    document.getElementById(
+      tahap
+    );
+
+    if(radio){
+
+      radio.checked =
+      true;
+
+    }
+
+    // UPDATE STATUS TEXT
+
+    updateStatusText(
+      tahap
+    );
+
+  }catch(err){
+
+    console.log(
+      "LOAD ERROR:",
+      err
+    );
+
+    document.getElementById(
+      "statusText"
+    ).innerText =
+    "ERROR";
+
+  }
+
+}
+
+/* =========================
+JALANKAN LOAD
+========================= */
+
+loadGlobalTahap();
+
+/* =========================
+SAVE GLOBAL TAHAP
+========================= */
+
+document
+.getElementById(
+  "saveBtn"
+)
+.addEventListener(
+  "click",
+  async()=>{
+
+  const btn =
+  document.getElementById(
+    "saveBtn"
+  );
+
+  const successText =
+  document.getElementById(
+    "successText"
+  );
+
+  // RESET SUCCESS
+
+  successText.style.display =
+  "none";
+
+  // LOADING BUTTON
+
+  btn.innerText =
+  "Menyimpan...";
+
+  btn.disabled =
+  true;
+
+  // AMBIL RADIO TERPILIH
+
+  const tahap =
+  document.querySelector(
+    'input[name="tahap"]:checked'
+  )?.value;
+
+  // VALIDASI
+
+  if(!tahap){
+
+    alert(
+      "Pilih tahap seleksi terlebih dahulu"
+    );
+
+    btn.innerText =
+    "Simpan Tahap Seleksi";
+
+    btn.disabled =
+    false;
+
+    return;
+
+  }
+
+  try{
+
+    // SAVE FIREBASE
+
+    await set(
+
+      ref(
+        database,
+        "globalSeleksi"
+      ),
+
+      {
+
+        tahap:
+        tahap,
+
+        updatedAt:
+        Date.now()
+
+      }
+
+    );
+
+    // UPDATE TEXT
+
+    updateStatusText(
+      tahap
+    );
+
+    // SUCCESS
+
+    btn.innerText =
+    "Berhasil Disimpan";
+
+    successText.style.display =
+    "block";
+
+    setTimeout(()=>{
+
+      btn.innerText =
+      "Simpan Tahap Seleksi";
+
+      btn.disabled =
+      false;
+
+    },2000);
+
+  }catch(err){
+
+    console.log(
+      "SAVE ERROR:",
+      err
+    );
+
+    btn.innerText =
+    "Gagal Menyimpan";
+
+    btn.disabled =
+    false;
+
+  }
+
+});
+
+</script>
+
+
+
+</body>
+</html>

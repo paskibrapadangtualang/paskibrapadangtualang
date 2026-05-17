@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Portal Status Seleksi</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:'Poppins',sans-serif;
+  background:#050b16;
+  color:white;
+  overflow-x:hidden;
+  min-height:100vh;
+}
+
+/* BACKGROUND */
+
+.bg{
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(circle at top,#132238 0%,#050b16 70%);
+  z-index:-3;
+}
+
+.grid{
+  position:fixed;
+  inset:0;
+  background-image:
+  linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+  linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size:35px 35px;
+  z-index:-2;
+}
+
+.blur-circle{
+  position:fixed;
+  width:300px;
+  height:300px;
+  border-radius:50%;
+  filter:blur(90px);
+  opacity:0.2;
+  z-index:-1;
+}
+
+.blur1{
+  background:#00ff99;
+  top:-80px;
+  left:-80px;
+}
+
+.blur2{
+  background:#facc15;
+  bottom:-100px;
+  right:-100px;
+}
+
+/* LOADING */
+
+#loadingScreen{
+  position:fixed;
+  inset:0;
+  background:#030712;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:15px;
+  transition:1s;
+}
+
+.loading-text{
+  color:#00ff9d;
+  font-size:14px;
+  letter-spacing:2px;
+  font-family:monospace;
+  animation:blink 1s infinite;
+}
+
+@keyframes blink{
+  50%{
+    opacity:.3;
+  }
+}
+
+.loading-bar{
+  width:260px;
+  height:5px;
+  border-radius:20px;
+  overflow:hidden;
+  background:#111827;
+}
+
+.loading-fill{
+  width:0%;
+  height:100%;
+  background:linear-gradient(90deg,#00ff99,#00c3ff);
+  animation:loading 3s linear forwards;
+}
+
+@keyframes loading{
+  100%{
+    width:100%;
+  }
+}
+
+/* MAIN */
+
+.main{
+  padding:25px 18px 120px;
+  margin:auto;
+  display:none;
+}
+
+/* HEADER */
+
+.header{
+  text-align:center;
+  margin-top:10px;
+}
+
+.logo{
+  width:85px;
+  height:85px;
+  object-fit:cover;
+  border-radius:50%;
+  border:3px solid rgba(255,255,255,0.15);
+  box-shadow:0 0 25px rgba(250,204,21,0.3);
+}
+
+.header h1{
+  margin-top:14px;
+  font-size:23px;
+  font-weight:800;
+  letter-spacing:1px;
+}
+
+.header p{
+  color:#9ca3af;
+  font-size:12px;
+  margin-top:5px;
+  letter-spacing:2px;
+}
+
+/* CARD */
+
+.card{
+  margin-top:28px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:28px;
+  padding:25px;
+  backdrop-filter:blur(18px);
+  position:relative;
+  overflow:hidden;
+  box-shadow:
+  0 10px 40px rgba(0,0,0,0.4);
+}
+
+
+
+@keyframes shine{
+  100%{
+    top:100%;
+  }
+}
+
+/* PROFILE */
+
+.profile{
+  text-align:center;
+  position:relative;
+  z-index:2;
+}
+
+.profile img{
+  width:120px;
+  height:120px;
+  border-radius:50%;
+  object-fit:cover;
+  border:4px solid rgba(255,255,255,0.12);
+  box-shadow:0 0 30px rgba(250,204,21,0.35);
+}
+
+.profile h2{
+  margin-top:16px;
+  font-size:24px;
+  font-weight:700;
+}
+
+.profile span{
+  display:block;
+  margin-top:5px;
+  color:#cbd5e1;
+  font-size:13px;
+}
+
+/* STATUS */
+
+.status-box{
+  margin-top:28px;
+  border-radius:22px;
+  padding:22px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+
+.status-box h3{
+  font-size:14px;
+  letter-spacing:3px;
+  margin-bottom:10px;
+}
+
+.status-box h1{
+  font-size:28px;
+  font-weight:800;
+}
+
+.status-box p{
+  margin-top:10px;
+  font-size:13px;
+  opacity:0.9;
+  line-height:1.6;
+}
+
+/* STATUS COLORS */
+
+.status-seleksi{
+  background:linear-gradient(135deg,#facc15,#f59e0b);
+  color:#111827;
+  animation:pulse 2s infinite;
+}
+
+.status-diterima{
+  background:linear-gradient(135deg,#16a34a,#22c55e);
+  color:white;
+  box-shadow:0 0 40px rgba(34,197,94,0.35);
+}
+
+.status-ditolak{
+  background:linear-gradient(135deg,#991b1b,#dc2626);
+  color:white;
+}
+
+@keyframes pulse{
+  50%{
+    transform:scale(1.02);
+  }
+}
+
+/* DATA */
+
+.data-list{
+  margin-top:25px;
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+.item{
+  background:rgba(255,255,255,0.04);
+  border-radius:16px;
+  padding:15px;
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.item label{
+  font-size:13px;
+  color:#9ca3af;
+}
+
+.item span{
+  font-size:13px;
+  font-weight:600;
+  text-align:right;
+}
+
+/* TIMELINE */
+
+/* =========================
+TIMELINE
+========================= */
+
+.timelineBox{
+
+  margin-top:25px;
+
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+
+}
+
+/* STEP */
+
+.step{
+
+  position:relative;
+
+  display:flex;
+  align-items:center;
+
+  gap:16px;
+
+  padding-left:14px;
+
+}
+
+/* GARIS */
+
+.line{
+
+  position:absolute;
+
+  left:0;
+  top:50%;
+
+  width:18px;
+  height:2px;
+
+  background:
+  rgba(255,255,255,0.3);
+
+}
+
+/* BULAT */
+
+.circle{
+
+  width:18px;
+  height:18px;
+
+  border-radius:50%;
+
+  border:
+  2px solid rgba(255,255,255,0.3);
+
+  background:
+  transparent;
+
+  flex-shrink:0;
+
+  transition:.3s;
+
+}
+
+/* TEXT */
+
+.text{
+
+  font-size:14px;
+  font-weight:500;
+
+  color:#e5e7eb;
+
+}
+
+/* DONE */
+
+.step-done{
+
+  background:
+  #22c55e;
+
+  border-color:
+  #22c55e;
+
+  box-shadow:
+  0 0 15px rgba(34,197,94,0.6);
+
+}
+
+/* PROCESS */
+
+.step-process{
+
+  background:
+  #facc15;
+
+  border-color:
+  #facc15;
+
+  box-shadow:
+  0 0 15px rgba(250,204,21,0.7);
+
+  animation:
+  pulse 1.5s infinite;
+
+}
+
+/* PENDING */
+
+.step-pending{
+
+  background:
+  transparent;
+
+  border-color:
+  rgba(255,255,255,0.25);
+
+}
+
+/* ANIMATION */
+
+@keyframes pulse{
+
+  0%{
+
+    transform:scale(1);
+
+  }
+
+  50%{
+
+    transform:scale(1.15);
+
+  }
+
+  100%{
+
+    transform:scale(1);
+
+  }
+
+}
+
+/* RANK */
+
+/* RESULT BOX */
+
+.rank-box{
+  margin-top:28px;
+  background:rgba(255,255,255,0.05);
+  border-radius:24px;
+  padding:24px;
+  text-align:center;
+  border:1px solid rgba(255,255,255,0.08);
+}
+
+.rank-box p{
+  font-size:12px;
+  letter-spacing:2px;
+  color:#9ca3af;
+}
+
+.rank-box h2{
+  margin-top:12px;
+  font-size:28px;
+  font-weight:800;
+  line-height:1.4;
+}
+
+.rank-box small{
+  display:block;
+  margin-top:12px;
+  line-height:1.8;
+  color:#d1d5db;
+  font-size:13px;
+}
+
+.progress{
+  margin-top:20px;
+  height:10px;
+  background:#111827;
+  border-radius:50px;
+  overflow:hidden;
+}
+
+.progress-fill{
+  height:100%;
+  width:70%;
+  border-radius:50px;
+  transition:1s;
+}
+
+/* QUOTE */
+
+.quote{
+  margin-top:28px;
+  text-align:center;
+  font-size:14px;
+  line-height:1.8;
+  color:#d1d5db;
+  font-style:italic;
+}
+
+/* FOOTER */
+
+.footer{
+  margin-top:40px;
+  text-align:center;
+  font-size:11px;
+  color:#6b7280;
+  line-height:1.8;
+  letter-spacing:1px;
+}
+
+/* SCAN EFFECT */
+
+.scan{
+  position:fixed;
+  inset:0;
+  background:linear-gradient(
+    to bottom,
+    transparent,
+    rgba(255,255,255,0.05),
+    transparent
+  );
+  animation:scan 5s linear infinite;
+  pointer-events:none;
+}
+
+@keyframes scan{
+  0%{
+    transform:translateY(-100%);
+  }
+
+  100%{
+    transform:translateY(100%);
+  }
+}
+
+
+
+
+
+
+
+/* STEP COLORS */
+
+.step-done{
+  background:#22c55e;
+  box-shadow:
+  0 0 15px rgba(34,197,94,0.5);
+}
+
+.step-process{
+  background:#facc15;
+  box-shadow:
+  0 0 15px rgba(250,204,21,0.5);
+}
+
+.step-pending{
+  background:#374151;
+}
+
+
+
+
+
+
+
+
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="grid"></div>
+<div class="blur-circle blur1"></div>
+<div class="blur-circle blur2"></div>
+<div class="scan"></div>
+
+<!-- LOADING -->
+
+<div id="loadingScreen">
+
+  <div class="loading-text" id="loadingText">
+    CONNECTING DATABASE...
+  </div>
+
+  <div class="loading-bar">
+    <div class="loading-fill"></div>
+  </div>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main" id="mainContent">
+
+  <!-- HEADER -->
+
+  <div class="header">
+
+    <img
+      src="assets/images/launchericon-192x192.png"
+      class="logo"
+    >
+
+    <h1>
+      PORTAL STATUS SELEKSI
+    </h1>
+
+    <p>
+      PASKIBRA PADANG TUALANG 2026
+    </p>
+
+  </div>
+
+  <!-- CARD -->
+
+  <div class="card">
+
+    <div class="profile">
+
+      <img
+        id="fotoProfile"
+        src=""
+      >
+
+      <h2 id="namaUser">
+        Loading...
+      </h2>
+
+      <span id="nomorPendaftaran">
+        PST-2026
+      </span>
+
+      <span id="asalSekolah">
+        Sekolah
+      </span>
+
+    </div>
+
+    <!-- STATUS -->
+
+    <div
+      class="status-box"
+      id="statusBox"
+    >
+
+      <h3>
+        STATUS SELEKSI
+      </h3>
+
+      <h1 id="statusText">
+        MEMPROSES
+      </h1>
+
+      <p id="statusDesc">
+        Panitia sedang melakukan evaluasi akhir.
+      </p>
+
+    </div>
+
+    <!-- DATA -->
+
+    <div class="data-list">
+
+      <div class="item">
+        <label>Angkatan</label>
+        <span id="angkatanTahun">-</span>
+      </div>
+
+      <div class="item">
+        <label>Jenis Kelamin</label>
+        <span id="jenisKelamin">-</span>
+      </div>
+
+      <div class="item">
+        <label>Tanggal Lahir</label>
+        <span id="tanggalLahir">-</span>
+      </div>
+
+      <div class="item">
+        <label>Nomor WhatsApp</label>
+        <span id="nomorWa">-</span>
+      </div>
+
+    </div>
+
+    <!-- TIMELINE -->
+
+   
+<!-- =========================
+TIMELINE TAHAP SELEKSI
+STATUSSAYA.HTML
+========================= -->
+
+<div class="timelineBox">
+
+  <!-- ADMINISTRASI -->
+
+  <div class="step">
+
+    <div class="line"></div>
+
+    <div
+      class="circle"
+      id="stepAdministrasi"
+    ></div>
+
+    <div class="text">
+      Seleksi Administrasi
+    </div>
+
+  </div>
+
+  <!-- WAWASAN -->
+
+  <div class="step">
+
+    <div class="line"></div>
+
+    <div
+      class="circle"
+      id="stepWawasan"
+    ></div>
+
+    <div class="text">
+      Tes Wawasan Kebangsaan
+    </div>
+
+  </div>
+
+  <!-- FISIK -->
+
+  <div class="step">
+
+    <div class="line"></div>
+
+    <div
+      class="circle"
+      id="stepFisik"
+    ></div>
+
+    <div class="text">
+      Tes Fisik & Mental
+    </div>
+
+  </div>
+
+  <!-- KEPRIBADIAN -->
+
+  <div class="step">
+
+    <div class="line"></div>
+
+    <div
+      class="circle"
+      id="stepKepribadian"
+    ></div>
+
+    <div class="text">
+      Tes Kepribadian
+    </div>
+
+  </div>
+
+  <!-- KARANTINA -->
+
+  <div class="step">
+
+    <div class="line"></div>
+
+    <div
+      class="circle"
+      id="stepKarantina"
+    ></div>
+
+    <div class="text">
+      Seleksi Kesehatan dan Parade
+    </div>
+
+  </div>
+
+  <!-- PBB -->
+
+  <div class="step">
+
+    <div class="line"></div>
+
+    <div
+      class="circle"
+      id="stepPengukuhan"
+    ></div>
+
+    <div class="text">
+      PBB
+    </div>
+
+  </div>
+
+  <!-- VERIFIKASI -->
+
+  <div class="step">
+
+    <div class="line"></div>
+
+    <div
+      class="circle"
+      id="stepVerifikasi"
+    ></div>
+
+    <div class="text">
+      Verifikasi Akhir Panitia
+    </div>
+
+  </div>
+
+</div>
+
+
+
+  <!-- STATUS INFORMATION -->
+
+<div
+  class="rank-box"
+  id="resultBox"
+>
+
+  <!-- TITLE -->
+
+  <p id="resultTitle">
+    STATUS VERIFIKASI
+  </p>
+
+  <!-- MAIN STATUS -->
+
+  <h2 id="resultMain">
+    DALAM PENINJAUAN
+  </h2>
+
+  <!-- DESCRIPTION -->
+
+  <small id="resultDesc">
+
+    Panitia seleksi sedang melakukan
+    evaluasi akhir terhadap hasil
+    peserta.
+
+  </small>
+
+  <!-- PROGRESS -->
+
+  <div class="progress">
+
+    <div
+      class="progress-fill"
+      id="resultProgress"
+    ></div>
+
+  </div>
+
+</div>
+
+    <!-- QUOTE -->
+
+    <div class="quote" id="quoteText">
+
+      “Setiap langkah menentukan kehormatan.”
+
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+
+  <div class="footer">
+
+    PASKIBRA PADANG TUALANG<br>
+    Selection Verification System 2026<br><br>
+
+    CONFIDENTIAL • INTERNAL ACCESS
+
+  </div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getAuth,
+  onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+  getDatabase,
+  ref,
+  get
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* FIREBASE */
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+
+  projectId: "paskibra2026-300eb",
+
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+
+  messagingSenderId: "937469132434",
+
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+
+};
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+const database = getDatabase(app);
+
+/* LOADING TEXT */
+
+const loadingMessages = [
+
+  "MENGHUBUNGKAN DATABASE...",
+
+  "MEMVERIFIKASI DATA PESERTA...",
+
+  "MENYINKRONKAN DATA SELEKSI...",
+
+  "MOHON TUNGGU"
+
+];
+
+let i = 0;
+
+const loadingText =
+document.getElementById("loadingText");
+
+const interval = setInterval(()=>{
+
+  i++;
+
+  if(i < loadingMessages.length){
+
+    loadingText.innerText =
+    loadingMessages[i];
+
+  }
+
+},700);
+
+/* QUOTES */
+
+const quotes = [
+
+  "Setiap langkah menentukan kehormatan.",
+
+  "Hanya kandidat terbaik yang akan dipilih.",
+
+  "Disiplin dan mental sedang dievaluasi.",
+
+  "Bukan sekadar seleksi, tetapi pengabdian.",
+
+  "Siap mengabdi untuk Merah Putih."
+
+];
+
+document.getElementById(
+  "quoteText"
+).innerText =
+quotes[
+  Math.floor(
+    Math.random() * quotes.length
+  )
+];
+
+/* AUTH */
+onAuthStateChanged(auth, async(user)=>{
+
+  if(user){
+
+    console.log(
+      "EMAIL LOGIN:",
+      user.email
+    );
+
+    // AMBIL SEMUA DATA USERS
+
+    const snapshot = await get(
+      ref(database, "users")
+    );
+
+    if(snapshot.exists()){
+
+      const users =
+        snapshot.val();
+
+
+
+
+let dataUser = null;
+
+// CARI BERDASARKAN EMAIL LOGIN
+
+Object.keys(users).forEach((key)=>{
+
+  const item = users[key];
+
+  if(
+    item.email &&
+    item.email.toLowerCase() ===
+    user.email.toLowerCase()
+  ){
+
+    dataUser = item;
+
+  }
+
+});
+
+// JIKA TIDAK DITEMUKAN
+// AMBIL DATA PERTAMA
+
+if(!dataUser){
+
+  const firstKey =
+    Object.keys(users)[0];
+
+  dataUser =
+    users[firstKey];
+
+  console.log(
+    "EMAIL TIDAK DITEMUKAN, MENGAMBIL DATA PERTAMA"
+  );
+
+}
+
+
+
+
+
+      // JIKA DATA DITEMUKAN
+
+      if(dataUser){
+
+        console.log(
+          "DATA USER:",
+          dataUser
+        );
+
+        /* PROFILE */
+
+        document.getElementById(
+          "fotoProfile"
+        ).src =
+        dataUser.fotoSelfie || "";
+
+        document.getElementById(
+          "namaUser"
+        ).innerText =
+        dataUser.namaLengkap || "-";
+
+        document.getElementById(
+          "nomorPendaftaran"
+        ).innerText =
+        dataUser.nomorPendaftaran || "-";
+
+        document.getElementById(
+          "asalSekolah"
+        ).innerText =
+        dataUser.asalSekolah || "-";
+
+        document.getElementById(
+          "angkatanTahun"
+        ).innerText =
+        dataUser.angkatanTahun || "-";
+
+        document.getElementById(
+          "jenisKelamin"
+        ).innerText =
+        dataUser.jenisKelamin || "-";
+
+        document.getElementById(
+          "tanggalLahir"
+        ).innerText =
+        dataUser.tanggalLahir || "-";
+
+        document.getElementById(
+          "nomorWa"
+        ).innerText =
+        dataUser.nomorHp || "-";
+
+        /* STATUS */
+
+        const statusBox =
+          document.getElementById(
+            "statusBox"
+          );
+
+        const statusText =
+          document.getElementById(
+            "statusText"
+          );
+
+        const statusDesc =
+          document.getElementById(
+            "statusDesc"
+          );
+
+        const status =
+          dataUser.statusPenerimaan || "Seleksi";
+
+
+
+/* =========================
+GLOBAL TAHAP SELEKSI
+STATUSSAYA.HTML
+========================= */
+
+const globalSnapshot =
+await get(
+  ref(
+    database,
+    "globalSeleksi"
+  )
+);
+
+if(globalSnapshot.exists()){
+
+  const globalData =
+  globalSnapshot.val();
+
+  const tahap =
+  globalData.tahap ||
+  "administrasi";
+
+  // ======================
+  // STEP ELEMENT
+  // ======================
+
+  const stepAdministrasi =
+  document.getElementById(
+    "stepAdministrasi"
+  );
+
+  const stepWawasan =
+  document.getElementById(
+    "stepWawasan"
+  );
+
+  const stepFisik =
+  document.getElementById(
+    "stepFisik"
+  );
+
+  const stepKepribadian =
+  document.getElementById(
+    "stepKepribadian"
+  );
+
+  const stepKarantina =
+  document.getElementById(
+    "stepKarantina"
+  );
+
+  const stepPengukuhan =
+  document.getElementById(
+    "stepPengukuhan"
+  );
+
+  const stepVerifikasi =
+  document.getElementById(
+    "stepVerifikasi"
+  );
+
+  // ======================
+  // RESET CLASS
+  // ======================
+
+  [
+
+    stepAdministrasi,
+    stepWawasan,
+    stepFisik,
+    stepKepribadian,
+    stepKarantina,
+    stepPengukuhan,
+    stepVerifikasi
+
+  ].forEach((item)=>{
+
+    item.classList.remove(
+
+      "step-done",
+      "step-process",
+      "step-pending"
+
+    );
+
+  });
+
+  // ======================
+  // ADMINISTRASI
+  // ======================
+
+  if(
+    tahap === "administrasi"
+  ){
+
+    stepAdministrasi.classList.add(
+      "step-process"
+    );
+
+    stepWawasan.classList.add(
+      "step-pending"
+    );
+
+    stepFisik.classList.add(
+      "step-pending"
+    );
+
+    stepKepribadian.classList.add(
+      "step-pending"
+    );
+
+    stepKarantina.classList.add(
+      "step-pending"
+    );
+
+    stepPengukuhan.classList.add(
+      "step-pending"
+    );
+
+    stepVerifikasi.classList.add(
+      "step-pending"
+    );
+
+  }
+
+  // ======================
+  // WAWASAN
+  // ======================
+
+  else if(
+    tahap === "wawasan"
+  ){
+
+    stepAdministrasi.classList.add(
+      "step-done"
+    );
+
+    stepWawasan.classList.add(
+      "step-process"
+    );
+
+    stepFisik.classList.add(
+      "step-pending"
+    );
+
+    stepKepribadian.classList.add(
+      "step-pending"
+    );
+
+    stepKarantina.classList.add(
+      "step-pending"
+    );
+
+    stepPengukuhan.classList.add(
+      "step-pending"
+    );
+
+    stepVerifikasi.classList.add(
+      "step-pending"
+    );
+
+  }
+
+  // ======================
+  // FISIK
+  // ======================
+
+  else if(
+    tahap === "fisikMental"
+  ){
+
+    stepAdministrasi.classList.add(
+      "step-done"
+    );
+
+    stepWawasan.classList.add(
+      "step-done"
+    );
+
+    stepFisik.classList.add(
+      "step-process"
+    );
+
+    stepKepribadian.classList.add(
+      "step-pending"
+    );
+
+    stepKarantina.classList.add(
+      "step-pending"
+    );
+
+    stepPengukuhan.classList.add(
+      "step-pending"
+    );
+
+    stepVerifikasi.classList.add(
+      "step-pending"
+    );
+
+  }
+
+  // ======================
+  // KEPRIBADIAN
+  // ======================
+
+  else if(
+    tahap === "kepribadian"
+  ){
+
+    stepAdministrasi.classList.add(
+      "step-done"
+    );
+
+    stepWawasan.classList.add(
+      "step-done"
+    );
+
+    stepFisik.classList.add(
+      "step-done"
+    );
+
+    stepKepribadian.classList.add(
+      "step-process"
+    );
+
+    stepKarantina.classList.add(
+      "step-pending"
+    );
+
+    stepPengukuhan.classList.add(
+      "step-pending"
+    );
+
+    stepVerifikasi.classList.add(
+      "step-pending"
+    );
+
+  }
+
+  // ======================
+  // KARANTINA
+  // ======================
+
+  else if(
+    tahap === "karantina"
+  ){
+
+    stepAdministrasi.classList.add(
+      "step-done"
+    );
+
+    stepWawasan.classList.add(
+      "step-done"
+    );
+
+    stepFisik.classList.add(
+      "step-done"
+    );
+
+    stepKepribadian.classList.add(
+      "step-done"
+    );
+
+    stepKarantina.classList.add(
+      "step-process"
+    );
+
+    stepPengukuhan.classList.add(
+      "step-pending"
+    );
+
+    stepVerifikasi.classList.add(
+      "step-pending"
+    );
+
+  }
+
+  // ======================
+  // PBB
+  // ======================
+
+  else if(
+    tahap === "pengukuhan"
+  ){
+
+    stepAdministrasi.classList.add(
+      "step-done"
+    );
+
+    stepWawasan.classList.add(
+      "step-done"
+    );
+
+    stepFisik.classList.add(
+      "step-done"
+    );
+
+    stepKepribadian.classList.add(
+      "step-done"
+    );
+
+    stepKarantina.classList.add(
+      "step-done"
+    );
+
+    stepPengukuhan.classList.add(
+      "step-process"
+    );
+
+    stepVerifikasi.classList.add(
+      "step-pending"
+    );
+
+  }
+
+  // ======================
+  // VERIFIKASI
+  // ======================
+
+  else if(
+    tahap === "verifikasi"
+  ){
+
+    stepAdministrasi.classList.add(
+      "step-done"
+    );
+
+    stepWawasan.classList.add(
+      "step-done"
+    );
+
+    stepFisik.classList.add(
+      "step-done"
+    );
+
+    stepKepribadian.classList.add(
+      "step-done"
+    );
+
+    stepKarantina.classList.add(
+      "step-done"
+    );
+
+    stepPengukuhan.classList.add(
+      "step-done"
+    );
+
+    stepVerifikasi.classList.add(
+      "step-process"
+    );
+
+  }
+
+}
+
+
+
+/* RESULT STATUS */
+
+const resultBox =
+document.getElementById(
+  "resultBox"
+);
+
+const resultMain =
+document.getElementById(
+  "resultMain"
+);
+
+const resultDesc =
+document.getElementById(
+  "resultDesc"
+);
+
+const resultProgress =
+document.getElementById(
+  "resultProgress"
+);
+
+/* STATUS DITERIMA */
+
+if(status === "Diterima"){
+
+  resultMain.innerText =
+  "DINYATAKAN LOLOS";
+
+  resultDesc.innerText =
+  "Selamat, Anda berhasil melewati tahapan seleksi dan dinyatakan layak untuk melanjutkan ke tahap berikutnya.";
+
+  resultProgress.style.width =
+  "100%";
+
+  resultProgress.style.background =
+  "linear-gradient(90deg,#16a34a,#22c55e)";
+
+}
+
+/* STATUS DITOLAK */
+
+else if(status === "Ditolak"){
+
+  resultMain.innerText =
+  "BELUM DINYATAKAN LOLOS";
+
+  resultDesc.innerText =
+  "Terima kasih atas partisipasi Anda dalam proses seleksi calon Paskibraka tahun ini.";
+
+  resultProgress.style.width =
+  "35%";
+
+  resultProgress.style.background =
+  "linear-gradient(90deg,#991b1b,#dc2626)";
+
+}
+
+/* STATUS PENDING */
+
+else{
+
+  resultMain.innerText =
+  "DALAM TAHAP PENINJAUAN";
+
+  resultDesc.innerText =
+  "Panitia seleksi sedang melakukan verifikasi dan evaluasi akhir terhadap hasil peserta.";
+
+  resultProgress.style.width =
+  "75%";
+
+  resultProgress.style.background =
+  "linear-gradient(90deg,#facc15,#f59e0b)";
+
+}
+
+
+
+
+        // RESET CLASS
+
+        statusBox.classList.remove(
+          "status-seleksi",
+          "status-diterima",
+          "status-ditolak"
+        );
+
+        // STATUS DITERIMA
+
+        if(
+          status === "Diterima"
+        ){
+
+          statusBox.classList.add(
+            "status-diterima"
+          );
+
+          statusText.innerText =
+            "LOLOS SELEKSI";
+
+          statusDesc.innerText =
+            "Selamat, Anda dinyatakan lolos ke tahap berikutnya.";
+
+        }
+
+        // STATUS DITOLAK
+
+        else if(
+          status === "Ditolak"
+        ){
+
+          statusBox.classList.add(
+            "status-ditolak"
+          );
+
+          statusText.innerText =
+            "BELUM LOLOS";
+
+          statusDesc.innerText =
+            "Terima kasih atas partisipasi Anda dalam seleksi.";
+
+        }
+
+        // STATUS SELEKSI
+
+        else{
+
+          statusBox.classList.add(
+            "status-seleksi"
+          );
+
+          statusText.innerText =
+            "MASIH DISELEKSI";
+
+          statusDesc.innerText =
+            "Panitia sedang melakukan evaluasi akhir.";
+
+        }
+
+        /* TAMPILKAN HALAMAN */
+
+        setTimeout(()=>{
+
+          clearInterval(interval);
+
+          document.getElementById(
+            "loadingScreen"
+          ).style.opacity = "0";
+
+          setTimeout(()=>{
+
+            document.getElementById(
+              "loadingScreen"
+            ).style.display = "none";
+
+            document.getElementById(
+              "mainContent"
+            ).style.display = "block";
+
+          },1000);
+
+        },3500);
+
+      }
+
+      // JIKA DATA USER TIDAK ADA
+
+      else{
+
+        alert(
+          "Data peserta tidak ditemukan"
+        );
+
+      }
+
+    }
+
+  }
+
+  // JIKA BELUM LOGIN
+
+  else{
+
+    window.location.href =
+      "akun.html";
+
+  }
+
+});
+
+
+
+
+
+
+
+
+</script>
+
+</body>
+</html>
