@@ -584,6 +584,36 @@ if (timeBuka >= timeTutup) {
   });
 };
 
+
+
+
+
+/* ======================
+   DETAIL LOKASI GPS
+====================== */
+async function getDetailLokasi(lat, lng){
+
+  try{
+
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+    );
+
+    const data = await res.json();
+
+    return data.display_name || "Lokasi tidak ditemukan";
+
+  }catch{
+
+    return "Lokasi tidak ditemukan";
+
+  }
+
+}
+
+
+
+
 /* =========================
    NORMALIZE DATE
 ========================= */
@@ -654,16 +684,32 @@ async function loadAbsensi() {
 
       tanggalSet.add(tgl);
 
-     semuaData.push({
-  key, // 🔥 PENTING UNTUK HAPUS
+
+
+
+
+semuaData.push({
+
+  key,
   uid,
+
   nama: item.nama || "-",
   email: item.email || "-",
+
   tanggal: tgl,
   jam: item.jam || "-",
+
   status: item.status || "-",
+
+  lokasi: item.lokasi || "-",
+  mapsLink: item.mapsLink || "",
+
   foto: userData.fotoSelfie || ""
+
 });
+
+
+
 
     });
 
@@ -684,7 +730,7 @@ async function loadAbsensi() {
 // ======================
 // RENDER DATA
 // ======================
-function renderData() {
+async function renderData() {
 
   const cari = searchInput.value.toLowerCase();
   const filterTgl = filterTanggal.value;
@@ -808,42 +854,97 @@ userBelum.forEach((item) => {
     return;
   }
 
-  // CARD
-  let html = "";
+ // CARD
+let html = "";
 
-  hasil.forEach((item) => {
+for (const item of hasil) {
 
-html += `
-  <div class="absen-card">
+  let detailLokasi = "Lokasi tidak ditemukan";
 
-    <img src="${item.foto}">
+  // CEK ADA GPS
+  if(item.lokasi){
 
-    <p><b>Nama:</b> ${item.nama}</p>
-    <p><b>Email:</b> ${item.email}</p>
-    <p><b>Tanggal:</b> ${item.tanggal}</p>
-    <p><b>Jam:</b> ${item.jam}</p>
+    const split = item.lokasi.split(",");
 
-    <div class="status">${item.status}</div>
+    // FORMAT: lat,lng
+    if(split.length >= 2){
 
-    <button onclick="hapusAbsen('${item.uid}','${item.key}')" 
-      style="
+      const lat = split[0].trim();
+      const lng = split[1].trim();
+
+      detailLokasi = await getDetailLokasi(lat, lng);
+
+    }
+
+  }
+
+  html += `
+    <div class="absen-card">
+
+      <img src="${item.foto}">
+
+      <p><b>Nama:</b> ${item.nama}</p>
+
+      <p><b>Email:</b> ${item.email}</p>
+
+      <p><b>Tanggal:</b> ${item.tanggal}</p>
+
+      <p><b>Jam:</b> ${item.jam}</p>
+
+      <p>
+        <b>Koordinat GPS:</b><br>
+
+        <a
+          href="${item.mapsLink || `https://www.google.com/maps?q=${item.lokasi}`}"
+          target="_blank"
+          style="
+            color:#2563eb;
+            text-decoration:underline;
+            font-weight:bold;
+            word-break:break-all;
+          "
+        >
+          ${item.lokasi}
+        </a>
+      </p>
+
+      <p style="
         margin-top:10px;
-        background:red;
-        color:white;
-        border:none;
-        padding:8px 12px;
-        border-radius:10px;
-        cursor:pointer;
-        width:100%;
+        padding:12px;
+        background:#f8fafc;
+        border-radius:12px;
+        line-height:1.6;
       ">
-      🗑 Hapus Absen
-    </button>
+        <b>📍 Detail Lokasi:</b><br>
+        ${detailLokasi}
+      </p>
 
-  </div>
-`;
-  });
+      <div class="status">
+        ${item.status}
+      </div>
 
-  absenList.innerHTML = html;
+      <button
+        onclick="hapusAbsen('${item.uid}','${item.key}')"
+        style="
+          margin-top:10px;
+          background:red;
+          color:white;
+          border:none;
+          padding:8px 12px;
+          border-radius:10px;
+          cursor:pointer;
+          width:100%;
+        "
+      >
+        🗑 Hapus Absen
+      </button>
+
+    </div>
+  `;
+}
+
+absenList.innerHTML = html;
+
 }
 
 // ======================

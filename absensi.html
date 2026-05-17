@@ -152,45 +152,310 @@ select{
 
 
 
+/* ================= HISTORY PROFESSIONAL ================= */
+
 .history-box{
-  background:#ffffff;
-  border-radius:16px;
-  padding:15px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.08);
-  margin-top:15px;
+
+  background:
+  linear-gradient(
+    135deg,
+    #ffffff,
+    #f8fbff
+  );
+
+  border-radius:24px;
+
+  padding:18px;
+
+  box-shadow:
+  0 15px 35px rgba(0,0,0,0.08);
+
+  margin-top:18px;
+
+  border:
+  1px solid rgba(37,99,235,0.08);
+
   overflow:hidden;
+
 }
 
 .history-header{
-  font-size:14px;
-  font-weight:bold;
-  color:#2563eb;
-  margin-bottom:10px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  margin-bottom:16px;
+
+  padding-bottom:12px;
+
+  border-bottom:
+  1px solid #e2e8f0;
+
+  font-size:15px;
+
+  font-weight:700;
+
+  color:#1e3a8a;
+
+  letter-spacing:.5px;
+
+}
+
+.history-content{
+
+  max-height:420px;
+
+  overflow-y:auto;
+
+  padding-right:4px;
+
+}
+
+/* ITEM */
+
+.history-item{
+
+  position:relative;
+
+  display:flex;
+
+  gap:14px;
+
+  align-items:flex-start;
+
+  background:#ffffff;
+
+  border-radius:20px;
+
+  padding:14px;
+
+  margin-bottom:14px;
+
+  border:
+  1px solid #e5e7eb;
+
+  transition:.25s;
+
+  overflow:hidden;
+
+}
+
+.history-item:hover{
+
+  transform:translateY(-2px);
+
+  box-shadow:
+  0 10px 25px rgba(0,0,0,0.08);
+
+}
+
+/* FOTO */
+
+.history-photo{
+
+  width:65px;
+
+  height:65px;
+
+  border-radius:18px;
+
+  object-fit:cover;
+
+  border:
+  3px solid #dbeafe;
+
+  flex-shrink:0;
+
+}
+
+/* INFO */
+
+.history-info{
+
+  flex:1;
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:5px;
+
+}
+
+/* NAMA */
+
+.history-name{
+
+  font-size:15px;
+
+  font-weight:700;
+
+  color:#0f172a;
+
+}
+
+/* STATUS */
+
+.history-status{
+
+  display:inline-flex;
+
+  align-items:center;
+
+  gap:6px;
+
+  background:#dcfce7;
+
+  color:#166534;
+
+  width:max-content;
+
+  padding:5px 10px;
+
+  border-radius:999px;
+
+  font-size:11px;
+
+  font-weight:700;
+
+  letter-spacing:.3px;
+
+}
+
+/* DETAIL */
+
+.history-detail{
+
+  font-size:12px;
+
+  color:#475569;
+
+  line-height:1.7;
+
+}
+
+/* JAM */
+
+.history-time{
+
+  margin-top:4px;
+
+  font-size:11px;
+
+  color:#94a3b8;
+
+  font-weight:600;
+
+}
+
+/* EMPTY */
+
+.empty-history{
+
+  text-align:center;
+
+  padding:30px 10px;
+
+  color:#64748b;
+
+  font-size:13px;
+
+}
+
+
+.loading{
+  position:fixed;
+  inset:0;
+  background:#f1f5f9;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  z-index:99999;
+}
+
+.spinner{
+  width:55px;
+  height:55px;
+  border-radius:50%;
+  border:5px solid rgba(0,0,0,0.15);
+  border-top:5px solid #009a00;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  0%{ transform:rotate(0deg); }
+  100%{ transform:rotate(360deg); }
+}
+
+.loading p{
+  margin-top:12px;
+  font-size:13px;
+  color:#444;
+}
+
+
+.history-avatar{
+  width:58px;
+  height:58px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#2563eb,#1e40af);
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  font-weight:700;
+  flex-shrink:0;
+  box-shadow:0 6px 18px rgba(37,99,235,0.25);
+  letter-spacing:1px;
+}
+
+.location-row{
   display:flex;
   align-items:center;
   gap:6px;
 }
 
-.history-content{
-  max-height:300px;
-  overflow-y:auto;
-  padding-right:5px;
+.location-icon{
+  width:16px;
+  height:16px;
+  object-fit:contain;
 }
 
-/* ITEM HISTORY */
-.history-item{
-  background:#f8fafc;
-  padding:12px;
-  border-radius:12px;
-  margin-bottom:10px;
-  border-left:4px solid #2563eb;
-  transition:0.2s;
+
+
+.gps-link{
+  text-decoration:underline;
+  color:#2563eb;
+  font-weight:600;
 }
 
-.history-item:hover{
-  transform:scale(1.02);
-  background:#eef2ff;
+.gps-link:hover{
+  opacity:.8;
 }
+
+
+
+
+
+@keyframes popupShow{
+
+  from{
+    opacity:0;
+    transform:scale(.85);
+  }
+
+  to{
+    opacity:1;
+    transform:scale(1);
+  }
+
+}
+
 </style>
 </head>
 
@@ -300,6 +565,13 @@ select{
 </div>
 
 
+
+<!-- LOADING SPINNER AWAL -->
+<div id="loadingScreen" class="loading">
+  <div class="spinner"></div>
+  <p>Memuat data absensi...</p>
+</div>
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -331,8 +603,121 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
+
+
+
+
+
+
+
+
+
+async function getLokasiGPS(){
+
+  return new Promise((resolve,reject)=>{
+
+    // browser tidak support
+    if(!navigator.geolocation){
+
+      reject(
+        "Perangkat tidak mendukung GPS"
+      );
+
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+
+      (pos)=>{
+
+        const lat =
+        pos.coords.latitude;
+
+        const lng =
+        pos.coords.longitude;
+
+        resolve({
+
+          text:
+          `${lat}, ${lng}`,
+
+          maps:
+          `https://www.google.com/maps?q=${lat},${lng}`
+
+        });
+
+      },
+
+      (err)=>{
+
+        // user menolak izin
+        if(
+          err.code === 1
+        ){
+
+          reject(
+            "GPS tidak diizinkan. Aktifkan lokasi untuk melakukan absensi."
+          );
+
+        }
+
+        // gps mati
+        else if(
+          err.code === 2
+        ){
+
+          reject(
+            "Lokasi tidak ditemukan. Aktifkan GPS terlebih dahulu."
+          );
+
+        }
+
+        // timeout
+        else{
+
+          reject(
+            "Gagal mengambil GPS."
+          );
+
+        }
+
+      },
+
+      {
+        enableHighAccuracy:true,
+        timeout:10000,
+        maximumAge:0
+      }
+
+    );
+
+  });
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+let appReady = false;
+
+
 // ELEMENT
 const btnAbsen = document.getElementById("btnAbsen");
+
+btnAbsen.disabled = true;
+btnAbsen.innerText = "Memuat...";
+
 const statusAbsen = document.getElementById("statusAbsen");
 const historyAbsen = document.getElementById("historyAbsen");
 const filterBulanHistory = document.getElementById("filterBulanHistory");
@@ -406,10 +791,20 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  statusAbsen.innerHTML = "✅ Login sebagai: " + user.email;
+statusAbsen.innerHTML = "✅ Login sebagai: " + user.email;
 
-  loadHistory();
+await loadHistory();
+updateButton();
+
+// unlock app
+appReady = true;
+
+// aktifkan tombol kalau memang boleh
+if (userStatus === "Diterima" && setting.aktif) {
   updateButton();
+}
+
+hideLoading();
 });
 
 /* =========================
@@ -446,6 +841,13 @@ function toNum(v) {
 ========================= */
 function updateButton() {
 
+    if (!appReady) {
+    btnAbsen.disabled = true;
+    btnAbsen.innerText = "Memuat data...";
+    return;
+  }
+
+
   if (!currentUser) return;
 
   // ❌ BLOCK JIKA TIDAK DITERIMA
@@ -479,7 +881,7 @@ function updateButton() {
    ABSEN
 ========================= */
 window.absenSekarang = async function () {
-
+if (!appReady) return;
   // 🔥 FINAL SECURITY CHECK
   if (userStatus !== "Diterima") {
     alert("❌ Akses ditolak! Status kamu bukan Diterima.");
@@ -518,24 +920,60 @@ window.absenSekarang = async function () {
         ? userData.sekolah
         : "Belum diisi";
 
-    const lokasiFix =
-      userData.lokasi && userData.lokasi !== "-"
-        ? userData.lokasi
-        : "Belum diisi";
+        // AMBIL GPS USER
+let gps;
+
+try{
+
+  gps = await getLokasiGPS();
+
+}
+
+
+catch(err){
+
+  bukaGpsPopup();
+
+  btnAbsen.disabled = false;
+  btnAbsen.innerText = "Absen Sekarang";
+
+  return;
+
+}
+
+
+
+const lokasiFix = gps.text;
+
+const mapsLink = gps.maps;
+
+
+
+
+
+// ================= GPS WAJIB AKTIF =================
+
+
 
     const nowDate = new Date();
 
-    const data = {
-      uid: currentUser.uid,
-      nama: namaFix,
-      email: currentUser.email,
-      sekolah: sekolahFix,
-      lokasi: lokasiFix,
-      status: "Hadir",
-      tanggal: nowDate.toLocaleDateString("id-ID"),
-      jam: nowDate.toLocaleTimeString("id-ID"),
-      bulan: String(nowDate.getMonth() + 1).padStart(2, "0")
-    };
+ const data = {
+
+  uid: currentUser.uid,
+  fotoSelfie: userData.fotoSelfie || "",
+  nama: namaFix,
+  email: currentUser.email,
+  sekolah: sekolahFix,
+
+  lokasi: lokasiFix,
+  mapsLink: mapsLink,
+
+  status: "Hadir",
+  tanggal: nowDate.toLocaleDateString("id-ID"),
+  jam: nowDate.toLocaleTimeString("id-ID"),
+  bulan: String(nowDate.getMonth() + 1).padStart(2, "0")
+
+};
 
     try {
       await push(ref(db, "absensi/" + currentUser.uid), data);
@@ -558,6 +996,43 @@ window.absenSekarang = async function () {
   }, 1200);
 };
 
+
+
+
+
+// =========================
+// DETAIL LOKASI DARI GPS
+// =========================
+async function getDetailLokasi(lat, lng){
+
+  try{
+
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+    );
+
+    const data = await res.json();
+
+    return data.display_name || "Lokasi tidak ditemukan";
+
+  }catch(err){
+
+    return "Gagal mengambil detail lokasi";
+
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
 /* =========================
    HISTORY
 ========================= */
@@ -565,33 +1040,176 @@ async function loadHistory() {
 
   if (!currentUser) return;
 
-  const snap = await get(ref(db, "absensi/" + currentUser.uid));
+  // DATA ABSENSI
+  const snap = await get(
+    ref(db, "absensi/" + currentUser.uid)
+  );
+
   const data = snap.val() || {};
 
-  const filterBulan = filterBulanHistory.value;
+  // DATA USER
+  const userSnap = await get(
+    ref(db, "users/" + currentUser.uid)
+  );
+
+  const userData = userSnap.val() || {};
+
+  const fotoSelfie =
+    userData.fotoSelfie || "";
+
+  const filterBulan =
+    filterBulanHistory.value;
 
   let html = "";
   let total = 0;
 
-  Object.values(data).reverse().forEach(item => {
+ for (const item of Object.values(data).reverse()) {
 
-    if (filterBulan && item.bulan !== filterBulan) return;
+      if (
+        filterBulan &&
+        item.bulan !== filterBulan
+      ) return;
 
-    total++;
+      total++;
 
-    html += `
-      <div class="history-item">
-        <b>${item.tanggal}</b> - ${item.jam}<br>
-        ${item.nama} | ${item.email}<br>
-        ${item.sekolah} | ${item.lokasi}
-      </div>
-    `;
-  });
+      const nama =
+        item.nama || "User";
 
-  totalAbsen.innerText = "Total Absen: " + total;
-  historyAbsen.innerHTML = html || "<p>Tidak ada data</p>";
+      const inisial = nama
+        .split(" ")
+        .map(v => v.charAt(0))
+        .join("")
+        .substring(0,2)
+        .toUpperCase();
+
+
+let detailLokasi = "Lokasi tidak ditemukan";
+
+if(item.lokasi){
+
+  const split = item.lokasi.split(",");
+
+  if(split.length >= 2){
+
+    const lat = split[0].trim();
+    const lng = split[1].trim();
+
+    detailLokasi =
+      await getDetailLokasi(lat, lng);
+
+  }
+
 }
 
+
+
+
+      html += `
+
+      <div class="history-item">
+
+        <div class="history-top">
+
+          ${
+            fotoSelfie
+            ? `
+            <img
+              src="${fotoSelfie}"
+              class="history-photo"
+            >
+            `
+            : `
+            <div class="history-avatar">
+              ${inisial}
+            </div>
+            `
+          }
+
+          <div class="history-user">
+
+            <div class="history-name">
+              ${nama}
+            </div>
+
+            <div class="history-email">
+              ${item.email}
+            </div>
+
+          </div>
+
+          <div class="history-status">
+            ${item.status}
+          </div>
+
+        </div>
+
+        <div class="history-info">
+
+          <div class="history-row">
+            <span>📅 ${item.tanggal}</span>
+            <span>🕒 ${item.jam}</span>
+          </div>
+
+          <div class="history-row">
+            <span>🏫 ${item.sekolah}</span>
+          </div>
+
+
+<div class="history-row">
+
+  <a
+    href="${item.mapsLink || `https://www.google.com/maps?q=${item.lokasi}`}"
+    target="_blank"
+    class="location-row gps-link"
+  >
+
+    <img
+      src="assets/images/gps.png"
+      class="location-icon"
+    >
+
+    ${item.lokasi}
+
+  </a>
+
+</div>
+
+<div style="
+  margin-top:8px;
+  padding:12px;
+  background:#f8fafc;
+  border-radius:12px;
+  font-size:12px;
+  line-height:1.6;
+  color:#334155;
+">
+
+  <b>📍 Detail Lokasi:</b><br>
+
+  ${detailLokasi}
+
+</div>
+
+
+
+
+        </div>
+
+      </div>
+
+      `;
+
+}
+
+  totalAbsen.innerText =
+    "Total Absen: " + total;
+
+  historyAbsen.innerHTML =
+    html || "<p>Tidak ada data</p>";
+}
+
+
+hideLoading();
 /* =========================
    FILTER
 ========================= */
@@ -644,7 +1262,207 @@ function showAlert(message) {
 
   }, 1000);
 }
+
+
+
+
+
+
+
+
+
+
+
+// ================= POPUP GPS =================
+
+function bukaGpsPopup(){
+
+  document.getElementById(
+    "gpsPopup"
+  ).style.display = "flex";
+
+}
+
+window.tutupGpsPopup = function(){
+
+  document.getElementById(
+    "gpsPopup"
+  ).style.display = "none";
+
+}
+
+// AKTIFKAN GPS ULANG
+window.aktifkanGPS = async function () {
+
+  try {
+
+    navigator.geolocation.getCurrentPosition(
+
+      async (position) => {
+
+        tutupGpsPopup();
+
+        await absenSekarang();
+
+      },
+
+      (error) => {
+
+        if (error.code === 1) {
+
+          alert(
+            "Izin lokasi ditolak.\n\n" +
+            "Aktifkan lokasi browser terlebih dahulu."
+          );
+
+        } else if (error.code === 2) {
+
+          alert(
+            "Lokasi tidak ditemukan.\n\n" +
+            "Aktifkan GPS perangkat."
+          );
+
+        } else {
+
+          alert(
+            "GPS gagal diakses."
+          );
+
+        }
+
+      },
+
+      {
+        enableHighAccuracy:true,
+        timeout:10000,
+        maximumAge:0
+      }
+
+    );
+
+  } catch(err) {
+
+    alert("Perangkat tidak mendukung GPS");
+
+  }
+
+};
+
+
+
+function hideLoading(){
+  document.getElementById("loadingScreen").style.display = "none";
+}
 </script>
 
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- POPUP GPS -->
+<div id="gpsPopup" style="
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.55);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:999999;
+  padding:20px;
+">
+
+  <div style="
+    width:100%;
+    max-width:380px;
+    background:white;
+    border-radius:28px;
+    padding:24px;
+    text-align:center;
+    box-shadow:0 20px 50px rgba(0,0,0,0.25);
+    animation:popupShow .25s ease;
+  ">
+
+    <div style="
+      width:75px;
+      height:75px;
+      margin:auto;
+      margin-bottom:18px;
+      border-radius:50%;
+      background:#dbeafe;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:34px;
+    ">
+      📍
+    </div>
+
+    <h2 style="
+      font-size:20px;
+      color:#0f172a;
+      margin-bottom:10px;
+    ">
+      GPS Dibutuhkan
+    </h2>
+
+    <p style="
+      color:#475569;
+      line-height:1.7;
+      font-size:14px;
+      margin-bottom:22px;
+    ">
+      Aktifkan lokasi GPS untuk melanjutkan proses absensi.
+    </p>
+
+    <div style="
+      display:flex;
+      gap:10px;
+    ">
+
+      <button
+        onclick="tutupGpsPopup()"
+        style="
+          flex:1;
+          padding:13px;
+          border:none;
+          border-radius:14px;
+          background:#e2e8f0;
+          color:#334155;
+          font-weight:600;
+          cursor:pointer;
+        "
+      >
+        Nanti
+      </button>
+
+<button
+  onclick="tutupGpsPopup()"
+  style="
+    flex:1;
+    padding:13px;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+  "
+>
+  Pergi ke Setelan
+</button>
+
+    </div>
+
+  </div>
+
+</div>
 </body>
 </html>
