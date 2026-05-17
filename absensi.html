@@ -156,24 +156,23 @@ select{
 
 .history-box{
 
-  background:
-  linear-gradient(
+  width:calc(100% + 20px);
+  margin-left:-30px;
+
+  background:linear-gradient(
     135deg,
     #ffffff,
     #f8fbff
   );
 
   border-radius:24px;
-
   padding:18px;
 
-  box-shadow:
-  0 15px 35px rgba(0,0,0,0.08);
+  box-shadow:0 15px 35px rgba(0,0,0,0.08);
 
   margin-top:18px;
 
-  border:
-  1px solid rgba(37,99,235,0.08);
+  border:1px solid rgba(37,99,235,0.08);
 
   overflow:hidden;
 
@@ -515,15 +514,23 @@ select{
     <div class="total-value" id="totalAbsen">0</div>
   </div>
 </div>
+</div>
 
-  <div class="history-box">
+
+<div class="history-box">
   <div class="history-header">
     📜 Riwayat Absensi
   </div>
 
   <div id="historyAbsen" class="history-content"></div>
 </div>
-</div>
+
+
+
+
+
+
+  
 <!-- FOOTER -->
 <div style="
   margin-top:30px;
