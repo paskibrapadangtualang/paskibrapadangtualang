@@ -429,6 +429,22 @@ button:hover{
 
 
 
+<label class="checkItem">
+
+  <input
+    type="radio"
+    name="tahap"
+    value="verifikasiAkhir"
+    id="verifikasiAkhir"
+  >
+
+  <span>
+    Verifikasi Akhir Panitia (FINAL)
+  </span>
+
+</label>
+
+
     <!-- BUTTON -->
 
     <button id="saveBtn">
@@ -526,30 +542,33 @@ UPDATE STATUS TEXT
 
 function updateStatusText(tahap){
 
-  const tahapMap = {
+ const tahapMap = {
 
-    administrasi:
-    "Seleksi Administrasi",
+  administrasi:
+  "Seleksi Administrasi",
 
-    wawasan:
-    "Tes Wawasan Kebangsaan",
+  wawasan:
+  "Tes Wawasan Kebangsaan",
 
-    fisikMental:
-    "Tes Fisik & Mental",
+  fisikMental:
+  "Tes Fisik & Mental",
 
-    kepribadian:
-    "Tes Kepribadian",
+  kepribadian:
+  "Tes Kepribadian",
 
-    karantina:
-    "Seleksi Kesehatan dan Parade",
+  karantina:
+  "Seleksi Kesehatan dan Parade",
 
-    pengukuhan:
-    "PBB",
+  pengukuhan:
+  "PBB",
 
-    verifikasi:
-    "Verifikasi Akhir Panitia"
+  verifikasi:
+  "Verifikasi Akhir Panitia",
 
-  };
+  verifikasiAkhir:
+  "SELEKSI SELESAI"
+
+};
 
   document.getElementById(
     "statusText"
@@ -695,67 +714,54 @@ document
 
   }
 
-  try{
+  try {
 
-    // SAVE FIREBASE
+  const dataToSave = {
+    tahap: tahap,
+    updatedAt: Date.now()
+  };
 
-    await set(
+  // 🔥 JIKA VERIFIKASI AKHIR → TAMBAH FLAG FINAL
+// 🔥 JIKA VERIFIKASI AKHIR PANITIA
+// 🔥 JIKA VERIFIKASI AKHIR FINAL
+if (tahap === "verifikasiAkhir") {
 
-      ref(
-        database,
-        "globalSeleksi"
-      ),
+  dataToSave.isFinal = true;
+  dataToSave.isClosed = true;
 
-      {
+} else {
 
-        tahap:
-        tahap,
+  dataToSave.isFinal = false;
+  dataToSave.isClosed = false;
 
-        updatedAt:
-        Date.now()
+}
 
-      }
+  // SAVE FIREBASE
+  await set(
+    ref(database, "globalSeleksi"),
+    dataToSave
+  );
 
-    );
+  // UPDATE TEXT
+  updateStatusText(tahap);
 
-    // UPDATE TEXT
+  // SUCCESS UI
+  btn.innerText = "Berhasil Disimpan";
+  successText.style.display = "block";
 
-    updateStatusText(
-      tahap
-    );
+  setTimeout(() => {
+    btn.innerText = "Simpan Tahap Seleksi";
+    btn.disabled = false;
+  }, 2000);
 
-    // SUCCESS
+} catch (err) {
 
-    btn.innerText =
-    "Berhasil Disimpan";
+  console.log("SAVE ERROR:", err);
 
-    successText.style.display =
-    "block";
+  btn.innerText = "Gagal Menyimpan";
+  btn.disabled = false;
 
-    setTimeout(()=>{
-
-      btn.innerText =
-      "Simpan Tahap Seleksi";
-
-      btn.disabled =
-      false;
-
-    },2000);
-
-  }catch(err){
-
-    console.log(
-      "SAVE ERROR:",
-      err
-    );
-
-    btn.innerText =
-    "Gagal Menyimpan";
-
-    btn.disabled =
-    false;
-
-  }
+}
 
 });
 
