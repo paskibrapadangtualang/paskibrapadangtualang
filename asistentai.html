@@ -126,7 +126,7 @@ body{
 }
 
 .ai-card{
-  background:#1f2937;
+  background:#3f5169;
   border-radius:16px;
   padding:18px;
   border:1px solid #374151;
@@ -251,28 +251,32 @@ Assistant saya
 
       <div class="quick-menu">
 
-        <button onclick="quickAsk('cara daftar online')">
+        <button onclick="quickAsk('daftar online')">
           Cara daftar online
         </button>
 
-        <button onclick="quickAsk('cara absen')">
+        <button onclick="quickAsk('absen')">
           Cara absen
         </button>
 
-        <button onclick="quickAsk('cara ganti data diri')">
+        <button onclick="quickAsk('ganti data diri')">
           Cara ganti data diri
         </button>
 
-        <button onclick="quickAsk('cara login')">
-          Cara login
+        <button onclick="quickAsk('dimana lihat hasil status')">
+          dimana lihat hasil status seleksi 
         </button>
 
-        <button onclick="quickAsk('cara logout')">
-          Cara logout
+        <button onclick="quickAsk('saya mau logout akun')">
+          saya mau logout akun
         </button>
 
-        <button onclick="quickAsk('cara download aplikasi')">
+        <button onclick="quickAsk('download aplikasi')">
           Cara download aplikasi
+        </button>
+
+        <button onclick="quickAsk('siapa pembuat aplikasi ini?')">
+          siapa pembuat aplikasi ini?
         </button>
 
       </div>
@@ -291,14 +295,12 @@ Assistant saya
     id="q"
     placeholder="Tanyakan sesuatu..."
     onkeypress="if(event.key==='Enter') ask()"
+    
   >
 
-<button
-  onclick="ask()"
-  disabled
->
-  Kirim
-</button>
+  <button onclick="ask()" >
+    Kirim
+  </button>
 
 </div>
 
