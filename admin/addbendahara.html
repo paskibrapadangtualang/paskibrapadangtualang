@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Code Bendahara</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#f1f5f9;
+  padding:20px;
+}
+
+.title{
+  font-size:28px;
+  font-weight:bold;
+  color:#2563eb;
+  margin-bottom:20px;
+}
+
+.card{
+  background:white;
+  border-radius:20px;
+  padding:20px;
+  margin-bottom:20px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.05);
+}
+
+.input-group{
+  margin-bottom:15px;
+}
+
+.input-group label{
+  display:block;
+  margin-bottom:8px;
+  font-size:14px;
+  font-weight:bold;
+  color:#333;
+}
+
+.input-group input{
+  width:100%;
+  padding:13px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  outline:none;
+}
+
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  background:#2563eb;
+  color:white;
+  font-size:15px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:hover{
+  opacity:.9;
+}
+
+.code-item{
+  background:#f8fafc;
+  border-radius:12px;
+  padding:10px;
+  margin-bottom:8px;
+  border:1px solid #e2e8f0;
+  font-size:14px;
+}
+.code-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+}
+
+.code-text{
+  font-size:15px;
+  font-weight:bold;
+  color:#1e3a8a;
+}
+
+.status{
+  padding:4px 8px;
+  border-radius:999px;
+  font-size:11px;
+}
+.active{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.nonactive{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.delete-btn{
+  background:red;
+  margin-top:8px;
+  padding:8px;
+  font-size:13px;
+  width: 50px;
+}
+
+.kosong{
+  text-align:center;
+  color:#777;
+  padding:30px;
+}
+
+</style>
+</head>
+<body>
+
+<h1 class="title">
+ Bendahara
+</h1>
+
+<!-- TAMBAH CODE -->
+<div class="card">
+
+  <div class="input-group">
+    <label>Buat Code Bendahara</label>
+    <input
+      type="text"
+      id="codeInput"
+      placeholder="Contoh: BN23892"
+    >
+  </div>
+
+  <button onclick="tambahCode()">
+    Tambah Code
+  </button>
+
+</div>
+
+<!-- AUTO GENERATE -->
+<div class="card">
+
+  <button onclick="generateCode()">
+    Generate Code Otomatis
+  </button>
+
+</div>
+
+
+
+
+
+<!-- LIST -->
+<div class="card">
+
+  <h3 style="margin-bottom:15px;">
+    Daftar Code Bendahara
+  </h3>
+
+
+  
+
+  <div id="listCode"></div>
+
+</div>
+
+
+<div style="margin-top:20px;">
+  <h3>Data Semua Bendahara</h3>
+  <div id="listBendahara"></div>
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  set,
+  get,
+  remove,
+  onValue
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const listCode =
+document.getElementById("listCode");
+
+
+
+const listBendahara = document.getElementById("listBendahara");
+
+function loadBendahara(){
+
+  onValue(ref(db, "bendahara"), (snap)=>{
+
+    const data = snap.val() || {};
+
+    let html = "";
+
+    Object.keys(data).forEach(uid => {
+
+      const d = data[uid];
+
+html += `
+<div class="code-item" style="
+display:flex;
+gap:12px;
+align-items:center;
+padding:12px;
+border-radius:14px;
+background:#fff;
+box-shadow:0 3px 10px rgba(0,0,0,0.05);
+margin-bottom:10px;
+">
+
+  <!-- FOTO PROFIL -->
+  <img src="${d.fotoProfil || 'https://via.placeholder.com/60'}"
+    style="
+      width:55px;
+      height:55px;
+      border-radius:50%;
+      object-fit:cover;
+      border:2px solid #eee;
+    "
+  >
+
+  <!-- INFO -->
+  <div style="flex:1">
+
+    <div style="font-weight:bold;font-size:15px;color:#111">
+      ${d.nama || "Tanpa Nama"}
+    </div>
+
+    <div style="font-size:12px;color:#666;margin-top:2px">
+      ${d.email || "-"}
+    </div>
+
+    <div style="font-size:12px;color:#444;margin-top:4px">
+      📱 ${d.wa || "-"}
+    </div>
+
+  </div>
+
+  <!-- ROLE + BUTTON -->
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+
+    <span style="
+      background:#dcfce7;
+      color:#166534;
+      font-size:11px;
+      padding:4px 8px;
+      border-radius:999px;
+      font-weight:bold;
+    ">
+      ${d.role || "bendahara"}
+    </span>
+
+    <button onclick="hapusBendahara('${uid}')"
+      style="
+        padding:6px 10px;
+        background:#b91c1c;
+        color:white;
+        border:none;
+        border-radius:8px;
+        font-size:12px;
+        cursor:pointer;
+      ">
+      Hapus
+    </button>
+
+  </div>
+
+</div>
+`;
+
+    });
+
+    listBendahara.innerHTML = html;
+
+  });
+
+}
+
+loadBendahara();
+/* =========================
+   GENERATE CODE
+========================= */
+
+function randomCode(){
+
+  const angka =
+  Math.floor(
+    10000 + Math.random() * 90000
+  );
+
+  return "BN" + angka;
+}
+
+/* =========================
+   TAMBAH MANUAL
+========================= */
+
+window.tambahCode = async function(){
+
+  const code =
+  document
+  .getElementById("codeInput")
+  .value
+  .trim()
+  .toUpperCase();
+
+  if(!code){
+    alert("Masukkan code");
+    return;
+  }
+
+  const snap = await get(
+    ref(db, "kodeBendahara/" + code)
+  );
+
+  if(snap.exists()){
+    alert("Code sudah ada");
+    return;
+  }
+
+  await set(
+    ref(db, "kodeBendahara/" + code),
+    {
+      aktif:true,
+      createdAt:Date.now()
+    }
+  );
+
+  alert("Code berhasil ditambahkan");
+
+  document.getElementById("codeInput").value = "";
+
+}
+
+/* =========================
+   GENERATE AUTO
+========================= */
+
+window.generateCode = async function(){
+
+  const code = randomCode();
+
+  await set(
+    ref(db, "kodeBendahara/" + code),
+    {
+      aktif:true,
+      createdAt:Date.now()
+    }
+  );
+
+  alert("Code berhasil dibuat:\n\n" + code);
+
+}
+
+/* =========================
+   LOAD CODE
+========================= */
+
+function loadCode(){
+
+  onValue(
+    ref(db, "kodeBendahara"),
+    (snap)=>{
+
+      const data = snap.val() || {};
+
+      let html = "";
+
+      const keys =
+      Object.keys(data).reverse();
+
+      if(keys.length === 0){
+
+        html = `
+        <div class="kosong">
+          Belum ada code
+        </div>
+        `;
+
+      }
+
+      keys.forEach((code)=>{
+
+        const item = data[code];
+
+        html += `
+        <div class="code-item">
+
+          <div class="code-top">
+
+<div style="
+display:flex;
+align-items:center;
+justify-content:space-between;
+background:linear-gradient(135deg,#111827,#1f2937);
+color:white;
+padding:10px 12px;
+border-radius:12px;
+font-family:monospace;
+font-size:14px;
+letter-spacing:1px;
+box-shadow:0 3px 10px rgba(0,0,0,0.15);
+">
+
+  <span style="opacity:0.7;font-size:11px"></span>
+
+  <span style="font-weight:bold">
+    ${code}
+  </span>
+
+</div>
+
+            <div class="
+              status
+              ${item.aktif ? "active" : "nonactive"}
+            ">
+              ${
+                item.aktif
+                ? "AKTIF"
+                : "USED"
+              }
+            </div>
+
+          </div>
+
+          <button
+            class="delete-btn"
+            onclick="hapusCode('${code}')"
+          >
+            Hapus
+          </button>
+
+        </div>
+        `;
+
+      });
+
+      listCode.innerHTML = html;
+
+    }
+  );
+
+}
+
+/* =========================
+   HAPUS
+========================= */
+
+window.hapusCode = async function(code){
+
+  const yakin =
+  confirm(
+    "Hapus code " + code + " ?"
+  );
+
+  if(!yakin) return;
+
+  await remove(
+    ref(db, "kodeBendahara/" + code)
+  );
+
+  alert("Code dihapus");
+
+}
+
+loadCode();
+
+
+
+
+window.hapusBendahara = async function(uid){
+
+  const yakin = confirm("Hapus bendahara ini?");
+
+  if(!yakin) return;
+
+  await remove(ref(db, "bendahara/" + uid));
+
+  alert("Bendahara berhasil dihapus");
+
+};
+
+</script>
+
+</body>
+</html>

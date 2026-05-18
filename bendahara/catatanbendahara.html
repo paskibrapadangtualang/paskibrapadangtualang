@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Note Bendahara</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#f3f4f6;
+}
+
+/* HEADER */
+
+.header{
+  position: sticky;
+  top: 0;
+  z-index: 999;
+
+  background: rgba(91,17,17,0.95);
+  backdrop-filter: blur(8px);
+
+  color: white;
+  padding: 15px;
+
+  font-weight: bold;
+  text-align: center;
+
+  box-shadow: 0 6px 18px rgba(0,0,0,.15);
+}
+
+/* INPUT */
+
+.container{
+max-width:800px;
+margin:auto;
+padding:15px;
+}
+
+.card{
+background:white;
+padding:15px;
+border-radius:14px;
+margin-bottom:15px;
+box-shadow:0 3px 10px rgba(0,0,0,.05);
+}
+
+textarea{
+width:96%;
+min-height:120px;
+padding:12px;
+border-radius:12px;
+border:1px solid #ddd;
+resize:none;
+font-size:14px;
+line-height:1.5;
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+border-radius:12px;
+background:#5b1111;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+/* BOOK STYLE */
+
+/* ====== BOOK STYLE FIX ====== */
+
+.noteBook{
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px 18px 14px;
+  margin-bottom: 18px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.08);
+  position: relative;
+  overflow: hidden;
+  border-left: 5px solid #5b1111;
+}
+
+/* HEADER NOTE */
+.noteHeader{
+  display:flex;
+  justify-content:space-between;
+  font-size:12px;
+  color:#6b7280;
+  margin-bottom:10px;
+}
+
+/* PAPER EFFECT (INI YANG BIKIN KAYAK BUKU) */
+.noteBody{
+  position: relative;
+  padding-left: 8px;
+  font-family: "Courier New", monospace;
+  font-size:14px;
+  line-height:28px;
+  white-space:pre-wrap;
+}
+
+/* garis buku asli (horizontal seperti kertas tulis) */
+.noteBody::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 26px,
+      #e5e7eb 27px
+    );
+  pointer-events:none;
+  opacity:0.9;
+}
+
+/* tombol */
+.actions{
+  display:flex;
+  gap:10px;
+  margin-top:14px;
+}
+
+.actions button{
+  flex:1;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.btnPdf{
+  background:#2563eb;
+  color:white;
+}
+
+.btnDel{
+  background:#dc2626;
+  color:white;
+}
+
+.bookLine{
+height:2px;
+background:#111;
+margin:10px 0;
+}
+
+.printArea{
+padding:10px 0;
+}
+
+/* garis buku */
+
+.line{
+border-top:2px dashed #999;
+margin:8px 0;
+}
+
+.meta{
+font-size:11px;
+color:#777;
+display:flex;
+justify-content:space-between;
+margin-bottom:6px;
+}
+
+.actions{
+margin-top:10px;
+display:flex;
+gap:10px;
+}
+
+.smallBtn{
+flex:1;
+padding:8px;
+font-size:12px;
+border-radius:8px;
+border:none;
+cursor:pointer;
+}
+
+.pdfBtn{
+background:#2563eb;
+color:white;
+}
+
+.delBtn{
+background:red;
+color:white;
+}
+
+/* PRINT STYLE */
+
+@media print{
+
+body *{
+visibility:hidden;
+}
+
+.printArea,
+.printArea *{
+visibility:visible;
+}
+
+.printArea{
+position:absolute;
+left:0;
+top:0;
+width:100%;
+}
+
+}
+
+
+
+
+
+#spinner{
+  position: fixed;
+  inset: 0;
+  background: #5b1111;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 999999;
+  color: white;
+}
+
+.loader{
+  width: 55px;
+  height: 55px;
+  border: 5px solid rgba(255,255,255,0.2);
+  border-top: 5px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes spin{
+  0%{transform: rotate(0deg);}
+  100%{transform: rotate(360deg);}
+}
+
+.loadingText{
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+</style>
+</head>
+
+<body>
+
+
+
+    <div id="spinner">
+  <div class="loader"></div>
+  <div class="loadingText">Memuat catatan bendahara...</div>
+</div>
+
+
+
+
+<div class="header">
+NOTE BENDAHARA
+</div>
+
+<div class="container">
+
+<!-- INPUT -->
+<div class="card">
+<h3>Tambah Catatan</h3>
+
+<textarea id="noteInput"
+placeholder="Tulis catatan...
+contoh:
+belanja ATK
+transfer dana
+uang kas"></textarea>
+
+<button onclick="saveNote()">Simpan</button>
+</div>
+
+<!-- LIST -->
+<div id="list"></div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getDatabase, ref, push, set, onValue, remove, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig={
+apiKey:"AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+authDomain:"paskibra2026-300eb.firebaseapp.com",
+databaseURL:"https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+projectId:"paskibra2026-300eb",
+storageBucket:"paskibra2026-300eb.firebasestorage.app",
+messagingSenderId:"937469132434",
+appId:"1:937469132434:web:d1924e1160350000d1b04b"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+let uid = null;
+let namaBendahara = "-";
+
+const list = document.getElementById("list");
+
+/* LOGIN */
+
+onAuthStateChanged(auth, async(user)=>{
+showSpinner(); // ⬅️ TAMBAH INI
+if(!user){
+location.href="login.html";
+return;
+}
+
+uid = user.uid;
+
+/* ambil nama bendahara */
+const snap = await get(ref(db,"bendahara/"+uid));
+if(snap.exists()){
+namaBendahara = snap.val().nama || "-";
+}
+
+loadNotes();
+hideSpinner(); // ⬅️ HILANGKAN SETELAH LOAD
+
+});
+
+/* SAVE */
+
+window.saveNote = async()=>{
+
+showSpinner();
+
+let text = document.getElementById("noteInput").value.trim();
+if(!text){
+hideSpinner();
+return;
+}
+
+let formatted =
+text.split("\n")
+.map(x => x.trim() ? "• " + x : "")
+.join("\n");
+
+const newRef = push(ref(db,"notes/"+uid));
+
+await set(newRef,{
+text:formatted,
+time:Date.now()
+});
+
+document.getElementById("noteInput").value="";
+
+hideSpinner();
+};
+
+/* LOAD */
+
+function loadNotes(){
+showSpinner();
+onValue(ref(db,"notes/"+uid),(snap)=>{
+
+list.innerHTML="";
+
+let data = snap.val() || {};
+
+Object.entries(data)
+.sort((a,b)=>b[1].time - a[1].time)
+.forEach(([id,val])=>{
+
+const div = document.createElement("div");
+div.className="noteBook";
+
+const date = new Date(val.time)
+.toLocaleString("id-ID");
+
+div.innerHTML = `
+  <div class="noteHeader">
+    <span>📅 ${date}</span>
+    <span>📒 Catatan Bendahara</span>
+  </div>
+
+  <div class="noteBody">
+    ${val.text}
+  </div>
+
+  <div class="actions">
+    <button class="btnPdf" onclick="exportPDF('${id}')">Export PDF</button>
+    <button class="btnDel" onclick="hapus('${id}')">Hapus</button>
+  </div>
+`;
+
+list.appendChild(div);
+hideSpinner();
+});
+
+});
+
+}
+
+/* DELETE */
+
+window.hapus = async(id)=>{
+
+if(!confirm("Hapus catatan?")) return;
+
+await remove(ref(db,"notes/"+uid+"/"+id));
+
+};
+
+/* PDF EXPORT */
+
+window.exportPDF = async(id)=>{
+showSpinner();
+const snap = await get(ref(db,"notes/"+uid+"/"+id));
+if(!snap.exists()) return;
+
+const data = snap.val();
+
+const { jsPDF } = window.jspdf;
+const doc = new jsPDF();
+
+let y = 20;
+
+/* HEADER BESAR */
+doc.setFillColor(91, 17, 17);
+doc.rect(0, 0, 220, 20, "F");
+
+doc.setTextColor(255,255,255);
+doc.setFontSize(16);
+doc.text("NOTE BENDAHARA", 105, 13, {align:"center"});
+
+doc.setTextColor(0,0,0);
+
+y = 35;
+
+/* INFO */
+doc.setFontSize(11);
+doc.text("Nama Bendahara: " + namaBendahara, 10, y);
+y += 7;
+
+doc.text("Tanggal: " + new Date(data.time).toLocaleString("id-ID"), 10, y);
+y += 10;
+
+/* garis */
+doc.setDrawColor(180);
+doc.line(10, y, 200, y);
+
+y += 10;
+
+/* isi buku */
+doc.setFont("courier");
+doc.setFontSize(11);
+
+const lines = data.text.split("\n");
+
+lines.forEach(line=>{
+
+if(y > 280){
+doc.addPage();
+y = 20;
+}
+
+doc.text("• " + line, 12, y);
+y += 7;
+
+/* garis buku tipis */
+doc.setDrawColor(235);
+doc.line(10, y-3, 200, y-3);
+
+});
+
+/* footer */
+doc.setDrawColor(0);
+doc.line(10, y+5, 200, y+5);
+
+doc.save("note-bendahara.pdf");
+hideSpinner();
+};
+
+
+
+
+
+
+
+
+
+function showSpinner(){
+  document.getElementById("spinner").style.display = "flex";
+}
+
+function hideSpinner(){
+  document.getElementById("spinner").style.display = "none";
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Login Bendahara</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#f1f5f9;
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+}
+
+.container{
+width:100%;
+max-width:430px;
+}
+
+.card{
+background:white;
+padding:25px;
+border-radius:25px;
+box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+.logo{
+text-align:center;
+margin-bottom:25px;
+}
+
+.logo h1{
+color:#2563eb;
+font-size:28px;
+}
+
+.logo p{
+color:#64748b;
+margin-top:5px;
+}
+
+.input-group{
+margin-bottom:15px;
+}
+
+.input-group label{
+display:block;
+font-size:14px;
+margin-bottom:8px;
+font-weight:bold;
+}
+
+.input-group input{
+width:100%;
+padding:14px;
+border-radius:12px;
+border:1px solid #d1d5db;
+outline:none;
+}
+
+.input-group input:focus{
+border-color:#2563eb;
+}
+
+button{
+width:100%;
+padding:14px;
+border:none;
+border-radius:14px;
+background:#2563eb;
+color:white;
+font-size:15px;
+font-weight:bold;
+cursor:pointer;
+margin-top:10px;
+}
+
+button:hover{
+opacity:.9;
+}
+
+.switch-text{
+margin-top:18px;
+text-align:center;
+font-size:14px;
+color:#666;
+}
+
+.switch-text span{
+color:#2563eb;
+cursor:pointer;
+font-weight:bold;
+}
+
+.preview{
+width:90px;
+height:90px;
+border-radius:50%;
+object-fit:cover;
+display:none;
+margin:auto;
+margin-top:10px;
+border:3px solid #2563eb;
+}
+
+.hidden{
+display:none;
+}
+
+.info-box{
+background:#eff6ff;
+padding:12px;
+border-radius:12px;
+margin-bottom:15px;
+font-size:13px;
+line-height:1.6;
+color:#1e40af;
+border:1px solid #bfdbfe;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<!-- LOGIN -->
+
+<div class="card"
+id="loginBox">
+
+<div class="logo">
+<h1>BENDAHARA</h1>
+<p>Login khusus bendahara</p>
+</div>
+
+<div class="input-group">
+<label>Email</label>
+
+<input
+type="email"
+id="loginEmail">
+</div>
+
+<div class="input-group">
+<label>Password</label>
+
+<input
+type="password"
+id="loginPassword">
+</div>
+
+<button
+onclick="loginBendahara()">
+
+Login Bendahara
+
+</button>
+
+<div class="switch-text">
+
+Belum punya akun?
+
+<span
+onclick="showRegister()">
+
+Daftar
+
+</span>
+
+</div>
+
+</div>
+
+<!-- REGISTER -->
+
+<div class="card hidden"
+id="registerBox">
+
+<div class="logo">
+<h1>DAFTAR</h1>
+<p>Pendaftaran bendahara</p>
+</div>
+
+<div class="info-box">
+
+Gunakan kode bendahara resmi
+untuk membuat akun.
+
+</div>
+
+<div class="input-group">
+<label>Nama</label>
+
+<input
+type="text"
+id="nama">
+</div>
+
+<div class="input-group">
+<label>No WA</label>
+
+<input
+type="text"
+id="wa">
+</div>
+
+<div class="input-group">
+<label>Email</label>
+
+<input
+type="email"
+id="email">
+</div>
+
+<div class="input-group">
+<label>Password</label>
+
+<input
+type="password"
+id="password">
+</div>
+
+<div class="input-group">
+<label>Konfirmasi</label>
+
+<input
+type="password"
+id="konfirmasi">
+</div>
+
+<div class="input-group">
+<label>Kode Bendahara</label>
+
+<input
+type="text"
+id="kodeBendahara">
+</div>
+
+<div class="input-group">
+
+<label>Foto Profil</label>
+
+<input
+type="file"
+id="foto"
+accept="image/*">
+
+<img
+id="preview"
+class="preview">
+
+</div>
+
+<button
+onclick="daftarBendahara()">
+
+Daftar Sekarang
+
+</button>
+
+<div class="switch-text">
+
+Sudah punya akun?
+
+<span
+onclick="showLogin()">
+
+Login
+
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getAuth,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword,
+onAuthStateChanged,
+signOut
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+getDatabase,
+ref,
+set,
+get,
+update
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* FIREBASE */
+
+const firebaseConfig={
+
+apiKey:
+"AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+
+authDomain:
+"paskibra2026-300eb.firebaseapp.com",
+
+databaseURL:
+"https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+
+projectId:
+"paskibra2026-300eb",
+
+storageBucket:
+"paskibra2026-300eb.firebasestorage.app",
+
+messagingSenderId:
+"937469132434",
+
+appId:
+"1:937469132434:web:d1924e1160350000d1b04b"
+
+};
+
+const app=
+initializeApp(
+firebaseConfig
+);
+
+const auth=
+getAuth(app);
+
+const db=
+getDatabase(app);
+
+/* CLOUDINARY */
+
+const CLOUD_NAME=
+"djxlbemky";
+
+const UPLOAD_PRESET=
+"uploadgambar";
+
+let fotoURL="";
+
+/* AUTO LOGIN */
+
+onAuthStateChanged(
+auth,
+
+async(user)=>{
+
+if(!user)
+return;
+
+const snap=
+await get(
+ref(
+db,
+"bendahara/"+user.uid
+)
+);
+
+if(
+snap.exists()
+){
+
+location.href=
+"Dashboardbendahara.html";
+
+}
+
+}
+
+);
+
+/* FOTO */
+
+foto.addEventListener(
+"change",
+
+async(e)=>{
+
+const file=
+e.target.files[0];
+
+if(!file)
+return;
+
+preview.src=
+URL.createObjectURL(
+file
+);
+
+preview.style.display=
+"block";
+
+const form=
+new FormData();
+
+form.append(
+"file",
+file
+);
+
+form.append(
+"upload_preset",
+UPLOAD_PRESET
+);
+
+const res=
+await fetch(
+
+`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+
+{
+method:"POST",
+body:form
+}
+
+);
+
+const data=
+await res.json();
+
+fotoURL=
+data.secure_url;
+
+}
+
+);
+
+/* SWITCH */
+
+window.showRegister=
+()=>{
+
+loginBox.classList.add(
+"hidden"
+);
+
+registerBox.classList.remove(
+"hidden"
+);
+
+};
+
+window.showLogin=
+()=>{
+
+registerBox.classList.add(
+"hidden"
+);
+
+loginBox.classList.remove(
+"hidden"
+);
+
+};
+
+/* DAFTAR */
+
+window.daftarBendahara=
+async()=>{
+
+const nama=
+document
+.getElementById(
+"nama"
+).value;
+
+const wa=
+document
+.getElementById(
+"wa"
+).value;
+
+const email=
+document
+.getElementById(
+"email"
+).value;
+
+const password=
+document
+.getElementById(
+"password"
+).value;
+
+const konfirmasi=
+document
+.getElementById(
+"konfirmasi"
+).value;
+
+const kode=
+document
+.getElementById(
+"kodeBendahara"
+)
+
+.value
+.trim()
+.toUpperCase();
+
+if(
+password!==konfirmasi
+){
+
+alert(
+"Password tidak sama"
+);
+
+return;
+
+}
+
+const cek=
+await get(
+ref(
+db,
+"kodeBendahara/"+kode
+)
+);
+
+if(
+!cek.exists()
+){
+
+alert(
+"Kode tidak valid"
+);
+
+return;
+
+}
+
+const user=
+await createUserWithEmailAndPassword(
+auth,
+email,
+password
+);
+
+const uid=
+user.user.uid;
+
+await set(
+ref(
+db,
+"bendahara/"+uid
+),
+
+{
+
+uid,
+
+nama,
+
+wa,
+
+email,
+
+fotoProfil:
+fotoURL,
+
+role:
+"bendahara",
+
+kodeBendahara:
+kode,
+
+createdAt:
+Date.now()
+
+}
+
+);
+
+alert(
+"Daftar berhasil"
+);
+
+location.href=
+"Dashboardbendahara.html";
+
+};
+
+/* LOGIN */
+
+window.loginBendahara=
+async()=>{
+
+try{
+
+const user=
+await signInWithEmailAndPassword(
+auth,
+loginEmail.value,
+loginPassword.value
+);
+
+const uid=
+user.user.uid;
+
+const snap=
+await get(
+ref(
+db,
+"bendahara/"+uid
+)
+);
+
+if(
+!snap.exists()
+){
+
+await signOut(
+auth
+);
+
+alert(
+"Akun bukan bendahara"
+);
+
+return;
+
+}
+
+location.href=
+"Dashboardbendahara.html";
+
+}
+
+catch(err){
+
+alert(
+err.message
+);
+
+}
+
+};
+
+</script>
+
+</body>
+</html>

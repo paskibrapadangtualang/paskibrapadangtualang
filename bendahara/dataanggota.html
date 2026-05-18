@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Data Anggota</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#f3f4f6;
+}
+
+/* HEADER */
+.header{
+position:sticky;
+top:0;
+z-index:999;
+background:#5b1111;
+color:white;
+padding:15px;
+font-weight:bold;
+text-align:center;
+box-shadow:0 4px 12px rgba(0,0,0,.2);
+}
+
+/* LOADING */
+.loading{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#5b1111;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+color:white;
+z-index:9999;
+}
+
+.spinner{
+width:50px;
+height:50px;
+border:5px solid rgba(255,255,255,.3);
+border-top:5px solid white;
+border-radius:50%;
+animation:spin 1s linear infinite;
+margin-bottom:10px;
+}
+
+@keyframes spin{
+to{transform:rotate(360deg);}
+}
+
+/* CONTAINER */
+.container{
+max-width:900px;
+margin:auto;
+padding:15px;
+}
+
+/* SEARCH */
+input{
+width:96%;
+padding:12px;
+border-radius:10px;
+border:1px solid #ddd;
+margin-bottom:15px;
+}
+
+/* CARD */
+.card{
+background:white;
+padding:15px;
+border-radius:14px;
+margin-bottom:12px;
+box-shadow:0 3px 10px rgba(0,0,0,.05);
+display:flex;
+gap:12px;
+align-items:center;
+}
+
+.card img{
+width:60px;
+height:60px;
+border-radius:12px;
+object-fit:cover;
+}
+
+.info{
+flex:1;
+}
+
+.nama{
+font-weight:bold;
+color:#111827;
+}
+
+.email{
+font-size:12px;
+color:#6b7280;
+}
+
+.badge{
+font-size:11px;
+padding:4px 8px;
+background:#dcfce7;
+color:#166534;
+border-radius:999px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="loading" id="loading">
+<div class="spinner"></div>
+<div>Loading data anggota...</div>
+</div>
+
+<div class="header">
+DATA ANGGOTA TAHUN 2026
+</div>
+
+<div class="container">
+
+<input id="search" placeholder="Cari nama / email...">
+
+<div id="list"></div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* FIREBASE */
+const firebaseConfig = {
+apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+authDomain: "paskibra2026-300eb.firebaseapp.com",
+databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+projectId: "paskibra2026-300eb",
+storageBucket: "paskibra2026-300eb.firebasestorage.app",
+messagingSenderId: "937469132434",
+appId: "1:937469132434:web:d1924e1160350000d1b04b"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+
+
+
+
+
+
+
+
+
+
+function maskEmail(email){
+  if(!email || !email.includes("@")) return "-";
+
+  let [name, domain] = email.split("@");
+
+  if(name.length <= 2){
+    return name[0] + "*".repeat(3) + "@" + domain;
+  }
+
+  let first = name.slice(0,3);
+  let last = name.slice(-1);
+
+  let middle = "*".repeat(Math.max(3, name.length - 4));
+
+  return first + middle + last + "@" + domain;
+}
+
+
+
+
+
+
+const list = document.getElementById("list");
+const loading = document.getElementById("loading");
+const search = document.getElementById("search");
+
+let allUsers = [];
+
+/* LOGIN WAJIB */
+onAuthStateChanged(auth, async(user)=>{
+
+if(!user){
+window.location.href="login.html";
+return;
+}
+
+await loadUsers();
+
+loading.style.display="none";
+
+});
+
+/* AMBIL DATA */
+async function loadUsers(){
+
+const snap = await get(ref(db,"users"));
+const data = snap.val() || {};
+
+const nowYear = new Date().getFullYear();
+
+allUsers = Object.keys(data).map(uid=>{
+
+const u = data[uid];
+
+let tahun = null;
+
+/* AMBIL TAHUN DARI ANGKATAN */
+if(u.angkatanTahun){
+tahun = Number(u.angkatanTahun);
+}
+else if(u.createdAt){
+tahun = new Date(u.createdAt).getFullYear();
+}
+else if(u.tanggalLahir){
+tahun = new Date(u.tanggalLahir).getFullYear();
+}
+
+return {
+uid,
+
+nama: u.namaLengkap || "-",
+email: u.email || "-",
+
+foto: u.fotoSelfie || "https://via.placeholder.com/100",
+
+tahun
+};
+
+})
+.filter(u => u.tahun == nowYear);
+
+render();
+}
+
+/* RENDER */
+function render(){
+
+let keyword = search.value.toLowerCase();
+
+list.innerHTML="";
+
+allUsers
+.filter(u=>
+u.nama.toLowerCase().includes(keyword) ||
+u.email.toLowerCase().includes(keyword)
+)
+.forEach(u=>{
+
+const div = document.createElement("div");
+div.className="card";
+
+div.innerHTML=`
+<img src="${u.foto}" onclick="openImg('${u.foto}')">
+<div class="info">
+<div class="nama">${u.nama}</div>
+<div class="email">${maskEmail(u.email)}</div>
+</div>
+<div class="badge">${u.tahun}</div>
+`;
+
+list.appendChild(div);
+
+});
+
+}
+
+/* SEARCH */
+search.oninput = render;
+
+
+
+
+
+
+
+
+
+
+
+
+
+window.openImg = (url) => {
+document.getElementById("imgPreview").src = url;
+document.getElementById("imgModal").style.display = "flex";
+};
+
+window.closeImg = () => {
+document.getElementById("imgModal").style.display = "none";
+};
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+<div id="imgModal" style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.85);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:9999;
+">
+
+<span onclick="closeImg()" style="
+position:absolute;
+top:20px;
+right:20px;
+color:white;
+font-size:30px;
+cursor:pointer;
+">✕</span>
+
+<img id="imgPreview" style="
+max-width:90%;
+max-height:90%;
+border-radius:12px;
+box-shadow:0 10px 30px rgba(0,0,0,.5);
+">
+</div>
+</body>
+</html>

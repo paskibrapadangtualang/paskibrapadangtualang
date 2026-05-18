@@ -1,0 +1,2637 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+
+<!-- GOOGLE FONT -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cash Admin Full System</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+body{
+  background:#f4f6f9;
+  padding:18px;
+  color:#1f2937;
+}
+
+/* HEADER */
+.header{
+  background:linear-gradient(135deg,#b80000,#ff2e2e);
+  color:white;
+  padding:20px;
+  text-align:center;
+  font-size:22px;
+  font-weight:700;
+
+  position:sticky;
+  top:0;
+
+  z-index:9999;
+
+  border-radius:0;
+  box-shadow:none;
+
+  width:calc(100% + 36px);
+
+  margin:
+    -18px
+    0
+    18px
+    -18px;
+}
+
+/* CARD */
+.card{
+  background:#ced6ff;
+  padding:18px;
+  border-radius:22px;
+  margin-bottom:18px;
+  box-shadow:0 4px 18px rgba(0,0,0,0.06);
+  border:1px solid #f1f1f1;
+}
+
+.card h3{
+  font-size:17px;
+  margin-bottom:15px;
+  color:#111827;
+}
+
+/* LABEL */
+label{
+  display:block;
+  font-size:13px;
+  font-weight:600;
+  margin-bottom:6px;
+  color:#4b5563;
+}
+
+/* INPUT */
+input,
+select{
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  border:1px solid #e5e7eb;
+  background:#fafafa;
+  font-size:14px;
+  margin-bottom:15px;
+  outline:none;
+  transition:0.2s;
+}
+
+input:focus,
+select:focus{
+  border-color:#c40000;
+  background:white;
+  box-shadow:0 0 0 4px rgba(196,0,0,0.08);
+}
+
+/* BUTTON */
+button{
+  width:100%;
+  border:none;
+  border-radius:16px;
+  padding:14px;
+  background:linear-gradient(135deg,#c40000,#ff3030);
+  color:white;
+  font-weight:600;
+  font-size:14px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+button:hover{
+  transform:translateY(-1px);
+  opacity:0.95;
+}
+
+/* USER LIST */
+.user-list{
+  max-height:220px;
+  overflow:auto;
+  border-radius:16px;
+  border:1px solid #eee;
+  background:#fafafa;
+  margin-bottom:15px;
+}
+
+.user-item{
+  padding:14px;
+  border-bottom:1px solid #eee;
+  transition:0.2s;
+}
+
+.user-item:last-child{
+  border-bottom:none;
+}
+
+.user-item:hover{
+  background:#f3f4f6;
+}
+
+/* INFO */
+.info{
+  background:#fff5f5;
+  color:#c40000;
+  padding:12px;
+  border-radius:14px;
+  font-size:13px;
+  margin-bottom:15px;
+  font-weight:500;
+}
+
+/* SUMMARY */
+#summary,
+#infoBulan{
+  font-size:14px;
+  line-height:1.8;
+  color:#374151;
+}
+
+
+
+
+#historyBox{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+
+#historyBox::-webkit-scrollbar{
+  width:6px;
+}
+
+#historyBox::-webkit-scrollbar-thumb{
+  background:#cbd5e1;
+  border-radius:10px;
+}
+
+#historyBox::-webkit-scrollbar-track{
+  background:transparent;
+}
+
+
+
+
+#historyBox .user-item{
+  border-radius:16px;
+  background:#b0ffd7;
+  padding:12px;
+  border:none;
+  box-shadow:0 2px 10px rgba(0,0,0,0.04);
+  font-size:12px;
+  line-height:1.6;
+  word-break:break-word;
+}
+
+
+@media(max-width:600px){
+
+  #historyBox{
+    grid-template-columns:1fr;
+  }
+
+}
+
+
+/* MODAL */
+#calendarModal,
+#globalModal{
+  backdrop-filter:blur(5px);
+    overflow-y:auto;
+  padding:20px 0;
+}
+
+
+
+/* MODAL BOX */
+.modal-content{
+  background:white;
+  width:92%;
+  max-width:450px;
+  margin:40px auto;
+  padding:20px;
+  border-radius:24px;
+  box-shadow:0 10px 40px rgba(0,0,0,0.15);
+  animation:popup .2s ease;
+
+  max-height:90vh;
+  overflow-y:auto;
+}
+
+@keyframes popup{
+  from{
+    transform:scale(.95);
+    opacity:0;
+  }
+  to{
+    transform:scale(1);
+    opacity:1;
+  }
+}
+
+.modal-title{
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:15px;
+  color:#111827;
+}
+
+/* CALENDAR */
+#calendarGrid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:8px;
+  margin-top:15px;
+}
+
+#calendarGrid div{
+  aspect-ratio:1/1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:14px;
+  font-size:13px;
+  font-weight:600;
+}
+
+/* GLOBAL RESULT */
+#globalResult{
+  margin-top:18px;
+  background:#fafafa;
+  border-radius:18px;
+  padding:15px;
+  font-size:14px;
+  line-height:1.8;
+}
+
+/* SCROLL */
+::-webkit-scrollbar{
+  width:6px;
+}
+
+::-webkit-scrollbar-thumb{
+  background:#ddd;
+  border-radius:20px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+#imagePreviewModal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.85);
+  z-index:9999999;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  backdrop-filter:blur(5px);
+}
+
+#imagePreviewModal img{
+  max-width:95%;
+  max-height:90vh;
+  border-radius:20px;
+  object-fit:contain;
+  box-shadow:0 10px 40px rgba(0,0,0,0.4);
+}
+
+
+
+
+
+
+/* LOADING SCREEN */
+
+#loadingScreen{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#6b0000;
+z-index:999999999;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+transition:.4s;
+}
+
+.loaderBox{
+text-align:center;
+}
+
+.loaderCircle{
+
+width:70px;
+height:70px;
+
+border-radius:50%;
+
+border:7px solid rgba(
+255,
+255,
+255,
+0.25
+);
+
+border-top:
+7px solid white;
+
+animation:
+spin .8s linear infinite;
+
+margin:auto;
+}
+
+.loaderText{
+
+margin-top:20px;
+
+font-size:15px;
+
+font-weight:700;
+
+color:white;
+
+letter-spacing:.5px;
+
+}
+
+@keyframes spin{
+
+from{
+transform:rotate(0deg);
+}
+
+to{
+transform:rotate(360deg);
+}
+
+}
+
+.hideLoader{
+
+opacity:0;
+pointer-events:none;
+}
+</style>
+
+</head>
+
+<body>
+
+
+
+    
+<!-- LOADING -->
+<div id="loadingScreen">
+
+<div class="loaderBox">
+
+<div class="loaderCircle"></div>
+
+<div class="loaderText">
+
+Memuat Data cash...
+
+</div>
+
+</div>
+
+</div>
+
+
+
+
+
+
+
+  <!-- POPUP TARIK -->
+<div id="popupTarik" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+z-index:999999;
+align-items:center;
+justify-content:center;
+padding:20px;
+">
+
+  <div style="
+  background:white;
+  width:100%;
+  max-width:380px;
+  border-radius:26px;
+  padding:22px;
+  ">
+
+    <h2 style="
+    margin-bottom:18px;
+    color:#111827;
+    ">
+      Tarik Uang Kas
+    </h2>
+
+    <input
+      type="number"
+      id="nominalTarik"
+      placeholder="Total ditarik"
+      style="
+      width:100%;
+      padding:14px;
+      border:1px solid #ddd;
+      border-radius:14px;
+      margin-bottom:14px;
+      "
+    >
+
+    <textarea
+      id="alasanTarik"
+      placeholder="Alasan penarikan..."
+      style="
+      width:100%;
+      height:110px;
+      padding:14px;
+      border:1px solid #ddd;
+      border-radius:14px;
+      resize:none;
+      "
+    ></textarea>
+
+    <button onclick="submitTarik()" style="
+    width:100%;
+    padding:14px;
+    margin-top:16px;
+    border:none;
+    border-radius:14px;
+    background:#c40000;
+    color:white;
+    font-weight:700;
+    ">
+      Tarik Sekarang
+    </button>
+
+    <button onclick="closeTarikPopup()" style="
+    width:100%;
+    padding:14px;
+    margin-top:10px;
+    border:none;
+    border-radius:14px;
+    background:#e5e7eb;
+    color:#111827;
+    font-weight:700;
+    ">
+      Batal
+    </button>
+
+  </div>
+
+</div>
+
+
+
+
+<!-- GLOBAL MODAL -->
+<div id="globalModal" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.45);
+z-index:99999;
+">
+
+<div class="modal-content">
+
+<div class="modal-title" style="
+background:linear-gradient(135deg,#2563eb,#3b82f6);
+color:white;
+padding:14px;
+border-radius:16px;
+text-align:center;
+margin-bottom:15px;
+box-shadow:0 4px 15px rgba(37,99,235,0.25);
+">
+📅 Global Dashboard
+</div>
+
+<label>Pilih Tanggal</label>
+<input type="date" id="globalDate">
+
+<button onclick="loadGlobalData()">
+Lihat Data Pembayaran
+</button>
+
+<div id="globalResult"></div>
+
+<button onclick="closeGlobal()" style="margin-top:15px;">
+Tutup
+</button>
+
+</div>
+</div>
+
+
+
+
+
+<!-- CALENDAR MODAL -->
+<div id="calendarModal" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.45);
+z-index:9999;
+">
+
+<div class="modal-content">
+
+<div class="modal-title" id="calName">
+Kalender User
+</div>
+
+<div id="calendarGrid"></div>
+
+<button onclick="closeCalendar()" style="margin-top:18px;">
+Tutup Kalender
+</button>
+
+</div>
+</div>
+
+
+
+<div id="detailPopup" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.5);
+z-index:999999;
+backdrop-filter:blur(4px);
+">
+
+<div style="
+background:white;
+width:90%;
+max-width:350px;
+margin:80px auto;
+padding:20px;
+border-radius:24px;
+">
+
+<div id="detailContent"></div>
+
+<button onclick="closeDetailPopup()" style="
+margin-top:15px;
+">
+Tutup
+</button>
+
+</div>
+
+</div>
+
+
+
+
+
+
+
+
+<!-- HEADER -->
+<div class="header">
+CASH BENDAHARA SYSTEM
+</div>
+
+
+
+
+
+<!-- INFO BULAN -->
+<div class="card">
+
+<h3>Informasi Bulan Aktif</h3>
+
+<p id="infoBulan"></p>
+
+</div>
+
+
+
+
+
+<!-- SUMMARY -->
+<div class="card">
+
+<h3>Developer Sistem</h3>
+
+<p id="summary"></p>
+
+</div>
+
+
+<!-- GLOBAL -->
+<div
+  onclick="openGlobalCalendar()"
+  style="
+  background:linear-gradient(135deg,#2563eb,#3b82f6);
+  color:white;
+  padding:22px;
+  border-radius:24px;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 10px 30px rgba(37,99,235,0.25);
+  transition:.2s;
+  "
+  
+  onmouseover="this.style.transform='scale(1.01)'"
+  onmouseout="this.style.transform='scale(1)'"
+>
+
+  <!-- ICON -->
+  <div style="
+  position:absolute;
+  right:-10px;
+  top:-10px;
+  font-size:90px;
+  opacity:.08;
+  ">
+    🌍
+  </div>
+
+  <!-- TOP -->
+  <div style="
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  ">
+
+    <div>
+
+      <div style="
+      font-size:24px;
+      font-weight:800;
+      letter-spacing:.3px;
+      ">
+        Global Dashboard
+      </div>
+
+      <div style="
+      margin-top:6px;
+      font-size:13px;
+      color:rgba(255,255,255,0.85);
+      line-height:1.6;
+      ">
+        Lihat semua pembayaran user
+        berdasarkan tanggal tertentu
+      </div>
+
+    </div>
+
+    <div style="
+    width:60px;
+    height:60px;
+    border-radius:18px;
+    background:rgba(255,255,255,0.15);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+    backdrop-filter:blur(4px);
+    ">
+      📅
+    </div>
+
+  </div>
+
+  <!-- BUTTON STYLE -->
+  <div style="
+  margin-top:18px;
+  background:white;
+  color:#2563eb;
+  padding:14px;
+  border-radius:16px;
+  text-align:center;
+  font-weight:700;
+  font-size:14px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.08);
+  ">
+    Buka Dashboard Pembayaran →
+  </div>
+
+</div>
+<br>
+
+
+
+
+
+<!-- FORM -->
+<div class="card">
+
+<h3>Tambah Pembayaran</h3>
+
+<label>Cari User</label>
+<input type="text" id="searchUser" placeholder="Ketik nama user...">
+
+<div class="user-list" id="userList"></div>
+
+<label>User Dipilih</label>
+<input type="text" id="selectedUser" disabled>
+
+<label>Nominal Pembayaran</label>
+<input type="number" id="nominal" value="2000">
+
+<label>Metode Pembayaran</label>
+<select id="metode">
+  <option value="cash">Cash</option>
+  <option value="transfer">Transfer</option>
+</select>
+
+<div class="info">
+Pembayaran otomatis menambah kalender hijau user sesuai jumlah hari.
+</div>
+
+<button onclick="bayar()">
+Simpan Pembayaran
+</button>
+
+</div>
+
+
+
+
+
+
+
+
+<!-- HISTORY -->
+<div class="card">
+
+  <h3>History Pembayaran</h3>
+
+  <div 
+    id="historyBox"
+    style="
+      max-height:400px;
+      overflow-y:auto;
+      padding-right:6px;
+    "
+  ></div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="card" style="
+padding:20px;
+border-radius:24px;
+background:linear-gradient(135deg,#ffffff,#f8fafc);
+box-shadow:0 6px 25px rgba(0,0,0,0.06);
+border:1px solid #eef2f7;
+margin-top:15px;
+">
+
+  <!-- HEADER -->
+  <div style="
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:18px;
+  ">
+
+    <div>
+
+      <div style="
+      font-size:22px;
+      font-weight:800;
+      color:#111827;
+      ">
+        💰 KAS GLOBAL
+      </div>
+
+      <div style="
+      font-size:13px;
+      color:#6b7280;
+      margin-top:4px;
+      ">
+        Total saldo seluruh uang cash
+      </div>
+
+    </div>
+
+    <div style="
+    width:55px;
+    height:55px;
+    border-radius:18px;
+    background:linear-gradient(135deg,#16a34a,#22c55e);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:26px;
+    color:white;
+    box-shadow:0 4px 18px rgba(34,197,94,0.3);
+    ">
+      💵
+    </div>
+
+  </div>
+
+  <!-- TOTAL -->
+  <div id="saldoGlobal" style="
+  font-size:34px;
+  font-weight:800;
+  color:#111827;
+  margin-bottom:18px;
+  ">
+    Rp 0
+  </div>
+
+
+
+
+  <div style="
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-top:10px;
+">
+
+  <div style="
+  background:#f0fdf4;
+  padding:12px;
+  border-radius:14px;
+  text-align:center;
+  ">
+    <div style="font-size:12px;color:#166534;">Pemasukan</div>
+    <div id="totalMasuk" style="font-weight:800;color:#16a34a;">Rp 0</div>
+  </div>
+
+  <div style="
+  background:#fef2f2;
+  padding:12px;
+  border-radius:14px;
+  text-align:center;
+  ">
+    <div style="font-size:12px;color:#991b1b;">Penarikan</div>
+    <div id="totalKeluar" style="font-weight:800;color:#dc2626;">Rp 0</div>
+  </div>
+
+</div>
+
+
+
+
+<div class="card" style="
+margin-top:15px;
+padding:20px;
+border-radius:24px;
+background:#fff;
+box-shadow:0 6px 25px rgba(0,0,0,0.06);
+">
+
+
+
+
+
+  <!-- BUTTON TARIK -->
+  <button id="btnTarik" onclick="openTarikPopup()" style="
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:16px;
+  background:linear-gradient(135deg,#c40000,#ff3b3b);
+  color:white;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+  display:none;
+  ">
+    💸 Tarik Uang Kas
+  </button>
+
+</div>
+
+
+  <div style="
+  font-size:18px;
+  font-weight:800;
+  margin-bottom:10px;
+  ">
+    💸 Penarikan Kas
+  </div>
+
+  <div id="historyTarik"></div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  get,
+  getDatabase,
+  ref,
+  onValue,
+  push,
+  update,
+  set,
+  remove
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+import {
+  getAuth,
+  onAuthStateChanged,
+  setPersistence,
+  browserLocalPersistence,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+
+
+let currentAdminName = "";
+let currentAdminRole = "";
+let currentAdminFoto = "";
+let currentAdminUid = "";
+
+
+
+function hideLoading(){
+
+const load =
+document.getElementById(
+"loadingScreen"
+);
+
+if(!load) return;
+
+load.classList.add(
+"hideLoader"
+);
+
+setTimeout(()=>{
+
+load.style.display=
+"none";
+
+},400);
+
+}
+
+
+
+// 🔥 pastikan login tidak hilang setelah refresh
+setPersistence(auth, browserLocalPersistence)
+  .catch((err) => console.error("Persistence error:", err));
+
+// =========================
+// AUTH BENDAHARA
+// =========================
+
+// =========================
+// AUTH BENDAHARA
+// =========================
+
+const allowedRoles = [
+  "bendahara",
+  "superadmin"
+];
+
+onAuthStateChanged(auth, async(user)=>{
+
+  console.log(
+    "AUTH:",
+    user
+  );
+
+  // BELUM LOGIN
+  if(!user){
+
+    document
+    .getElementById(
+      "btnTarik"
+    )
+    ?.style
+    .setProperty(
+      "display",
+      "none"
+    );
+
+
+    hideLoading();
+    
+    // arah ke login bendahara
+    window.location.href =
+    "login.html";
+
+
+
+    return;
+  }
+
+  currentAdminUid =
+  user.uid;
+
+  try{
+
+    // 🔥 ambil dari tabel bendahara
+    const snap =
+    await get(
+      ref(
+        db,
+        "bendahara/" +
+        user.uid
+      )
+    );
+
+    if(!snap.exists()){
+
+      alert(
+        "Data bendahara tidak ditemukan"
+      );
+
+      await signOut(auth);
+
+      window.location.href =
+      "login.html";
+
+      return;
+    }
+
+    const data =
+    snap.val() || {};
+
+    console.log(
+      "DATA BENDAHARA:",
+      data
+    );
+
+    currentAdminFoto =
+      data.fotoProfil || "";
+
+    currentAdminName =
+      data.nama ||
+      "Bendahara";
+
+    currentAdminRole =
+      String(
+        data.role || ""
+      )
+      .toLowerCase()
+      .trim();
+
+    if(
+      !allowedRoles.includes(
+        currentAdminRole
+      )
+    ){
+
+      alert(
+        "Akses ditolak"
+      );
+
+      await signOut(auth);
+
+      window.location.href =
+      "login.html";
+
+      return;
+    }
+
+    document
+    .getElementById(
+      "btnTarik"
+    )
+    .style.display =
+    "block";
+
+    loadHistoryPenarikan();
+
+    setTimeout(()=>{
+
+hideLoading();
+
+},600);
+
+  }
+
+catch(err){
+
+console.error(err);
+
+hideLoading();
+
+alert(
+"Gagal memuat data bendahara"
+);
+
+}
+
+});
+
+
+
+console.log(
+  "⚡ AUTH READY:",
+  auth
+);
+
+
+window.openDetailPopup = function(data, hari){
+
+  const box = document.getElementById("detailContent");
+
+  if(data){
+
+    box.innerHTML = `
+
+    <div style="
+    background:white;
+    border-radius:22px;
+    padding:18px;
+    position:relative;
+    overflow:hidden;
+    border:1px dashed #d1d5db;
+    box-shadow:0 6px 20px rgba(0,0,0,0.05);
+    ">
+
+      <!-- TOP -->
+      <div style="
+      position:absolute;
+      top:0;
+      left:0;
+      width:100%;
+      height:6px;
+      background:linear-gradient(90deg,#16a34a,#22c55e);
+      "></div>
+
+      <!-- HEADER -->
+      <div style="
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:18px;
+      ">
+
+        <div style="
+        display:flex;
+        align-items:center;
+        gap:12px;
+        ">
+
+          <div style="
+          width:52px;
+          height:52px;
+          border-radius:16px;
+          background:#f0fdf4;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          overflow:hidden;
+          ">
+
+            <img src="assets/images/bdn.png" style="
+            width:26px;
+            height:26px;
+            object-fit:contain;
+            ">
+
+          </div>
+
+          <div>
+
+            <div style="
+            font-size:17px;
+            font-weight:700;
+            color:#111827;
+            ">
+              Pembayaran Cash
+            </div>
+
+            <div style="
+            font-size:12px;
+            color:#6b7280;
+            margin-top:3px;
+            ">
+              Status transaksi berhasil
+            </div>
+
+          </div>
+
+        </div>
+
+        <div style="
+        background:#dcfce7;
+        color:#15803d;
+        padding:7px 12px;
+        border-radius:999px;
+        font-size:11px;
+        font-weight:700;
+        ">
+          BERHASIL
+        </div>
+
+      </div>
+
+      <!-- TOTAL -->
+      <div style="
+      text-align:center;
+      margin-bottom:18px;
+      ">
+
+        <div style="
+        font-size:12px;
+        color:#6b7280;
+        margin-bottom:6px;
+        ">
+          Total Pembayaran
+        </div>
+
+        <div style="
+        font-size:30px;
+        font-weight:800;
+        color:#111827;
+        ">
+          Rp ${data.nominal}
+        </div>
+
+      </div>
+
+      <!-- GARIS -->
+      <div style="
+      border-top:1px dashed #d1d5db;
+      margin-bottom:18px;
+      "></div>
+
+      <!-- DETAIL -->
+      <div style="
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      ">
+
+        <div style="
+        display:flex;
+        justify-content:space-between;
+        font-size:13px;
+        ">
+          <span style="color:#6b7280;">Hari</span>
+          <b>${hari}</b>
+        </div>
+
+        <div style="
+        display:flex;
+        justify-content:space-between;
+        font-size:13px;
+        ">
+          <span style="color:#6b7280;">Metode</span>
+          <b style="text-transform:capitalize;">
+            ${data.metode}
+          </b>
+        </div>
+
+        <div style="
+        display:flex;
+        justify-content:space-between;
+        font-size:13px;
+        ">
+          <span style="color:#6b7280;">Status</span>
+          <b style="color:#16a34a;">
+            Lunas
+          </b>
+        </div>
+
+        <div style="
+        display:flex;
+        justify-content:space-between;
+        gap:15px;
+        font-size:13px;
+        ">
+          <span style="color:#6b7280;">Waktu</span>
+
+          <b style="
+          text-align:right;
+          max-width:160px;
+          ">
+            ${data.waktu || "-"}
+          </b>
+        </div>
+
+      </div>
+
+      <!-- FOOTER -->
+      <div style="
+      margin-top:20px;
+      text-align:center;
+      font-size:11px;
+      color:#9ca3af;
+      ">
+
+        CASH SYSTEM • PASKIBRA
+
+      </div>
+
+    </div>
+
+    `;
+
+  }else{
+
+    box.innerHTML = `
+
+    <div style="
+    text-align:center;
+    padding:30px 10px;
+    ">
+
+      <img src="assets/images/abm.png" style="
+      width:70px;
+      opacity:.7;
+      margin-bottom:15px;
+      ">
+
+      <div style="
+      font-size:18px;
+      font-weight:700;
+      color:#111827;
+      margin-bottom:8px;
+      ">
+        Belum Bayar
+      </div>
+
+      <div style="
+      font-size:13px;
+      color:#6b7280;
+      ">
+        Tidak ada pembayaran pada hari ${hari}
+      </div>
+
+    </div>
+
+    `;
+  }
+
+  document.getElementById("detailPopup").style.display = "block";
+}
+window.closeDetailPopup = function(){
+  document.getElementById("detailPopup").style.display = "none";
+}
+
+
+window.hapusHistory = function(id, userId, bulan, hari, nominal){
+
+  const yakin = confirm("Yakin mau hapus?");
+  if(!yakin) return;
+
+  // hapus history admin
+  remove(ref(db, "cashHistory/" + id));
+
+  const jumlahHari = Math.ceil(nominal / 2000);
+
+  for(let i=0;i<jumlahHari;i++){
+
+    const baseDate = new Date(
+      Number(bulan.split("-")[0]),
+      Number(bulan.split("-")[1]) - 1,
+      Number(hari) + i
+    );
+
+    const hariTarget = baseDate.getDate();
+
+    const bulanFix =
+      baseDate.getFullYear() + "-" +
+      String(baseDate.getMonth()+1).padStart(2,"0");
+
+    const path =
+      `users/${userId}/cash/${bulanFix}/${hariTarget}`;
+
+    remove(ref(db, path));
+  }
+
+  alert("History & kalender berhasil dihapus");
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+window.loadGlobalData = function(){
+
+  const date = new Date(document.getElementById("globalDate").value);
+
+  const hari = date.getDate();
+
+  const bulan =
+    date.getFullYear() + "-" + String(date.getMonth()+1).padStart(2,"0");
+
+  let totalBayar = 0;
+  let sudahBayar = [];
+  let belumBayar = [];
+
+  onValue(ref(db,"users"), (snap)=>{
+
+    const users = snap.val() || {};
+
+Object.keys(users).forEach(uid => {
+
+  const u = users[uid];
+
+const cashHari =
+  u.cash?.[bulan]?.[String(hari)];
+
+let sudah = false;
+let nominalBayar = 0;
+
+// FORMAT BARU
+if(cashHari && cashHari.status === "paid"){
+
+  sudah = true;
+  nominalBayar = Number(cashHari.nominal || 2000);
+
+}
+
+// FORMAT LAMA
+const semuaCash = u.cash?.[bulan] || {};
+
+Object.values(semuaCash).forEach(item => {
+
+  if(
+    item?.status === "paid" &&
+    Number(item?.hari) === hari
+  ){
+    sudah = true;
+    nominalBayar = Number(item.nominal || 2000);
+  }
+
+});
+
+if(sudah){
+
+  sudahBayar.push(u.namaLengkap);
+  totalBayar += nominalBayar;
+
+}else{
+
+  belumBayar.push(u.namaLengkap);
+
+}
+
+});
+
+document.getElementById("globalResult").innerHTML = `
+
+<div style="
+background:#ffffff;
+border-radius:20px;
+padding:16px;
+box-shadow:0 4px 18px rgba(0,0,0,0.06);
+">
+
+  <!-- HEADER -->
+  <div style="
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:18px;
+  ">
+
+    <div>
+      <div style="
+      font-size:18px;
+      font-weight:700;
+      color:#111827;
+      ">
+        📊 Dashboard Pembayaran
+      </div>
+
+      <div style="
+      font-size:13px;
+      color:#6b7280;
+      margin-top:3px;
+      ">
+        Tanggal ${hari}/${bulan}
+      </div>
+    </div>
+
+    <div style="
+    background:#eff6ff;
+    color:#2563eb;
+    padding:8px 29px;
+    border-radius:12px;
+    font-size:13px;
+    font-weight:600;
+    ">
+      IDR${totalBayar}
+    </div>
+
+  </div>
+
+  <!-- SUMMARY -->
+  <div style="
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:18px;
+  ">
+
+    <div style="
+    background:#f0fdf4;
+    padding:14px;
+    border-radius:16px;
+    text-align:center;
+    ">
+      <div style="
+      font-size:22px;
+      font-weight:700;
+      color:#16a34a;
+      ">
+        ${sudahBayar.length}
+      </div>
+
+      <div style="
+      font-size:12px;
+      color:#166534;
+      margin-top:4px;
+      ">
+        Sudah Bayar
+      </div>
+    </div>
+
+    <div style="
+    background:#fef2f2;
+    padding:14px;
+    border-radius:16px;
+    text-align:center;
+    ">
+      <div style="
+      font-size:22px;
+      font-weight:700;
+      color:#dc2626;
+      ">
+        ${belumBayar.length}
+      </div>
+
+      <div style="
+      font-size:12px;
+      color:#991b1b;
+      margin-top:4px;
+      ">
+        Belum Bayar
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SUDAH BAYAR -->
+  <div style="
+  margin-bottom:18px;
+  ">
+
+    <div style="
+    font-size:14px;
+    font-weight:700;
+    color:#16a34a;
+    margin-bottom:10px;
+    ">
+      ✔ Sudah Bayar
+    </div>
+
+    <div style="
+    background:#84dbbb;
+    border-radius:14px;
+    padding:12px;
+    max-height:150px;
+    overflow:auto;
+    font-size:13px;
+    line-height:1.7;
+    ">
+      ${
+        sudahBayar.length
+        ? sudahBayar.map(n=>`
+          <div style="
+          padding:6px 0;
+          border-bottom:1px solid #eee;
+          ">
+            ${n}
+          </div>
+        `).join("")
+        : `<div style="color:#9ca3af;">Belum ada data</div>`
+      }
+    </div>
+
+  </div>
+
+  <!-- BELUM BAYAR -->
+  <div>
+
+    <div style="
+    font-size:14px;
+    font-weight:700;
+    color:#dc2626;
+    margin-bottom:10px;
+    ">
+      ❌ Belum Bayar
+    </div>
+
+    <div style="
+    background:#6d6d6d;
+    color:#ffffff;
+    border-radius:14px;
+    padding:12px;
+    max-height:150px;
+    overflow:auto;
+    font-size:13px;
+    line-height:1.7;
+    ">
+      ${
+        belumBayar.length
+        ? belumBayar.map(n=>`
+          <div style="
+          padding:6px 0;
+          border-bottom:1px solid #eee;
+          ">
+            ${n}
+          </div>
+        `).join("")
+        : `<div style="color:#9ca3af;">Semua sudah bayar</div>`
+      }
+    </div>
+
+  </div>
+
+</div>
+
+`;
+
+  });
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+let calendarUnsub = null;
+
+window.refreshCalendar = function (uid, nama) {
+
+  document.getElementById("calendarModal").style.display = "block";
+  document.getElementById("calName").innerText = nama;
+
+  const grid = document.getElementById("calendarGrid");
+
+  const now = new Date();
+  const totalHari = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+
+  const bulan = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
+
+  const refCash = ref(db, `users/${uid}/cash/${bulan}`);
+
+  // ❌ HAPUS LISTENER LAMA
+  if (calendarUnsub) {
+    calendarUnsub();
+    calendarUnsub = null;
+  }
+
+  // ✔ PASANG LISTENER BARU
+  calendarUnsub = onValue(refCash, (snap) => {
+
+    const data = snap.val() || {};
+
+    grid.innerHTML = "";
+
+    for (let i = 1; i <= totalHari; i++) {
+
+      const div = document.createElement("div");
+
+      const item = data[i];
+
+      const isPaid = item && item.status === "paid";
+
+      div.style.background = isPaid ? "#28a745" : "#dc3545";
+      div.style.color = "white";
+      div.style.padding = "10px";
+      div.style.borderRadius = "8px";
+      div.style.textAlign = "center";
+      div.style.cursor = "pointer";
+
+      div.innerText = i;
+
+      div.onclick = () => {
+        openDetailPopup(item || null, i);
+      };
+
+      grid.appendChild(div);
+    }
+
+  });
+
+};
+
+
+window.closeCalendar = function(){
+  document.getElementById("calendarModal").style.display = "none";
+}
+
+
+
+function loadHistory(){
+
+  onValue(ref(db, "cashHistory"), (snap)=>{
+
+    const data = snap.val() || {};
+    const box = document.getElementById("historyBox");
+
+    box.innerHTML = "";
+
+    // 🔥 kalau kosong
+    if(!Object.keys(data).length){
+
+      box.innerHTML = `
+        <div style="
+          padding:20px;
+          text-align:center;
+          color:#6b7280;
+        ">
+          Belum ada history pembayaran
+        </div>
+      `;
+
+      return;
+    }
+
+    Object.keys(data).reverse().forEach(id=>{
+
+      const d = data[id];
+
+      const foto =
+        users?.[d.userId]?.fotoSelfie ||
+        users?.[d.userId]?.foto ||
+        d?.fotoSelfie ||
+        "assets/images/user.png";
+
+      const div = document.createElement("div");
+      div.className = "user-item";
+
+      div.innerHTML = `
+
+      <div style="
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:10px;
+      ">
+
+        <img
+          src="${foto}"
+
+          onclick="openImagePreview(this.src)"
+
+          onerror="this.src='assets/images/user.png'"
+
+          style="
+            width:60px;
+            height:60px;
+            border-radius:50%;
+            object-fit:cover;
+            border:3px solid #e5e7eb;
+            cursor:pointer;
+            flex-shrink:0;
+          "
+        >
+
+        <div style="
+        flex:1;
+        min-width:0;
+        ">
+
+          <b style="
+          font-size:15px;
+          display:block;
+          color:#111827;
+          ">
+            ${d.nama || "-"}
+          </b>
+
+          <div style="
+          font-size:13px;
+          color:#374151;
+          margin-top:4px;
+          ">
+            💰 Rp ${Number(d.nominal || 0).toLocaleString("id-ID")}
+            (${d.metode || "-"})
+          </div>
+
+          <div style="
+          font-size:12px;
+          color:#6b7280;
+          margin-top:4px;
+          ">
+            📅 ${d.bulan || "-"} - Hari ${d.mulaiHari || "-"}
+          </div>
+
+        </div>
+
+      </div>
+
+      <button
+        onclick="hapusHistory(
+          '${id}',
+          '${d.userId}',
+          '${d.bulan}',
+          '${d.mulaiHari}',
+          ${d.nominal}
+        )"
+
+        style="
+          margin-top:8px;
+          background:#c40000;
+          color:white;
+          border:none;
+          padding:7px 14px;
+          border-radius:8px;
+          cursor:pointer;
+          width:auto;
+          font-size:12px;
+          font-weight:600;
+        "
+      >
+        Hapus
+      </button>
+
+      `;
+
+      box.appendChild(div);
+
+    });
+
+  });
+
+}
+
+
+
+let users = {};
+let selectedUserId = "";
+let selectedUserName = "";
+let selectedUserFoto = "";
+
+
+const now = new Date();
+const bulan =
+  now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,"0");
+const totalHari = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+
+document.getElementById("infoBulan").innerText =
+"Bulan: " + bulan + " | Total hari: " + totalHari + " | 2000/hari";
+
+onValue(ref(db, "users"), (snap)=>{
+
+  users = snap.val() || {};
+
+  renderUser("");
+  updateSummary();
+
+  // 🔥 refresh ulang history setelah users siap
+  loadHistory();
+
+});
+
+document.getElementById("searchUser").addEventListener("input",(e)=>{
+  renderUser(e.target.value);
+});
+
+function renderUser(keyword){
+
+  const box = document.getElementById("userList");
+  box.innerHTML = "";
+
+  if(!users) return;
+
+  Object.keys(users).forEach(uid=>{
+    const u = users[uid];
+
+    if(!u || !u.namaLengkap) return;
+
+    if(u.namaLengkap.toLowerCase().includes(keyword.toLowerCase())){
+
+      const div = document.createElement("div");
+      div.className = "user-item";
+      div.innerText = u.namaLengkap;
+
+div.onclick = ()=>{
+
+  console.log("FOTO USER:", u);
+
+  selectedUserId = uid;
+  selectedUserName = u.namaLengkap;
+
+  selectedUserFoto =
+    u.foto ||
+    u.fotoSelfie ||
+    u.photoURL ||
+    "";
+
+  document.getElementById("selectedUser").value =
+    u.namaLengkap;
+
+  window.refreshCalendar(uid, u.namaLengkap);
+
+};
+      box.appendChild(div);
+    }
+  });
+}
+
+console.log("USERS:", users);
+
+window.bayar = async function(){
+
+  const nominal = Number(document.getElementById("nominal").value);
+  const metode = document.getElementById("metode").value;
+
+  if(!selectedUserId){
+    alert("Pilih user!");
+    return;
+  }
+
+  const jumlahHari = Math.ceil(nominal / 2000);
+
+  // ambil semua data cash user
+  onValue(ref(db, `users/${selectedUserId}/cash`), async (snap)=>{
+
+    const semuaCash = snap.val() || {};
+
+    // mulai dari hari kemarin
+    let tanggalTerakhir = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() - 1
+    );
+
+    // cari tanggal terakhir
+    Object.keys(semuaCash).forEach(bln=>{
+
+      Object.keys(semuaCash[bln] || {}).forEach(h=>{
+
+        const tgl = new Date(
+          Number(bln.split("-")[0]),
+          Number(bln.split("-")[1]) - 1,
+          Number(h)
+        );
+
+        if(tgl > tanggalTerakhir){
+          tanggalTerakhir = tgl;
+        }
+
+      });
+
+    });
+
+  // mulai setelah tanggal terakhir
+const mulaiTanggal = new Date(tanggalTerakhir);
+mulaiTanggal.setDate(mulaiTanggal.getDate() + 1);
+
+console.log("FOTO TERSIMPAN:", selectedUserFoto);
+
+
+// simpan history admin
+const data = {
+  userId: selectedUserId,
+  nama: selectedUserName,
+
+  fotoSelfie:
+    users[selectedUserId]?.fotoSelfie || "",
+
+  nominal: nominal,
+  metode: metode,
+
+  bulan:
+    mulaiTanggal.getFullYear() + "-" +
+    String(mulaiTanggal.getMonth()+1).padStart(2,"0"),
+
+  mulaiHari: mulaiTanggal.getDate(),
+  jumlahHari: jumlahHari,
+  waktu: new Date().toLocaleString("id-ID"),
+  tanggalISO: now.toISOString()
+};
+
+push(ref(db,"cashHistory"), data);
+
+
+
+
+
+await refreshCashGlobal();
+
+
+    // =========================
+    // ISI KALENDER USER
+    // =========================
+
+for(let i=0;i<jumlahHari;i++){
+
+  const baseDate = new Date(mulaiTanggal);
+  baseDate.setDate(baseDate.getDate() + i);
+
+  const hariTarget = baseDate.getDate();
+
+  const bulanKeyFix =
+    baseDate.getFullYear() + "-" +
+    String(baseDate.getMonth()+1).padStart(2,"0");
+
+  await set(
+    ref(db, `users/${selectedUserId}/cash/${bulanKeyFix}/${hariTarget}`),
+    {
+      status: "paid",
+      nominal: 2000,
+      metode: metode,
+      waktu: new Date().toLocaleString("id-ID")
+    }
+  );
+
+}
+
+await window.refreshCalendar(selectedUserId, selectedUserName);
+
+    alert("Pembayaran berhasil ditambahkan!");
+
+  }, {
+    onlyOnce:true
+  });
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+function updateSummary(){
+
+  let totalUser = Object.keys(users).length;
+
+  document.getElementById("summary").innerHTML =
+  "Total User: " + totalUser + "<br>" +
+  "Sistem Kalender: AKTIF<br>" +
+  "Status: READY CALENDAR";
+}
+
+
+
+
+
+
+window.openGlobalCalendar = function(){
+  document.getElementById("globalModal").style.display = "block";
+
+  // default hari ini
+  document.getElementById("globalDate").valueAsDate = new Date();
+  loadGlobalData();
+}
+
+window.closeGlobal = function(){
+  document.getElementById("globalModal").style.display = "none";
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+let isUpdatingCash = false; // 👈 TARUH DI LUAR (GLOBAL)
+
+window.refreshCashGlobal = async function () {
+
+  if (isUpdatingCash) return;
+  isUpdatingCash = true;
+
+  try {
+
+    console.log("🔥 refreshCashGlobal DIPANGGIL");
+
+    const snapMasuk = await get(ref(db,"cashHistory"));
+    const snapKeluar = await get(ref(db,"cashPenarikan"));
+
+    const masukData = snapMasuk.val() || {};
+    const keluarData = snapKeluar.val() || {};
+
+    const totalMasuk = Object.values(masukData).reduce((sum, item) => {
+      return sum + Number(item?.nominal || 0);
+    }, 0);
+
+    const totalKeluar = Object.values(keluarData).reduce((sum, item) => {
+      return sum + Number(item?.nominal || 0);
+    }, 0);
+
+    const totalSaldo = totalMasuk - totalKeluar;
+
+    console.log("MASUK TOTAL:", totalMasuk);
+    console.log("KELUAR TOTAL:", totalKeluar);
+
+    await set(ref(db,"cashGlobal"), {
+      totalMasuk,
+      totalKeluar,
+      totalSaldo
+    });
+
+  } finally {
+    isUpdatingCash = false;
+  }
+};
+
+
+// =======================
+// SALDO GLOBAL
+// =======================
+
+onValue(ref(db,"cashGlobal"),(snap)=>{
+
+  const d = snap.val() || {};
+
+  console.log("📊 UPDATE UI CASHGLOBAL");
+
+document.getElementById("saldoGlobal").innerText =
+  "Rp " + Number(d.totalSaldo || 0).toLocaleString("id-ID");
+
+document.getElementById("totalMasuk").innerText =
+  "Rp " + Number(d.totalMasuk || 0).toLocaleString("id-ID");
+
+document.getElementById("totalKeluar").innerText =
+  "Rp " + Number(d.totalKeluar || 0).toLocaleString("id-ID");
+});
+// =======================
+// ADMIN BUTTON
+// =======================
+
+
+
+// =======================
+// POPUP
+// =======================
+
+window.openTarikPopup = function(){
+
+  document.getElementById(
+    "popupTarik"
+  ).style.display = "flex";
+
+}
+
+window.closeTarikPopup = function(){
+
+  document.getElementById(
+    "popupTarik"
+  ).style.display = "none";
+
+}
+
+// =======================
+// SUBMIT TARIK
+// =======================
+window.submitTarik = async function () {
+
+  const nominal = Number(document.getElementById("nominalTarik").value);
+  const alasan = document.getElementById("alasanTarik").value;
+
+  if (!nominal || !alasan) {
+    alert("Lengkapi data");
+    return;
+  }
+
+  const snap = await get(ref(db,"cashGlobal"));
+  const data = snap.val() || {};
+
+  if (nominal > (data.totalSaldo || 0)) {
+    alert("Saldo tidak cukup");
+    return;
+  }
+
+await push(ref(db,"cashPenarikan"), {
+
+  nominal,
+  alasan,
+
+  adminNama:
+    currentAdminName || "Admin",
+
+  adminRole:
+    currentAdminRole || "-",
+
+  adminFoto:
+  currentAdminFoto || "",
+
+  waktu: new Date().toLocaleString("id-ID")
+
+});
+
+  await window.refreshCashGlobal();
+
+  alert("Penarikan berhasil");
+  closeTarikPopup();
+};
+    
+
+
+
+
+
+
+window.loadHistoryPenarikan = function(){
+
+  onValue(ref(db,"cashPenarikan"),(snap)=>{
+
+    const box = document.getElementById("historyTarik");
+
+    if (!box) return;
+
+    const data = snap.val();
+
+    box.innerHTML = "";
+
+    if (!data) {
+      box.innerHTML =
+      "<div style='color:#999'>Belum ada penarikan</div>";
+      return;
+    }
+
+    Object.entries(data).reverse().forEach(([id,d])=>{
+
+      const div = document.createElement("div");
+
+      div.style = `
+        background:#fff;
+        padding:14px;
+        border-radius:16px;
+        margin-bottom:10px;
+        box-shadow:0 2px 10px rgba(0,0,0,0.05);
+        border:1px solid #eee;
+      `;
+
+      div.innerHTML = `
+
+      <!-- NOMINAL -->
+      <div style="
+      font-weight:800;
+      color:#b61919;
+      font-size:18px;
+      ">
+        💸 -Rp ${Number(d.nominal || 0).toLocaleString("en-US")}
+      </div>
+
+      <!-- ALASAN -->
+      <div style="
+      font-size:13px;
+      color:#6b7280;
+      margin-top:6px;
+      ">
+        📄 ${d.alasan || "-"}
+      </div>
+
+      <!-- WAKTU -->
+      <div style="
+      font-size:11px;
+      color:#9ca3af;
+      margin-top:8px;
+      ">
+        🕒 ${d.waktu || "-"}
+      </div>
+
+      <!-- ADMIN -->
+      <div style="
+      margin-top:10px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background:#f3f4f6;
+      padding:10px;
+      border-radius:14px;
+      ">
+
+       <img
+  src="${
+    d.adminFoto ||
+    'assets/images/user.png'
+  }"
+
+  onclick="openImagePreview(this.src)"
+
+  onerror="this.src='assets/images/user.png'"
+
+  style="
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    object-fit:cover;
+    border:2px solid #e5e7eb;
+    cursor:pointer;
+  "
+>
+
+        <div>
+
+          <div style="
+          font-size:13px;
+          font-weight:700;
+          color:#111827;
+          text-transform:uppercase;
+          ">
+            ${d.adminNama || "ADMIN"}
+          </div>
+
+          <div style="
+          font-size:11px;
+          color:#6b7280;
+          margin-top:2px;
+          ">
+            melakukan penarikan uang kas~
+          </div>
+
+          <div style="
+          font-size:11px;
+          color:#2563eb;
+          margin-top:2px;
+          font-weight:600;
+          ">
+            ${d.adminRole || "-"}
+          </div>
+
+        </div>
+
+      </div>
+
+      ${
+        String(currentAdminRole).toLowerCase() === "superadmin"
+        ? `
+
+        <button
+          onclick="hapusPenarikan('${id}')"
+          style="
+            margin-top:12px;
+            width:100%;
+            border:none;
+            padding:12px;
+            border-radius:12px;
+            background:#dc2626;
+            color:white;
+            font-size:12px;
+            font-weight:700;
+            cursor:pointer;
+          "
+        >
+          🗑 Hapus Riwayat
+        </button>
+
+        `
+        : ""
+      }
+
+      `;
+
+      box.appendChild(div);
+
+    });
+
+  });
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+window.openImagePreview = function(src){
+
+  document.getElementById("previewImage").src = src;
+
+  document.getElementById(
+    "imagePreviewModal"
+  ).style.display = "flex";
+
+}
+
+window.closeImagePreview = function(){
+
+  document.getElementById(
+    "imagePreviewModal"
+  ).style.display = "none";
+
+}
+
+
+
+window.hapusPenarikan = async function(id){
+
+  if(
+    String(currentAdminRole).toLowerCase() !== "superadmin"
+  ){
+    alert("Akses ditolak");
+    return;
+  }
+
+  const yakin = confirm(
+    "Yakin ingin menghapus riwayat penarikan?"
+  );
+
+  if(!yakin) return;
+
+  try{
+
+    await remove(ref(db, "cashPenarikan/" + id));
+
+    await refreshCashGlobal();
+
+    alert("Riwayat berhasil dihapus");
+
+  }catch(err){
+
+    console.error(err);
+    alert("Gagal menghapus");
+
+  }
+
+}
+
+
+
+
+window.refreshCashGlobal();
+
+</script>
+
+
+
+
+
+<!-- IMAGE PREVIEW -->
+<div id="imagePreviewModal" onclick="closeImagePreview()">
+
+  <img id="previewImage">
+
+</div>
+
+
+<script>
+
+window.addEventListener(
+"load",
+
+()=>{
+
+setTimeout(()=>{
+
+const loader =
+document.getElementById(
+"loadingScreen"
+);
+
+if(loader){
+
+loader.style.display =
+"none";
+
+}
+
+},3000);
+
+}
+
+);
+
+</script>
+
+</body>
+</html>

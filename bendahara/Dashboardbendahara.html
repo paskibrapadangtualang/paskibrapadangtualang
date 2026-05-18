@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0">
+
+<title>Dashboard Bendahara</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f1f5f9;
+}
+
+/* TOPBAR */
+
+.topbar{
+background:white;
+padding:15px 20px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+box-shadow:0 2px 10px rgba(0,0,0,.05);
+}
+
+.menu-btn{
+font-size:22px;
+cursor:pointer;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+position:fixed;
+top:0;
+left:-260px;
+width:250px;
+height:100%;
+background:#790000;
+color:white;
+padding:20px;
+transition:.3s;
+z-index:1000;
+overflow:auto;
+}
+
+.sidebar.active{
+left:0;
+}
+
+.sidebar h3{
+margin-bottom:20px;
+}
+
+.menu-item{
+padding:12px;
+margin-bottom:10px;
+background:#787878;
+border-radius:10px;
+cursor:pointer;
+}
+
+.menu-item:hover{
+background:#374151;
+}
+
+/* OVERLAY */
+
+.overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+display:none;
+background:rgba(0,0,0,.4);
+z-index:999;
+}
+
+/* CONTENT */
+
+.content{
+padding:20px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:15px;
+margin-bottom:15px;
+box-shadow:0 5px 20px rgba(0,0,0,.05);
+}
+
+.profile{
+display:flex;
+gap:15px;
+align-items:center;
+}
+
+.profile img{
+width:60px;
+height:60px;
+border-radius:50%;
+object-fit:cover;
+border:3px solid #e5e7eb;
+}
+
+.badge{
+padding:6px 12px;
+border-radius:999px;
+background:#dcfce7;
+color:#166534;
+font-size:12px;
+font-weight:bold;
+}
+
+.section{
+display:none;
+}
+
+.section.active{
+display:block;
+}
+
+.loading{
+text-align:center;
+padding:30px;
+color:#666;
+}
+
+
+
+
+
+
+
+
+
+#loadingScreen{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#5b1111;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+z-index:9999;
+color:white;
+font-weight:bold;
+}
+
+.spinner{
+width:55px;
+height:55px;
+border:5px solid rgba(255,255,255,0.3);
+border-top:5px solid white;
+border-radius:50%;
+animation:spin 1s linear infinite;
+margin-bottom:10px;
+}
+
+@keyframes spin{
+to{transform:rotate(360deg);}
+}
+
+</style>
+
+</head>
+<body>
+
+
+<div id="loadingScreen">
+  <div class="spinner"></div>
+  <div>Memuat halaman...</div>
+</div>
+
+
+
+
+<!-- OVERLAY -->
+
+<div
+class="overlay"
+id="overlay"
+onclick="toggleMenu()"
+></div>
+
+<!-- SIDEBAR -->
+
+<div
+class="sidebar"
+id="sidebar"
+>
+
+<h3>
+Menu Bendahara
+</h3>
+
+<div
+class="menu-item"
+onclick="showSection(
+'dashboard'
+)"
+>
+Dashboard
+</div>
+
+<div
+class="menu-item"
+
+onclick="
+location.href=
+'cashbendahara.html'
+"
+
+>
+ Uang Kas
+</div>
+
+<div
+class="menu-item"
+onclick="
+window.location.href=
+'absenbendahara.html'
+"
+>
+Absensi
+</div>
+
+
+
+
+
+<div
+class="menu-item"
+onclick="
+window.location.href=
+'dataanggota.html'
+"
+>
+Data angoota
+</div>
+
+
+
+<div
+class="menu-item"
+onclick="window.location.href='catatanbendahara.html'"
+style="cursor:pointer;"
+>
+Catatan
+</div>
+
+<div
+class="menu-item"
+style="background:#b70505"
+onclick="logout()"
+>
+🚪 Logout
+</div>
+
+</div>
+
+<!-- TOPBAR -->
+
+<div class="topbar">
+
+<div
+class="menu-btn"
+onclick="toggleMenu()"
+>
+☰
+</div>
+
+<b>
+Bendahara Panel
+</b>
+
+</div>
+
+<!-- CONTENT -->
+
+<div class="content">
+
+<div
+id="dashboard"
+class="section active"
+>
+
+<div class="card">
+
+<div class="profile" onclick="openProfile()" style="cursor:pointer;">
+
+<img id="fotoProfil"
+src="https://via.placeholder.com/100"
+style="cursor:pointer;"
+onclick="openImg(this.src)">
+
+<div>
+
+<div id="nama">
+Loading...
+</div>
+
+<div
+id="email"
+style="
+font-size:12px;
+color:#666;
+"
+></div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+Nomor WA<br>
+<b id="wa">-</b>
+</div>
+
+<div class="card">
+Sebagai<br>
+<span
+class="badge"
+id="role"
+>
+-
+</span>
+</div>
+
+<div class="card">
+Kode Bendahara<br>
+<b id="kode">-</b>
+</div>
+
+<div class="card">
+Nomor bendahara<br>
+<small id="uid">-</small>
+</div>
+
+</div>
+
+<div
+id="kas"
+class="section"
+>
+<div class="card">
+<h3>Uang Kas</h3>
+<p>Mkas </p>
+</div>
+</div>
+
+
+
+<div id="laporan" class="section">
+  <a href="catatanbendahara.html" style="text-decoration:none; color:inherit;">
+    <div class="card">
+      <h3>Catatan</h3>
+      <p>Catatan</p>
+    </div>
+  </a>
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getAuth,
+onAuthStateChanged,
+signOut
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+getDatabase,
+ref,
+get
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* FIREBASE */
+
+const firebaseConfig={
+
+apiKey:"AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+
+authDomain:"paskibra2026-300eb.firebaseapp.com",
+
+databaseURL:"https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+
+projectId:"paskibra2026-300eb",
+
+storageBucket:"paskibra2026-300eb.firebasestorage.app",
+
+messagingSenderId:"937469132434",
+
+appId:"1:937469132434:web:d1924e1160350000d1b04b"
+
+};
+
+const app=
+initializeApp(
+firebaseConfig
+);
+
+const auth=
+getAuth(app);
+
+const db=
+getDatabase(app);
+
+/* ELEMENT */
+
+const nama=
+document.getElementById(
+"nama"
+);
+
+const email=
+document.getElementById(
+"email"
+);
+
+const wa=
+document.getElementById(
+"wa"
+);
+
+const role=
+document.getElementById(
+"role"
+);
+
+const kode=
+document.getElementById(
+"kode"
+);
+
+const uid=
+document.getElementById(
+"uid"
+);
+
+const fotoProfil=
+document.getElementById(
+"fotoProfil"
+);
+
+const loadingScreen = document.getElementById("loadingScreen");
+
+const sidebar=
+document.getElementById(
+"sidebar"
+);
+
+const overlay=
+document.getElementById(
+"overlay"
+);
+
+/* CEK LOGIN */
+
+onAuthStateChanged(
+
+auth,
+
+async(user)=>{
+
+if(!user){
+
+alert(
+"Silakan login dulu"
+);
+
+location.href=
+"login.html";
+
+return;
+
+}
+
+try{
+
+const snap=
+await get(
+
+ref(
+db,
+"bendahara/"+user.uid
+)
+
+);
+
+if(
+!snap.exists()
+){
+
+alert(
+"Akun ini bukan bendahara"
+);
+
+await signOut(
+auth
+);
+
+location.href=
+"login.html";
+
+return;
+
+}
+
+const d=
+snap.val();
+
+/* ISI DATA */
+
+nama.innerText=
+d.nama || "-";
+
+email.innerText=
+d.email || "-";
+
+wa.innerText=
+d.wa || "-";
+
+role.innerText=
+d.role || "bendahara";
+
+kode.innerText=
+d.kodeBendahara || "-";
+
+uid.innerText=
+user.uid;
+
+fotoProfil.src=
+
+d.fotoProfil ||
+
+user.photoURL ||
+
+"https://via.placeholder.com/100";
+loadingScreen.style.display = "none";
+}
+
+catch(err){
+
+console.log(err);
+
+alert(
+"Gagal load data"
+);
+
+}
+
+}
+
+);
+
+/* SIDEBAR */
+
+window.toggleMenu=
+function(){
+
+sidebar.classList.toggle(
+"active"
+);
+
+overlay.style.display=
+
+sidebar.classList.contains(
+"active"
+)
+
+?
+
+"block"
+
+:
+
+"none";
+
+};
+
+/* GANTI HALAMAN */
+
+window.showSection=
+function(id){
+
+document
+.querySelectorAll(
+".section"
+)
+
+.forEach(el=>{
+
+el.classList.remove(
+"active"
+);
+
+});
+
+document
+.getElementById(id)
+.classList.add(
+"active"
+);
+
+toggleMenu();
+
+};
+
+/* LOGOUT */
+
+window.logout=
+async function(){
+
+await signOut(
+auth
+);
+
+location.href=
+"login.html";
+
+};
+
+
+
+
+
+
+
+document.getElementById("laporan").addEventListener("click", function(e){
+  window.location.href = "catatanbendahara.html";
+}, true);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+window.openProfile = function(){
+
+document.getElementById("profileModal").style.display = "flex";
+
+document.getElementById("modalFoto").src = fotoProfil.src;
+document.getElementById("modalNama").innerText = nama.innerText;
+document.getElementById("modalEmail").innerText = email.innerText;
+document.getElementById("modalWa").innerText = wa.innerText;
+document.getElementById("modalRole").innerText = role.innerText;
+document.getElementById("modalKode").innerText = kode.innerText;
+document.getElementById("modalUid").innerText = uid.innerText;
+
+};
+
+window.closeProfile = function(){
+document.getElementById("profileModal").style.display = "none";
+};
+
+
+
+
+
+window.openImg = function(url){
+document.getElementById("imgViewer").style.display = "flex";
+document.getElementById("imgFull").src = url;
+};
+
+window.closeImg = function(){
+document.getElementById("imgViewer").style.display = "none";
+};
+</script>
+
+<div id="imgViewer" style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.9);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:99999;
+">
+
+<span onclick="closeImg()" style="
+position:absolute;
+top:20px;
+right:20px;
+color:white;
+font-size:28px;
+cursor:pointer;
+">✕</span>
+
+<img id="imgFull" style="
+max-width:95%;
+max-height:95%;
+border-radius:10px;
+box-shadow:0 10px 30px rgba(0,0,0,.5);
+">
+</div>
+
+<div id="profileModal" style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.85);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:99999;
+">
+
+<div style="
+background:white;
+width:90%;
+max-width:420px;
+border-radius:15px;
+padding:20px;
+position:relative;
+">
+
+<span onclick="closeProfile()" style="
+position:absolute;
+top:10px;
+right:15px;
+font-size:22px;
+cursor:pointer;
+">✕</span>
+
+<div style="text-align:center">
+
+<img id="modalFoto" style="
+width:90px;
+height:90px;
+border-radius:50%;
+object-fit:cover;
+margin-bottom:10px;
+border:3px solid #ddd;
+">
+
+<h3 id="modalNama">-</h3>
+<p id="modalEmail" style="color:#666;font-size:13px"></p>
+
+</div>
+
+<div style="margin-top:10px">
+
+<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee">
+  <span style="color:#666;font-size:13px">WA</span>
+  <span id="modalWa" style="font-weight:bold"></span>
+</div>
+
+<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee">
+  <span style="color:#666;font-size:13px">Role</span>
+  <span id="modalRole" style="font-weight:bold"></span>
+</div>
+
+<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee">
+  <span style="color:#666;font-size:13px">Kode</span>
+  <span id="modalKode" style="font-weight:bold;color:#1e3a8a"></span>
+</div>
+
+<div style="padding:8px 0">
+  <div style="color:#666;font-size:13px;margin-bottom:5px">UID</div>
+  <div id="modalUid" style="
+    font-size:11px;
+    word-break:break-all;
+    background:#f3f4f6;
+    padding:8px;
+    border-radius:8px;
+  "></div>
+</div>
+
+</div>
+
+</body>
+</html>

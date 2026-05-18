@@ -818,6 +818,37 @@ hideLoading();
    AMBIL SETTING ADMIN
 ========================= */
 onValue(ref(db, "settings/absen"), (snap) => {
+
+
+
+/* =========================
+   AUTO REFRESH DARI ADMIN
+========================= */
+
+let lastRefresh = localStorage.getItem("lastRefresh") || 0;
+
+onValue(ref(db, "systemRefresh"), (snap) => {
+
+  const data = snap.val();
+
+  if(!data) return;
+
+  // supaya tidak reload terus saat pertama buka
+  if(data.time > lastRefresh){
+
+    localStorage.setItem(
+      "lastRefresh",
+      data.time
+    );
+
+    // refresh paksa halaman
+    location.reload(true);
+
+  }
+
+});
+
+
   const data = snap.val() || {};
 
   setting = {

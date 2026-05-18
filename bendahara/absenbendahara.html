@@ -1,0 +1,2155 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Absensi Bendahara</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f1f5f9;
+}
+
+/* TOP */
+
+.topbar{
+background:white;
+padding:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+box-shadow:0 2px 10px rgba(0,0,0,.05);
+position:sticky;
+top:0;
+z-index:99;
+}
+
+.menuBtn{
+font-size:22px;
+cursor:pointer;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+position:fixed;
+left:-260px;
+top:0;
+width:250px;
+height:100%;
+background:#790000;
+padding:20px;
+color:white;
+transition:.3s;
+z-index:1000;
+}
+
+.sidebar.active{
+left:0;
+}
+
+.menu{
+padding:12px;
+background:#1f2937;
+margin-bottom:10px;
+border-radius:10px;
+cursor:pointer;
+}
+
+.menu:hover{
+background:#374151;
+}
+
+.overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+display:none;
+background:rgba(0,0,0,.4);
+z-index:999;
+}
+
+/* CONTENT */
+
+.content{
+padding:20px;
+}
+
+.card{
+background:white;
+padding:15px;
+border-radius:15px;
+margin-bottom:15px;
+box-shadow:0 4px 12px rgba(0,0,0,.05);
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(
+auto-fit,
+minmax(120px,1fr)
+);
+gap:10px;
+}
+
+.stat{
+padding:15px;
+background:#eff6ff;
+border-radius:12px;
+text-align:center;
+}
+
+input,
+select{
+width:100%;
+padding:12px;
+margin-top:10px;
+border-radius:10px;
+border:1px solid #ddd;
+}
+
+button{
+padding:12px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+}
+
+/* TITIK */
+
+#titikContainer{
+display:flex;
+flex-wrap:wrap;
+gap:8px;
+margin-top:10px;
+}
+
+.titik{
+width:18px;
+height:18px;
+border-radius:50%;
+}
+
+.hijau{
+background:#22c55e;
+}
+
+.merah{
+background:#ef4444;
+}
+
+/* ABSEN */
+
+#absenList{
+display:flex;
+flex-direction:column;
+gap:12px;
+
+max-height:650px;
+
+overflow-y:auto;
+
+padding-right:6px;
+}
+
+#absenList::-webkit-scrollbar{
+width:6px;
+}
+
+#absenList::-webkit-scrollbar-thumb{
+background:#cbd5e1;
+border-radius:20px;
+}
+
+
+
+
+.absen-card{
+background:white;
+
+padding:14px;
+
+border-radius:16px;
+
+box-shadow:
+0 4px 12px
+rgba(0,0,0,.05);
+
+display:flex;
+
+flex-direction:column;
+
+gap:12px;
+}
+
+.absenHead{
+display:flex;
+
+align-items:center;
+
+gap:12px;
+}
+
+.fotoUser{
+width:52px;
+height:52px;
+
+border-radius:14px;
+
+object-fit:cover;
+
+flex-shrink:0;
+}
+
+.userInfo{
+flex:1;
+overflow:hidden;
+}
+
+.namaUser{
+font-size:15px;
+
+font-weight:700;
+
+color:#111827;
+
+white-space:nowrap;
+
+overflow:hidden;
+
+text-overflow:ellipsis;
+}
+
+.emailUser{
+font-size:12px;
+
+color:#64748b;
+
+overflow:hidden;
+
+text-overflow:ellipsis;
+
+white-space:nowrap;
+
+margin-top:2px;
+}
+
+.badgeStatus{
+padding:6px 10px;
+
+background:#dcfce7;
+
+color:#166534;
+
+border-radius:999px;
+
+font-size:11px;
+
+font-weight:700;
+
+flex-shrink:0;
+}
+
+.detailGrid{
+display:grid;
+
+grid-template-columns:
+repeat(
+2,
+1fr
+);
+
+gap:8px;
+}
+
+.detailBox{
+background:#f8fafc;
+
+padding:10px;
+
+border-radius:12px;
+}
+
+.detailTitle{
+font-size:11px;
+
+color:#94a3b8;
+
+margin-bottom:4px;
+}
+
+.detailIsi{
+font-size:13px;
+
+font-weight:600;
+
+color:#111827;
+}
+
+.lokasiBox{
+background:#eff6ff;
+
+padding:10px;
+
+border-radius:12px;
+}
+
+.lokasiTitle{
+font-size:12px;
+
+font-weight:700;
+
+color:#2563eb;
+
+margin-bottom:4px;
+}
+
+.lokasiIsi{
+font-size:13px;
+
+color:#334155;
+}
+
+.status{
+margin-top:10px;
+padding:8px;
+background:#dcfce7;
+border-radius:10px;
+text-align:center;
+font-weight:bold;
+}
+
+.hapusBtn{
+width:100%;
+background:red;
+color:white;
+margin-top:10px;
+}
+
+.saveBtn{
+width:100%;
+background:#2563eb;
+color:white;
+margin-top:10px;
+}
+
+
+
+
+
+
+
+.popupBox{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.5);
+
+display:none;
+
+justify-content:center;
+align-items:center;
+
+z-index:99999;
+padding:20px;
+}
+
+.popupBox.show{
+display:flex;
+}
+
+.popupCard{
+width:100%;
+max-width:350px;
+
+background:white;
+
+padding:20px;
+
+border-radius:18px;
+
+animation:popup .2s ease;
+}
+
+@keyframes popup{
+
+from{
+transform:scale(.8);
+opacity:0;
+}
+
+to{
+transform:scale(1);
+opacity:1;
+}
+
+}
+
+.popupTitle{
+font-size:18px;
+font-weight:bold;
+margin-bottom:15px;
+}
+
+.popupItem{
+padding:10px;
+background:#f3f4f6;
+border-radius:10px;
+margin-bottom:10px;
+}
+
+.popupBtn{
+width:100%;
+
+background:#2563eb;
+
+color:white;
+
+margin-top:10px;
+}
+
+
+
+
+
+
+.absenHead{
+display:flex;
+align-items:center;
+gap:12px;
+margin-bottom:15px;
+}
+
+.fotoUser{
+width:70px;
+height:70px;
+border-radius:18px;
+object-fit:cover;
+box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+.userInfo{
+flex:1;
+}
+
+.namaUser{
+font-size:17px;
+font-weight:700;
+color:#111827;
+margin-bottom:4px;
+}
+
+.emailUser{
+font-size:13px;
+color:#6b7280;
+word-break:break-word;
+}
+
+.badgeStatus{
+background:#dcfce7;
+color:#166534;
+padding:8px 12px;
+border-radius:999px;
+font-size:12px;
+font-weight:700;
+white-space:nowrap;
+}
+
+.detailGrid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-bottom:12px;
+}
+
+.detailBox{
+background:#f8fafc;
+padding:12px;
+border-radius:14px;
+}
+
+.detailTitle{
+font-size:12px;
+color:#6b7280;
+margin-bottom:4px;
+}
+
+.detailIsi{
+font-size:15px;
+font-weight:600;
+color:#111827;
+}
+
+.lokasiBox{
+background:#eff6ff;
+padding:14px;
+border-radius:14px;
+}
+
+.lokasiTitle{
+font-size:13px;
+font-weight:700;
+margin-bottom:6px;
+color:#1d4ed8;
+}
+
+.lokasiIsi{
+font-size:14px;
+color:#334155;
+line-height:1.5;
+}
+
+
+
+
+.filterTitikBox{
+margin-bottom:15px;
+
+background:#f8fafc;
+
+padding:12px;
+
+border-radius:12px;
+}
+
+.filterTitikBox label{
+display:block;
+
+font-size:13px;
+
+font-weight:700;
+
+margin-bottom:8px;
+
+color:#334155;
+}
+
+.filterTitikBox input{
+margin-top:0;
+}
+
+
+
+.fotoPreview{
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:rgba(
+0,
+0,
+0,
+0.85
+);
+
+display:none;
+
+justify-content:center;
+align-items:center;
+
+padding:20px;
+
+z-index:999999;
+}
+
+.fotoPreview.show{
+display:flex;
+}
+
+#fotoFull{
+max-width:95%;
+max-height:95%;
+
+border-radius:18px;
+
+background:white;
+
+object-fit:contain;
+}
+
+.closeFoto{
+position:absolute;
+
+top:20px;
+right:20px;
+
+font-size:28px;
+
+color:white;
+
+cursor:pointer;
+
+background:rgba(
+255,
+255,
+255,
+0.15
+);
+
+width:45px;
+height:45px;
+
+border-radius:50%;
+
+display:flex;
+
+justify-content:center;
+align-items:center;
+}
+
+
+
+
+
+
+
+
+
+
+/* LOADING */
+
+#loadingScreen{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#5b1111;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+z-index:9999999;
+transition:.4s;
+}
+
+#loadingScreen.hide{
+opacity:0;
+visibility:hidden;
+pointer-events:none;
+}
+
+.spinner{
+width:70px;
+height:70px;
+border:6px solid rgba(
+255,
+255,
+255,
+0.25
+);
+
+border-top:6px solid white;
+
+border-radius:50%;
+
+animation:putar 1s linear infinite;
+}
+
+.loadingText{
+margin-top:18px;
+color:white;
+font-size:15px;
+font-weight:bold;
+letter-spacing:1px;
+}
+
+@keyframes putar{
+
+0%{
+transform:rotate(0deg);
+}
+
+100%{
+transform:rotate(360deg);
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+
+
+  <!-- LOADING -->
+
+<div id="loadingScreen">
+
+<div class="spinner"></div>
+
+<div class="loadingText">
+
+Memuat Data Absen...
+
+</div>
+
+</div>
+
+
+
+
+<div class="overlay"
+id="overlay"
+onclick="toggleMenu()"></div>
+
+<div class="sidebar"
+id="sidebar">
+
+
+
+<div class="menu"
+onclick="location.href='Dashboardbendahara.html'">
+Dashboard
+</div>
+
+
+
+
+</div>
+
+<div class="topbar">
+
+<div class="menuBtn"
+onclick="toggleMenu()">
+☰
+</div>
+
+<b>Absensi Bendahara</b>
+
+</div>
+
+<div class="content">
+
+<div class="card">
+
+<div class="grid">
+
+<div class="stat">
+<div>Total User</div>
+<h2 id="totalUser">0</h2>
+</div>
+
+<div class="stat">
+<div>Hadir</div>
+<h2 id="totalHadir">0</h2>
+</div>
+
+<div class="stat">
+<div>Belum</div>
+<h2 id="totalBelum">0</h2>
+</div>
+
+</div>
+
+
+
+
+
+
+<div class="filterTitikBox">
+<label>
+Lihat Status Titik Tanggal
+</label>
+<input
+type="date"
+id="tanggalTitik">
+</div>
+<div id="titikContainer"></div>
+
+
+
+
+
+
+</div>
+
+<div class="card">
+
+<input
+id="searchInput"
+placeholder="Cari nama / email">
+
+<select id="filterTanggal">
+<option value="">
+Semua tanggal
+</option>
+</select>
+
+<select id="filterBulan">
+
+<option value="">
+Semua bulan
+</option>
+
+<option value="01">Januari</option>
+<option value="02">Februari</option>
+<option value="03">Maret</option>
+<option value="04">April</option>
+<option value="05">Mei</option>
+<option value="06">Juni</option>
+<option value="07">Juli</option>
+<option value="08">Agustus</option>
+<option value="09">September</option>
+<option value="10">Oktober</option>
+<option value="11">November</option>
+<option value="12">Desember</option>
+
+</select>
+
+</div>
+
+<div class="card">
+
+<h3>Setting Jam</h3>
+
+<select id="jamBuka"></select>
+
+<select id="jamTutup"></select>
+
+<button
+class="saveBtn"
+onclick="simpanSettingAbsen()">
+
+Simpan Setting
+
+</button>
+
+</div>
+
+<div id="absenList"></div>
+
+</div>
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getAuth,
+onAuthStateChanged,
+signOut
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+getDatabase,
+ref,
+get,
+set,
+onValue
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* FIREBASE */
+
+const firebaseConfig={
+
+apiKey:"AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+
+authDomain:"paskibra2026-300eb.firebaseapp.com",
+
+databaseURL:"https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+
+projectId:"paskibra2026-300eb",
+
+storageBucket:"paskibra2026-300eb.firebasestorage.app",
+
+messagingSenderId:"937469132434",
+
+appId:"1:937469132434:web:d1924e1160350000d1b04b"
+
+};
+
+const app=
+initializeApp(firebaseConfig);
+
+const auth=
+getAuth(app);
+
+const db=
+getDatabase(app);
+
+
+
+
+
+function filterLokasi(
+lokasi
+){
+
+if(
+!lokasi
+||
+lokasi==="tidak mengizinkan"
+){
+
+return "tidak mengizinkan";
+
+}
+
+let split=
+String(
+lokasi
+)
+.split(
+","
+);
+
+if(
+split.length<2
+){
+
+return lokasi;
+
+}
+
+let lat=
+split[0]
+.trim();
+
+let lng=
+split[1]
+.trim();
+
+lat=
+
+lat.substring(
+0,
+5
+)
+
++
+
+"*******";
+
+lng=
+
+lng.substring(
+0,
+6
+)
+
++
+
+"*******";
+
+/* RETURN HARUS SATU BARIS */
+
+return (
+lat
++
+", "
++
+lng
+);
+
+}
+
+/* ELEMENT */
+
+const absenList=
+document.getElementById(
+"absenList"
+);
+
+const searchInput=
+document.getElementById(
+"searchInput"
+);
+
+const filterTanggal=
+document.getElementById(
+"filterTanggal"
+);
+
+const filterBulan=
+document.getElementById(
+"filterBulan"
+);
+
+const titikContainer=
+document.getElementById(
+"titikContainer"
+);
+
+const tanggalTitik=
+document.getElementById(
+"tanggalTitik"
+);
+
+const jamBuka=
+document.getElementById(
+"jamBuka"
+);
+
+const jamTutup=
+document.getElementById(
+"jamTutup"
+);
+
+const sidebar=
+document.getElementById(
+"sidebar"
+);
+
+const overlay=
+document.getElementById(
+"overlay"
+);
+
+let semuaData=[];
+let semuaUsers=[];
+
+const loadingScreen=
+document.getElementById(
+"loadingScreen"
+);
+
+function hideLoading(){
+
+loadingScreen
+?.classList
+.add(
+"hide"
+);
+
+}
+
+
+
+
+
+
+
+
+
+/* LOGIN */
+
+onAuthStateChanged(
+auth,
+
+async(user)=>{
+
+if(!user){
+
+hideLoading();
+
+location.href=
+"login.html";
+
+return;
+
+}
+
+try{
+
+const cek=
+await get(
+ref(
+db,
+"bendahara/"+user.uid
+)
+);
+
+if(!cek.exists()){
+
+hideLoading();
+
+await signOut(auth);
+
+location.href=
+"login.html";
+
+return;
+
+}
+
+isiJam();
+
+loadSetting();
+
+/* DEFAULT HARI INI */
+
+tanggalTitik.value=
+new Date()
+.toISOString()
+.split(
+"T"
+)[0];
+
+await loadAbsensi();
+
+/* tunggu render selesai */
+
+setTimeout(()=>{
+
+hideLoading();
+
+},400);
+
+
+
+
+
+}
+
+catch(err){
+
+console.error(
+err
+);
+
+hideLoading();
+
+alert(
+"Gagal memuat data"
+);
+
+}
+
+}
+
+);
+
+/* JAM */
+
+function isiJam(){
+
+jamBuka.innerHTML="";
+jamTutup.innerHTML="";
+
+for(
+let h=0;
+h<24;
+h++
+){
+
+for(
+let m=0;
+m<60;
+m+=5
+){
+
+let jam=
+String(h)
+.padStart(
+2,
+"0"
+);
+
+let menit=
+String(m)
+.padStart(
+2,
+"0"
+);
+
+let v=
+`${jam}.${menit}`;
+
+jamBuka.innerHTML+=
+`<option>${v}</option>`;
+
+jamTutup.innerHTML+=
+`<option>${v}</option>`;
+
+}
+
+}
+
+}
+
+function loadSetting(){
+
+onValue(
+
+ref(
+db,
+"settings/absen"
+),
+
+snap=>{
+
+const d=
+snap.val();
+
+if(!d)
+return;
+
+jamBuka.value=
+d.buka || "07.00";
+
+jamTutup.value=
+d.tutup || "17.00";
+
+}
+
+);
+
+}
+
+window.simpanSettingAbsen=
+async()=>{
+
+await set(
+
+ref(
+db,
+"settings/absen"
+),
+
+{
+
+buka:
+jamBuka.value,
+
+tutup:
+jamTutup.value,
+
+aktif:true
+
+}
+
+);
+
+alert(
+"Setting tersimpan"
+);
+
+};
+
+/* LOAD DATA */
+
+async function loadAbsensi(){
+
+absenList.innerHTML=
+"Loading...";
+
+const userSnap=
+await get(
+ref(
+db,
+"users"
+)
+);
+
+const absenSnap=
+await get(
+ref(
+db,
+"absensi"
+)
+);
+
+const users=
+userSnap.val()
+|| {};
+
+const absensi=
+absenSnap.val()
+|| {};
+
+semuaData=[];
+
+semuaUsers=
+Object.keys(users)
+.map(uid=>({
+
+uid,
+
+nama:
+users[uid]
+?.namaLengkap
+|| "-",
+
+
+sekolah:
+
+users[uid]
+?.asalSekolah
+
+||
+
+users[uid]
+?.sekolah
+
+||
+
+"-",
+
+
+
+email:
+users[uid]
+?.email
+|| "-",
+
+sekolah:
+users[uid]
+?.asalSekolah
+||
+
+users[uid]
+?.sekolah
+||
+
+"-",
+
+foto:
+users[uid]
+?.fotoSelfie
+||
+"https://via.placeholder.com/300"
+
+}));
+
+Object.keys(
+absensi
+).forEach(uid=>{
+
+if(
+!absensi[uid]
+)
+return;
+
+Object.keys(
+absensi[uid]
+).forEach(key=>{
+
+const item=
+absensi[uid][key];
+
+semuaData.push({
+
+uid,
+
+key,
+
+nama:
+item.nama
+||
+users[uid]
+?.namaLengkap
+||
+"-",
+
+email:
+item.email
+||
+users[uid]
+?.email
+||
+"-",
+
+tanggal:
+item.tanggal
+|| "-",
+
+jam:
+item.jam
+|| "-",
+
+status:
+item.status
+|| "-",
+
+lokasi:
+item.lokasi
+|| "",
+
+mapsLink:
+item.mapsLink
+|| "",
+
+foto:
+users[uid]
+?.fotoSelfie
+||
+"https://via.placeholder.com/300"
+
+});
+
+});
+
+});
+
+isiTanggal();
+
+render();
+
+}
+
+/* TANGGAL */
+
+function isiTanggal(){
+
+let setTanggal=
+new Set();
+
+semuaData.forEach(x=>{
+
+if(
+x.tanggal
+&&
+x.tanggal!="-"
+){
+
+setTanggal.add(
+x.tanggal
+);
+
+}
+
+});
+
+filterTanggal.innerHTML=
+`<option value="">
+Semua tanggal
+</option>`;
+
+[
+...setTanggal
+]
+.sort()
+.forEach(t=>{
+
+filterTanggal.innerHTML+=
+`<option value="${t}">
+${t}
+</option>`;
+
+});
+
+}
+
+/* RENDER */
+
+function render(){
+
+let cari=
+searchInput.value
+.toLowerCase();
+
+let tanggal=
+filterTanggal.value;
+
+let bulan=
+filterBulan.value;
+
+/* FILTER */
+
+let hasil=
+semuaData.filter(x=>{
+
+let cocokCari=
+
+x.nama
+.toLowerCase()
+.includes(cari)
+
+||
+
+x.email
+.toLowerCase()
+.includes(cari);
+
+let cocokTanggal=
+
+!tanggal
+
+||
+
+x.tanggal==
+tanggal;
+
+/* BULAN */
+
+let cocokBulan=true;
+
+if(
+bulan
+){
+
+const split=
+
+String(
+x.tanggal
+||""
+)
+
+.split(
+"/"
+);
+
+const bln=
+
+String(
+split[1]
+||""
+)
+
+.padStart(
+2,
+"0"
+);
+
+cocokBulan=
+
+bln==
+bulan;
+
+}
+
+return(
+
+cocokCari
+
+&&
+
+cocokTanggal
+
+&&
+
+cocokBulan
+
+);
+
+});
+
+hasil.reverse();
+
+/* USER HADIR */
+
+/* TANGGAL HARI INI */
+
+/* TANGGAL HARI INI */
+
+
+let pilihTanggal=
+tanggalTitik.value;
+
+let hariIni;
+
+if(
+pilihTanggal
+){
+
+let pecah=
+pilihTanggal.split(
+"-"
+);
+
+hariIni=
+
+Number(
+pecah[2]
+)
+
++
+
+"/"
+
++
+
+Number(
+pecah[1]
+)
+
++
+
+"/"
+
++
+
+pecah[0];
+
+}else{
+
+const sekarang=
+new Date();
+
+hariIni=
+
+sekarang.getDate()
+
++
+
+"/"
+
++
+
+(
+sekarang.getMonth()
++1
+)
+
++
+
+"/"
+
++
+
+sekarang.getFullYear();
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* SUDAH ABSEN HARI INI */
+
+const hadirUID=
+new Set();
+
+semuaData.forEach(x=>{
+
+let tanggalDb=
+
+String(
+x.tanggal
+|| ""
+)
+.trim();
+
+if(
+
+tanggalDb
+===
+
+hariIni
+
+){
+
+hadirUID.add(
+x.uid
+);
+
+}
+
+});
+
+/* USER BELUM ABSEN HARI INI */
+
+const belum=
+
+semuaUsers.filter(
+u=>
+
+!hadirUID.has(
+u.uid
+)
+
+);
+
+/* RESET */
+
+absenList.innerHTML="";
+titikContainer.innerHTML="";
+
+/* TITIK */
+
+semuaUsers.forEach(u=>{
+
+const titik=
+document.createElement(
+"div"
+);
+
+/* STATUS */
+
+let sudahAbsen=
+
+hadirUID.has(
+u.uid
+);
+
+if(
+sudahAbsen
+){
+
+titik.className=
+"titik hijau";
+
+}else{
+
+titik.className=
+"titik merah";
+
+}
+
+/* KLIK TITIK */
+
+
+
+
+titik.onclick=()=>{
+
+document
+.getElementById(
+"userPopup"
+)
+.classList.add(
+"show"
+);
+
+document
+.getElementById(
+"popupIsi"
+)
+.innerHTML=
+
+`
+
+<div class="popupItem">
+
+<b>Nama</b>
+
+<br>
+
+${u.nama||"-"}
+
+</div>
+
+<div class="popupItem">
+
+<b>Asal Sekolah</b>
+
+<br>
+
+${
+
+u.sekolah
+
+||
+
+u.asalSekolah
+
+||
+
+"-"
+
+}
+
+</div>
+
+<div class="popupItem">
+
+<b>Status</b>
+
+<br>
+
+${
+sudahAbsen
+
+?
+
+"🟢 Sudah Absen Hari Ini"
+
+:
+
+"🔴 Belum Absen Hari Ini"
+
+}
+
+</div>
+
+`;
+
+};
+
+
+
+
+titik.title=
+u.nama;
+
+titikContainer
+.appendChild(
+titik
+);
+
+});
+
+/* KOSONG */
+
+if(
+hasil.length===0
+){
+
+absenList.innerHTML=
+`
+
+<div class="card">
+
+Belum ada data absen
+
+</div>
+
+`;
+
+}
+
+/* CARD USER */
+
+hasil.forEach(i=>{
+
+const card=
+document.createElement(
+"div"
+);
+
+card.className=
+"absen-card";
+
+card.innerHTML=
+`
+
+<div class="absenHead">
+
+<img
+
+class="fotoUser"
+
+src="${i.foto}"
+
+loading="lazy"
+
+onclick="
+lihatFoto(
+'${i.foto}'
+)
+"
+
+>
+
+<div class="userInfo">
+
+<div class="namaUser">
+
+${i.nama}
+
+</div>
+
+<div class="emailUser">
+
+${i.email}
+
+</div>
+
+</div>
+
+<div class="badgeStatus">
+
+${i.status}
+
+</div>
+
+</div>
+
+<div class="detailGrid">
+
+<div class="detailBox">
+
+<div class="detailTitle">
+
+Tanggal Absen
+
+</div>
+
+<div class="detailIsi">
+
+${i.tanggal}
+
+</div>
+
+</div>
+
+<div class="detailBox">
+
+<div class="detailTitle">
+
+Jam Absen
+
+</div>
+
+<div class="detailIsi">
+
+${i.jam}
+
+</div>
+
+</div>
+
+</div>
+
+<div class="lokasiBox">
+
+<div class="lokasiTitle">
+
+📍 Lokasi
+
+</div>
+
+<div class="lokasiIsi">
+
+${
+filterLokasi(
+i.lokasi
+)
+}
+
+</div>
+
+</div>
+
+`;
+
+absenList.appendChild(
+card
+);
+
+});
+
+/* STATS */
+
+document.getElementById(
+"totalUser"
+).innerText=
+semuaUsers.length;
+
+document.getElementById(
+"totalHadir"
+).innerText=
+hadirUID.size;
+
+document.getElementById(
+"totalBelum"
+).innerText=
+belum.length;
+
+}
+
+
+
+
+
+/* HAPUS */
+
+window.hapusAbsen=
+async(
+uid,
+key
+)=>{
+
+if(
+!confirm(
+"Hapus data?"
+)
+)
+return;
+
+await set(
+
+ref(
+db,
+`absensi/${uid}/${key}`
+),
+
+null
+
+);
+
+await loadAbsensi();
+
+};
+
+
+
+
+
+
+/* FILTER */
+
+searchInput.oninput=
+render;
+
+filterTanggal.onchange=
+render;
+
+filterBulan.onchange=
+render;
+
+tanggalTitik.onchange=
+render;
+/* MENU */
+
+window.toggleMenu=
+()=>{
+
+sidebar.classList.toggle(
+"active"
+);
+
+overlay.style.display=
+
+sidebar.classList.contains(
+"active"
+)
+
+?
+
+"block"
+
+:
+
+"none";
+
+};
+
+
+
+
+
+
+
+
+
+
+
+window.tutupPopup=()=>{
+
+document
+.getElementById(
+"userPopup"
+)
+.classList.remove(
+"show"
+);
+
+};
+
+
+
+
+
+window.lihatFoto=(foto)=>{
+
+document
+.getElementById(
+"fotoPreview"
+)
+.classList.add(
+"show"
+);
+
+document
+.getElementById(
+"fotoFull"
+)
+.src=
+foto;
+
+};
+
+window.tutupFoto=()=>{
+
+document
+.getElementById(
+"fotoPreview"
+)
+.classList.remove(
+"show"
+);
+
+};
+</script>
+
+
+
+
+
+
+
+
+
+
+<div id="fotoPreview" class="fotoPreview">
+
+<span
+class="closeFoto"
+onclick="tutupFoto()">
+
+✕
+
+</span>
+
+<img
+id="fotoFull">
+
+</div>
+
+
+
+
+
+
+
+<div id="userPopup" class="popupBox">
+
+<div class="popupCard">
+
+<div class="popupTitle">
+Detail Absensi
+</div>
+
+<div id="popupIsi">
+-
+</div>
+
+<button
+class="popupBtn"
+onclick="tutupPopup()">
+
+Tutup
+
+</button>
+
+</div>
+
+</div>
+</body>
+</html>

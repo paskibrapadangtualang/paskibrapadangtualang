@@ -392,8 +392,21 @@ Dashboard Absensi Admin
       " onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
         Simpan Setting
       </button>
+      
     </div>
-
+<button onclick="refreshSemuaUser()" style="
+  width:100%;
+  padding:13px;
+  border:none;
+  border-radius:12px;
+  background:#dc2626;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  margin-top:15px;
+">
+🔄 Refresh Semua User
+</button>
   </div>
 </div>
 
@@ -1026,6 +1039,26 @@ loadAbsensi();
 
 loadSettingAbsen();
 
+
+
+
+window.refreshSemuaUser = async function(){
+
+  try{
+
+    await set(ref(db, "systemRefresh"), {
+      time: Date.now()
+    });
+
+    alert("✅ Semua user berhasil direfresh");
+
+  }catch(err){
+
+    alert("❌ Gagal refresh: " + err.message);
+
+  }
+
+}
 </script>
 
 </body>
