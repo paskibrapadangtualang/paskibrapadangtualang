@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ADMIN AI FIREBASE</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  background:#0f172a;
+  font-family:Arial,sans-serif;
+  color:white;
+}
+
+/* HEADER */
+.header{
+  background:#7f1d1d;
+  padding:18px;
+  text-align:center;
+  font-size:20px;
+  font-weight:bold;
+  letter-spacing:1px;
+}
+
+/* CONTAINER */
+.container{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  padding:12px;
+}
+
+.card{
+  background:#1f2937;
+  border-radius:14px;
+  padding:15px;
+}
+
+/* INPUT */
+input,
+textarea,
+button{
+  width:100%;
+  border:none;
+  outline:none;
+  border-radius:10px;
+  margin-top:10px;
+  padding:12px;
+  font-size:14px;
+}
+
+input,
+textarea{
+  background:#111827;
+  color:white;
+}
+
+textarea{
+  min-height:620px;
+  resize:none;
+}
+
+button{
+  background:#7f1d1d;
+  color:white;
+  cursor:pointer;
+  font-weight:bold;
+  transition:0.2s;
+}
+
+button:hover{
+  opacity:0.9;
+}
+
+hr{
+  border:none;
+  height:1px;
+  background:#374151;
+  margin:18px 0;
+}
+
+/* MEMORY */
+.list{
+  max-height:350px;
+  overflow:auto;
+  margin-top:10px;
+}
+
+.item{
+  background:#111827;
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:10px;
+  font-size:13px;
+  line-height:1.5;
+}
+
+/* CHAT */
+.chat{
+  height:400px;
+  overflow:auto;
+  background:#111827;
+  border-radius:12px;
+  padding:10px;
+  margin-bottom:10px;
+}
+
+.msg{
+  padding:10px;
+  border-radius:10px;
+  margin:8px 0;
+  max-width:90%;
+  word-wrap:break-word;
+  line-height:1.5;
+}
+
+.user{
+  background:#2563eb;
+  margin-left:auto;
+}
+
+.ai{
+  background:#374151;
+}
+
+/* MOBILE */
+@media(max-width:800px){
+
+  .container{
+    grid-template-columns:1fr;
+  }
+
+}
+
+
+/* MEMORY */
+
+.memory-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:10px;
+}
+
+.memory-key{
+  font-size:13px;
+  font-weight:bold;
+  color:#60a5fa;
+  line-height:1.5;
+}
+
+.memory-answer{
+  font-size:13px;
+  line-height:1.7;
+  color:#e5e7eb;
+}
+
+.delete-btn{
+  width:auto;
+  padding:8px 12px;
+  background:#dc2626;
+  font-size:12px;
+  border:none;
+  border-radius:8px;
+  color:white;
+  cursor:pointer;
+}
+.memory-answer{
+  white-space:pre-line;
+  line-height:1.7;
+  font-size:13px;
+  color:#e5e7eb;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+🤖 ADMIN AI PANEL FIREBASE
+</div>
+
+<div class="container">
+
+  <!-- LEFT -->
+
+
+<!-- LEFT -->
+<div class="card">
+
+  <h3>🧠 Tambah Memory AI</h3>
+
+  <input
+    id="keyword"
+    placeholder="#login #firebase #dashboard"
+  >
+
+  <textarea
+    id="answer"
+    placeholder="Masukkan jawaban AI..."
+  ></textarea>
+
+  <button onclick="saveMemory()">
+    Simpan Memory AI
+  </button>
+
+  <hr>
+
+  <h3>📦 Monitoring Memory AI</h3>
+
+  <div class="list" id="memory"></div>
+
+</div>
+
+
+
+
+
+
+
+  <!-- RIGHT -->
+  <div class="card">
+
+    <h3>💬 AI Chat</h3>
+
+    <div class="chat" id="chat"></div>
+
+    <input
+      id="q"
+      placeholder="Tanyakan sesuatu..."
+    >
+
+    <button onclick="ask()">
+      Kirim
+    </button>
+
+  </div>
+
+</div>
+
+<script type="module">
+
+/* FIREBASE */
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  set,
+  push,
+  onValue,
+  get,
+  remove
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* CONFIG */
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+let MEMORY = {};
+
+/* =========================
+   DETECT WEBSITE FEATURES
+========================= */
+
+function detectFeatures(html){
+
+  html = html.toLowerCase();
+
+  let features = [];
+
+  const checks = {
+
+    "Dashboard":[
+      "dashboard",
+      "panel"
+    ],
+
+    "Login":[
+      "login",
+      "sign in",
+      "masuk"
+    ],
+
+    "Register":[
+      "register",
+      "daftar"
+    ],
+
+    "Firebase":[
+      "firebase"
+    ],
+
+    "Admin":[
+      "admin"
+    ],
+
+    "Absensi":[
+      "absensi"
+    ],
+
+    "Kas":[
+      "kas"
+    ],
+
+    "PWA":[
+      "manifest",
+      "service-worker"
+    ],
+
+    "AI":[
+      "openai",
+      "gpt",
+      "gemini"
+    ]
+
+  };
+
+  Object.keys(checks).forEach(feature=>{
+
+    let found = checks[feature].some(keyword=>
+      html.includes(keyword)
+    );
+
+    if(found){
+      features.push(feature);
+    }
+
+  });
+
+  return features;
+
+}
+
+/* =========================
+   SCAN WEBSITE
+========================= */
+
+window.scanWebsite = async function(){
+
+  let url =
+    document.getElementById("url")
+    .value
+    .trim();
+
+  if(!url){
+    alert("Masukkan URL");
+    return;
+  }
+
+  try{
+
+    addChat(
+      "🔍 Sedang scan website...",
+      "ai"
+    );
+
+    const res = await fetch(
+      "https://api.allorigins.win/raw?url=" +
+      encodeURIComponent(url)
+    );
+
+    const html = await res.text();
+
+    const parser = new DOMParser();
+
+    const doc = parser.parseFromString(
+      html,
+      "text/html"
+    );
+
+    const title =
+      doc.querySelector("title")
+      ?.innerText || "Tanpa Judul";
+
+    const features =
+      detectFeatures(html);
+
+    const newRef =
+      push(ref(db,"aiWebsite"));
+
+    await set(newRef,{
+
+      url,
+      title,
+      features,
+      createdAt:Date.now()
+
+    });
+
+    addChat(
+      `✅ Website berhasil di-scan:
+      ${title}`,
+      "ai"
+    );
+
+    document.getElementById("url").value="";
+
+  }catch(err){
+
+    console.log(err);
+
+    addChat(
+      "❌ Gagal scan website",
+      "ai"
+    );
+
+  }
+
+}
+
+/* =========================
+   SAVE AI MEMORY
+========================= */
+/* =========================
+   SAVE MEMORY AI
+========================= */
+
+window.saveMemory = async function(){
+
+  let keyword =
+    document.getElementById("keyword")
+    .value
+    .trim();
+
+  let answer =
+    document.getElementById("answer")
+    .value
+    .trim();
+
+  /* VALIDASI */
+
+  if(!keyword || !answer){
+
+    alert("Lengkapi data");
+
+    return;
+
+  }
+
+  /* =========================
+     FORMAT KEYWORDS
+  ========================= */
+
+  let keywords = keyword
+
+    .toLowerCase()
+
+    .split(" ")
+
+    .filter(k => k.trim() !== "")
+
+    .map(k => {
+
+      /* HAPUS # LAMA */
+
+      k = k.replaceAll("#","");
+
+      /* TAMBAHKAN # */
+
+      return "#" + k;
+
+    });
+
+  /* =========================
+     FORMAT JAWABAN
+  ========================= */
+
+  answer = answer
+
+    /* HAPUS SPASI BERLEBIH */
+    .replace(/[ \t]+/g," ")
+
+    /* RAPIKAN ENTER */
+    .replace(/\n{3,}/g,"\n\n")
+
+    .trim();
+
+  try{
+
+    /* =========================
+       SIMPAN FIREBASE
+    ========================= */
+
+    const newRef =
+      push(ref(db,"aiCustomMemory"));
+
+    await set(newRef,{
+
+      keywords,
+      answer,
+      createdAt:Date.now()
+
+    });
+
+    /* RESET INPUT */
+
+    document.getElementById(
+      "keyword"
+    ).value = "";
+
+    document.getElementById(
+      "answer"
+    ).value = "";
+
+    /* SUCCESS */
+
+    alert(
+      "✅ Memory AI berhasil disimpan"
+    );
+
+  }catch(err){
+
+    console.log(err);
+
+    alert(
+      "❌ Gagal menyimpan memory"
+    );
+
+  }
+
+}
+/* =========================
+   LOAD WEBSITE MEMORY
+========================= */
+
+/* =========================
+   LOAD MEMORY AI
+========================= */
+
+function loadMemory(){
+
+  onValue(
+    ref(db,"aiCustomMemory"),
+    snap=>{
+
+      const data =
+        snap.val() || {};
+
+      let html = "";
+
+      Object.entries(data)
+      .reverse()
+      .forEach(([id,item])=>{
+
+        html += `
+
+        <div class="item">
+
+          <div class="memory-top">
+
+            <div class="memory-key">
+
+              🏷️ ${
+                item.keywords
+                ?.join(" ")
+                || "-"
+              }
+
+            </div>
+
+            <button
+              class="delete-btn"
+              onclick="deleteMemory('${id}')"
+            >
+              Hapus
+            </button>
+
+          </div>
+
+          <div class="memory-answer">
+
+            ${item.answer}
+
+          </div>
+
+        </div>
+
+        `;
+
+      });
+
+      document
+      .getElementById("memory")
+      .innerHTML = html;
+
+    }
+  );
+
+}
+
+loadMemory();
+/* =========================
+   ASK AI
+========================= */
+
+window.ask = async function(){
+
+  let q = document
+    .getElementById("q")
+    .value
+    .trim();
+
+  if(!q) return;
+
+  addChat(q,"user");
+
+  document.getElementById("q").value = "";
+
+  let userQuestion = q.toLowerCase();
+
+  let finalAnswer = null;
+
+  try{
+
+    /* =========================
+       AMBIL MEMORY FIREBASE
+    ========================= */
+
+    const snap = await get(
+      ref(db,"aiCustomMemory")
+    );
+
+    const memory = snap.val() || {};
+
+    /* =========================
+       CEK KEYWORD MEMORY
+    ========================= */
+
+    Object.values(memory).forEach(item=>{
+
+      if(!item.keywords) return;
+
+      item.keywords.forEach(key=>{
+
+        let cleanKey = key
+          .replaceAll("#","")
+          .toLowerCase()
+          .trim();
+
+        /* COCOKKAN PERTANYAAN */
+
+        if(
+          userQuestion.includes(cleanKey)
+        ){
+
+          finalAnswer = item.answer;
+
+        }
+
+      });
+
+    });
+
+    /* =========================
+       JIKA ADA MEMORY FIREBASE
+    ========================= */
+
+    if(finalAnswer){
+
+      addChat(finalAnswer,"ai");
+
+      return;
+
+    }
+
+    /* =========================
+       LOADING AI
+    ========================= */
+
+    addChat(
+      "🤖 AI sedang berpikir...",
+      "ai"
+    );
+
+    /* =========================
+       OPENAI FALLBACK
+    ========================= */
+
+/* =========================
+   GEMINI FALLBACK
+========================= */
+
+const response = await fetch(
+
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyA0hE_MaRyYMyghm8lZ2Az65wrk2_Rzjcs",
+
+  {
+
+    method:"POST",
+
+    headers:{
+      "Content-Type":"application/json"
+    },
+
+    body:JSON.stringify({
+
+      contents:[
+
+        {
+          parts:[
+
+            {
+              text:`
+              Kamu adalah AI assistant website.
+
+              Jawab:
+              - natural
+              - singkat
+              - ramah
+              - bahasa Indonesia
+
+              Pertanyaan:
+              ${userQuestion}
+              `
+            }
+
+          ]
+        }
+
+      ]
+
+    })
+
+  }
+
+);
+
+const data = await response.json();
+
+console.log(data);
+
+/* =========================
+   HAPUS LOADING
+========================= */
+
+let aiMessages =
+  document.querySelectorAll(".ai");
+
+if(aiMessages.length > 0){
+
+  let lastAi =
+    aiMessages[
+      aiMessages.length - 1
+    ];
+
+  if(
+    lastAi.innerText.includes(
+      "AI sedang berpikir"
+    )
+  ){
+    lastAi.remove();
+  }
+
+}
+
+/* =========================
+   CEK ERROR GEMINI
+========================= */
+
+if(data.error){
+
+let localAnswer = "";
+
+/* AI LOKAL */
+
+if(
+  userQuestion.includes("login")
+){
+
+  localAnswer =
+    "Silakan login menggunakan akun yang sudah terdaftar.";
+
+}
+
+else if(
+  userQuestion.includes("dashboard")
+){
+
+  localAnswer =
+    "Website memiliki fitur dashboard admin.";
+
+}
+
+else if(
+  userQuestion.includes("firebase")
+){
+
+  localAnswer =
+    "Website menggunakan Firebase Database.";
+
+}
+
+else if(
+  userQuestion.includes("absensi")
+){
+
+  localAnswer =
+    "Fitur absensi tersedia di website.";
+
+}
+
+else{
+
+  localAnswer =
+    `
+    Saya memahami pertanyaan:
+    "${userQuestion}"
+
+    Namun AI online sedang tidak tersedia.
+    `;
+}
+
+addChat(localAnswer,"ai");
+
+  return;
+
+}
+
+/* =========================
+   AMBIL TEXT GEMINI
+========================= */
+
+let aiText =
+  data?.candidates?.[0]
+  ?.content?.parts?.[0]
+  ?.text;
+
+/* =========================
+   FALLBACK JIKA KOSONG
+========================= */
+
+if(!aiText){
+
+  aiText =
+    "🤖 AI tidak menemukan jawaban.";
+
+}
+
+/* =========================
+   TAMPILKAN CHAT AI
+========================= */
+
+addChat(aiText,"ai");
+/* =========================
+   HAPUS LOADING
+========================= */
+
+
+
+/* =========================
+   AMBIL TEXT GEMINI
+========================= */
+
+if(
+  data.candidates &&
+  data.candidates.length > 0
+){
+
+  aiText =
+    data.candidates[0]
+    .content.parts[0]
+    .text;
+
+}
+
+/* =========================
+   DEFAULT JIKA KOSONG
+========================= */
+
+if(!aiText){
+
+  aiText =
+    "🤖 AI tidak menemukan jawaban.";
+
+}
+
+addChat(aiText,"ai");
+
+
+  }catch(err){
+
+    console.log(err);
+
+    addChat(
+      "❌ Terjadi kesalahan koneksi AI",
+      "ai"
+    );
+
+  }
+
+}
+
+/* =========================
+   CHAT UI
+========================= */
+
+function addChat(text,type){
+
+  const chat =
+    document.getElementById("chat");
+
+  chat.innerHTML += `
+
+    <div class="msg ${type}">
+      ${text}
+    </div>
+
+  `;
+
+  chat.scrollTop =
+    chat.scrollHeight;
+
+}
+
+
+
+
+
+
+/* =========================
+   HAPUS MEMORY
+========================= */
+
+window.deleteMemory =
+async function(id){
+
+  let ok = confirm(
+    "Hapus memory ini?"
+  );
+
+  if(!ok) return;
+
+  try{
+
+    await remove(
+      ref(
+        db,
+        "aiCustomMemory/" + id
+      )
+    );
+
+    alert(
+      "Memory berhasil dihapus"
+    );
+
+  }catch(err){
+
+    console.log(err);
+
+    alert(
+      "Gagal menghapus memory"
+    );
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>

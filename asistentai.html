@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AI CHAT USER</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  background:#0f172a;
+  font-family:Arial,sans-serif;
+  color:white;
+  display:flex;
+  flex-direction:column;
+  height:100vh;
+}
+
+/* HEADER */
+.header{
+  background:#7f1d1d;
+  padding:18px;
+  text-align:center;
+  font-size:20px;
+  font-weight:bold;
+}
+
+/* CHAT */
+.chat{
+  flex:1;
+  overflow:auto;
+  padding:15px;
+}
+
+/* CHAT MESSAGE */
+
+.msg{
+  max-width:85%;
+  padding:14px;
+  margin-bottom:12px;
+  border-radius:16px;
+  line-height:1.8;
+  word-wrap:break-word;
+  white-space:pre-line;
+  font-size:14px;
+}
+
+/* USER */
+
+.user{
+  background:#2563eb;
+  margin-left:auto;
+}
+
+/* AI */
+
+.ai{
+  background:#1f2937;
+  margin-right:auto;
+  border:1px solid #374151;
+}
+/* INPUT AREA */
+.bottom{
+  padding:12px;
+  background:#111827;
+  display:flex;
+  gap:10px;
+}
+
+.bottom input{
+  flex:1;
+  border:none;
+  outline:none;
+  border-radius:10px;
+  padding:12px;
+  background:#1f2937;
+  color:white;
+}
+
+.bottom button{
+  border:none;
+  border-radius:10px;
+  padding:12px 18px;
+  background:#7f1d1d;
+  color:white;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+
+
+
+
+.msg{
+  max-width:85%;
+  padding:12px;
+  margin-bottom:10px;
+  border-radius:14px;
+  line-height:1.6;
+  word-wrap:break-word;
+  font-size:14px;
+}
+
+.user{
+  background:#2563eb;
+  margin-left:auto;
+}
+
+.ai{
+  background:#1f2937;
+  margin-right:auto;
+}
+
+
+/* CHAT BOX AWAL */
+
+.chat-box-awal{
+  padding:15px;
+}
+
+.ai-card{
+  background:#1f2937;
+  border-radius:16px;
+  padding:18px;
+  border:1px solid #374151;
+}
+
+.ai-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:18px;
+  font-weight:bold;
+}
+
+/* LOGO */
+
+.ai-logo{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  object-fit:cover;
+  background:white;
+  padding:2px;
+  box-shadow:0 0 10px rgba(255,255,255,0.2);
+}
+
+.ai-desc{
+  line-height:1.8;
+  font-size:14px;
+  color:#e5e7eb;
+}
+
+/* QUICK MENU */
+
+.quick-menu{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:15px;
+}
+
+.quick-menu button{
+  background:#111827;
+  border:none;
+  color:white;
+  padding:10px 14px;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:13px;
+  transition:0.2s;
+}
+
+.quick-menu button:hover{
+  background:#374151;
+}
+
+
+
+button:disabled{
+  opacity:0.5;
+  cursor:not-allowed;
+  background: #b0b0b0;
+}
+
+
+
+
+/* NAMA USER */
+
+.nama-user{
+  color:#fff;
+  font-weight:bold;
+  font-size:9px;
+  background:#650000;
+  padding:4px 12px;
+  border-radius:999px;
+  display:inline-block;
+  margin-left:4px;
+  
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+Assistant saya
+</div>
+
+<!-- CHAT AREA -->
+
+<div class="chat" id="chat">
+
+  <!-- BOX AWAL -->
+
+  <div class="chat-box-awal">
+
+    <div class="ai-card">
+
+<div class="ai-title">
+
+  <img
+    src="assets/images/appicon.png"
+    class="ai-logo"
+  >
+
+  <span>
+    Assistant Paskibra~
+  </span>
+
+</div>
+
+      <div class="ai-desc">
+
+        Halo <span id="namaUser">User</span> 👋
+        <br><br>
+
+        Ada yang bisa saya bantu?
+
+      </div>
+
+      <!-- QUICK MENU -->
+
+      <div class="quick-menu">
+
+        <button onclick="quickAsk('cara daftar online')">
+          Cara daftar online
+        </button>
+
+        <button onclick="quickAsk('cara absen')">
+          Cara absen
+        </button>
+
+        <button onclick="quickAsk('cara ganti data diri')">
+          Cara ganti data diri
+        </button>
+
+        <button onclick="quickAsk('cara login')">
+          Cara login
+        </button>
+
+        <button onclick="quickAsk('cara logout')">
+          Cara logout
+        </button>
+
+        <button onclick="quickAsk('cara download aplikasi')">
+          Cara download aplikasi
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- INPUT -->
+
+<div class="bottom">
+
+  <input
+    id="q"
+    placeholder="Tanyakan sesuatu..."
+    onkeypress="if(event.key==='Enter') ask()"
+  >
+
+<button
+  onclick="ask()"
+  disabled
+>
+  Kirim
+</button>
+
+</div>
+
+
+
+
+
+
+
+
+
+<script type="module">
+
+/* FIREBASE */
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  get
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* CONFIG FIREBASE */
+const firebaseConfig = {
+
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+
+
+
+
+/* =========================
+   NAMA USER LOGIN
+========================= */
+
+/* CONTOH */
+
+/* =========================
+   AMBIL USER LOGIN
+========================= */
+
+import {
+  getAuth,
+  onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const auth = getAuth(app);
+
+/* CEK LOGIN */
+
+onAuthStateChanged(auth, async(user)=>{
+
+  if(user){
+
+    const uid = user.uid;
+
+    try{
+
+      /* AMBIL DATA USER */
+
+      const snap = await get(
+        ref(db,"users/" + uid)
+      );
+
+      if(snap.exists()){
+
+        const data = snap.val();
+
+        /* TAMPILKAN NAMA */
+
+let nama =
+  data.namaLengkap || "User";
+
+/* HURUF AWAL BESAR */
+
+nama = nama
+  .toLowerCase()
+  .replace(/\b\w/g, l => l.toUpperCase());
+
+/* TAMPILKAN */
+
+document.getElementById(
+  "namaUser"
+).innerHTML = `
+  <span class="nama-user">
+    ${nama}
+  </span>
+`;
+
+      }
+
+    }catch(err){
+
+      console.log(err);
+
+    }
+
+  }
+
+});
+/* =========================
+   QUICK ASK
+========================= */
+
+window.quickAsk = function(text){
+
+  /* MASUKKAN KE INPUT */
+
+  document.getElementById("q")
+  .value = text;
+
+  /* AUTO KIRIM */
+
+  ask();
+
+}
+
+window.ask = async function(){
+
+  let q =
+    document.getElementById("q")
+    .value
+    .trim();
+
+  if(!q) return;
+
+  addChat(q,"user");
+
+  document.getElementById("q").value="";
+
+  let userQuestion =
+    q.toLowerCase();
+
+  let finalAnswer = null;
+
+  try{
+
+    /* =========================
+       CEK FIREBASE MEMORY
+    ========================= */
+
+    const snap = await get(
+      ref(db,"aiCustomMemory")
+    );
+
+    const memory =
+      snap.val() || {};
+
+    Object.values(memory).forEach(item=>{
+
+      if(!item.keywords) return;
+
+      item.keywords.forEach(key=>{
+
+        let cleanKey =
+          key.replaceAll("#","")
+          .toLowerCase()
+          .trim();
+
+        if(
+          userQuestion.includes(cleanKey)
+        ){
+
+          finalAnswer =
+            item.answer;
+
+        }
+
+      });
+
+    });
+
+    /* =========================
+       JIKA ADA DI FIREBASE
+    ========================= */
+
+    if(finalAnswer){
+
+      addChat(finalAnswer,"ai");
+
+      return;
+
+    }
+
+    /* =========================
+       LOADING
+    ========================= */
+
+    addChat(
+      "🤖 AI sedang berpikir...",
+      "ai"
+    );
+
+    /* =========================
+       GEMINI AI
+    ========================= */
+
+    const response = await fetch(
+
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyA0hE_MaRyYMyghm8lZ2Az65wrk2_Rzjcs",
+
+      {
+
+        method:"POST",
+
+        headers:{
+          "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+          contents:[
+
+            {
+              parts:[
+
+                {
+                  text:`
+                  Kamu adalah AI assistant website.
+
+                  Jawab:
+                  - natural
+                  - singkat
+                  - ramah
+                  - bahasa Indonesia
+
+                  Pertanyaan:
+                  ${userQuestion}
+                  `
+                }
+
+              ]
+            }
+
+          ]
+
+        })
+
+      }
+
+    );
+
+    const data =
+      await response.json();
+
+    console.log(data);
+
+    /* =========================
+       HAPUS LOADING
+    ========================= */
+
+    let aiMessages =
+      document.querySelectorAll(".ai");
+
+    if(aiMessages.length > 0){
+
+      let lastAi =
+        aiMessages[
+          aiMessages.length - 1
+        ];
+
+      if(
+        lastAi.innerText.includes(
+          "AI sedang berpikir"
+        )
+      ){
+        lastAi.remove();
+      }
+
+    }
+
+    /* =========================
+       ERROR GEMINI
+    ========================= */
+
+    if(data.error){
+
+      let localAnswer = "";
+
+      /* AI LOKAL */
+
+      if(
+        userQuestion.includes("login")
+      ){
+
+        localAnswer =
+          "Silakan login menggunakan akun yang sudah terdaftar.";
+
+      }
+
+      else if(
+        userQuestion.includes("dashboard")
+      ){
+
+        localAnswer =
+          "Website memiliki fitur dashboard.";
+
+      }
+
+      else if(
+        userQuestion.includes("firebase")
+      ){
+
+        localAnswer =
+          "Website menggunakan Firebase Database.";
+
+      }
+
+      else{
+
+        localAnswer =
+          `
+          Saya memahami pertanyaan:
+
+          "${q}"
+
+          Namun AI online sedang sibuk.
+          `;
+
+      }
+
+      addChat(localAnswer,"ai");
+
+      return;
+
+    }
+
+    /* =========================
+       AMBIL JAWABAN GEMINI
+    ========================= */
+
+    let aiText =
+      data?.candidates?.[0]
+      ?.content?.parts?.[0]
+      ?.text;
+
+    if(!aiText){
+
+      aiText =
+        "🤖 AI tidak menemukan jawaban.";
+
+    }
+
+    addChat(aiText,"ai");
+
+  }catch(err){
+
+    console.log(err);
+
+    addChat(
+      "❌ Terjadi kesalahan AI",
+      "ai"
+    );
+
+  }
+
+}
+
+/* =========================
+   CHAT UI
+========================= */
+
+/* =========================
+   CHAT UI
+========================= */
+
+function addChat(text,type){
+
+  const chat =
+    document.getElementById("chat");
+
+  if(!chat) return;
+
+  /* RAPIKAN TEXT */
+
+  text = text
+
+    /* HAPUS SPASI BERLEBIH */
+    .replace(/[ \t]+/g," ")
+
+    /* RAPIKAN ENTER */
+    .replace(/\n{3,}/g,"\n\n")
+
+    .trim();
+
+  chat.innerHTML += `
+
+    <div class="msg ${type}">
+      ${text}
+    </div>
+
+  `;
+
+  chat.scrollTop =
+    chat.scrollHeight;
+
+}
+
+</script>
+
+</body>
+</html>
