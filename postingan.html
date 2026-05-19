@@ -632,10 +632,11 @@ async function loadPostingan(){
 
         }
 
+const BASE_URL =
+  "https://paskibrapadangtualang.github.io/paskibrapadangtualang/";
+
 const linkPost =
-window.location.origin +
-"/detailpostingan.html?id=" +
-id;
+  BASE_URL + "detailpostingan.html?id=" + id;
 
 postinganContainer.innerHTML += `
 
@@ -647,145 +648,73 @@ postinganContainer.innerHTML += `
 
     <div class="post-content">
 
-      <h3>
-        ${post.judul}
-      </h3>
+      <h3>${post.judul || "-"}</h3>
 
-      <p>
-        ${deskripsiSingkat}
-      </p>
+      <p>${deskripsiSingkat || "-"}</p>
 
       <div class="post-date">
-        ${post.tanggal}
+        ${post.tanggal || "-"}
       </div>
 
     </div>
 
   </div>
 
- <!-- SHARE -->
-<div style="
-display:flex;
-justify-content:space-around;
-align-items:center;
-padding:12px;
-border-top:1px solid #eee;
-background:#fafafa;
-">
+  <!-- SHARE -->
+  <div style="
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    padding:12px;
+    border-top:1px solid #eee;
+    background:#fafafa;
+  ">
 
-<!-- COPY -->
-<div onclick="
-event.stopPropagation();
-salinLink('${linkPost}')
-" style="
-display:flex;
-flex-direction:column;
-align-items:center;
-gap:5px;
-cursor:pointer;
-">
+    <!-- COPY -->
+    <div onclick="event.stopPropagation(); salinLink('${linkPost}')"
+      style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;">
 
-<img
-src="assets/images/360_F_1390166235_aHkQ7HCrH3WKc3Utjl01zh1oAiH2iO5u.jpg"
-style="
-width:24px;
-height:24px;
-object-fit:contain;
-">
+      <img src="assets/images/copy.png"
+        style="width:24px;height:24px;object-fit:contain;">
 
-<span style="
-font-size:11px;
-">
-Salin
-</span>
+      <span style="font-size:11px;">Salin</span>
 
-</div>
+    </div>
 
-<!-- WHATSAPP -->
-<div onclick="
-event.stopPropagation();
-shareWA('${linkPost}')
-" style="
-display:flex;
-flex-direction:column;
-align-items:center;
-gap:5px;
-cursor:pointer;
-">
+    <!-- WHATSAPP -->
+    <div onclick="event.stopPropagation(); shareWA('${linkPost}')"
+      style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;">
 
-<img
-src="assets/images/whatsapp.png"
-style="
-width:24px;
-height:24px;
-object-fit:contain;
-">
+      <img src="assets/images/whatsapp.png"
+        style="width:24px;height:24px;object-fit:contain;">
 
-<span style="
-font-size:11px;
-">
-WhatsApp
-</span>
+      <span style="font-size:11px;">WhatsApp</span>
 
-</div>
+    </div>
 
-<!-- FACEBOOK -->
-<div onclick="
-event.stopPropagation();
-shareFB('${linkPost}')
-" style="
-display:flex;
-flex-direction:column;
-align-items:center;
-gap:5px;
-cursor:pointer;
-">
+    <!-- FACEBOOK -->
+    <div onclick="event.stopPropagation(); shareFB('${linkPost}')"
+      style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;">
 
-<img
-src="assets/images/facebook.png"
-style="
-width:24px;
-height:24px;
-object-fit:contain;
-">
+      <img src="assets/images/facebook.png"
+        style="width:24px;height:24px;object-fit:contain;">
 
-<span style="
-font-size:11px;
-">
-Facebook
-</span>
+      <span style="font-size:11px;">Facebook</span>
 
-</div>
+    </div>
 
-<!-- INSTAGRAM -->
-<div onclick="
-event.stopPropagation();
-bukaIG()
-" style="
-display:flex;
-flex-direction:column;
-align-items:center;
-gap:5px;
-cursor:pointer;
-">
+    <!-- INSTAGRAM -->
+    <div onclick="event.stopPropagation(); shareIG('${linkPost}')"
+      style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;">
 
-<img
-src="assets/images/social.png"
-style="
-width:24px;
-height:24px;
-object-fit:contain;
-">
+      <img src="assets/images/social.png"
+        style="width:24px;height:24px;object-fit:contain;">
 
-<span style="
-font-size:11px;
-">
-Instagram
-</span>
+      <span style="font-size:11px;">Instagram</span>
 
-</div>
+    </div>
 
-</div>
+  </div>
 
 </div>
 
@@ -880,67 +809,39 @@ window.toggleMenu = function () {
 
 
 window.salinLink = async function(link){
-
   try{
-
     await navigator.clipboard.writeText(link);
-
-    alert(
-      "Link berhasil disalin"
-    );
-
+    alert("Link berhasil disalin");
   }catch{
-
-    alert(
-      "Gagal salin link"
-    );
-
+    alert("Gagal menyalin link");
   }
-
 };
 
 window.shareWA = function(link){
+  const text =
+`🔥 PASKIBRA PADANG TUALANG
+
+Baca postingan:
+${link}`;
 
   window.open(
-
-    "https://wa.me/?text=" +
-
-    encodeURIComponent(
-      link
-    ),
-
+    "https://wa.me/?text=" + encodeURIComponent(text),
     "_blank"
-
   );
-
 };
 
 window.shareFB = function(link){
-
   window.open(
-
     "https://www.facebook.com/sharer/sharer.php?u=" +
-
-    encodeURIComponent(
-      link
-    ),
-
+    encodeURIComponent(link),
     "_blank"
-
   );
-
 };
 
-window.bukaIG = function(){
-
-  window.open(
-
-    "https://www.instagram.com",
-
-    "_blank"
-
-  );
-
+window.shareIG = async function(link){
+  await navigator.clipboard.writeText(link);
+  alert("Link disalin, paste ke Instagram");
+  window.open("https://instagram.com", "_blank");
 };
 
 

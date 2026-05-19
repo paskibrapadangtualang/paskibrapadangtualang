@@ -4,10 +4,16 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
 
+  
+  <meta charset="UTF-8">
+<meta property="og:title" content="Seputar Paskibra" />
+<meta property="og:description" content="Postingan terbaru Paskibra Padang Tualang" />
+<meta property="og:image" content="https://paskibrapadangtualang.github.io/paskibrapadangtualang/assets/images/Image May 19, 2026, 03_48_28 PM.png" />
+<meta property="og:url" content="https://paskibrapadangtualang.github.io/paskibrapadangtualang/detailpostingan.html" />
+<meta property="og:type" content="article" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Seputar Paskibra</title>
+  <title>Artikel Seputar Paskibra</title>
 
   <style>
 
@@ -2322,81 +2328,49 @@ document
 
 }
 
-function getShareLink(){
-
-const path = "/paskibrapadangtualang/";
-
-return "https://paskibrapadangtualang.github.io" +
-path +
-"detailpostingan.html?id=" +
-postId;
-
+function getShareLink(postId){
+  const base = "https://paskibrapadangtualang.github.io/paskibrapadangtualang/";
+  return base + "detailpostingan.html?id=" + postId;
 }
+
+
 
 /* COPY */
 
-window.copyLink=
-async function(){
-
-await navigator.clipboard.writeText(
-getShareLink()
-);
-
-alert(
-"Link disalin"
-);
-
+window.copyLink = async function(){
+  const id = postId;
+  await navigator.clipboard.writeText(getShareLink(id));
+  alert("Link disalin");
 }
 
 /* WA */
 
-window.shareWA=
-function(){
+window.shareWA = function(){
+  const id = postId;
 
-window.open(
-
-"https://wa.me/?text="+
-
-encodeURIComponent(
-
-getShareLink()
-
-)
-
-);
-
+  window.open(
+    "https://wa.me/?text=" +
+    encodeURIComponent(getShareLink(id))
+  );
 }
 
 /* FB */
 
-window.shareFB=
-function(){
+window.shareFB = function(){
+  const id = postId;
 
-window.open(
-
-"https://www.facebook.com/sharer/sharer.php?u="+
-
-encodeURIComponent(
-
-getShareLink()
-
-)
-
-);
-
+  window.open(
+    "https://www.facebook.com/sharer/sharer.php?u=" +
+    encodeURIComponent(getShareLink(id))
+  );
 }
 
 /* IG */
 
-window.shareIG=
-function(){
-
-window.open(
-
-"https://instagram.com"
-
-);
-
+window.shareIG = async function(){
+  await navigator.clipboard.writeText(getShareLink(postId));
+  alert("Link disalin, paste ke Instagram");
+  window.open("https://instagram.com");
 }
 </script>
 

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Loading...</title>
+
+<!-- DEFAULT OG (fallback) -->
+<meta property="og:title" content="Paskibra Padang Tualang">
+<meta property="og:description" content="Berita & informasi Paskibra">
+<meta property="og:image" content="assets/images/Image May 19, 2026, 03_48_28 PM.png">
+<meta property="og:type" content="article">
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#f2f2f2;
+}
+
+.card{
+  max-width:500px;
+  margin:30px auto;
+  background:white;
+  border-radius:15px;
+  overflow:hidden;
+  box-shadow:0 4px 15px rgba(0,0,0,.1);
+}
+
+img{
+  width:100%;
+  height:250px;
+  object-fit:cover;
+}
+
+.content{
+  padding:15px;
+}
+
+h1{
+  font-size:18px;
+  margin:0 0 10px;
+}
+
+p{
+  font-size:13px;
+  color:#555;
+  line-height:1.6;
+}
+
+.small{
+  font-size:11px;
+  color:#999;
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card" id="card">
+  <p style="padding:20px;">Loading...</p>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// ambil id dari URL
+const params = new URLSearchParams(location.search);
+const id = params.get("id");
+
+async function load(){
+
+  const snap = await get(ref(db, "postingan/" + id));
+
+  if(!snap.exists()){
+    document.getElementById("card").innerHTML = "Post tidak ditemukan";
+    return;
+  }
+
+  const data = snap.val();
+
+  const title = data.judul || "";
+  const desc = (data.deskripsi || "").substring(0,120);
+  const img = data.gambar || "";
+
+  // 🔥 UPDATE HALAMAN
+  document.title = title;
+
+  document.querySelector('meta[property="og:title"]').setAttribute("content", title);
+  document.querySelector('meta[property="og:description"]').setAttribute("content", desc);
+  document.querySelector('meta[property="og:image"]').setAttribute("content", img);
+
+  // tampil UI
+  document.getElementById("card").innerHTML = `
+    <img src="${img}">
+    <div class="content">
+      <h1>${title}</h1>
+      <p>${desc}</p>
+      <div class="small">${data.tanggal || ""}</div>
+    </div>
+  `;
+}
+
+load();
+
+</script>
+
+</body>
+</html>
