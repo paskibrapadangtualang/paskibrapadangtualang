@@ -536,6 +536,13 @@ html, body{
   </span>
 </div>
 
+<div class="switch-text">
+  Kamu bendahara?
+  <span onclick="window.location.href='bendahara/login.html'">
+    Login bendahara
+  </span>
+</div>
+
     </div>
 
     <!-- REGISTER -->
@@ -703,18 +710,21 @@ html, body{
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-    import {
-      getAuth,
-      createUserWithEmailAndPassword,
-      signInWithEmailAndPassword,
-      sendPasswordResetEmail,
-      onAuthStateChanged
+import {
+getAuth,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword,
+sendPasswordResetEmail,
+onAuthStateChanged,
+signOut
+
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
     import {
       getDatabase,
       ref,
-      set
+      set,
+      get
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
     // CONFIG FIREBASE
@@ -739,39 +749,129 @@ html, body{
 
 // CEK LOGIN
 
-onAuthStateChanged(auth, (user)=>{
+onAuthStateChanged(
+auth,
+async(user)=>{
 
-  const loadingScreen =
-    document.getElementById(
-      "loadingScreen"
-    );
+const loadingScreen =
+document.getElementById(
+"loadingScreen"
+);
 
-  // CEK HALAMAN REGISTER SEDANG TERBUKA
+const registerBox =
+document.getElementById(
+"registerBox"
+);
 
-  const registerBox =
-    document.getElementById(
-      "registerBox"
-    );
+const sedangRegister =
+!registerBox.classList.contains(
+"hidden"
+);
 
-  const sedangRegister =
-    !registerBox.classList.contains(
-      "hidden"
-    );
+if(
+user &&
+!sedangRegister
+){
 
-  if(user && !sedangRegister){
+// CEK USERS
 
-    window.location.href =
-      "user.html";
+const usersSnap =
+await get(
+ref(
+database,
+"users/" + user.uid
+)
+);
 
-  }else{
+// CEK ADMIN
 
-    loadingScreen.style.display =
-      "none";
+const adminSnap =
+await get(
+ref(
+database,
+"admin/" + user.uid
+)
+);
 
-  }
+// CEK PURNA
 
-});
+const purnaSnap =
+await get(
+ref(
+database,
+"purna/" + user.uid
+)
+);
 
+// CEK BENDAHARA
+
+const bendaharaSnap =
+await get(
+ref(
+database,
+"bendahara/" + user.uid
+)
+);
+
+// CEK SUPERADMIN
+
+const superSnap =
+await get(
+ref(
+database,
+"superadmin/" + user.uid
+)
+);
+
+// HANYA USERS
+
+if(
+
+usersSnap.exists()
+
+&&
+
+!adminSnap.exists()
+
+&&
+
+!purnaSnap.exists()
+
+&&
+
+!bendaharaSnap.exists()
+
+&&
+
+!superSnap.exists()
+
+){
+
+window.location.href =
+"user.html";
+
+}else{
+
+await signOut(auth);
+
+showAlert(
+"Akses ditolak. Khusus anggota users"
+);
+
+loadingScreen.style.display =
+"none";
+
+}
+
+}else{
+
+loadingScreen.style.display =
+"none";
+
+}
+
+}
+);
 
     // TAMPIL REGISTER
     window.showRegister = function(){
@@ -907,28 +1007,118 @@ window.login = async function(){
     "Mencocokkan data akun..."
   );
 
-  await signInWithEmailAndPassword(
-    auth,
-    email,
-    password
-  );
 
-  // HIDE LOADING
 
-  hideLoading();
 
-  // NOTIF
+const userCredential =
+await signInWithEmailAndPassword(
+auth,
+email,
+password
+);
 
-  showAlert("Login berhasil");
+const user =
+userCredential.user;
 
-  // PINDAH HALAMAN
+// CEK USERS
 
-  setTimeout(()=>{
+const usersSnap =
+await get(
+ref(
+database,
+"users/" + user.uid
+)
+);
 
-    window.location.href =
-      "user.html";
+// CEK ADMIN
 
-  }, 1500);
+const adminSnap =
+await get(
+ref(
+database,
+"admin/" + user.uid
+)
+);
+
+// CEK PURNA
+
+const purnaSnap =
+await get(
+ref(
+database,
+"purna/" + user.uid
+)
+);
+
+// CEK BENDAHARA
+
+const bendaharaSnap =
+await get(
+ref(
+database,
+"bendahara/" + user.uid
+)
+);
+
+// CEK SUPERADMIN
+
+const superSnap =
+await get(
+ref(
+database,
+"superadmin/" + user.uid
+)
+);
+
+// HANYA USERS
+
+if(
+usersSnap.exists()
+
+&&
+
+!adminSnap.exists()
+
+&&
+
+!purnaSnap.exists()
+
+&&
+
+!bendaharaSnap.exists()
+
+&&
+
+!superSnap.exists()
+
+){
+
+hideLoading();
+
+showAlert(
+"Login berhasil"
+);
+
+setTimeout(()=>{
+
+window.location.href=
+"user.html";
+
+},1500);
+
+}else{
+
+await signOut(auth);
+
+hideLoading();
+
+showAlert(
+"Akses ditolak. Login khusus anggota."
+);
+
+}
+
+
 
 }catch(error){
 
@@ -1173,42 +1363,45 @@ const jenisKelamin =
     // SIMPAN DATABASE
     // =====================
 
-    await set(
-      ref(database, "users/" + user.uid),
-      {
+   await set(
+ref(database, "users/" + user.uid),
+{
 
-        namaLengkap: nama,
+role:"users",
 
-        angkatanTahun: angkatanTahun,
+namaLengkap:nama,
 
-        asalSekolah: asalSekolah,
+angkatanTahun:angkatanTahun,
 
-        jenisKelamin: jenisKelamin,
+asalSekolah:asalSekolah,
 
-        tanggalLahir: tanggalLahir,
+jenisKelamin:jenisKelamin,
 
-        umur: umur,
+tanggalLahir:tanggalLahir,
 
-        nomorHp: nomorHp,
+umur:umur,
 
-        email: email,
+nomorHp:nomorHp,
 
-        tinggiBadan: tinggiBadan,
+email:email,
 
-        fotoSelfie: fotoUrl,
+tinggiBadan:tinggiBadan,
 
-        nomorWa: nomorWa,
+fotoSelfie:fotoUrl,
 
-        namaIbu: namaIbu,
+nomorWa:nomorWa,
 
-        nomorPendaftaran: nomorPendaftaran,
+namaIbu:namaIbu,
 
-        alamat: alamat,
+nomorPendaftaran:nomorPendaftaran,
 
-        statusPenerimaan: "Menunggu Seleksi"
+alamat:alamat,
 
-      }
-    );
+statusPenerimaan:
+"Menunggu Seleksi"
+
+}
+);
 
     // HIDE LOADING
 

@@ -1024,6 +1024,134 @@ html, body{
 
 
 
+
+
+
+
+
+
+    // PROTEKSI KHUSUS USERS
+
+onAuthStateChanged(
+auth,
+async(user)=>{
+
+// BELUM LOGIN
+
+if(!user){
+
+window.location.href =
+"akun.html";
+
+return;
+
+}
+
+// CEK USERS
+
+const usersSnap =
+await get(
+ref(
+database,
+"users/" + user.uid
+)
+);
+
+// CEK ADMIN
+
+const adminSnap =
+await get(
+ref(
+database,
+"admin/" + user.uid
+)
+);
+
+// CEK PURNA
+
+const purnaSnap =
+await get(
+ref(
+database,
+"purna/" + user.uid
+)
+);
+
+// CEK BENDAHARA
+
+const bendaharaSnap =
+await get(
+ref(
+database,
+"bendahara/" + user.uid
+)
+);
+
+// CEK SUPERADMIN
+
+const superSnap =
+await get(
+ref(
+database,
+"superadmin/" + user.uid
+)
+);
+
+// HANYA USERS YANG BOLEH
+
+if(
+
+usersSnap.exists()
+
+&&
+
+!adminSnap.exists()
+
+&&
+
+!purnaSnap.exists()
+
+&&
+
+!bendaharaSnap.exists()
+
+&&
+
+!superSnap.exists()
+
+){
+
+console.log(
+"Users diterima"
+);
+
+}else{
+
+// AUTO KELUAR
+
+await signOut(auth);
+
+// PINDAH KE LOGIN
+
+window.location.href =
+"akun.html";
+
+}
+
+}
+);
+
+
+
+
+
+
+
+
+
+
+
+
 // ======================
 // FIREBASE MESSAGING
 // ======================

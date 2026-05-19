@@ -189,9 +189,98 @@ body{
   font-weight:bold;
   word-break:break-word;
 }
+
+
+
+
+/* ================= SPLASH LOADING ================= */
+
+#pageLoader{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#c40000;
+z-index:99999;
+
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+
+transition:.4s;
+}
+
+.spinner{
+width:65px;
+height:65px;
+
+border:6px solid rgba(255,255,255,.25);
+
+border-top:6px solid white;
+
+border-radius:50%;
+
+animation:spin .8s linear infinite;
+}
+
+.loader-text{
+margin-top:18px;
+color:white;
+font-size:15px;
+font-weight:bold;
+}
+
+@keyframes spin{
+0%{
+transform:rotate(0deg);
+}
+100%{
+transform:rotate(360deg);
+}
+}
 </style>
 </head>
 <body>
+
+
+<!-- PAGE LOADER -->
+
+<div id="pageLoader">
+
+<div class="spinner"></div>
+
+<div class="loader-text">
+Memuat...
+</div>
+
+</div>
+
+  <!-- IMAGE PREVIEW MODAL -->
+<div id="imgModal" 
+     style="
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.9);
+      z-index:9999;
+      justify-content:center;
+      align-items:center;
+     ">
+
+  <img id="imgPreview"
+       style="
+        max-width:90%;
+        max-height:90%;
+        border-radius:12px;
+       ">
+
+</div>
+
+
+
+
 
 <!-- HEADER -->
 <div class="header">
@@ -299,6 +388,13 @@ const loading =
 const detailWrapper =
   document.getElementById("detailWrapper");
 
+
+  const pageLoader =
+document.getElementById(
+"pageLoader"
+);
+
+
 // ================= ICON AUTO =================
 function getIcon(title){
 
@@ -324,6 +420,7 @@ async function loadDetail(){
 
       loading.innerHTML =
         "ID informasi tidak ditemukan";
+        pageLoader.style.display="none";
 
       return;
 
@@ -336,7 +433,7 @@ async function loadDetail(){
 
       loading.innerHTML =
         "Informasi tidak ditemukan";
-
+pageLoader.style.display="none";
       return;
 
     }
@@ -369,10 +466,39 @@ async function loadDetail(){
 
             <div class="info-meta">
 
-              👤 ${item.admin?.nama || "Admin"}
-              •
-              ${new Date(item.waktu)
-                .toLocaleString("id-ID")}
+<div class="info-meta"
+     style="
+      display:flex;
+      align-items:center;
+      gap:1px;
+      font-size:13px;
+      color:#777;
+     ">
+
+  <img
+    src="${item.admin?.foto || 'assets/images/default-user.png'}"
+    style="
+      width:24px;
+      height:24px;
+      border-radius:50%;
+      object-fit:cover;
+      cursor:pointer;
+      flex-shrink:0;
+    "
+    onclick="openPreview(this.src)"
+  />
+
+  <span style="font-weight:500; color:#444;">
+    ${item.admin?.nama || "Admin"}
+  </span>
+
+  <span style="opacity:0.6;">•</span>
+
+  <span>
+    ${new Date(item.waktu).toLocaleString("id-ID")}
+  </span>
+
+</div>
 
             </div>
 
@@ -388,8 +514,21 @@ async function loadDetail(){
 
     `;
 
-    loading.style.display = "none";
-    detailWrapper.style.display = "block";
+ loading.style.display = "none";
+
+detailWrapper.style.display = "block";
+
+setTimeout(()=>{
+
+pageLoader.style.opacity="0";
+
+setTimeout(()=>{
+
+pageLoader.style.display="none";
+
+},400);
+
+},300);
 
   }catch(err){
 
@@ -397,13 +536,39 @@ async function loadDetail(){
 
     loading.innerHTML =
       "Gagal memuat informasi";
-
+pageLoader.style.display="none";
   }
 
 }
 
 // START
 loadDetail();
+
+
+
+
+const modal = document.getElementById("imgModal");
+const imgPreview = document.getElementById("imgPreview");
+
+function openPreview(src){
+  imgPreview.src = src;
+  modal.style.display = "flex";
+}
+
+function closePreview(){
+  modal.style.display = "none";
+}
+
+modal.addEventListener("click", function(e){
+  if(e.target === modal){
+    closePreview();
+  }
+});
+
+// penting: expose ke global karena module
+window.openPreview = openPreview;
+window.closePreview = closePreview;
+
 
 </script>
 

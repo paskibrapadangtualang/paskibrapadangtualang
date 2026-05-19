@@ -538,12 +538,22 @@ return;
 
 }
 
-const cek=
-await get(
+
+
+
+
+
+
+
+const kodeRef =
 ref(
 db,
-"kodeBendahara/"+kode
-)
+"kodeBendahara/" + kode
+);
+
+const cek =
+await get(
+kodeRef
 );
 
 if(
@@ -557,6 +567,31 @@ alert(
 return;
 
 }
+
+const dataKode =
+cek.val();
+
+// SUDAH DIPAKAI
+
+if(
+dataKode.aktif === false
+){
+
+alert(
+"Kode sudah digunakan"
+);
+
+return;
+
+}
+
+
+
+
+
+
+
+
 
 const user=
 await createUserWithEmailAndPassword(
@@ -599,6 +634,36 @@ Date.now()
 }
 
 );
+
+
+
+// MATIKAN KODE
+
+await update(
+
+ref(
+db,
+"kodeBendahara/" + kode
+),
+
+{
+
+aktif:false,
+
+dipakaiOleh:uid,
+
+usedAt:
+Date.now()
+
+}
+
+);
+
+
+
+
+
+
 
 alert(
 "Daftar berhasil"

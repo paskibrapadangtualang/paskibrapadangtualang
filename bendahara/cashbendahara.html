@@ -81,7 +81,7 @@ label{
 /* INPUT */
 input,
 select{
-  width:100%;
+
   padding:14px;
   border-radius:14px;
   border:1px solid #e5e7eb;
@@ -399,6 +399,55 @@ transform:rotate(360deg);
 
 opacity:0;
 pointer-events:none;
+}
+
+
+.metodeBox{
+display:flex;
+flex-direction:column;
+gap:10px;
+margin-top:10px;
+}
+
+.metodeItem,
+.bankItem{
+
+display:flex;
+
+align-items:center;
+
+gap:10px;
+
+padding:12px;
+
+background:white;
+
+border:1px solid #ddd;
+
+border-radius:14px;
+
+margin-bottom:10px;
+
+cursor:pointer;
+}
+
+.metodeItem img,
+.bankItem img{
+
+width:24px;
+
+height:24px;
+
+object-fit:contain;
+}
+
+.hiddenTransfer{
+display:none;
+margin-top:15px;
+}
+
+.showTransfer{
+display:block;
 }
 </style>
 
@@ -781,11 +830,214 @@ CASH BENDAHARA SYSTEM
 <label>Nominal Pembayaran</label>
 <input type="number" id="nominal" value="2000">
 
+<label>Pesan</label>
+
+<textarea
+id="pesan"
+placeholder="
+Contoh:
+Bayar transfer dari atas nama
+"
+
+style="
+width:100%;
+min-height:90px;
+
+padding:12px;
+
+border-radius:14px;
+
+border:1px solid #ddd;
+
+resize:none;
+
+margin-top:8px;
+"
+></textarea>
+
+
+
+
 <label>Metode Pembayaran</label>
-<select id="metode">
-  <option value="cash">Cash</option>
-  <option value="transfer">Transfer</option>
-</select>
+
+<div class="metodeBox">
+
+<!-- CASH -->
+<label class="metodeItem">
+
+<input
+type="radio"
+name="metode"
+value="cash"
+checked
+onclick="toggleTransfer()"
+>
+
+<img src="assets/images/8029547.png">
+
+<span>Cash</span>
+
+</label>
+
+
+<!-- TRANSFER -->
+<label class="metodeItem">
+
+<input
+type="radio"
+name="metode"
+value="transfer"
+onclick="toggleTransfer()"
+>
+
+<img src="assets/images/transfer.png">
+
+<span>Transfer</span>
+
+</label>
+
+</div>
+
+
+
+<!-- PILIHAN TRANSFER -->
+
+<div id="transferList" class="hiddenTransfer">
+
+<label class="bankItem">
+
+<input
+type="radio"
+name="metode"
+value="gopay"
+>
+
+<img src="assets/images/gopay.png">
+
+<span>GoPay</span>
+
+</label>
+
+
+
+<label class="bankItem">
+
+<input
+type="radio"
+name="metode"
+value="ovo"
+>
+
+<img src="assets/images/ovo.png">
+
+<span>OVO</span>
+
+</label>
+
+
+
+<label class="bankItem">
+
+<input
+type="radio"
+name="metode"
+value="dana"
+>
+
+<img src="assets/images/dana.png">
+
+<span>DANA</span>
+
+</label>
+
+
+
+<label class="bankItem">
+
+<input
+type="radio"
+name="metode"
+value="bri"
+>
+
+<img src="assets/images/bri.png">
+
+<span>BRI</span>
+
+</label>
+
+
+
+<label class="bankItem">
+
+<input
+type="radio"
+name="metode"
+value="bca"
+>
+
+<img src="assets/images/bca.png">
+
+<span>BCA</span>
+
+</label>
+
+
+
+<label class="bankItem">
+
+<input
+type="radio"
+name="metode"
+value="mandiri"
+>
+
+<img src="assets/images/bankmandiri.png">
+
+<span>Mandiri</span>
+
+</label>
+
+
+
+<label class="bankItem">
+
+<input
+type="radio"
+name="metode"
+value="shopeepay"
+>
+
+<img src="assets/images/64ba0c687557d_1689914472.png">
+
+<span>ShopeePay</span>
+
+</label>
+
+
+
+<label class="bankItem">
+
+<input
+type="radio"
+name="metode"
+value="bankjago"
+>
+
+<img src="assets/images/bankjago.png">
+
+<span>Bank Jago</span>
+
+</label>
+
+</div>
+
+
+
+
+
+
+
 
 <div class="info">
 Pembayaran otomatis menambah kalender hijau user sesuai jumlah hari.
@@ -1378,6 +1630,54 @@ window.openDetailPopup = function(data, hari){
             Lunas
           </b>
         </div>
+
+
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+gap:15px;
+margin-top:8px;
+">
+
+<div style="
+font-size:12px;
+color:#6b7280;
+font-weight:600;
+white-space:nowrap;
+">
+
+📝 NOTE
+
+</div>
+
+<div style="
+text-align:right;
+
+max-width:180px;
+
+background:#f3f4f6;
+
+padding:8px 12px;
+
+border-radius:12px;
+
+font-size:12px;
+
+color:#111827;
+
+line-height:1.5;
+
+word-break:break-word;
+">
+
+${data.pesan || "Tidak ada pesan"}
+
+</div>
+
+</div>
+
+
 
         <div style="
         display:flex;
@@ -2043,7 +2343,18 @@ console.log("USERS:", users);
 window.bayar = async function(){
 
   const nominal = Number(document.getElementById("nominal").value);
-  const metode = document.getElementById("metode").value;
+const metode =
+document.querySelector(
+'input[name="metode"]:checked'
+).value;
+
+
+const pesan =
+document.getElementById(
+"pesan"
+).value.trim();
+
+
 
   if(!selectedUserId){
     alert("Pilih user!");
@@ -2093,27 +2404,53 @@ console.log("FOTO TERSIMPAN:", selectedUserFoto);
 // simpan history admin
 const data = {
   userId: selectedUserId,
+
   nama: selectedUserName,
 
   fotoSelfie:
     users[selectedUserId]?.fotoSelfie || "",
 
   nominal: nominal,
+
   metode: metode,
 
-  bulan:
-    mulaiTanggal.getFullYear() + "-" +
-    String(mulaiTanggal.getMonth()+1).padStart(2,"0"),
+  pesan: pesan,
 
-  mulaiHari: mulaiTanggal.getDate(),
-  jumlahHari: jumlahHari,
-  waktu: new Date().toLocaleString("id-ID"),
-  tanggalISO: now.toISOString()
+  bulan:
+    mulaiTanggal.getFullYear()
+    + "-"
+    +
+    String(
+      mulaiTanggal.getMonth()+1
+    ).padStart(
+      2,
+      "0"
+    ),
+
+  mulaiHari:
+    mulaiTanggal.getDate(),
+
+  jumlahHari:
+    jumlahHari,
+
+  waktu:
+    new Date()
+    .toLocaleString(
+      "id-ID"
+    ),
+
+  tanggalISO:
+    now.toISOString()
+
 };
 
-push(ref(db,"cashHistory"), data);
-
-
+push(
+ref(
+db,
+"cashHistory"
+),
+data
+);
 
 
 
@@ -2135,15 +2472,27 @@ for(let i=0;i<jumlahHari;i++){
     baseDate.getFullYear() + "-" +
     String(baseDate.getMonth()+1).padStart(2,"0");
 
-  await set(
-    ref(db, `users/${selectedUserId}/cash/${bulanKeyFix}/${hariTarget}`),
-    {
-      status: "paid",
-      nominal: 2000,
-      metode: metode,
-      waktu: new Date().toLocaleString("id-ID")
-    }
-  );
+await set(
+ref(
+db,
+`users/${selectedUserId}/cash/${bulanKeyFix}/${hariTarget}`
+),
+{
+status:"paid",
+
+nominal:2000,
+
+metode:metode,
+
+pesan: pesan,
+
+waktu:
+new Date()
+.toLocaleString(
+"id-ID"
+)
+}
+);
 
 }
 
@@ -2630,6 +2979,53 @@ loader.style.display =
 }
 
 );
+
+
+
+
+
+
+function toggleTransfer(){
+
+const metode =
+document.querySelector(
+'input[name="metode"]:checked'
+).value;
+
+const box =
+document.getElementById(
+"transferList"
+);
+
+if(
+metode==="transfer"
+){
+
+box.classList.remove(
+"hiddenTransfer"
+);
+
+box.classList.add(
+"showTransfer"
+);
+
+}else{
+
+box.classList.remove(
+"showTransfer"
+);
+
+box.classList.add(
+"hiddenTransfer"
+);
+
+}
+
+}
+
+
+
+
 
 </script>
 

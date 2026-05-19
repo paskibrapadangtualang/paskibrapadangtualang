@@ -220,23 +220,42 @@ border:1px solid #eef2f7;
   margin-bottom:18px;
   ">
 
-    <div>
-      <div style="
-      font-size:20px;
-      font-weight:700;
-      color:#111827;
-      ">
-        👤 INFO SAYA
-      </div>
+<div style="
+display:flex;
+align-items:center;
+gap:12px;
+">
 
-      <div style="
-      font-size:13px;
-      color:#6b7280;
-      margin-top:4px;
-      ">
-        Informasi pembayaran cash bulan ini
-      </div>
-    </div>
+<img id="fotoSelfiUser" src="assets/images/icon.png" style="
+width:38px;
+height:38px;
+border-radius:50%;
+object-fit:cover;
+border:2px solid white;
+box-shadow:0 3px 8px rgba(0,0,0,.12);
+">
+
+<div>
+
+<div style="
+font-size:15px;
+font-weight:700;
+color:#111827;
+">
+INFO SAYA
+</div>
+
+<div style="
+font-size:10px;
+color:#6b7280;
+margin-top:4px;
+">
+Informasi pembayaran cash bulan ini
+</div>
+
+</div>
+
+</div>
 
 <div style="
 width:52px;
@@ -555,15 +574,14 @@ window.openPopup = function(data, hari){
           Total Pembayaran
         </div>
 
-        <div style="
-        font-size:28px;
-        font-weight:800;
-        color:#111827;
-        letter-spacing:1px;
-        ">
-          Rp ${data.nominal}
-        </div>
-
+<div style="
+font-size:28px;
+font-weight:800;
+color:#111827;
+letter-spacing:1px;
+">
+  Rp ${(data.nominal || 0).toLocaleString("id-ID")}
+</div>
       </div>
 
       <!-- DASH -->
@@ -643,30 +661,63 @@ window.openPopup = function(data, hari){
 
         </div>
 
-        <!-- WAKTU -->
-        <div style="
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        font-size:13px;
-        ">
+      <!-- WAKTU -->
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-size:13px;
+">
 
-          <div style="color:#6b7280;">
-            Waktu
-          </div>
+  <div style="color:#6b7280;">
+    Waktu
+  </div>
 
-          <div style="
-          font-weight:600;
-          color:#111827;
-          text-align:right;
-          max-width:160px;
-          ">
-            ${data.waktu || "-"}
-          </div>
+  <div style="
+  font-weight:600;
+  color:#111827;
+  text-align:right;
+  max-width:160px;
+  ">
+    ${data.waktu || "-"}
+  </div>
 
-        </div>
+</div>
 
-      </div>
+<!-- PESAN -->
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+font-size:13px;
+">
+
+  <div style="
+  color:#6b7280;
+  ">
+    Pesan
+  </div>
+
+  <div style="
+  font-weight:600;
+  font-size: 10px;
+  color:#111827;
+  text-align:right;
+  max-width:180px;
+  line-height:1.6;
+  word-break:break-word;
+  ">
+    ${data.pesan || "-"}
+  </div>
+
+</div>
+
+</div>
+
+
+
+
+      
 
       <!-- FOOTER -->
       <div style="
@@ -947,36 +998,97 @@ loadUser(uid);
 
 function loadUser(uid){
 
-  onValue(ref(db,"users/"+uid),(snap)=>{
+  onValue(
+    ref(db,"users/"+uid),
 
-    const data = snap.val() || {};
-    const cash = data.cash?.[bulan] || {};
+    (snap)=>{
 
-    document.getElementById("nama").innerText =
-      "Nama: " + data.namaLengkap;
+      const data = snap.val() || {};
 
-    let bayar = 0;
+      const cash =
+      data.cash?.[bulan] || {};
 
-    for(let i in cash){
-      if(cash[i].status === "paid"){
-        bayar += cash[i].nominal || 2000;
+      // NAMA USER
+      document.getElementById(
+        "nama"
+      ).innerText =
+      "Nama: " +
+      (data.namaLengkap || "-");
+
+      // FOTO USER
+      document.getElementById(
+        "fotoSelfiUser"
+      ).src =
+
+      data.fotoSelfie ||
+      data.fotoSelfi ||
+      data.foto ||
+      data.profileImage ||
+
+      "assets/images/icon.png";
+
+      // HITUNG TOTAL BAYAR
+      let bayar = 0;
+
+      for(let i in cash){
+
+        if(
+          cash[i] &&
+          cash[i].status === "paid"
+        ){
+
+          bayar +=
+          cash[i].nominal ||
+          2000;
+
+        }
+
       }
+
+      // TARGET CASH
+      const target =
+      totalHari * 2000;
+
+      // TUNGGAKAN
+      let tunggakan =
+      target - bayar;
+
+      if(
+        tunggakan < 0
+      ){
+        tunggakan = 0;
+      }
+
+      // TOTAL BAYAR
+      document.getElementById(
+        "totalBayar"
+      ).innerText =
+
+      "Total Bayar: Rp " +
+
+      bayar.toLocaleString(
+        "id-ID"
+      );
+
+      // TOTAL TUNGGAKAN
+      document.getElementById(
+        "totalTunggakan"
+      ).innerText =
+
+      "Tunggakan: Rp " +
+
+      tunggakan.toLocaleString(
+        "id-ID"
+      );
+
+      // RENDER
+      renderKalender(cash);
+
+      renderHistory(uid);
+
     }
 
-    const target = totalHari * 2000;
-    const tunggakan = target - bayar;
-
-    document.getElementById("totalBayar").innerText =
-      "Total Bayar: Rp " + bayar;
-
-    document.getElementById("totalTunggakan").innerText =
-      "Tunggakan: Rp " + tunggakan;
-
-    renderKalender(cash);
-
-    renderHistory(uid);
-
-  });
+  );
 
 }
 
@@ -1132,14 +1244,14 @@ box-shadow:0 6px 20px rgba(0,0,0,0.05);
       Total Pembayaran
     </div>
 
-    <div style="
-    font-size:28px;
-    font-weight:800;
-    color:#111827;
-    letter-spacing:1px;
-    ">
-      Rp ${d.nominal}
-    </div>
+<div style="
+font-size:28px;
+font-weight:800;
+color:#111827;
+letter-spacing:1px;
+">
+  Rp ${(d.nominal || 0).toLocaleString("id-ID")}
+</div>
 
   </div>
 
@@ -1226,32 +1338,63 @@ box-shadow:0 6px 20px rgba(0,0,0,0.05);
 
     </div>
 
-    <!-- WAKTU -->
-    <div style="
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    font-size:13px;
-    ">
+<!-- WAKTU -->
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-size:13px;
+">
 
-      <div style="
-      color:#6b7280;
-      ">
-        Waktu
-      </div>
-
-      <div style="
-      font-weight:600;
-      color:#111827;
-      text-align:right;
-      max-width:160px;
-      ">
-        ${d.waktu || "-"}
-      </div>
-
-    </div>
-
+  <div style="
+  color:#6b7280;
+  ">
+    Waktu
   </div>
+
+  <div style="
+  font-weight:600;
+  color:#111827;
+  text-align:right;
+  max-width:160px;
+  ">
+    ${d.waktu || "-"}
+  </div>
+
+</div>
+
+<!-- PESAN -->
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+font-size:13px;
+">
+
+  <div style="
+  color:#6b7280;
+  ">
+    Pesan
+  </div>
+
+  <div style="
+  font-weight:600;
+  font-size: 10px;
+  color:#111827;
+  text-align:right;
+  max-width:180px;
+  line-height:1.6;
+  word-break:break-word;
+  ">
+    ${d.pesan || "-"}
+  </div>
+
+</div>
+
+</div>
+
+
+  
 
   <!-- FOOTER -->
   <div style="

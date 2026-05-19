@@ -2046,6 +2046,11 @@ window.refreshCashGlobal = async function () {
 };
 
 
+
+
+
+
+
 // =======================
 // SALDO GLOBAL
 // =======================
@@ -2333,7 +2338,68 @@ await window.refreshCashGlobal();
 
 
 
+window.resetSemuaCash = async function(){
 
+const yakin = confirm(
+"SEMUA DATA CASH USER + HISTORY akan dihapus, lanjut?"
+);
+
+if(!yakin) return;
+
+try{
+
+// hapus history
+await remove(
+ref(db,"cashHistory")
+);
+
+// hapus cash global
+await remove(
+ref(db,"cashGlobal")
+);
+
+// hapus penarikan
+await remove(
+ref(db,"cashPenarikan")
+);
+
+// ambil semua user
+const snap =
+await get(
+ref(db,"users")
+);
+
+const semuaUser =
+snap.val() || {};
+
+for(
+const uid in semuaUser
+){
+
+await remove(
+ref(
+db,
+`users/${uid}/cash`
+)
+);
+
+}
+
+alert(
+"SEMUA CASH BERHASIL DIRESET"
+);
+
+}catch(err){
+
+console.error(err);
+
+alert(
+"Gagal reset"
+);
+
+}
+
+}
 
 
 

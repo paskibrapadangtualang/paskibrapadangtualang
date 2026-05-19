@@ -193,6 +193,8 @@ const loading = document.getElementById("loading");
 const search = document.getElementById("search");
 
 let allUsers = [];
+let dataAbsensi = {};
+let dataKas = {};
 
 /* LOGIN WAJIB */
 onAuthStateChanged(auth, async(user)=>{
@@ -214,6 +216,22 @@ async function loadUsers(){
 const snap = await get(ref(db,"users"));
 const data = snap.val() || {};
 
+const absenSnap = await get(
+ref(db,"absensi")
+);
+
+dataAbsensi =
+absenSnap.val() || {};
+
+
+const kasSnap = await get(
+ref(db,"cashHistory")
+);
+
+dataKas =
+kasSnap.val() || {};
+
+
 const nowYear = new Date().getFullYear();
 
 allUsers = Object.keys(data).map(uid=>{
@@ -233,16 +251,124 @@ else if(u.tanggalLahir){
 tahun = new Date(u.tanggalLahir).getFullYear();
 }
 
+const sekarang = new Date();
+
+const hariIni =
+
+sekarang.getDate()
+
++ "/"
+
++ (sekarang.getMonth()+1)
+
++ "/"
+
++ sekarang.getFullYear();
+
+let sudahAbsen = false;
+let sudahBayar = false;
+
+if(dataAbsensi[uid]){
+
+Object.values(
+dataAbsensi[uid]
+).forEach(a=>{
+
+if(
+String(
+a.tanggal || ""
+).trim()
+
+===
+
+hariIni
+){
+
+sudahAbsen = true;
+
+}
+
+});
+
+}
+
+
+
+
+
+Object.values(
+dataKas
+).forEach(k=>{
+
+if(
+k.userId === uid
+){
+
+let tanggalKas = "";
+
+if(k.waktu){
+
+tanggalKas =
+k.waktu
+.split(",")[0]
+.trim();
+
+}
+
+if(
+tanggalKas === hariIni
+){
+
+sudahBayar = true;
+
+}
+
+}
+
+});
+
+
+
+
+
+
+
+
+
+
 return {
 uid,
 
 nama: u.namaLengkap || "-",
+
 email: u.email || "-",
 
-foto: u.fotoSelfie || "https://via.placeholder.com/100",
+asalSekolah:
 
-tahun
+u.asalSekolah
+
+||
+
+u.sekolah
+
+||
+
+"-",
+
+foto:
+u.fotoSelfie
+||
+
+"https://via.placeholder.com/100",
+
+tahun,
+
+sudahAbsen,
+
+sudahBayar
+
 };
+
 
 })
 .filter(u => u.tahun == nowYear);
@@ -270,9 +396,112 @@ div.className="card";
 div.innerHTML=`
 <img src="${u.foto}" onclick="openImg('${u.foto}')">
 <div class="info">
-<div class="nama">${u.nama}</div>
-<div class="email">${maskEmail(u.email)}</div>
+
+<div class="nama">
+${u.nama}
 </div>
+
+
+
+<div style="
+display:flex;
+align-items:center;
+gap:6px;
+margin-top:3px;
+font-size:12px;
+color:#475569;
+font-weight:600;
+">
+
+<img
+src="assets/images/afs.png"
+
+style="
+width:14px;
+height:14px;
+object-fit:contain;
+">
+
+<span>
+${u.asalSekolah}
+</span>
+
+</div>
+
+
+
+
+<div style="
+font-size:12px;
+margin-top:5px;
+font-weight:bold;
+color:
+${u.sudahAbsen ? "#15803d" : "#dc2626"};
+">
+
+${
+
+u.sudahAbsen
+
+?
+
+"🟢 Sudah absen hari ini"
+
+:
+
+"🔴 Belum absen hari ini"
+
+}
+
+
+
+<div style="
+font-size:12px;
+margin-top:4px;
+font-weight:bold;
+color:
+${u.sudahBayar ? "#15803d" : "#dc2626"};
+">
+
+${
+u.sudahBayar
+
+?
+
+`<img src="assets/images/bdn.png"
+style="
+width:14px;
+height:14px;
+vertical-align:middle;
+margin-right:4px;
+">
+Sudah bayar uang kas hari ini`
+
+:
+
+`<img src="assets/images/chat_icon_send_failure.png"
+style="
+width:14px;
+height:14px;
+vertical-align:middle;
+margin-right:4px;
+opacity:.5;
+">
+Belum bayar uang kas hari ini`
+
+}
+</div>
+
+
+
+
+
+
+
+</div>
+
+</div>
+
 <div class="badge">${u.tahun}</div>
 `;
 
