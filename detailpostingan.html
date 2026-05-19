@@ -634,6 +634,188 @@ transform:rotate(360deg);
 
 }
 
+
+
+
+
+
+
+
+
+
+/* ======================
+   FLOAT SHARE BUTTON
+====================== */
+
+.share-float{
+
+position:fixed;
+
+right:20px;
+bottom:100px;
+
+width:50px;
+height:50px;
+
+border-radius:50%;
+
+background:#c40000;
+
+display:flex;
+
+justify-content:center;
+align-items:center;
+
+box-shadow:0 6px 18px rgba(0,0,0,.25);
+
+cursor:pointer;
+
+z-index:9999;
+
+}
+
+.share-float img{
+
+width:28px;
+height:28px;
+
+object-fit:contain;
+
+filter:brightness(0) invert(1);
+
+}
+
+/* POPUP */
+
+.share-popup{
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:rgba(0,0,0,.65);
+
+display:none;
+
+justify-content:center;
+align-items:center;
+
+z-index:999999;
+
+}
+
+.share-popup.active{
+display:flex;
+}
+
+.share-box{
+
+width:92%;
+max-width:420px;
+
+background:white;
+
+border-radius:25px;
+
+padding:20px;
+
+}
+
+.share-banner{
+
+width:100%;
+height:160px;
+
+object-fit:cover;
+
+border-radius:18px;
+
+margin-bottom:15px;
+
+}
+
+.share-title{
+
+font-size:18px;
+
+font-weight:bold;
+
+margin-bottom:8px;
+
+}
+
+.share-desc{
+
+font-size:13px;
+
+color:#666;
+
+line-height:1.6;
+
+margin-bottom:20px;
+
+}
+
+.share-icons{
+
+display:flex;
+
+justify-content:space-around;
+
+}
+
+.share-item{
+
+display:flex;
+
+flex-direction:column;
+
+align-items:center;
+
+gap:8px;
+
+cursor:pointer;
+
+}
+
+.share-item img{
+
+width:42px;
+height:42px;
+
+object-fit:contain;
+
+}
+
+.close-share{
+
+float:right;
+
+font-size:22px;
+
+cursor:pointer;
+
+margin-bottom:10px;
+
+}
+
+
+.share-item span{
+
+font-size:10px;
+
+color:#444;
+
+font-weight:600;
+
+text-align:center;
+
+}
+
   </style>
 </head>
 <body>
@@ -681,6 +863,139 @@ Memuat postingan...
   </div>
 
 </div>
+
+
+
+<!-- TOMBOL SHARE -->
+
+<div
+class="share-float"
+onclick="openShare()"
+>
+
+<img src="assets/images/share.png">
+
+</div>
+
+<!-- POPUP SHARE -->
+
+<div
+id="sharePopup"
+class="share-popup"
+>
+
+<div class="share-box">
+
+<div
+class="close-share"
+onclick="closeShare()"
+>
+
+✕
+
+</div>
+
+<img
+id="shareBanner"
+class="share-banner"
+>
+
+<div
+id="shareTitle"
+class="share-title"
+>
+
+Loading...
+
+</div>
+
+<div
+id="shareDesc"
+class="share-desc"
+>
+
+Loading...
+
+</div>
+
+<div class="share-icons">
+
+<!-- FB -->
+
+<div
+class="share-item"
+onclick="shareFB()"
+>
+
+<img src="assets/images/facebook.png">
+
+<span>
+
+Facebook
+
+</span>
+
+</div>
+
+<!-- IG -->
+
+<div
+class="share-item"
+onclick="shareIG()"
+>
+
+<img src="assets/images/social.png">
+
+<span>
+
+Instagram
+
+</span>
+
+</div>
+
+<!-- COPY -->
+
+<div
+class="share-item"
+onclick="copyLink()"
+>
+
+<img src="assets/images/copy.png">
+
+<span>
+
+Salin
+
+</span>
+
+</div>
+
+<!-- WA -->
+
+<div
+class="share-item"
+onclick="shareWA()"
+>
+
+<img src="assets/images/whatsapp.png">
+
+<span>
+
+WhatsApp
+
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
 
 <!-- ===================== -->
   <!-- IKLAN -->
@@ -1029,6 +1344,60 @@ pageLoader.style.display=
     if(snapshot.exists()){
 
       const post = snapshot.val();
+
+
+      window.postShare = post;
+
+let bannerShare="";
+
+if(
+post.gambarList
+){
+
+bannerShare=
+Object.values(
+post.gambarList
+)[0];
+
+}
+
+if(
+!bannerShare &&
+post.gambar
+){
+
+bannerShare=
+post.gambar;
+
+}
+
+document.getElementById(
+"shareBanner"
+).src=
+
+bannerShare;
+
+document.getElementById(
+"shareTitle"
+).innerText=
+
+(post.judul || "")
+.substring(
+0,
+50
+);
+
+document.getElementById(
+"shareDesc"
+).innerText=
+
+(post.deskripsi || "")
+.substring(
+0,
+120
+);
+
+
 
       // ===============================
       // AMBIL SEMUA FOTO
@@ -1922,6 +2291,112 @@ document.addEventListener('dragstart', function(e){
   e.preventDefault(); // disable drag gambar
 });
 
+
+
+
+
+
+
+
+window.openShare=function(){
+
+document
+.getElementById(
+"sharePopup"
+)
+.classList.add(
+"active"
+);
+
+}
+
+window.closeShare=function(){
+
+document
+.getElementById(
+"sharePopup"
+)
+.classList.remove(
+"active"
+);
+
+}
+
+function getShareLink(){
+
+return window.location.origin+
+
+"/detailpostingan.html?id="+
+
+postId;
+
+}
+
+/* COPY */
+
+window.copyLink=
+async function(){
+
+await navigator.clipboard.writeText(
+getShareLink()
+);
+
+alert(
+"Link disalin"
+);
+
+}
+
+/* WA */
+
+window.shareWA=
+function(){
+
+window.open(
+
+"https://wa.me/?text="+
+
+encodeURIComponent(
+
+getShareLink()
+
+)
+
+);
+
+}
+
+/* FB */
+
+window.shareFB=
+function(){
+
+window.open(
+
+"https://www.facebook.com/sharer/sharer.php?u="+
+
+encodeURIComponent(
+
+getShareLink()
+
+)
+
+);
+
+}
+
+/* IG */
+
+window.shareIG=
+function(){
+
+window.open(
+
+"https://instagram.com"
+
+);
+
+}
 </script>
 
 

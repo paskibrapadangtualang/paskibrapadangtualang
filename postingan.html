@@ -632,34 +632,164 @@ async function loadPostingan(){
 
         }
 
-        postinganContainer.innerHTML += `
+const linkPost =
+window.location.origin +
+"/detailpostingan.html?id=" +
+id;
 
-        <div
-          class="post-card"
-          onclick="bukaDetail('${id}')"
-        >
+postinganContainer.innerHTML += `
 
-          <img src="${gambarAwal}">
+<div class="post-card">
 
-          <div class="post-content">
+  <div onclick="bukaDetail('${id}')">
 
-            <h3>
-              ${post.judul}
-            </h3>
+    <img src="${gambarAwal}">
 
-            <p>
-              ${deskripsiSingkat}
-            </p>
+    <div class="post-content">
 
-            <div class="post-date">
-              ${post.tanggal}
-            </div>
+      <h3>
+        ${post.judul}
+      </h3>
 
-          </div>
+      <p>
+        ${deskripsiSingkat}
+      </p>
 
-        </div>
+      <div class="post-date">
+        ${post.tanggal}
+      </div>
 
-        `;
+    </div>
+
+  </div>
+
+ <!-- SHARE -->
+<div style="
+display:flex;
+justify-content:space-around;
+align-items:center;
+padding:12px;
+border-top:1px solid #eee;
+background:#fafafa;
+">
+
+<!-- COPY -->
+<div onclick="
+event.stopPropagation();
+salinLink('${linkPost}')
+" style="
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:5px;
+cursor:pointer;
+">
+
+<img
+src="assets/images/360_F_1390166235_aHkQ7HCrH3WKc3Utjl01zh1oAiH2iO5u.jpg"
+style="
+width:24px;
+height:24px;
+object-fit:contain;
+">
+
+<span style="
+font-size:11px;
+">
+Salin
+</span>
+
+</div>
+
+<!-- WHATSAPP -->
+<div onclick="
+event.stopPropagation();
+shareWA('${linkPost}')
+" style="
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:5px;
+cursor:pointer;
+">
+
+<img
+src="assets/images/whatsapp.png"
+style="
+width:24px;
+height:24px;
+object-fit:contain;
+">
+
+<span style="
+font-size:11px;
+">
+WhatsApp
+</span>
+
+</div>
+
+<!-- FACEBOOK -->
+<div onclick="
+event.stopPropagation();
+shareFB('${linkPost}')
+" style="
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:5px;
+cursor:pointer;
+">
+
+<img
+src="assets/images/facebook.png"
+style="
+width:24px;
+height:24px;
+object-fit:contain;
+">
+
+<span style="
+font-size:11px;
+">
+Facebook
+</span>
+
+</div>
+
+<!-- INSTAGRAM -->
+<div onclick="
+event.stopPropagation();
+bukaIG()
+" style="
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:5px;
+cursor:pointer;
+">
+
+<img
+src="assets/images/social.png"
+style="
+width:24px;
+height:24px;
+object-fit:contain;
+">
+
+<span style="
+font-size:11px;
+">
+Instagram
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+`;
 
       });
 
@@ -733,6 +863,90 @@ window.toggleMenu = function () {
     menu.style.display = "flex";
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+window.salinLink = async function(link){
+
+  try{
+
+    await navigator.clipboard.writeText(link);
+
+    alert(
+      "Link berhasil disalin"
+    );
+
+  }catch{
+
+    alert(
+      "Gagal salin link"
+    );
+
+  }
+
+};
+
+window.shareWA = function(link){
+
+  window.open(
+
+    "https://wa.me/?text=" +
+
+    encodeURIComponent(
+      link
+    ),
+
+    "_blank"
+
+  );
+
+};
+
+window.shareFB = function(link){
+
+  window.open(
+
+    "https://www.facebook.com/sharer/sharer.php?u=" +
+
+    encodeURIComponent(
+      link
+    ),
+
+    "_blank"
+
+  );
+
+};
+
+window.bukaIG = function(){
+
+  window.open(
+
+    "https://www.instagram.com",
+
+    "_blank"
+
+  );
+
+};
+
+
+
+
+
 
 
 
