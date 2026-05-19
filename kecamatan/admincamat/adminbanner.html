@@ -226,8 +226,7 @@ window.addBanner = async function(){
 
   const url = await upload(file);
 
-  const newRef = push(ref(db,"banner"));
-
+  const newRef = push(ref(db,"bannercamat"));
   await set(newRef, url);
 
   alert("✅ Banner ditambahkan");
@@ -239,7 +238,7 @@ window.addBanner = async function(){
 /* 📥 LOAD */
 async function loadBanner(){
 
-  const snap = await get(ref(db,"banner"));
+  const snap = await get(ref(db,"bannercamat"));
   const box = document.getElementById("bannerBox");
 
   box.innerHTML = "";
@@ -276,7 +275,7 @@ window.editBanner = async function(id){
 
   const url = await upload(file);
 
-  await set(ref(db,"banner/"+id), url);
+  await set(ref(db,"bannercamat/"+id), url);
 
   alert("✅ Banner diupdate");
 
@@ -288,7 +287,7 @@ window.deleteBanner = async function(id){
 
   if(!confirm("Yakin hapus banner ini?")) return;
 
-  await remove(ref(db,"banner/"+id));
+  await remove(ref(db,"bannercamat/"+id));
 
   alert("🗑 Banner dihapus");
 

@@ -509,56 +509,64 @@ onValue(runningRef, async (snap) => {
 });
 
 
-const bannerRef = ref(db, "banner");
+const bannerRef = ref(db, "bannercamat");
 
-get(bannerRef).then((snap) => {
+get(bannerRef).then(async (snap) => {
   const slides = document.getElementById("slides");
 
   slides.innerHTML = "";
 
+  // 🔥 kalau belum ada data → BUAT OTOMATIS
   if (!snap.exists()) {
-    slides.innerHTML = `
-      <img src="https://picsum.photos/1200/300?1">
-      <img src="https://picsum.photos/1200/300?2">
-      <img src="https://picsum.photos/1200/300?3">
-    `;
+
+    const dummy = {
+      img1: "https://picsum.photos/1200/300?random=11",
+      img2: "https://picsum.photos/1200/300?random=12",
+      img3: "https://picsum.photos/1200/300?random=13"
+    };
+
+    await set(ref(db, "bannercamat"), dummy);
+
+    Object.values(dummy).forEach(url => {
+      slides.innerHTML += `<img src="${url}">`;
+    });
+
+    startSlider();
     return;
   }
 
   const data = snap.val();
 
   Object.values(data).forEach(url => {
-    if(url && url.trim() !== ""){
+    if (url && url.trim() !== "") {
       slides.innerHTML += `<img src="${url}">`;
     }
   });
-   startSlider();
+
+  startSlider();
 });
 
 let index = 0;
 let total = 0;
 
-function startSlider(){
+function startSlider() {
   const slides = document.getElementById("slides");
 
   const imgs = slides.querySelectorAll("img");
   total = imgs.length;
 
-  if(total <= 1) return;
+  if (total <= 1) return;
 
   setInterval(() => {
     index++;
 
-    if(index >= total){
+    if (index >= total) {
       index = 0;
     }
 
     slides.style.transform = `translateX(-${index * 100}%)`;
-
   }, 4000);
 }
-
-
 
 
 
