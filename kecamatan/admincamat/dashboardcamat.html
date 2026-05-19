@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard Camat</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#f4f6f8;
+}
+
+/* NAVBAR */
+.navbar{
+  background:#0f6b20;
+  color:white;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 20px;
+}
+
+.menu button{
+  background:transparent;
+  border:1px solid rgba(255,255,255,0.3);
+  color:white;
+  padding:8px 12px;
+  margin-right:8px;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+.menu button:hover{
+  background:white;
+  color:#0f6b20;
+}
+
+/* CONTAINER */
+.container{
+  max-width:900px;
+  margin:20px auto;
+  padding:10px;
+}
+
+/* CARD */
+.card{
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* TAB */
+.tab{
+  display:none;
+}
+
+.tab.active{
+  display:block;
+}
+
+button.save{
+  width:100%;
+  padding:12px;
+  background:#0f6b20;
+  color:white;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+input, textarea{
+  width:100%;
+  padding:10px;
+  margin:8px 0;
+  border-radius:10px;
+  border:1px solid #ddd;
+}
+
+
+
+
+.card{
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.08);
+  transition:0.2s;
+  text-align:center;
+}
+
+.card:hover{
+  transform:translateY(-3px);
+}
+
+.card h3{
+  margin:0;
+  font-size:16px;
+  color:#0f6b20;
+}
+
+.card p{
+  font-size:28px;
+  font-weight:bold;
+  margin-top:10px;
+}
+
+#sidebar button{
+  width:100%;
+  padding:12px;
+  background:transparent;
+  border:none;
+  color:white;
+  text-align:left;
+  font-size:15px;
+  cursor:pointer;
+  border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+#sidebar button:hover{
+  background:rgba(255,255,255,0.15);
+}
+
+
+
+
+
+#userFoto{
+  box-shadow:0 0 10px rgba(15,107,32,0.4);
+}
+@keyframes spin {
+  0% { transform:rotate(0deg); }
+  100% { transform:rotate(360deg); }
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="loadingScreen" style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:linear-gradient(135deg,#0f6b20,#0c4d16);
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:9999;
+flex-direction:column;
+color:white;
+">
+
+  <div style="
+    width:50px;
+    height:50px;
+    border:5px solid rgba(255,255,255,0.3);
+    border-top:5px solid white;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+  "></div>
+
+  <p style="margin-top:15px;">Memuat dashboard...</p>
+</div>
+
+
+
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <div>🔥 DASHBOARD CAMAT</div>
+
+<!-- TOGGLE BUTTON -->
+<button onclick="toggleMenu()" style="
+position:fixed;
+top:5px;
+left:5px;
+z-index:2000;
+padding:10px 12px;
+border:none;
+background:#0f6b20;
+color:white;
+border-radius:8px;
+cursor:pointer;
+">
+☰
+</button>
+
+<!-- SIDEBAR -->
+<div id="sidebar" style="
+position:fixed;
+top:0;
+left:-260px;
+width:250px;
+height:100%;
+background:#0f6b20;
+padding-top:60px;
+transition:0.3s;
+z-index:1999;
+">
+
+  <button onclick="go('ListLayanan.html')">Laporan</button>
+  <button onclick="go('camatpostingan.html')"> Postingan</button>
+  <button onclick="go('adminbanner.html')"> banner portal</button>
+  <button onclick="go('banner.html')">Banner</button>
+  <button onclick="go('youtube.html')">YouTube</button>
+  <button onclick="logout()">🚪 Logout</button>
+
+</div>
+</div>
+
+<div class="container">
+
+  <!-- HEADER -->
+<div class="card" style="
+margin-bottom:15px;
+display:flex;
+align-items:center;
+gap:15px;
+background:linear-gradient(135deg,#ffffff,#f3f6f4);
+border-left:5px solid #0f6b20;
+">
+  <img id="userFoto" src="" style="
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    object-fit:cover;
+    border:2px solid #0f6b20;
+  ">
+
+  <div>
+    <h2 id="userNama" style="margin:0;">Dashboard Camat</h2>
+  </div>
+
+</div>
+
+  <!-- GRID BOX -->
+  <div style="
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:15px;
+  ">
+
+    <!-- LAPORAN -->
+    <div class="card">
+      <h3>Laporan</h3>
+      <p id="laporanCount">0</p>
+    </div>
+
+    <!-- POSTINGAN -->
+    <div class="card">
+      <h3>Postingan</h3>
+      <p id="postinganCount">0</p>
+    </div>
+
+    <!-- BOX 1 -->
+    <div class="card">
+      <h3>User Aktif</h3>
+      <p>0</p>
+    </div>
+
+    <!-- BOX 2 -->
+    <div class="card">
+      <h3>Kegiatan</h3>
+      <p>0</p>
+    </div>
+
+    <!-- BOX 3 -->
+    <div class="card">
+      <h3>Pesan</h3>
+      <p>0</p>
+    </div>
+
+    <!-- BOX 4 -->
+    <div class="card">
+      <h3>Pengumuman</h3>
+      <p>0</p>
+    </div>
+
+    <!-- BOX 5 -->
+    <div class="card">
+      <h3>Video</h3>
+      <p>0</p>
+    </div>
+
+  </div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signOut, onAuthStateChanged } 
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import { getDatabase, ref, get, child }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+
+
+
+onAuthStateChanged(auth, async (user)=>{
+
+  if(user){
+
+    const snap = await get(child(ref(db), "admincamat/"+user.uid));
+
+    if(snap.exists()){
+      const data = snap.val();
+
+      // NAMA
+      document.getElementById("userNama").innerText =
+        "📊 " + data.nama;
+
+      // FOTO
+      document.getElementById("userFoto").src =
+        data.foto || "https://via.placeholder.com/60";
+
+    } else {
+      window.location.href = "login.html";
+    }
+
+  } else {
+    window.location.href = "login.html";
+  }
+
+});
+
+function hideLoading(){
+  document.getElementById("loadingScreen").style.display = "none";
+}
+
+
+
+
+
+
+
+
+/* TAB MENU */
+window.openTab = function(id){
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+/* CEK LOGIN + ROLE */
+onAuthStateChanged(auth, async (user)=>{
+
+  if(!user){
+    window.location.href = "login.html";
+    return;
+  }
+
+  const snap = await get(child(ref(db), "admincamat/"+user.uid));
+
+  if(snap.exists()){
+
+    const data = snap.val();
+
+    document.getElementById("userNama").innerText = "📊 " + data.nama;
+    document.getElementById("userFoto").src = data.foto;
+
+    // ⛔ HILANGKAN SPINNER SETELAH SEMUA SIAP
+    hideLoading();
+
+  } else {
+    window.location.href = "login.html";
+  }
+
+});
+
+/* LOGOUT */
+window.logout = function(){
+  signOut(auth).then(()=>{
+    window.location.href = "logincamat.html";
+  });
+}
+
+
+
+
+
+
+
+let sidebarOpen = false;
+
+window.toggleMenu = function(){
+  const sidebar = document.getElementById("sidebar");
+
+  if(sidebarOpen){
+    sidebar.style.left = "-260px";
+    sidebarOpen = false;
+  }else{
+    sidebar.style.left = "0";
+    sidebarOpen = true;
+  }
+}
+window.go = function(page){
+  window.location.href = page;
+}
+
+
+
+</script>
+
+</body>
+</html>

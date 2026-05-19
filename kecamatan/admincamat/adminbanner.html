@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Admin Banner Dinamis</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#f4f6f8;
+}
+
+.container{
+  max-width:900px;
+  margin:30px auto;
+  padding:15px;
+}
+
+.card{
+  background:#fff;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.08);
+  margin-bottom:15px;
+}
+
+input{
+  width:50%;
+  padding:10px;
+  margin-top:8px;
+  border-radius:10px;
+  border:1px solid #ddd;
+}
+
+button{
+  width:100%;
+  margin-top:10px;
+  padding:10px;
+  background:#0f6b20;
+  color:white;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+button:hover{ background:#0c5a1a; }
+
+.banner-list{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.item{
+  width:400px;
+  background:#fff;
+  border-radius:10px;
+  padding:10px;
+  border:1px solid #eee;
+}
+
+.item img{
+  width:100%;
+  height:140px;
+  object-fit:cover;
+  border-radius:10px;
+}
+
+.btn-danger{
+  background:#c62828;
+}
+.btn-danger:hover{
+  background:#a51f1f;
+}
+
+
+
+
+
+
+
+.card{
+  background:white;
+  border-radius:12px;
+  padding:15px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.08);
+  margin-bottom:15px;
+}
+
+.card h2{
+  margin:0;
+  font-size:18px;
+  color:#0f6b20;
+}
+
+.card p{
+  margin:5px 0 15px;
+  font-size:13px;
+  color:#666;
+}
+
+/* GRID 4 BUTTON */
+.menu-4{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:10px;
+}
+
+/* BUTTON STYLE */
+.menu-btn{
+  background:#0f6b20;
+  color:white;
+  text-decoration:none;
+  padding:12px;
+  border-radius:10px;
+  text-align:center;
+  font-weight:bold;
+  font-size:13px;
+  transition:0.2s;
+}
+
+.menu-btn:hover{
+  background:#0c5218;
+  transform:translateY(-3px);
+}
+
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+  <h2>Menu lain</h2>
+  <p></p>
+
+  <div class="menu-4">
+
+    <a href="runingtextadmin.html" class="menu-btn">RuningText</a>
+    <a href="layanan.html" class="menu-btn">Layanan</a>
+    <a href="kontak.html" class="menu-btn">Kontak</a>
+    <a href="profil.html" class="menu-btn">Profil</a>
+
+  </div>
+
+</div>
+
+
+  <!-- UPLOAD BARU -->
+  <div class="card">
+    <h3>➕ Tambah Banner</h3>
+    <input type="file" id="newBanner">
+    <button onclick="addBanner()">Upload Banner</button>
+  </div>
+
+  <!-- LIST -->
+  <div id="bannerBox" class="banner-list"></div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getDatabase,
+  ref,
+  push,
+  set,
+  get,
+  remove
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+import {
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+
+/* LOGIN */
+onAuthStateChanged(auth,(user)=>{
+  if(!user){
+    window.location.href="logincamat.html";
+  }else{
+    loadBanner();
+  }
+});
+
+/* CLOUDINARY */
+async function upload(file){
+  const fd = new FormData();
+  fd.append("file", file);
+  fd.append("upload_preset", "uploadgambar");
+  fd.append("cloud_name", "djxlbemky");
+
+  const res = await fetch(
+    "https://api.cloudinary.com/v1_1/djxlbemky/image/upload",
+    { method:"POST", body:fd }
+  );
+
+  const data = await res.json();
+  return data.secure_url;
+}
+
+/* ➕ ADD BANNER */
+window.addBanner = async function(){
+
+  const file = document.getElementById("newBanner").files[0];
+  if(!file){
+    alert("Pilih gambar dulu");
+    return;
+  }
+
+  const url = await upload(file);
+
+  const newRef = push(ref(db,"banner"));
+
+  await set(newRef, url);
+
+  alert("✅ Banner ditambahkan");
+
+  document.getElementById("newBanner").value = "";
+  loadBanner();
+};
+
+/* 📥 LOAD */
+async function loadBanner(){
+
+  const snap = await get(ref(db,"banner"));
+  const box = document.getElementById("bannerBox");
+
+  box.innerHTML = "";
+
+  if(!snap.exists()){
+    box.innerHTML = "<p>Belum ada banner</p>";
+    return;
+  }
+
+  Object.entries(snap.val()).forEach(([id,url])=>{
+
+    box.innerHTML += `
+      <div class="item">
+        <img src="${url}">
+
+        <input type="file" id="file-${id}">
+
+        <button onclick="editBanner('${id}')">💾 Update</button>
+        <button class="btn-danger" onclick="deleteBanner('${id}')">🗑 Hapus</button>
+      </div>
+    `;
+  });
+}
+
+/* 💾 EDIT */
+window.editBanner = async function(id){
+
+  const file = document.getElementById("file-"+id).files[0];
+
+  if(!file){
+    alert("Pilih gambar dulu");
+    return;
+  }
+
+  const url = await upload(file);
+
+  await set(ref(db,"banner/"+id), url);
+
+  alert("✅ Banner diupdate");
+
+  loadBanner();
+};
+
+/* 🗑 DELETE */
+window.deleteBanner = async function(id){
+
+  if(!confirm("Yakin hapus banner ini?")) return;
+
+  await remove(ref(db,"banner/"+id));
+
+  alert("🗑 Banner dihapus");
+
+  loadBanner();
+};
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Camat Postingan</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#f4f6f8;
+}
+
+.container{
+  max-width:850px;
+  margin:30px auto;
+  padding:15px;
+}
+
+.card{
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.08);
+  margin-bottom:15px;
+}
+
+input, textarea{
+  width:100%;
+  padding:12px;
+  margin:6px 0;
+  border-radius:10px;
+  border:1px solid #ddd;
+  font-size:14px;
+  box-sizing:border-box;
+}
+
+/* khusus textarea biar lebih panjang ke bawah */
+textarea{
+  min-height:180px;
+  resize:vertical;
+  line-height:1.6;
+}
+
+
+button{
+  padding:10px;
+  background:#0f6b20;
+  color:white;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#0c5a1a;
+}
+
+.post{
+  border-left:4px solid #0f6b20;
+  padding:10px;
+  margin-bottom:10px;
+}
+
+.actions button{
+  width:auto;
+  margin-right:5px;
+  background:#444;
+}
+
+.actions button.delete{
+  background:#c0392b;
+}
+</style>
+</head>
+
+<body>
+
+
+
+  <div id="editModal" style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.5);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:9999;
+">
+
+  <div style="
+    background:white;
+    padding:20px;
+    width:400px;
+    border-radius:15px;
+  ">
+
+    <h3>✏️ Edit Postingan</h3>
+
+    <input id="editJudul" placeholder="Judul">
+    <textarea id="editIsi" placeholder="Isi"></textarea>
+
+    <button onclick="saveEdit()">Simpan</button>
+    <button onclick="closeEdit()" style="background:#999;margin-top:10px;">Batal</button>
+
+  </div>
+
+</div>
+
+
+
+
+
+<div class="container">
+
+<!-- FORM POST -->
+<div class="card">
+  <h2>📝 Posting Camat</h2>
+
+  <input id="judul" placeholder="Judul">
+  <textarea id="isi" placeholder="Isi postingan"></textarea>
+
+  <input type="file" id="gambar" multiple accept="image/*">
+
+  <button onclick="uploadPost()">Publish</button>
+</div>
+
+<!-- EDIT FORM -->
+<div class="card" id="editBox" style="display:none;">
+  <h2>✏️ Edit Post</h2>
+
+  <input id="editJudul">
+  <textarea id="editIsi"></textarea>
+
+  <button onclick="saveEdit()">Simpan Perubahan</button>
+</div>
+
+<!-- LIST -->
+<div class="card">
+  <h2>📄 Data Postingan</h2>
+  <div id="listPost"></div>
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getDatabase,
+  ref,
+  set,
+  remove,
+  update,
+  onValue,
+  get
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+import {
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+
+let editID = null;
+
+/* 🔐 LOGIN */
+onAuthStateChanged(auth,(user)=>{
+  if(!user){
+    window.location.href = "logincamat.html";
+  }else{
+    loadPost();
+  }
+});
+
+/* ☁️ UPLOAD CLOUDINARY */
+async function uploadImage(file){
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", "uploadgambar");
+  formData.append("cloud_name", "djxlbemky");
+
+  const res = await fetch(
+    "https://api.cloudinary.com/v1_1/djxlbemky/image/upload",
+    {
+      method:"POST",
+      body:formData
+    }
+  );
+
+  const data = await res.json();
+  return data.secure_url;
+}
+
+/* 📝 CREATE POST (MAX 5 IMAGE) */
+window.uploadPost = async function(){
+
+  const judul = document.getElementById("judul").value;
+  const isi = document.getElementById("isi").value;
+  const files = document.getElementById("gambar").files;
+
+  if(!judul || !isi){
+    alert("Isi lengkap dulu");
+    return;
+  }
+
+  let images = [];
+
+  for(let i=0; i<files.length && i<5; i++){
+    const url = await uploadImage(files[i]);
+    images.push(url);
+  }
+
+  const id = "post_" + Date.now();
+
+  await set(ref(db,"portalcamat/"+id),{
+    judul,
+    isi,
+    gambar: images,
+    tanggal:new Date().toISOString().split("T")[0]
+  });
+
+  alert("Postingan berhasil dibuat");
+}
+
+/* 📄 LOAD POST */
+function loadPost(){
+  onValue(ref(db,"portalcamat"),(snap)=>{
+    const data = snap.val();
+    let html = "";
+
+    for(let id in data){
+
+      const item = data[id];
+
+      let imgHTML = "";
+      if(item.gambar){
+        if(Array.isArray(item.gambar)){
+          item.gambar.forEach(g=>{
+            imgHTML += `<img src="${g}" style="width:100%;margin-top:5px;border-radius:10px;">`;
+          });
+        }else{
+          imgHTML = `<img src="${item.gambar}" style="width:100%;border-radius:10px;">`;
+        }
+      }
+
+      html += `
+        <div class="post">
+          <h3>${item.judul}</h3>
+          ${imgHTML}
+          <p>${item.isi}</p>
+          <small>${item.tanggal}</small>
+
+          <div class="actions">
+            <button onclick="editPost('${id}')">Edit</button>
+            <button class="delete" onclick="deletePost('${id}')">Hapus</button>
+          </div>
+        </div>
+      `;
+    }
+
+    document.getElementById("listPost").innerHTML = html;
+  });
+}
+
+/* ❌ DELETE */
+window.deletePost = async function(id){
+
+  const yakin = confirm("⚠️ Yakin mau hapus postingan ini?");
+
+  if(!yakin){
+    return;
+  }
+
+  await remove(ref(db,"portalcamat/"+id));
+
+  alert("🗑️ Postingan berhasil dihapus");
+}
+
+/* ✏️ EDIT */
+window.editPost = async function(id){
+
+  editID = id;
+
+  const snap = await get(ref(db,"portalcamat/"+id));
+
+  if(snap.exists()){
+    const data = snap.val();
+
+    document.getElementById("editJudul").value = data.judul;
+    document.getElementById("editIsi").value = data.isi;
+
+    document.getElementById("editModal").style.display = "flex";
+  }
+}
+
+/* 💾 SAVE EDIT */
+window.saveEdit = async function(){
+
+  const judul = document.getElementById("editJudul").value;
+  const isi = document.getElementById("editIsi").value;
+
+  if(!judul || !isi){
+    alert("❌ Tidak boleh kosong");
+    return;
+  }
+
+  try {
+    await update(ref(db,"portalcamat/"+editID),{
+      judul,
+      isi
+    });
+
+    alert("✅ Berhasil diupdate");
+
+    closeEdit(); // pakai modal close
+  } catch(err){
+    alert("❌ Gagal update: " + err.message);
+  }
+}
+
+
+/* CLOSE MODAL */
+window.closeEdit = function(){
+  document.getElementById("editModal").style.display = "none";
+}
+</script>
+
+</body>
+</html>

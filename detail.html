@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detail Sejarah</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#f3f4f6;
+  color:#111;
+}
+
+/* HEADER */
+.header{
+  background:linear-gradient(135deg,#c40000,#7a0000);
+  color:white;
+  padding:25px 20px;
+  text-align:center;
+}
+
+.header h1{
+  margin:0;
+  font-size:24px;
+}
+
+.badge{
+  display:inline-block;
+  margin-top:8px;
+  background:rgba(255,255,255,0.2);
+  padding:5px 12px;
+  border-radius:20px;
+  font-size:12px;
+}
+
+/* CONTAINER */
+.container{
+  max-width:850px;
+  margin:-20px auto 40px;
+  background:white;
+  border-radius:16px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.08);
+  overflow:hidden;
+}
+
+/* IMAGE */
+.banner{
+  width:100%;
+  height:280px;
+  object-fit:cover;
+}
+
+/* CONTENT */
+.content{
+  padding:20px;
+}
+
+/* SECTION BOX */
+.box{
+  border:1px solid #eee;
+  border-left:5px solid #c40000;
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:15px;
+  background:#fafafa;
+}
+
+/* TITLE */
+h2{
+  margin:0 0 10px;
+  font-size:18px;
+  border-bottom:2px solid #c40000;
+  display:inline-block;
+  padding-bottom:3px;
+}
+
+/* TEXT */
+p{
+  line-height:1.8;
+  font-size:15px;
+  color:#333;
+  margin:0;
+}
+
+/* AUTO SUMMARY */
+.summary{
+  background:#fff7f7;
+  border:1px dashed #c40000;
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:15px;
+  font-size:14px;
+}
+
+/* LOADING */
+.loading{
+  text-align:center;
+  padding:50px;
+  color:#777;
+}
+
+
+
+
+
+.footer{
+  margin-top:40px;
+  background:#7f7f7f;
+  color:#ddd;
+  padding:40px 20px 15px;
+      border-radius: 10px;
+}
+
+.footer-container{
+  max-width:900px;
+  margin:auto;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:20px;
+}
+
+.footer h3,
+.footer h4{
+  color:white;
+  margin-bottom:10px;
+}
+
+.footer p{
+  font-size:14px;
+  line-height:1.6;
+  color:#bbb;
+}
+
+.footer a{
+  display:block;
+  color:#bbb;
+  text-decoration:none;
+  margin-bottom:6px;
+  font-size:14px;
+}
+
+.footer a:hover{
+  color:#c40000;
+}
+
+.footer-bottom{
+  text-align:center;
+  margin-top:25px;
+  padding-top:15px;
+  border-top:1px solid #333;
+  font-size:13px;
+  color:#777;
+}
+
+
+.footer-info h4{
+  color:white;
+  margin-bottom:10px;
+}
+
+.footer-info p{
+  font-size:14px;
+  line-height:1.6;
+  color:#bbb;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h1 id="judul">Loading...</h1>
+  <div class="badge" id="tahun"></div>
+</div>
+
+<div class="container">
+
+  <img id="gambar" class="banner">
+
+  <div class="content">
+
+    <!-- AUTO RANGKUM -->
+    <div class="summary" id="summary">
+      Loading ringkasan...
+    </div>
+
+    <!-- SEJARAH -->
+    <div class="box">
+      <h2>Sejarah Lengkap</h2>
+      <p id="sejarah">Loading...</p>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+  storageBucket: "paskibra2026-300eb.firebasestorage.app",
+  messagingSenderId: "937469132434",
+  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// ambil id
+const params = new URLSearchParams(location.search);
+const id = params.get("id");
+
+function autoSummary(text){
+  if(!text) return "-";
+  return text.length > 180 ? text.substring(0,180) + "..." : text;
+}
+
+async function load(){
+
+  const snap = await get(ref(db, "postingansejarah/" + id));
+
+  if(!snap.exists()){
+    document.body.innerHTML = "<div class='loading'>Data tidak ditemukan</div>";
+    return;
+  }
+
+  const data = snap.val();
+
+  document.getElementById("judul").innerText = data.judul || "Sejarah Paskibra";
+  document.getElementById("tahun").innerText = data.tahun || "";
+  document.getElementById("gambar").src = data.gambar || "";
+  document.getElementById("sejarah").innerText = data.sejarah || "-";
+
+  // 🔥 AUTO RANGKUM
+  document.getElementById("summary").innerText =
+    "Ringkasan: " + autoSummary(data.sejarah);
+}
+
+load();
+
+</script>
+
+
+
+
+<footer class="footer">
+
+  <div class="footer-container">
+
+    <div class="footer-brand">
+      <h3>Paskibra Digital</h3>
+      <p>
+        Sistem informasi sejarah dan dokumentasi Paskibra Indonesia.
+        Dibuat untuk edukasi, arsip, dan generasi muda.
+      </p>
+    </div>
+
+    <div class="footer-links">
+      <h4>Menu</h4>
+      <a href="home.html">Beranda</a>
+      <a href="postingansejara.html">Sejarah</a>
+      <a href="postingan.html">Postingan</a>
+      <a href="tentangkami.html">Tentang</a>
+    </div>
+
+<div class="footer-info">
+  <h4>Informasi</h4>
+  <p>
+    Platform ini digunakan sebagai media edukasi dan dokumentasi sejarah Paskibra di Indonesia.
+  </p>
+  <p>
+    Dibangun untuk mendukung digitalisasi organisasi dan meningkatkan pengetahuan generasi muda.
+  </p>
+</div>
+
+  </div>
+
+  <div class="footer-bottom">
+    © 2026 Paskibra padang tualang • All Rights Reserved
+  </div>
+
+</footer>
+
+
+
+</body>
+</html>

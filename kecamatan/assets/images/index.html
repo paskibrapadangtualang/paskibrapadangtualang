@@ -1,0 +1,4632 @@
+<!-- VIEWPORT -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+
+<!-- VIEWPORT -->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<!-- SEO -->
+<meta name="description" content="Layanan pengecekan tagihan dan pembayaran pinjaman secara online.">
+<meta name="robots" content="index, follow">
+
+<!-- OPEN GRAPH (WhatsApp / Facebook) -->
+<meta property="og:title" content="Pinjamanku - Cek Tagihan Online">
+<meta property="og:description" content="Layanan pengecekan tagihan dan pembayaran pinjaman secara online.">
+<meta property="og:image" content="https://rupiahsegar.sbs/logo-preview.png">
+<meta property="og:url" content="https://rupiahsegar.sbs">
+<meta property="og:type" content="website">
+
+<!-- TWITTER CARD (bonus bagus untuk share) -->
+<meta name="twitter:card" content="summary_large_image">
+
+<!-- FAVICON (ICON TAB BROWSER) -->
+<link rel="icon" type="image/png" href="https://rupiahsegar.sbs/logo-preview.png">
+<link rel="shortcut icon" type="image/png" href="https://rupiahsegar.sbs/logo-preview.png">
+<link rel="apple-touch-icon" href="https://rupiahsegar.sbs/logo-preview.png">
+<link rel="icon" href="/favicon.ico">
+<!-- THEME -->
+<meta name="theme-color" content="#b10808">
+
+<!-- STRUCTURED DATA (GOOGLE LOGO) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Pinjamanku",
+  "url": "https://rupiahsegar.sbs",
+  "logo": "https://rupiahsegar.sbs/logo-preview.png"
+}
+</script>
+
+<title>Dashboard Pinjaman</title>
+
+
+<style>
+/* ====================== CSS ====================== */
+body{
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding:0;
+  padding-bottom: 80px;
+  color: #333;
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+ 
+
+  background: 
+    linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), 
+    url("global_map.png");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+html, body {
+  touch-action: manipulation;
+}
+
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+
+
+/* sembunyikan isi app dulu */
+#mainApp{
+  display:none;
+}
+
+/* loader */
+#appLoader{
+  position:fixed;
+  inset:0;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999999;
+}
+
+.loader-box{
+  text-align:center;
+  font-family:'Segoe UI',sans-serif;
+}
+
+.spinner{
+  width:55px;
+  height:55px;
+  border:5px solid #ececec;
+  border-top:5px solid #dc2626;
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+  margin:auto;
+}
+
+.loader-box p{
+  margin-top:14px;
+  color:#666;
+  font-size:14px;
+}
+
+@keyframes spin{
+  to{
+    transform:rotate(360deg);
+  }
+}
+
+
+
+
+ /* cek tagihan & pembayaran */
+.logo-desc{
+  font-size: 11px;
+
+  color: #ffd6d6;
+
+  font-weight: 500;
+
+  margin-top: 2px;
+
+  letter-spacing: 0.3px;
+
+  opacity: 0.9;
+}
+
+
+.header {
+  display: flex;
+  justify-content: space-between; /* kiri di kiri, kanan di kanan */
+  align-items: center;
+    padding: 13px 5px;
+  background: #b10808;
+  position: fixed;
+  border-radius: 1px 1px 14px 11px;
+  color: #fff;
+  font-weight: bold;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 999; 
+  
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 6px; /* tambahan biar tidak terlalu nempel kiri */
+}
+
+.header-left .logo {
+  width: 32px; /* sedikit dibesarkan biar lebih proporsional */
+  height: 32px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.header-left .logo-text {
+  font-size: 16px;
+  color: #fff;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+/* Kanan: logo menu */
+.header-right {
+  position: relative;
+  margin-right: 6px;
+
+}
+
+.header-right .logo-menu {
+  margin-right: 10px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  filter: brightness(0) invert(1); /* hitam → putih */
+}
+
+.header-right .logo-menu {
+  margin-right: 10px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  filter: brightness(0) invert(1);
+
+  transition: 0.2s ease; /* biar smooth */
+}
+
+/* 🔥 saat di hover */
+.header-right .logo-menu:hover {
+  transform: scale(1.1);
+  opacity: 0.85;
+  
+}
+
+/* 🔥 saat diklik (pressed effect) */
+.header-right .logo-menu:active {
+  transform: scale(0.9);
+  opacity: 0.7;
+  
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: #fff;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+  z-index: 10;
+
+  display: flex;
+  flex-direction: column;
+  height: 180px;
+}
+
+/* DROPDOWN UTAMA */
+#dropdownMenu {
+  position: fixed;
+  top: 61px;
+  right: 2px;
+  width: 50vw;
+  height: 20vh;
+
+  background: #b10808;
+  color: #ffffff;
+
+  flex-direction: column;
+  padding: 20px;
+
+  z-index: 999;
+  overflow-y: auto;
+
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+
+  gap: 10px;
+
+  /* ANIMASI */
+  transform: translateX(100%);
+  opacity: 0;
+  transition: all 0.35s ease;
+
+  pointer-events: none;
+  display: flex;
+}
+
+/* SAAT DIBUKA */
+#dropdownMenu.show {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* MENU ITEM */
+#dropdownMenu .menu-item {
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 12px;
+
+  text-align: center;
+
+  transition: 0.2s;
+}
+
+/* HOVER */
+#dropdownMenu .menu-item:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+/* ITEM TERAKHIR */
+#dropdownMenu .menu-item:last-child {
+  border-bottom: none;
+}
+
+/* MENU KELUAR */
+#menuKeluar {
+  display: none;
+  margin-top: auto;
+  padding: 14px;
+  text-align: center;
+  background: #f48639;
+  border-radius: 8px;
+}
+
+
+.menu-item {
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.menu-item:hover {
+  background-color: #a0a0a0;
+}
+/* Artikel + Foto */
+.article-photos {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.article-photos img {
+  width: 30%;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+/* Modal */
+.modal-content {
+  display: none;
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background: rgb(0 0 0 / 84%);
+  justify-content:center;
+  align-items:center;
+  z-index: 1000;
+}
+
+.modal-inner{
+  background:
+    linear-gradient(
+      rgba(255,255,255,0.92),
+      rgba(255,255,255,0.92)
+    ),
+    url("global_map.png");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  padding: 25px;
+
+  border-radius: 18px;
+    max-height: 80vh;     /* 🔥 batas tinggi */
+  overflow-y: auto;     /* 🔥 aktifkan scroll */
+
+  width: 500px;
+  max-width: 90%;
+
+  position: relative;
+
+  box-shadow:
+    0 10px 35px rgba(0,0,0,0.18);
+
+  border: 1px solid rgba(255,255,255,0.6);
+
+  backdrop-filter: blur(6px);
+}
+
+
+
+
+
+
+.modal-inner .close {
+  position: sticky;
+  top: 10px;
+
+  margin-left: auto;   /* dorong ke kanan */
+  display: flex;
+
+  width: 32px;
+  height: 32px;
+
+  align-items: center;
+  justify-content: center;
+
+  font-size: 20px;
+
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.2); /* transparan */
+  color: #fff;
+
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+
+  transition: 0.2s ease;
+}
+
+.modal-inner .close:hover {
+  background: rgba(0, 0, 0, 0.35);
+  transform: scale(1.1);
+}
+
+
+
+
+
+
+/* PAGE */
+.page{
+  animation:fade .2s ease;
+  padding-top:70px;
+  max-width:500px;
+  margin:0 auto;
+}
+
+@keyframes fade{from{opacity:0}to{opacity:1}}
+
+/* CARD */
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 18px;
+  margin: 50px 15px 15px 15px; /* atas 50px, kanan/bawah/kiri 15px */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  border: 1px solid #b4b4b4;
+}
+
+.card-title{
+  text-align:center;
+  font-weight:bold;
+  font-size:18px;
+  margin-bottom:15px;
+  color:#c40000;
+}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  padding:12px 0;
+  border-bottom:1px solid #f0f0f0;
+}
+
+.row:last-child{
+  border-bottom:none;
+}
+
+.label{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#555;
+}
+
+.value{
+  text-align:right;
+  font-weight:bold;
+}
+
+.icon{
+  width:25px;
+  height:25px;
+}
+
+.order{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:6px;
+  font-size:13px;
+  color:#888;
+  margin-top:5px;
+}
+
+.payment-box {
+  background: #f5f5f5;
+  border: 2px dashed #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  max-width: 400px;  /* Bisa disesuaikan */
+  margin: 10px auto; /* Tengah horizontal */
+}
+
+/* Row tetap seperti semula */
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Label & Icon */
+.label {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  gap: 5px;
+}
+
+/* Order di bawah total bayar */
+.value {
+  text-align: right;
+  position: relative;
+}
+
+/* Box untuk Order ID + icon copy */
+.order {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 5px;
+  justify-content: flex-end;
+}
+
+/* Icon copy */
+.copy-icon {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+/* KTP BOX */
+/* Container 2 foto */
+/* Container 2 foto */
+/* Container 2 foto */
+.ktp-container{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:15px;
+}
+
+/* KTP BOX */
+.ktp-box{
+  background:#f5f5f5;
+  border:2px dashed #ddd;
+  border-radius:12px;
+  padding:12px;
+  flex:1;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+/* Konten gambar + label */
+.ktp-content{
+  width:100%;
+
+  display:flex;
+  flex-direction:column;
+
+  align-items:center;
+
+  text-align:center;
+}
+
+/* Foto */
+.ktp-img{
+  width:100%;
+  max-width:150px;
+
+  height:110px; /* tinggi dibuat sama */
+
+  object-fit:cover; /* biar rapi */
+
+  border-radius:8px;
+
+  border:1px solid #ddd;
+
+  background:#fff;
+
+  margin-bottom:8px;
+}
+
+/* Text label */
+.ktp-content p{
+  margin:0;
+
+  font-size:14px;
+
+  font-weight:600;
+
+  color:#444;
+
+  min-height:20px; /* posisi teks tetap sejajar */
+}
+
+/* ===============================
+   VALUE APP PREMIUM
+=============================== */
+.value-app{
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  background: linear-gradient(
+    135deg,
+    #ffffff,
+    #ff9b9b
+  );
+
+  border: 1px solid #ffd0d0;
+
+  padding: 10px 16px;
+
+  border-radius: 14px;
+
+  font-weight: 600;
+  font-size: 13px;
+
+  color: #7a0000;
+
+  overflow: hidden;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.3s ease;
+
+  box-shadow:
+    0 6px 18px rgba(0,0,0,0.08);
+
+  animation:
+    valuePulse 2.5s infinite,
+    valueShake 6s infinite;
+}
+
+/* ===============================
+   ICON
+=============================== */
+.value-icon{
+  width: 20px;
+  height: 20px;
+
+  object-fit: contain;
+
+  border-radius: 6px;
+
+  z-index: 2;
+
+  animation: iconFloat 2s ease-in-out infinite;
+}
+
+/* ===============================
+   TEKS DI ATAS EFEK
+=============================== */
+.value-app span{
+  position: relative;
+  z-index: 2;
+}
+
+/* ===============================
+   EFEK CAHAYA BERJALAN
+=============================== */
+.value-app::before{
+  content: "";
+
+  position: absolute;
+
+  top: -50%;
+  left: -50%;
+
+  width: 200%;
+  height: 200%;
+
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.45),
+    transparent
+  );
+
+  transform: rotate(25deg);
+
+  animation: valueShine 3.5s linear infinite;
+}
+
+/* ===============================
+   HOVER
+=============================== */
+.value-app:hover{
+  transform: translateY(-3px) scale(1.03);
+
+  box-shadow:
+    0 12px 28px rgba(255,90,90,0.28);
+}
+
+/* ===============================
+   KLIK
+=============================== */
+.value-app:active{
+  transform: scale(0.97);
+}
+
+/* ===============================
+   PULSE
+=============================== */
+@keyframes valuePulse{
+
+  0%{
+    box-shadow:
+      0 0 0 0 rgba(255,120,120,0.4);
+  }
+
+  70%{
+    box-shadow:
+      0 0 0 12px rgba(255,120,120,0);
+  }
+
+  100%{
+    box-shadow:
+      0 0 0 0 rgba(255,120,120,0);
+  }
+}
+
+/* ===============================
+   GETAR HALUS
+=============================== */
+@keyframes valueShake{
+
+  0%, 92%, 100%{
+    transform: translateX(0);
+  }
+
+  94%{
+    transform: translateX(-1px);
+  }
+
+  96%{
+    transform: translateX(1px);
+  }
+
+  98%{
+    transform: translateX(-1px);
+  }
+}
+
+/* ===============================
+   ICON NAIK TURUN
+=============================== */
+@keyframes iconFloat{
+
+  0%,100%{
+    transform: translateY(0);
+  }
+
+  50%{
+    transform: translateY(-2px);
+  }
+}
+
+/* ===============================
+   SHINE
+=============================== */
+@keyframes valueShine{
+
+  0%{
+    transform:
+      translateX(-100%)
+      rotate(25deg);
+  }
+
+  100%{
+    transform:
+      translateX(100%)
+      rotate(25deg);
+  }
+}
+
+/* PAYMENT BOX */
+.payment-box{
+  background:#edfff2;
+  border-radius:12px;
+  padding:15px;
+  margin-top:15px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.08);
+}
+
+.box-title{
+  text-align:center;
+  font-weight:bold;
+  font-size:16px;
+  margin-bottom:15px;
+  color:#333;
+}
+
+/* BUTTON */
+.pay-btn{
+  width:100%;
+  margin-top:15px;
+  background:#c40000;
+  color:white;
+  border:none;
+  padding:14px;
+  border-radius:20px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  box-shadow:0 3px 10px rgba(0,0,0,0.2);
+}
+.pay-btn:hover{
+  background:#a80000;
+}
+
+/* ===============================
+   POPUP
+=============================== */
+.popup-bayar{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+
+  background: rgb(0 0 0 / 86%);
+
+  display: none;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
+
+  /* ANIMASI */
+  opacity: 0;
+  visibility: hidden;
+
+  transition:
+    opacity 0.35s ease,
+    visibility 0.35s ease;
+}
+
+/* ===============================
+   SAAT MUNCUL
+=============================== */
+.popup-bayar.show{
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ===============================
+   CONTENT POPUP
+=============================== */
+.popup-content{
+    background:
+    linear-gradient(rgba(255, 255, 255, 0.92), rgb(223 191 191 / 92%)), url(global_map.png);
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  width: 90%;
+  max-width: 350px;
+
+  padding: 20px;
+
+  border-radius: 12px;
+
+  box-shadow:
+    0 5px 20px rgba(0,0,0,0.3);
+
+  /* ANIMASI KECIL → BESAR */
+  transform: scale(0.7);
+
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+
+  position: relative;
+}
+
+/* ===============================
+   ANIMASI AKTIF
+=============================== */
+.popup-bayar.show .popup-content{
+  transform: scale(1);
+}
+
+/* ===============================
+   FORM
+=============================== */
+.form-group{
+  margin-bottom: 18px;
+}
+
+.form-group label{
+  font-weight: 600;
+  font-size: 14px;
+
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: #444;
+}
+
+.form-group input{
+  width: 100%;
+
+  padding: 12px 14px;
+
+  border: 1px solid #ddd;
+
+  border-radius: 8px;
+
+  background: #fafafa;
+
+  font-size: 16px;
+
+  transition: all 0.2s ease;
+
+  box-sizing: border-box;
+
+  font-weight: bold;
+}
+
+/* ===============================
+   INPUT FOCUS
+=============================== */
+.form-group input:focus{
+  outline: none;
+
+  border-color: #ffffff;
+
+  background: #fff;
+
+  box-shadow:
+    0 0 0 2px rgba(196,0,0,0.08);
+}
+
+/* ===============================
+   PLACEHOLDER
+=============================== */
+.form-group input::placeholder{
+  color: #999;
+  font-size: 14px;
+}
+
+/* ===============================
+   VA IMAGE
+=============================== */
+.va-image{
+  border: 1px dashed #ccc;
+
+  padding: 10px;
+
+  text-align: center;
+
+  border-radius: 8px;
+
+  background: #fafafa;
+}
+
+.va-image img{
+  width: 100%;
+  max-width: 250px;
+}
+
+/* ===============================
+   CLOSE BUTTON
+=============================== */
+.close-btn{
+  width: 100%;
+
+  padding: 12px;
+
+  background: #c40000;
+
+  color: white;
+
+  border: none;
+
+  border-radius: 20px;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+/* HOVER */
+.close-btn:hover{
+  transform: scale(1.03);
+  background: #a80000;
+}
+
+/* KLIK */
+.close-btn:active{
+  transform: scale(0.98);
+}
+
+/* LOGIN CARD */
+#loginCard{
+  max-width:350px;
+  margin:120px auto;
+  padding:20px;
+  text-align:center;
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+
+  /* background gambar */
+  background: url('ajz.png') no-repeat center center;
+  background-size: cover;
+
+  /* lengkungan bawah */
+  clip-path: ellipse(140% 100% at 50% 0%);
+
+  /* shadow */
+  box-shadow:0 8px 25px rgb(18 18 18 / 99%);
+}
+
+
+#loginCard h2{
+  margin-bottom:15px;
+  color:#ffffff;
+}
+
+#loginCard input{
+  width:50%;
+  padding:12px;
+  margin-bottom:1px;
+  border-radius:8px;
+  border:1px solid #ddd;
+  font-size:16px;
+}
+
+#loginCard button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:8px;
+  background:#c40000;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  font-size:16px;
+}
+
+#loginCard button:hover{
+  background:#a80000;
+}
+
+#loginMessage {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #fff;
+    background: rgba(255,255,255,0.08);
+    padding: 8px 10px;
+    border-radius: 8px;
+    backdrop-filter: blur(6px);
+    display: inline-block;
+}
+
+#loginMessage img {
+  width: 18px;
+  height: 18px;
+}
+
+/* BOTTOM NAV */
+.bottom-nav{
+  position:fixed;
+  border-radius: 10px;
+  bottom:0;
+  left:0;
+  width:100%;
+  background:white;
+  display:flex;
+  justify-content:space-around;
+  padding:10px 0;
+  border-top:1px solid #ddd;
+  box-shadow:0 -2px 10px rgba(0,0,0,0.08);
+  z-index:999;
+}
+
+.nav-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  font-size:12px;
+  color:#666;
+  cursor:pointer;
+  gap:4px;
+  font-weight: bold;
+}
+
+.nav-item img{
+  width:40px;
+  height:40px;
+}
+
+.nav-item:hover{
+  color:#c40000;
+}
+
+
+#copyVA {
+  display: block;
+  margin: 10px auto 0; /* margin top 10px, auto kiri-kanan = tengah */
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background: #f0f0f0;
+}
+
+.va-box {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 15px;
+  background: #f9f9f9;
+  width: 250px; /* sesuaikan lebar */
+  text-align: center; /* tombol dan kode VA di tengah */
+  margin: 10px auto; /* center box di halaman */
+}
+
+.va-box .va-image {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.va-box #copyVA {
+  display: block;
+  margin: 10px auto 0;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background: #e0e0e0;
+}
+
+
+
+
+
+
+
+
+.cs-btn {
+  display: flex;
+  justify-content: center;   /* center horizontal */
+  align-items: center;       /* center vertical */
+  gap: 8px;
+
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #ff3b3b, #b10000);
+  border: none;
+  border-radius: 12px;
+
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+
+  text-align: center;
+  transition: 0.2s ease;
+}
+
+.cs-btn:hover {
+  transform: scale(1.03);
+}
+
+.cs-btn:active {
+  transform: scale(0.98);
+}
+
+.cs-icon {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.cs-box {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* posisi tengah */
+  gap: 8px;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-top: 15px; /* beri jarak dari tombol login */
+}
+
+
+
+#loginCS {
+  background-color: #999; /* abu-abu */
+  color: #fff;             /* teks putih supaya kontras */
+  border: none;            /* hilangkan border default */
+  padding: 8px 15px;       /* beri ruang di dalam tombol */
+  border-radius: 6px;      /* sudut agak membulat */
+  cursor: pointer;         /* kursor pointer saat hover */
+}
+
+#loginCS:hover {
+  background-color: #888;  /* efek hover sedikit lebih gelap */
+}
+
+.cs-box {
+  display: flex;
+  justify-content: center; /* tengah horizontal */
+  align-items: center;     /* tengah vertikal */
+  gap: 10px;               /* jarak icon & tombol */
+  margin-top: -100px;       /* naik mendekati input login */
+}
+
+
+/* ===============================
+   BUTTON CS PREMIUM
+=============================== */
+#csbox{
+  position: relative;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  background: linear-gradient(
+    135deg,
+    #ff2d2d,
+    #b10808
+  );
+
+  color: #fff;
+
+  border: none;
+
+  padding: 10px 18px;
+
+  border-radius: 12px;
+
+  cursor: pointer;
+
+  font-weight: 600;
+
+  font-size: 14px;
+
+  letter-spacing: 0.5px;
+
+  overflow: hidden;
+
+  text-align: center;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.3s ease,
+    background 0.3s ease;
+
+  box-shadow:
+    0 6px 18px rgba(177,8,8,0.35);
+
+  animation:
+    csPulse 2s infinite,
+    csShake 5s infinite;
+}
+
+/* ===============================
+   ICON
+=============================== */
+.cs-icon{
+  width: 22px;
+  height: 22px;
+
+  object-fit: contain;
+
+  display: block;
+
+  position: relative;
+
+  z-index: 2;
+
+  animation:
+    iconFloat 2s ease-in-out infinite;
+}
+
+/* ===============================
+   TEKS DI ATAS EFEK
+=============================== */
+#csbox span,
+#csbox{
+  z-index: 2;
+}
+
+/* ===============================
+   EFEK CAHAYA BERJALAN
+=============================== */
+#csbox::before{
+  content: "";
+
+  position: absolute;
+
+  top: -50%;
+  left: -50%;
+
+  width: 200%;
+  height: 200%;
+
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.35),
+    transparent
+  );
+
+  transform: rotate(25deg);
+
+  animation: shine 3s linear infinite;
+}
+
+/* ===============================
+   HOVER
+=============================== */
+#csbox:hover{
+  transform: translateY(-2px) scale(1.03);
+
+  box-shadow:
+    0 10px 24px rgba(177,8,8,0.45);
+}
+
+/* ===============================
+   KLIK
+=============================== */
+#csbox:active{
+  transform: scale(0.97);
+}
+
+/* ===============================
+   PULSE
+=============================== */
+@keyframes csPulse{
+
+  0%{
+    box-shadow:
+      0 0 0 0 rgba(255,45,45,0.5);
+  }
+
+  70%{
+    box-shadow:
+      0 0 0 12px rgba(255,45,45,0);
+  }
+
+  100%{
+    box-shadow:
+      0 0 0 0 rgba(255,45,45,0);
+  }
+}
+
+/* ===============================
+   GETAR HALUS
+=============================== */
+@keyframes csShake{
+
+  0%, 90%, 100%{
+    transform: translateX(0);
+  }
+
+  92%{
+    transform: translateX(-1px);
+  }
+
+  94%{
+    transform: translateX(1px);
+  }
+
+  96%{
+    transform: translateX(-1px);
+  }
+
+  98%{
+    transform: translateX(1px);
+  }
+}
+
+/* ===============================
+   ICON FLOAT
+=============================== */
+@keyframes iconFloat{
+
+  0%,100%{
+    transform: translateY(0);
+  }
+
+  50%{
+    transform: translateY(-2px);
+  }
+}
+
+/* ===============================
+   SHINE
+=============================== */
+@keyframes shine{
+
+  0%{
+    transform:
+      translateX(-100%)
+      rotate(25deg);
+  }
+
+  100%{
+    transform:
+      translateX(100%)
+      rotate(25deg);
+  }
+}
+
+
+
+
+/* Logo atas */
+.logo-top {
+  margin-bottom: 15px;
+  
+}
+.logo-top .logo-img {
+  width: 100px;
+  height: auto;
+  border-radius: 10px;
+}
+
+
+/* INFO DI BAWAH LOGIN */
+.login-info{
+  display:flex;
+  align-items:center; /* bikin teks sejajar dengan icon */
+  gap:8px; /* jarak antara icon dan teks */
+  justify-content:center; /* opsional, supaya di tengah */
+}
+
+.info-logo{
+  width:20px;
+  height:20px;
+}
+
+
+
+.input-box {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 15px;
+}
+
+.input-logo {
+  width: 40px;       /* ukuran logo */
+  height: 40px;
+  margin-right: 10px; /* jarak antara logo dan input */
+}
+
+.input-box input {
+  border: none;
+  outline: none;
+  flex: 1;           /* input memenuhi sisa box */
+  font-size: 14px;
+}
+
+
+
+
+/* Scroll lebih halus */
+.modal-inner::-webkit-scrollbar {
+  width: 6px;
+}
+.modal-inner::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+
+
+
+
+/* Tambahkan CSS untuk toast */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100%);
+  background-color: #56a958; /* hijau sukses */
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  opacity: 0;
+  transition: all 0.4s ease;
+  z-index: 9999;
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+
+.toast-wrap{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.toast-logo{
+  width:24px;
+  height:24px;
+  object-fit:contain;
+  border-radius:20%;
+}
+
+
+
+#sponsorBox {
+  position: fixed;
+  bottom: 90px;
+  right: 12px;
+  width: 140px;
+  height: 180px;
+  
+  border-radius: 16px;
+  overflow: hidden;
+  
+  background: linear-gradient(145deg, #ffffff, #f1f1f1);
+  box-shadow: 
+    0 10px 25px rgba(0,0,0,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.6);
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  transition: all 0.3s ease;
+  z-index: 999;
+   animation: slideUp 0.5s ease;
+}
+
+
+#sponsorFrame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 16px;
+}
+#sponsorBox:hover {
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 
+    0 15px 35px rgba(0,0,0,0.25);
+}
+
+
+.closeSponsor {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-size: 12px;
+  background: rgba(0,0,0,0.5);
+  color: white;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.closeSponsor:hover {
+  background: red;
+}
+
+
+.footer{
+  text-align:center;
+  font-size:13px;
+  color:#777;
+  margin-top:40px;
+  padding:15px 10px;
+}
+
+
+
+
+
+#copyright{
+  text-align:center;
+  font-size:13px;
+  color:#777;
+  margin-top:40px;
+  padding:15px;
+}
+
+
+#copyright span{
+  color:#999191;
+  font-weight:bold;
+}
+
+
+
+
+.popup-overlay{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.5);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+
+.popup-box{
+  background:white;
+  width:90%;
+  max-width:350px;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+.popup-box h3{
+  text-align:center;
+  margin-bottom:15px;
+  color:#c40000;
+}
+
+.popup-box select,
+.popup-box textarea,
+.popup-box input{
+  width:100%;
+  padding:5px;
+  border:1px solid #ddd;
+  border-radius:7px;
+  margin-top:5px;
+  font-size:14px;
+}
+
+.popup-box textarea{
+  resize:none;
+  height:70px;
+}
+
+.popup-buttons{
+  display:flex;
+  gap:10px;
+  margin-top:15px;
+}
+
+.popup-buttons button{
+  flex:1;
+  padding:10px;
+  border:none;
+  border-radius:7px;
+  background:#c40000;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.btn-batal{
+  background:#999;
+}
+
+/* ===============================
+   LOGO CS PREMIUM
+=============================== */
+/* ===============================
+   LOGO CS PREMIUM
+=============================== */
+.cs-logo{
+  width: 70px;
+
+  display: block;
+
+  margin: 0 auto 12px auto;
+
+  border-radius: 50%;
+
+  padding: 6px;
+
+  background: linear-gradient(
+    135deg,
+    #ffffff,
+    #ffe0e0
+  );
+
+  box-shadow:
+    0 6px 20px rgba(177,8,8,0.25),
+    0 0 18px rgba(255,70,70,0.35);
+
+  animation:
+    csLogoPulse 2s infinite;
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* ===============================
+   HOVER
+=============================== */
+.cs-logo:hover{
+  transform: scale(1.08);
+
+  box-shadow:
+    0 10px 28px rgba(177,8,8,0.35),
+    0 0 28px rgba(255,70,70,0.55);
+}
+
+/* ===============================
+   PULSE GLOW
+=============================== */
+@keyframes csLogoPulse{
+
+  0%{
+    box-shadow:
+      0 0 0 0 rgba(255,45,45,0.45),
+      0 6px 20px rgba(177,8,8,0.25);
+  }
+
+  70%{
+    box-shadow:
+      0 0 0 16px rgba(255,45,45,0),
+      0 6px 20px rgba(177,8,8,0.25);
+  }
+
+  100%{
+    box-shadow:
+      0 0 0 0 rgba(255,45,45,0),
+      0 6px 20px rgba(177,8,8,0.25);
+  }
+}
+
+
+
+
+
+
+
+
+
+.status-belum{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+
+  background:#f1f3f5;
+  border:1px solid #e0e0e0;
+  padding:6px 12px;
+  border-radius:8px;
+
+  font-size:13px;
+  font-weight:500;
+  color:#555;
+
+  box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* animasi titik loading */
+.status-belum::after{
+  content:"";
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#eb0003;
+  animation:loadingDot 1.2s infinite;
+}
+
+@keyframes loadingDot{
+  0%{opacity:0.2; transform:scale(0.8);}
+  50%{opacity:1; transform:scale(1.3);}
+  100%{opacity:0.2; transform:scale(0.8);}
+}
+
+
+
+
+
+
+
+.image-viewer{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(20 13 9 / 96%);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.image-viewer img{
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+}
+
+.close-viewer{
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  font-size: 30px;
+  color: #fff;
+  cursor: pointer;
+}
+
+
+
+.image-viewer img{
+  animation: zoomIn 0.25s ease;
+}
+
+@keyframes zoomIn{
+  from{ transform: scale(0.8); opacity: 0; }
+  to{ transform: scale(1); opacity: 1; }
+}
+
+
+
+img, .logo-admin, .icon {
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+
+
+
+</style>
+</head>
+<body>
+
+<div id="appLoader">
+  <div class="loader-box">
+    <div class="spinner"></div>
+    <p>Memuat aplikasi...</p>
+  </div>
+</div>
+
+
+
+
+
+
+<!-- HEADER -->
+<div class="header">
+
+  <!-- Kiri: logo + teks -->
+  <div class="header-left">
+
+    <img src="Rupiah segar.jpg" class="logo">
+
+    <div class="logo-area">
+
+      <span class="logo-text">Rupiah Segar</span>
+
+      <div class="logo-desc">
+        Cek Tagihan & Pembayaran
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Kanan: logo menu dengan dropdown -->
+  <div class="header-right">
+    <img src="country_filter_icon.png" class="logo-menu" onclick="toggleMenu()">
+    <div id="dropdownMenu" class="dropdown-menu">
+      <div class="menu-item" onclick="showKontak()">Kontak Bantuan</div>
+      <div class="menu-item" onclick="showKetentuan()">Ketentuan & Privasi</div>
+
+<div class="menu-item" id="menuKeluar">
+  Keluar
+</div>
+    
+
+</div>
+  </div>
+</div>
+
+<div id="mainApp"></div>
+
+
+<!-- Modal untuk menampilkan konten profesional -->
+<div id="modalContent" class="modal-content">
+  <div class="modal-inner">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+
+
+
+
+<!-- LOGIN CARD -->
+<div id="loginCard">
+  <!-- Logo di atas -->
+  <div class="logo-top">
+    <img src="Rupiah segar.jpg" alt="Logo" class="logo-img">
+  </div>
+
+  <!-- Judul Login -->
+  <h2>Login Akun</h2>
+
+  <!-- Input WA -->
+  <div class="input-box">
+  <img src="bdn.png" class="input-logo" alt="Logo">
+  <input type="tel" id="noWa" placeholder="Masukkan Nomor HP">
+</div>
+
+  <!-- Tombol Login -->
+  <button id="loginBtn">Login</button>
+<p id="loginMessage">
+<img src="24-hours-support.png" alt="status"
+style="width:18px; vertical-align:middle; filter: brightness(0) invert(1);">
+  <span id="loginText"></span>
+</p>
+
+  <!-- Info di bawah login -->
+  <div class="login-info">
+  <img src="manner_rating_up_unselect.png" class="info-logo" alt="Logo">
+  <span style="color:white;">
+    Silahkan masuk Nomor HP sesuai yang terdaftar di sistem
+  </span>
+</div>
+</div>
+
+  <!-- Fitur CS Tengah -->
+  <div class="cs-box">
+    
+    <button id="csbox">
+      <img src="ajb.png" class="cs-icon" alt="CS Icon">
+      
+      Bantuan CS</button>
+
+
+
+      
+    <!-- POPUP BANTUAN CS -->
+<div id="csPopup" class="popup-overlay">
+  <div class="popup-box">
+
+    <img src="ajb.png" class="cs-logo" alt="Logo">
+
+    <h3>Customer Service</h3>
+
+    <div class="form-group">
+      <label>Nomor HP Terdaftar</label>
+      <input type="text" id="csHp" placeholder="Masukkan nomor HP">
+    </div>
+    <div class="form-group">
+      <label>Kategori Bantuan</label>
+      <select id="csKategori">
+        <option>Cara Pembayaran</option>
+        <option>Cara Login</option>
+        <option>Cara Periksa Pembayaran</option>
+        <option>Cara Ganti Nomor HP</option>
+        <option>Cara Salin Kode VA</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Pesan Lain</label>
+      <textarea id="csPesan" placeholder="Tuliskan pesan anda"></textarea>
+    </div>
+
+    <div class="popup-buttons">
+      <button onclick="kirimCS()">Kirim</button>
+      <button class="btn-batal" onclick="tutupCS()">Batal</button>
+    </div>
+
+  </div>
+</div>
+  </div>
+
+
+
+</div>
+
+
+
+<!-- DASHBOARD USER -->
+<div id="dashboard" style="display:none">
+
+<div id="pinjamanPage" class="page" style="display:none;">
+  <div class="card">
+    <div class="card-title">Jumlah Pinjaman</div>
+
+<div class="row">
+  <span class="label">Pemberi Pinjaman</span>
+
+  <span class="value-app">
+    <img src="Rupiah segar.jpg" class="value-icon">
+    Rupiah Segar
+  </span>
+
+</div>
+    <div class="row">
+      <span class="label">Jumlah Pinjaman</span>
+      <span class="value" id="jumlahPinjaman">Memuat..</span>
+    </div>
+
+    <div class="row">
+      <span class="label">Jatuh Tempo</span>
+      <span class="value" id="jatuhTempoPinjaman">Memuat..</span>
+    </div>
+
+  </div>
+
+
+
+
+</div>
+
+
+
+
+
+<div id="tagihanPage" class="page" style="display:none">
+  <div class="card">
+    <div class="card-title">Tagihan Nasabah</div>
+    <div class="row">
+      <span class="label">Status</span>
+      <span class="value status-belum" id="statusTagihan">Memuat..</span>
+    </div>
+    <div class="row">
+      <span class="label">Total Tagihan</span>
+      <span class="value" id="totalTagihan">IDR Memuat..</span>
+    </div>
+    <div class="row">
+      <span class="label">Jatuh Tempo</span>
+      <span class="value" id="jatuhTempo">Memuat..</span>
+    </div>
+    <button class="pay-btn" onclick="openBayar()">Bayar Sekarang</button>
+  </div>
+</div>
+
+
+
+
+  <!-- BAGIAN SAYA -->
+<div id="sayaPage" class="page" style="display:none;">
+  <div class="card">
+    <div class="card-title">Data Nasabah</div>
+ <div class="ktp-container">
+  <div class="ktp-box">
+    <div class="ktp-content">
+      <img id="ktpImg" class="ktp-img" src="bdi.png" alt="Foto KTP">
+      <p>Dokumen KTP</p>
+    </div>
+  </div>
+  <div class="ktp-box">
+    <div class="ktp-content">
+      <img id="selfieImg" class="ktp-img" src="abk.png" alt="Foto Selfie">
+      <p>Verifikasi Wajah</p>
+    </div>
+  </div>
+</div>
+
+
+<div id="imageViewer" class="image-viewer">
+  <span class="close-viewer">&times;</span>
+  <img id="viewerImg" src="" />
+</div>
+
+
+
+    <div class="payment-box">
+      <div class="box-title">Total Jumlah Pembayaran</div>
+ <div class="payment-box">
+  <div class="row">
+    <span class="label"><img src="mine_rucksack_icon.png" class="icon"> IDR</span>
+    <span class="value" id="totalBayar">
+      Rp 0
+      <div class="order">
+        <span class="order-text" id="orderId">Order ID : -</span>
+        <img src="copy_id_icon.png" class="copy-icon" onclick="copyOrder()">
+      </div>
+    </span>
+  </div>
+</div>
+      <div class="row">
+        <span class="label"><img src="bdn.png" class="icon"> Nama</span>
+        <span class="value" id="namaNasabah" style="color:#7c7c7c;">-</span>
+      </div>
+      <div class="row">
+        <span class="label"><img src="bac.png" class="icon"> Nama Bank</span>
+        <span class="value" id="bankNasabah">-</span>
+      </div>
+      <div class="row">
+        <span class="label"><img src="aaq.png" class="icon"> Virtual Account</span>
+        <span class="value" id="vaNasabah">-</span>
+      </div>
+    </div>
+  </div>
+
+  
+
+
+  
+</div>
+
+<div style="
+  margin:18px auto 0 auto;
+  padding:16px 18px;
+  width:92%;
+  max-width:340px;
+  border-radius:14px;
+  border:1px solid #e5e7eb;
+">
+
+  <div style="
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+  ">
+
+    <!-- ICON PNG -->
+    <div style="
+      width:42px;
+      height:42px;
+      min-width:42px;
+
+      border-radius:12px;
+
+      background:#ffffff;
+
+      display:flex;
+      align-items:center;
+      justify-content:center;
+
+      box-shadow:0 4px 10px rgba(0,0,0,0.08);
+
+      border:1px solid #e5e7eb;
+    ">
+
+      <img 
+        src="bdn.png" 
+        alt="Security"
+        style="
+          width:24px;
+          height:24px;
+          object-fit:contain;
+        "
+      >
+
+    </div>
+
+    <!-- TEXT -->
+    <div>
+
+      <div style="
+        font-size:15px;
+        font-weight:700;
+        color:#111827;
+        margin-bottom:8px;
+      ">
+        Keamanan & Perlindungan Data
+      </div>
+
+      <p style="
+        margin:0;
+        color:#4b5563;
+        font-size:13px;
+        line-height:1.8;
+        text-align:left;
+      ">
+        Seluruh data pengguna diproses secara aman dan hanya digunakan
+        untuk kebutuhan verifikasi layanan sesuai kebijakan privasi yang berlaku.
+      </p>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+  <!-- POPUP BAYAR -->
+<!-- POPUP PEMBAYARAN -->
+<div id="bayarPopup" class="popup-bayar">
+  <div class="popup-content">
+    <h3>Form Pembayaran</h3>
+
+    <div class="form-group">
+      <label>Nama Nasabah</label>
+      <input type="text" id="popupNama" value="" readonly>
+    </div>
+
+<div class="form-group va-box">
+  <label>Kode VA Pembayaran</label>
+  <div class="va-image" id="popupKodeVA">
+    <!-- JS akan isi kode VA di sini -->
+  </div>
+<button id="copyVA" title="Salin Kode VA">Salin Kode</button>
+</div>
+
+    <div class="form-group">
+      <label>Bank Pembayaran</label>
+      <input type="text" id="popupBank" value="" readonly>
+    </div>
+
+    <div class="form-group">
+  <label>Jumlah Pembayaran</label>
+  <input type="text" id="popupTagihan" value="" readonly>
+</div>
+
+    <button class="close-btn" onclick="closeBayar()">Tutup</button>
+  </div>
+</div>
+
+
+
+
+
+  <!-- NAV -->
+  <div class="bottom-nav">
+    <div class="nav-item" onclick="showPage('pinjaman')">
+      <img src="aaz.png">Pinjaman Anda
+    </div>
+    <div class="nav-item" onclick="showPage('tagihan')">
+      <img src="abm.png">Tagihan
+    </div>
+    <div class="nav-item" onclick="showPage('saya')">
+      <img src="aao.png">Saya
+    </div>
+  </div>
+
+
+
+  <!-- Tambahkan ini di HTML body -->
+<div id="toast" class="toast"></div>
+
+
+
+
+
+
+
+
+</div>
+
+<!-- ====================== SCRIPT ====================== -->
+<script type="module">
+import { initializeApp } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+// FIRESTORE (untuk users)
+import { getFirestore, collection, query, where, getDocs, doc,onSnapshot, getDoc } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// REALTIME DB (untuk kontak)
+import { getDatabase, ref, onValue,get} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDa5S7LeRuudC2ZWnOsW51asyOQ2WsXZGY",
+  authDomain: "datapinjam-c6008.firebaseapp.com",
+  projectId: "datapinjam-c6008",
+  storageBucket: "datapinjam-c6008.firebasestorage.app",
+  messagingSenderId: "937287862152",
+  appId: "1:937287862152:web:7ea55a1e90be67c3591c3d"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const rtdb = getDatabase(app);
+
+
+/* BASE64 */
+function decodeBase64(str) {
+  return decodeURIComponent(escape(atob(str)));
+}
+let sponsorHTML = "";
+
+onSnapshot(doc(db, "visual_code", "main_code"), (docSnap) => {
+  if (!docSnap.exists()) return;
+
+  let html = docSnap.data().code;
+
+  try {
+    html = decodeURIComponent(escape(atob(html)));
+  } catch {}
+
+  html = html
+    .replace(/<!DOCTYPE.*?>/gi, "")
+    .replace(/<html.*?>/gi, "")
+    .replace(/<\/html>/gi, "")
+    .replace(/<head.*?>[\s\S]*?<\/head>/gi, "")
+    .replace(/<body.*?>/gi, "")
+    .replace(/<\/body>/gi, "");
+
+  sponsorHTML = html; // ✅ HANYA SIMPAN
+  console.log("📦 Sponsor siap ditampilkan");
+});
+
+let userData = null; // simpan data user yang login
+
+async function loginUser() {
+    const noWa = document.getElementById("noWa").value;
+    if (!noWa) return alert("Masukkan nomor WA");
+
+    const q = query(collection(db, "users"), where("noWa", "==", noWa));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+        alert("Nomor WA tidak terdaftar");
+        return;
+    }
+
+    querySnapshot.forEach((doc) => {
+        userData = doc.data(); // simpan data user
+    });
+
+    // sembunyikan login, tampilkan dashboard
+    document.getElementById("loginUser").style.display = "none";
+    document.getElementById("pinjamanPage").style.display = "block";
+    document.getElementById("tagihanPage").style.display = "block";
+    document.getElementById("sayaPage").style.display = "block";
+    document.getElementById("copyright").style.display = "none";
+
+    updateUserDashboard();
+}
+
+
+// LOGIN USER
+window.loginUser = async function () {
+  const noWa = document.getElementById("noWa")?.value.trim();
+  const msgEl = document.getElementById("loginText");
+  
+
+  if (!msgEl) return;
+
+const showStatus = (text) => {
+  msgEl.textContent = text;
+
+  setTimeout(() => {
+    msgEl.textContent = "";
+  }, 3000);
+};
+
+  // VALIDASI
+  if (!noWa) {
+    showStatus("Mohon masukan nomor!");
+    return;
+  }
+
+  // 🔥 POPUP LOADING
+  const loader = document.createElement("div");
+loader.id = "loadingPopup";
+loader.innerHTML = `
+  <div style="
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.65);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+  ">
+    <div style="
+      width:55px;
+      height:55px;
+      border:5px solid #fff;
+      border-top:5px solid transparent;
+      border-radius:50%;
+      animation:spin 0.8s linear infinite;
+    "></div>
+  </div>
+`;
+document.body.appendChild(loader);
+
+  try {
+    await new Promise(res => setTimeout(res, 1000));
+
+    const q = query(collection(db, "users"), where("noWa", "==", noWa));
+    const snap = await getDocs(q);
+
+    // ❌ tidak ditemukan
+    if (snap.empty) {
+      document.getElementById("loadingPopup")?.remove();
+      showStatus("Nomor HP tidak terdaftar!");
+      return;
+    }
+
+    userData = snap.docs[0].data();
+
+    // ❌ remove loading dulu
+    document.getElementById("loadingPopup")?.remove();
+
+    // ✅ success status (hilang 2 detik)
+    showStatus("Login berhasil");
+
+  } catch (err) {
+    console.error(err);
+    document.getElementById("loadingPopup")?.remove();
+    showStatus("Terjadi kesalahan, coba lagi");
+  }
+
+
+  // 🔥 HAPUS POPUP LOADING
+  document.getElementById("loadingPopup")?.remove();
+
+
+
+// lanjut query Firebase setelah ini
+
+  try{
+    const q = query(collection(db, "users"), where("noWa","==",noWa));
+    const snap = await getDocs(q);
+
+    if(snap.empty){ msgEl.textContent="Nomor HP tidak terdaftar!"; return; }
+
+   userData = snap.docs[0].data();
+
+    // simpan login
+localStorage.setItem("isLogin", "true");
+localStorage.setItem("userData", JSON.stringify(userData));
+    // Hide login, show dashboard
+    // Hide login, show dashboard
+document.getElementById("loginCard").style.display="none";
+document.getElementById("dashboard").style.display="block";
+document.getElementById("copyright").style.display="none";
+document.getElementById("menuKeluar").style.display = "block";
+
+showPage("pinjaman");
+
+    // Update halaman "Saya"
+    if(document.getElementById("namaNasabah")){
+    document.getElementById("namaNasabah").innerText = userData.nama || "-";
+}
+if(document.getElementById("orderId")){
+    document.getElementById("orderId").innerText = "Order ID : " + (userData.orderId || "-");
+}
+if(document.getElementById("totalTagihan")){
+    document.getElementById("totalTagihan").innerText = "IDR " + (Number(userData.tagihan || 0)).toLocaleString();
+}
+if(document.getElementById("jatuhTempo")){
+    document.getElementById("jatuhTempo").innerText = userData.jatuhTempo || "-";
+}
+if(document.getElementById("statusTagihan")){
+    const statusEl = document.getElementById("statusTagihan");
+    statusEl.innerText = userData.status || "Belum Bayar";
+    statusEl.classList.remove("status-belum", "status-bayar");
+    if(userData.status === "Lunas") statusEl.classList.add("status-bayar");
+    else statusEl.classList.add("status-belum");
+}
+// Set data Pinjaman sesuai akun
+document.getElementById("jumlahPinjaman").innerText = 
+  userData.totalPinjaman ? "IDR " + userData.totalPinjaman.toLocaleString("id-ID") : "IDR 0";
+
+document.getElementById("jatuhTempoPinjaman").innerText = 
+  userData.jatuhTempo || "-";
+    document.getElementById("namaNasabah").innerText = userData.nama || "-";
+    document.getElementById("orderId").innerText = "Order ID : " + (userData.orderId || "-");
+    document.getElementById("totalBayar").childNodes[0].textContent = "Rp " + ((userData.totalBayar || 0).toLocaleString());
+    document.getElementById("bankNasabah").innerText = userData.bank || "-";
+    document.getElementById("vaNasabah").innerText = userData.va || "-";
+
+    // Foto KTP & Selfie
+   // Foto KTP & Selfie (versi aman)
+const ktpImg = document.getElementById("ktpImg");
+const selfieImg = document.getElementById("selfieImg");
+
+const viewer = document.getElementById("imageViewer");
+const viewerImg = document.getElementById("viewerImg");
+const closeBtn = document.querySelector(".close-viewer");
+
+// 🔥 fungsi buka viewer
+function showImage(src){
+  viewer.style.display = "flex";
+  viewerImg.src = src;
+}
+
+// 🔹 klik KTP
+if(ktpImg){
+  ktpImg.addEventListener("click", () => {
+    showImage(ktpImg.src);
+  });
+}
+
+// 🔹 klik selfie
+if(selfieImg){
+  selfieImg.addEventListener("click", () => {
+    showImage(selfieImg.src);
+  });
+}
+
+// 🔥 tombol close
+closeBtn.addEventListener("click", () => {
+  viewer.style.display = "none";
+});
+
+// 🔥 klik luar gambar = close
+viewer.addEventListener("click", (e) => {
+  if(e.target === viewer){
+    viewer.style.display = "none";
+  }
+});
+
+if (userData && ktpImg && selfieImg) {
+  ktpImg.src = userData.ktp || "";
+  selfieImg.src = userData.swafoto || "";
+}
+
+console.log("DATA USER:", userData);
+
+    // Update popup pembayaran
+    const popupInputs = document.querySelectorAll("#bayarPopup input[readonly]");
+    popupInputs[0].value = userData.nama || "-"; // Nama Nasabah
+    popupInputs[1].value = userData.bank || "-"; // Bank
+    popupInputs[2].value = "IDR " + ((userData.tagihan || 0).toLocaleString()); // Jumlah Bayar
+
+// Update Kode VA di popup
+// Update Kode VA dari Firebase
+const vaContainer = document.getElementById("popupKodeVA");
+if(vaContainer){
+    vaContainer.textContent = userData.kodeVA || "-";
+}
+
+// 🔥 tampilkan sponsor setelah login
+setTimeout(() => {
+
+  if (!sponsorHTML) {
+    console.log("❌ sponsor belum siap");
+    return;
+  }
+
+  if (!document.getElementById("sponsorPopup")) {
+    document.body.insertAdjacentHTML("beforeend", sponsorHTML);
+
+    setTimeout(() => {
+      document.getElementById("sponsorPopup")?.classList.add("active");
+    }, 300);
+  }
+
+}, 2000);
+
+// letakkan di user page
+document.addEventListener("click", function(e){
+  if(e.target.matches("#sponsorPopup .popup-header button")){ // tombol close
+    const popup = e.target.closest(".popup-overlay");
+    if(popup) popup.classList.remove("active");
+  }
+});
+
+function closePopup() {
+  const popup = document.getElementById("popupSponsor"); // sesuaikan ID
+  if (popup) {
+    popup.style.display = "none"; // sembunyikan popup
+    console.log("Popup ditutup ✅");
+  } else {
+    console.log("❌ Elemen popup tidak ditemukan");
+  }
+}
+
+
+
+    // event listeners
+    document.getElementById('closePopupBtn').addEventListener('click', () => {
+      document.getElementById('sponsorPopup').remove();
+    });
+
+    document.getElementById('claimBtn').addEventListener('click', () => {
+      document.getElementById('popupChoice').style.display = 'flex';
+    });
+
+    document.getElementById('waBtn').addEventListener('click', () => {
+      window.open(data.btnLinks.wa, '_blank');
+    });
+
+    document.getElementById('siteBtn').addEventListener('click', () => {
+      window.open(data.btnLinks.site, '_blank');
+    });
+
+    // tampilkan popup otomatis
+    setTimeout(() => {
+      document.getElementById('sponsorPopup').classList.add('active');
+    }, 2000);
+    
+  
+document.getElementById('claimBtn').addEventListener('click', () => {
+  document.getElementById('popupChoice').style.display = 'flex';
+
+});
+
+
+
+
+// Tombol copy
+
+
+
+  }catch(err){
+    console.error(err);
+    msgEl.textContent="Terjadi kesalahan, coba lagi";
+  }
+}
+document.getElementById("loginBtn").addEventListener("click",()=>window.loginUser());
+
+
+
+
+
+console.log(userData);
+
+
+
+// Update halaman Tagihan sesuai data user
+
+function updateUserDashboard(){
+
+  if(!userData) return;
+
+  // STATUS
+  document.getElementById("statusTagihan").innerText =
+  userData.status || "Belum Bayar";
+
+  // TOTAL TAGIHAN
+  document.getElementById("totalTagihan").innerText =
+  "IDR " + Number(userData.tagihan || 0).toLocaleString();
+
+  // JATUH TEMPO
+  document.getElementById("jatuhTempo").innerText =
+  userData.jatuhTempo || "-";
+
+}
+
+
+
+
+
+
+
+
+ // Toggle dropdown menu
+window.toggleMenu = function () {
+  const menu = document.getElementById("dropdownMenu");
+
+  if (menu.classList.contains("show")) {
+    
+    // TUTUP MENU
+    menu.classList.remove("show");
+
+    setTimeout(() => {
+      menu.style.display = "none";
+    }, 350);
+
+  } else {
+
+    // BUKA MENU
+    menu.style.display = "flex";
+
+    setTimeout(() => {
+      menu.classList.add("show");
+    }, 10);
+  }
+}
+
+
+
+
+// Fungsi menampilkan modal profesional
+window.showKontak = function () {
+
+  const kontakRef = ref(rtdb, "setting/contact");
+
+  // listener realtime
+  onValue(kontakRef, (snapshot) => {
+
+    if (!snapshot.exists()) {
+      return alert("Data kontak tidak ditemukan!");
+    }
+
+    const data = snapshot.val();
+
+    showModal(`
+
+<div style="
+  font-family:'Segoe UI',sans-serif;
+  color:#333;
+  max-width:420px;
+  margin:0 auto;
+">
+
+  <!-- HEADER -->
+  <div style="
+    text-align:center;
+    margin-bottom:22px;
+  ">
+
+    <div style="
+      width:72px;
+      height:72px;
+      margin:0 auto 12px auto;
+
+      border-radius:22px;
+
+      background:linear-gradient(135deg,#ffffff,#f8fafc);
+
+      display:flex;
+      align-items:center;
+      justify-content:center;
+
+      box-shadow:0 8px 22px rgba(177,8,8,0.15);
+
+      border:1px solid #eee;
+    ">
+
+      <img src="cs.png" style="
+        width:42px;
+        height:42px;
+        object-fit:contain;
+      ">
+
+    </div>
+
+    <h2 style="
+      color:#b10808;
+      margin:0;
+      font-size:24px;
+      font-weight:700;
+      letter-spacing:0.3px;
+    ">
+      Pusat Bantuan
+    </h2>
+
+    <p style="
+      font-size:14px;
+      color:#6b7280;
+      margin-top:10px;
+      line-height:1.7;
+    ">
+      Tim layanan pelanggan Rupiah Segar siap membantu
+      kebutuhan informasi dan kendala pengguna secara profesional.
+    </p>
+
+  </div>
+
+  <!-- LIST -->
+  <div style="
+    display:grid;
+    gap:14px;
+  ">
+
+    <!-- EMAIL -->
+    <div style="
+      display:flex;
+      align-items:center;
+
+      padding:16px;
+
+      background:linear-gradient(135deg,#ffffff,#f8fafc);
+
+      border-radius:18px;
+
+      border:1px solid #e5e7eb;
+
+      box-shadow:0 5px 16px rgba(0,0,0,0.05);
+    ">
+
+      <!-- ICON -->
+      <div style="
+        width:50px;
+        height:50px;
+        min-width:50px;
+
+        border-radius:16px;
+
+        background:#fff;
+
+        display:flex;
+        align-items:center;
+        justify-content:center;
+
+        margin-right:14px;
+
+        box-shadow:0 4px 12px rgba(0,0,0,0.06);
+      ">
+
+        <img src="gmail.png" style="
+          width:24px;
+          height:24px;
+          object-fit:contain;
+        ">
+
+      </div>
+
+      <!-- TEXT -->
+      <div style="flex:1;">
+
+        <div style="
+          font-size:15px;
+          font-weight:700;
+          color:#111827;
+          margin-bottom:4px;
+        ">
+          Email Support
+        </div>
+
+        <div style="
+          color:#6b7280;
+          font-size:13px;
+          line-height:1.6;
+          word-break:break-word;
+        ">
+          ${data.email || "-"}
+        </div>
+
+      </div>
+
+      <!-- BUTTON -->
+      <button style="
+        background:linear-gradient(135deg,#b10808,#e11d1d);
+
+        color:white;
+
+        border:none;
+
+        padding:8px 14px;
+
+        border-radius:10px;
+
+        cursor:pointer;
+
+        font-size:12px;
+
+        font-weight:600;
+
+        box-shadow:0 4px 12px rgba(177,8,8,0.25);
+      "
+
+      onclick="
+        navigator.clipboard.writeText('${data.email || ""}');
+
+        showToast(\`
+          <div class='toast-wrap'>
+            <img src='Rupiah segar.jpg' class='toast-logo'>
+            <span>Email berhasil disalin</span>
+          </div>
+        \`);
+      ">
+        Salin
+      </button>
+
+    </div>
+
+    <!-- WHATSAPP -->
+    <div style="
+      display:flex;
+      align-items:center;
+
+      padding:16px;
+
+      background:linear-gradient(135deg,#ffffff,#f8fafc);
+
+      border-radius:18px;
+
+      border:1px solid #e5e7eb;
+
+      box-shadow:0 5px 16px rgba(0,0,0,0.05);
+    ">
+
+      <!-- ICON -->
+      <div style="
+        width:50px;
+        height:50px;
+        min-width:50px;
+
+        border-radius:16px;
+
+        background:#fff;
+
+        display:flex;
+        align-items:center;
+        justify-content:center;
+
+        margin-right:14px;
+
+        box-shadow:0 4px 12px rgba(0,0,0,0.06);
+      ">
+
+        <img src="whatsapp.png" style="
+          width:24px;
+          height:24px;
+          object-fit:contain;
+        ">
+
+      </div>
+
+      <!-- TEXT -->
+      <div style="flex:1;">
+
+        <div style="
+          font-size:15px;
+          font-weight:700;
+          color:#111827;
+          margin-bottom:4px;
+        ">
+          WhatsApp Support
+        </div>
+
+        <div style="
+          color:#6b7280;
+          font-size:13px;
+          line-height:1.6;
+        ">
+          ${data.wa || "-"}
+        </div>
+
+      </div>
+
+      <!-- BUTTON -->
+      <button style="
+        background:linear-gradient(135deg,#16a34a,#15803d);
+
+        color:white;
+
+        border:none;
+
+        padding:8px 14px;
+
+        border-radius:10px;
+
+        cursor:pointer;
+
+        font-size:12px;
+
+        font-weight:600;
+
+        box-shadow:0 4px 12px rgba(22,163,74,0.25);
+      "
+
+      onclick="
+        navigator.clipboard.writeText('${data.wa || ""}');
+
+        showToast(\`
+          <div class='toast-wrap'>
+            <img src='Rupiah segar.jpg' class='toast-logo'>
+            <span>Nomor WhatsApp berhasil disalin</span>
+          </div>
+        \`);
+      ">
+        Salin
+      </button>
+
+    </div>
+
+    <!-- JAM -->
+    <div style="
+      display:flex;
+      align-items:center;
+
+      padding:16px;
+
+      background:linear-gradient(135deg,#ffffff,#f8fafc);
+
+      border-radius:18px;
+
+      border:1px solid #e5e7eb;
+
+      box-shadow:0 5px 16px rgba(0,0,0,0.05);
+    ">
+
+      <!-- ICON -->
+      <div style="
+        width:50px;
+        height:50px;
+        min-width:50px;
+
+        border-radius:16px;
+
+        background:#fff;
+
+        display:flex;
+        align-items:center;
+        justify-content:center;
+
+        margin-right:14px;
+
+        box-shadow:0 4px 12px rgba(0,0,0,0.06);
+      ">
+
+        <img src="24-hours-support.png" style="
+          width:24px;
+          height:24px;
+          object-fit:contain;
+        ">
+
+      </div>
+
+      <!-- TEXT -->
+      <div>
+
+        <div style="
+          font-size:15px;
+          font-weight:700;
+          color:#111827;
+          margin-bottom:4px;
+        ">
+          Jam Operasional
+        </div>
+
+
+
+
+
+
+        <div style="
+          color:#6b7280;
+          font-size:13px;
+          line-height:1.6;
+        ">
+          ${data.jam || "-"}
+        </div>
+
+      </div>
+
+    </div>
+<button class="cs-btn" onclick="document.getElementById('csPopup').style.display='flex'">
+  <img src="ajb.png" class="cs-icon">
+  <span>Bantuan CS</span>
+</button>
+  </div>
+
+
+
+
+
+
+
+
+
+  <!-- FOOTER -->
+  <div style="
+    margin-top:20px;
+
+    padding:16px;
+
+    background:linear-gradient(135deg,#eff6ff,#ffffff);
+
+    border:1px solid #dbeafe;
+
+    border-radius:16px;
+
+    font-size:13px;
+
+    color:#1e40af;
+
+    text-align:center;
+
+    line-height:1.8;
+
+    box-shadow:0 4px 12px rgba(0,0,0,0.04);
+  ">
+
+    Dengan menggunakan layanan Rupiah Segar,
+    pengguna dianggap telah membaca dan menyetujui
+    kebijakan privasi serta ketentuan layanan yang berlaku.
+
+  </div>
+
+</div>
+
+`);
+
+  }, (error) => {
+
+    console.error(error);
+
+    alert("Gagal ambil data kontak!");
+
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+window.showKetentuan = async function(){
+  try {
+    // pakai path yang sama seperti Kontak
+    const snapshot = await get(ref(rtdb, "setting/contact")); 
+ if(!snapshot.exists()) throw new Error("Data kontak tidak ditemukan!");
+    const data = snapshot.val();
+
+    showModal(`
+      <div style="font-family:'Segoe UI',sans-serif; line-height:1.6; color:#333;">
+        
+        <h2 style="margin-bottom:10px; color:#e90e0e;">Ketentuan & Kebijakan Privasi</h2>
+        <p style="font-size:14px; color:#666;">Terakhir diperbarui: ${new Date().toLocaleDateString("id-ID")}</p>
+
+        <hr style="margin:15px 0;">
+
+<div style="
+  margin-top:20px;
+  padding:22px;
+  background:linear-gradient(135deg,#ffffff,#f8fafc);
+  border:1px solid #e5e7eb;
+  border-radius:18px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.06);
+">
+
+  <!-- HEADER -->
+  <div style="
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:16px;
+  ">
+
+    <div style="
+      width:44px;
+      height:44px;
+      border-radius:14px;
+      background:linear-gradient(135deg,#b10808,#ff3b3b);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      font-size:20px;
+      box-shadow:0 4px 12px rgba(177,8,8,0.35);
+    ">
+      📄
+    </div>
+
+    <div>
+      <h3 style="
+        margin:0;
+        color:#111827;
+        font-size:18px;
+        font-weight:700;
+      ">
+        Pendahuluan
+      </h3>
+
+      <div style="
+        font-size:12px;
+        color:#6b7280;
+        margin-top:3px;
+      ">
+        Komitmen perlindungan privasi dan keamanan data pengguna
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CONTENT -->
+  <div style="
+    background:#fff;
+    padding:16px;
+    border-radius:14px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.05);
+  ">
+
+  <p style="
+  margin:0;
+  color:#4b5563;
+  font-size:14px;
+  line-height:1.8;
+  text-align:left;
+">
+Dalam rangka meningkatkan kualitas layanan, <b style="color:#b10808;">Rupiah Segar</b> berkomitmen untuk melindungi serta menjaga kerahasiaan data pribadi setiap pengguna. Kebijakan ini menjelaskan bagaimana kami mengumpulkan, menggunakan, menyimpan, dan melindungi informasi pengguna selama menggunakan layanan kami.
+
+<br><br>
+
+Dengan menggunakan layanan <b style="color:#b10808;">Rupiah Segar</b>, pengguna dianggap telah membaca, memahami, dan menyetujui kebijakan privasi serta syarat layanan yang berlaku demi menciptakan keamanan dan kenyamanan bersama.
+</p>
+
+  </div>
+
+</div>
+
+       <!-- PENGUMPULAN DATA -->
+<div style="
+  margin-top:20px;
+  padding:20px;
+  background:linear-gradient(135deg,#ffffff,#f8fafc);
+  border:1px solid #e5e7eb;
+  border-radius:18px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.06);
+">
+
+  <!-- HEADER -->
+  <div style="
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:16px;
+  ">
+
+    <div style="
+      width:42px;
+      height:42px;
+      border-radius:14px;
+      background:linear-gradient(135deg,#2563eb,#1d4ed8);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      font-size:20px;
+      box-shadow:0 4px 12px rgba(37,99,235,0.3);
+    ">
+      📂
+    </div>
+
+    <div>
+      <h3 style="
+        margin:0;
+        color:#111827;
+        font-size:18px;
+        font-weight:700;
+      ">
+        Pengumpulan Data
+      </h3>
+
+      <div style="
+        font-size:12px;
+        color:#6b7280;
+        margin-top:3px;
+      ">
+        Informasi yang diperlukan untuk mendukung layanan
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CONTENT -->
+  <div style="display:grid; gap:12px;">
+
+    <div style="
+      display:flex;
+      gap:12px;
+      padding:14px;
+      background:#fff;
+      border-radius:14px;
+      box-shadow:0 3px 10px rgba(0,0,0,0.05);
+    ">
+      <div style="
+        min-width:34px;
+        height:34px;
+        border-radius:10px;
+        background:#dbeafe;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+      ">
+        👤
+      </div>
+
+      <div>
+        <div style="
+          font-size:14px;
+          font-weight:700;
+          color:#111827;
+          margin-bottom:4px;
+        ">
+          Data Identitas
+        </div>
+
+        <div style="
+          font-size:13px;
+          color:#6b7280;
+          line-height:1.7;
+        ">
+          Nama, nomor HP, dan informasi identitas lain yang dibutuhkan untuk verifikasi layanan.
+        </div>
+      </div>
+    </div>
+
+    <div style="
+      display:flex;
+      gap:12px;
+      padding:14px;
+      background:#fff;
+      border-radius:14px;
+      box-shadow:0 3px 10px rgba(0,0,0,0.05);
+    ">
+      <div style="
+        min-width:34px;
+        height:34px;
+        border-radius:10px;
+        background:#dcfce7;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+      ">
+        💳
+      </div>
+
+      <div>
+        <div style="
+          font-size:14px;
+          font-weight:700;
+          color:#111827;
+          margin-bottom:4px;
+        ">
+          Aktivitas & Transaksi
+        </div>
+
+        <div style="
+          font-size:13px;
+          color:#6b7280;
+          line-height:1.7;
+        ">
+          Riwayat transaksi dan aktivitas pengguna digunakan untuk meningkatkan kualitas layanan.
+        </div>
+      </div>
+    </div>
+
+    <div style="
+      display:flex;
+      gap:12px;
+      padding:14px;
+      background:#fff;
+      border-radius:14px;
+      box-shadow:0 3px 10px rgba(0,0,0,0.05);
+    ">
+      <div style="
+        min-width:34px;
+        height:34px;
+        border-radius:10px;
+        background:#fee2e2;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+      ">
+        📱
+      </div>
+
+      <div>
+        <div style="
+          font-size:14px;
+          font-weight:700;
+          color:#111827;
+          margin-bottom:4px;
+        ">
+          Informasi Perangkat
+        </div>
+
+        <div style="
+          font-size:13px;
+          color:#6b7280;
+          line-height:1.7;
+        ">
+          Informasi perangkat dan akses sistem digunakan demi keamanan dan stabilitas layanan.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- PENGGUNAAN DATA -->
+<div style="
+  margin-top:20px;
+  padding:20px;
+  background:linear-gradient(135deg,#ffffff,#f8fafc);
+  border:1px solid #e5e7eb;
+  border-radius:18px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.06);
+">
+
+  <div style="
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:16px;
+  ">
+
+    <div style="
+      width:42px;
+      height:42px;
+      border-radius:14px;
+      background:linear-gradient(135deg,#f59e0b,#d97706);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      font-size:20px;
+      box-shadow:0 4px 12px rgba(245,158,11,0.3);
+    ">
+      ⚙
+    </div>
+
+    <div>
+      <h3 style="
+        margin:0;
+        color:#111827;
+        font-size:18px;
+        font-weight:700;
+      ">
+        Penggunaan Data
+      </h3>
+
+      <div style="
+        font-size:12px;
+        color:#6b7280;
+        margin-top:3px;
+      ">
+        Pemanfaatan data untuk mendukung kualitas layanan
+      </div>
+    </div>
+
+  </div>
+
+  <div style="
+    font-size:14px;
+    color:#4b5563;
+    line-height:1.8;
+  ">
+    Data yang dikumpulkan digunakan untuk memproses layanan dan transaksi,
+    meningkatkan kualitas sistem serta keamanan, dan memberikan informasi terkait layanan kepada pengguna.
+  </div>
+
+</div>
+
+<!-- KEAMANAN DATA -->
+<div style="
+  margin-top:20px;
+  padding:20px;
+  background:linear-gradient(135deg,#ffffff,#f8fafc);
+  border:1px solid #e5e7eb;
+  border-radius:18px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.06);
+">
+
+  <div style="
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:16px;
+  ">
+
+    <div style="
+      width:42px;
+      height:42px;
+      border-radius:14px;
+      background:linear-gradient(135deg,#16a34a,#15803d);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      font-size:20px;
+      box-shadow:0 4px 12px rgba(22,163,74,0.3);
+    ">
+      🔒
+    </div>
+
+    <div>
+      <h3 style="
+        margin:0;
+        color:#111827;
+        font-size:18px;
+        font-weight:700;
+      ">
+        Keamanan Data
+      </h3>
+
+      <div style="
+        font-size:12px;
+        color:#6b7280;
+        margin-top:3px;
+      ">
+        Perlindungan berlapis terhadap data pengguna
+      </div>
+    </div>
+
+  </div>
+
+  <div style="
+    font-size:14px;
+    color:#4b5563;
+    line-height:1.8;
+  ">
+    Rupiah Segar menggunakan sistem keamanan berlapis untuk menjaga data pengguna
+    tetap aman dari akses tidak sah, perubahan, maupun penyalahgunaan data.
+  </div>
+
+</div>
+
+<!-- PIHAK KETIGA -->
+<div style="
+  margin-top:20px;
+  padding:20px;
+  background:linear-gradient(135deg,#ffffff,#f8fafc);
+  border:1px solid #e5e7eb;
+  border-radius:18px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.06);
+">
+
+  <div style="
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:16px;
+  ">
+
+    <div style="
+      width:42px;
+      height:42px;
+      border-radius:14px;
+      background:linear-gradient(135deg,#9333ea,#7e22ce);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      font-size:20px;
+      box-shadow:0 4px 12px rgba(147,51,234,0.3);
+    ">
+      🤝
+    </div>
+
+    <div>
+      <h3 style="
+        margin:0;
+        color:#111827;
+        font-size:18px;
+        font-weight:700;
+      ">
+        Pihak Ketiga
+      </h3>
+
+      <div style="
+        font-size:12px;
+        color:#6b7280;
+        margin-top:3px;
+      ">
+        Kerja sama layanan dengan tetap menjaga privasi pengguna
+      </div>
+    </div>
+
+  </div>
+
+  <div style="
+    font-size:14px;
+    color:#4b5563;
+    line-height:1.8;
+  ">
+    Dalam beberapa kondisi, kami dapat bekerja sama dengan pihak ketiga untuk mendukung layanan.
+    Namun, setiap pihak tetap diwajibkan menjaga keamanan dan kerahasiaan data pengguna sesuai kebijakan yang berlaku.
+  </div>
+
+</div>
+
+
+
+
+
+
+<!-- DESKRIPSI -->
+<div style="
+  margin-bottom:18px;
+  padding:18px;
+  background:linear-gradient(135deg,#ffffff,#f8fafc);
+  border:1px solid #e5e7eb;
+  border-radius:16px;
+  box-shadow:0 5px 14px rgba(0,0,0,0.06);
+">
+
+  <div style="
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+  ">
+
+    <!-- ICON -->
+    <div style="
+      min-width:42px;
+      height:42px;
+      border-radius:14px;
+      background:linear-gradient(135deg,#b10808,#ff3b3b);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      font-size:20px;
+      box-shadow:0 4px 12px rgba(177,8,8,0.25);
+    ">
+      🛡
+    </div>
+
+
+    <!-- TEXT -->
+    <div>
+
+      <div style="
+        font-size:16px;
+        font-weight:700;
+        color:#111827;
+        margin-bottom:6px;
+      ">
+        Perlindungan Privasi Pengguna
+      </div>
+
+      <p style="
+        margin:0;
+        color:#4b5563;
+        font-size:14px;
+        line-height:1.9;
+        text-align:left;
+      ">
+        <b style="color:#b10808;">Rupiah Segar</b> berkomitmen untuk menghormati
+        privasi serta melindungi hak setiap pengguna dalam menggunakan layanan kami.
+        Pengguna memiliki hak penuh untuk mengelola informasi dan aktivitas akun
+        secara aman, transparan, dan sesuai dengan kebijakan yang berlaku.
+      </p>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+
+  <!-- LIST -->
+  <div style="
+    display:grid;
+    gap:12px;
+  ">
+
+    <!-- ITEM -->
+    <div style="
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+      padding:14px;
+      background:#fff;
+      border-radius:14px;
+      box-shadow:0 3px 10px rgba(0,0,0,0.05);
+    ">
+      <div style="
+        min-width:34px;
+        height:34px;
+        border-radius:10px;
+        background:#dcfce7;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:16px;
+      ">
+        👤
+      </div>
+
+      <div>
+        <div style="
+          font-size:14px;
+          font-weight:700;
+          color:#111827;
+          margin-bottom:3px;
+        ">
+          Akses & Perbarui Data
+        </div>
+
+        <div style="
+          font-size:13px;
+          color:#6b7280;
+          line-height:1.6;
+        ">
+          Pengguna dapat melihat dan memperbarui informasi pribadi kapan saja.
+        </div>
+      </div>
+    </div>
+
+    <!-- ITEM -->
+    <div style="
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+      padding:14px;
+      background:#fff;
+      border-radius:14px;
+      box-shadow:0 3px 10px rgba(0,0,0,0.05);
+    ">
+      <div style="
+        min-width:34px;
+        height:34px;
+        border-radius:10px;
+        background:#fee2e2;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:16px;
+      ">
+        🗑
+      </div>
+
+      <div>
+        <div style="
+          font-size:14px;
+          font-weight:700;
+          color:#111827;
+          margin-bottom:3px;
+        ">
+          Penghapusan Data
+        </div>
+
+        <div style="
+          font-size:13px;
+          color:#6b7280;
+          line-height:1.6;
+        ">
+          Pengguna dapat meminta penghapusan data sesuai kebijakan privasi yang berlaku.
+        </div>
+      </div>
+    </div>
+
+    <!-- ITEM -->
+    <div style="
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+      padding:14px;
+      background:#fff;
+      border-radius:14px;
+      box-shadow:0 3px 10px rgba(0,0,0,0.05);
+    ">
+      <div style="
+        min-width:34px;
+        height:34px;
+        border-radius:10px;
+        background:#dbeafe;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:16px;
+      ">
+        🔒
+      </div>
+
+      <div>
+        <div style="
+          font-size:14px;
+          font-weight:700;
+          color:#111827;
+          margin-bottom:3px;
+        ">
+          Menghentikan Layanan
+        </div>
+
+<div style="
+  font-size:13px;
+  color:#6b7280;
+  line-height:1.6;
+">
+  Pengguna dapat berhenti menggunakan layanan kapan saja tanpa biaya tambahan.
+  Pengguna juga dapat mengajukan pemberhentian layanan dan penghapusan data
+  apabila seluruh kewajiban, aturan, serta kebijakan layanan telah dipenuhi
+  sesuai syarat dan ketentuan yang berlaku.
+</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+        <h3 style="color:#111;">Penutup</h3>
+        <p>
+          Dengan menggunakan layanan Rupiah Segar, Anda dianggap telah membaca dan menyetujui seluruh 
+          ketentuan yang berlaku dalam kebijakan ini.
+        </p>
+
+ <!-- BAGIAN KONTAK PREMIUM -->
+<div style="
+  margin-top:20px;
+  padding:18px;
+  background:linear-gradient(135deg,#ffffff,#fff5f5);
+  border:1px solid #ffe0e0;
+  border-radius:16px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.08);
+">
+
+  <!-- TITLE -->
+  <div style="
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:14px;
+  ">
+
+    <div style="
+      width:38px;
+      height:38px;
+      border-radius:12px;
+      background:linear-gradient(135deg,#ff2d2d,#b10808);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      font-size:18px;
+      box-shadow:0 4px 12px rgba(177,8,8,0.35);
+    ">
+      ☎
+    </div>
+
+    <div>
+      <div style="
+        font-size:16px;
+        font-weight:700;
+        color:#b10808;
+      ">
+        Kontak Kami
+      </div>
+
+      <div style="
+        font-size:12px;
+        color:#888;
+        margin-top:2px;
+      ">
+        Layanan bantuan pelanggan 24 jam
+      </div>
+    </div>
+
+  </div>
+
+  <!-- EMAIL -->
+  <div style="
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px;
+    background:#fff;
+    border-radius:12px;
+    margin-bottom:10px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.05);
+  ">
+
+    <div>
+      <div style="
+        font-size:12px;
+        color:#999;
+        margin-bottom:3px;
+      ">
+        Email Support
+      </div>
+
+      <div style="
+        font-size:14px;
+        font-weight:600;
+        color:#333;
+      ">
+        ${data.email || "-"}
+      </div>
+    </div>
+
+
+  </div>
+
+  <!-- WHATSAPP -->
+  <div style="
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px;
+    background:#fff;
+    border-radius:12px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.05);
+  ">
+
+    <div>
+      <div style="
+        font-size:12px;
+        color:#999;
+        margin-bottom:3px;
+      ">
+        WhatsApp
+      </div>
+
+      <div style="
+        font-size:14px;
+        font-weight:600;
+        color:#333;
+      ">
+        ${data.wa || "-"}
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+      </div>
+    `);
+
+  } catch(err){
+    console.error(err);
+    alert("Gagal menampilkan Ketentuan & Privasi!");
+  }
+}
+
+window.showModal = function(htmlContent){
+  document.getElementById("modalBody").innerHTML = htmlContent;
+  document.getElementById("modalContent").style.display = "flex";
+}
+
+
+window.closeModal = function(){
+  document.getElementById("modalContent").style.display = "none";
+}
+
+
+function closeModal(){
+  document.getElementById("modalContent").style.display = "none";
+}
+
+// Klik di luar dropdown menutup menu
+window.addEventListener("click", function(e){
+  const menu = document.getElementById("dropdownMenu");
+  const logo = document.querySelector(".logo-menu");
+  if(!menu.contains(e.target) && e.target !== logo){
+    menu.style.display = "none";
+  }
+});
+
+
+
+
+
+
+
+</script>
+
+<script>
+ 
+// tombol login
+// ===============================
+// OPEN POPUP BAYAR (ANIMASI)
+// ===============================
+function openBayar() {
+
+  const popup = document.getElementById("bayarPopup");
+
+  if (!popup) return;
+
+  popup.style.display = "flex";
+
+  setTimeout(() => {
+    popup.classList.add("show");
+  }, 10);
+}
+
+// ===============================
+// CLOSE POPUP BAYAR
+// ===============================
+function closeBayar() {
+
+  const popup = document.getElementById("bayarPopup");
+
+  if (!popup) return;
+
+  popup.classList.remove("show");
+
+  setTimeout(() => {
+    popup.style.display = "none";
+  }, 350);
+}
+
+// ===============================
+// SHOW PAGE
+// ===============================
+function showPage(page) {
+
+  document.querySelectorAll(".page").forEach(p => {
+    p.style.display = "none";
+  });
+
+  const target = document.getElementById(page + "Page");
+
+  if (target) {
+    target.style.display = "block";
+  }
+}
+
+// ===============================
+// TOAST
+// ===============================
+function showToast(html, color = "#4caf50") {
+
+  const toast = document.getElementById("toast");
+
+  if (!toast) return;
+
+  toast.innerHTML = html;
+
+  toast.style.backgroundColor = color;
+
+  toast.classList.add("show");
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2500);
+}
+
+// ===============================
+// COPY ORDER ID
+// ===============================
+function copyOrder() {
+
+  const orderEl = document.getElementById("orderId");
+
+  // 🔥 cek elemen ada atau tidak
+  if (!orderEl) {
+
+    showToast(`
+      <div class="toast-wrap">
+        <img src="Rupiah segar.jpg" class="toast-logo">
+        <span>Order ID tidak ditemukan</span>
+      </div>
+    `, "#f44336");
+
+    return;
+  }
+
+  const text = orderEl.innerText;
+
+  // 🔥 copy ke clipboard
+  navigator.clipboard.writeText(text)
+
+    .then(() => {
+
+      showToast(`
+        <div class="toast-wrap">
+          <img src="Rupiah segar.jpg" class="toast-logo">
+          <span>Order ID berhasil disalin</span>
+        </div>
+      `);
+
+    })
+
+    .catch(() => {
+
+      showToast(`
+        <div class="toast-wrap">
+          <img src="Rupiah segar.jpg" class="toast-logo">
+          <span>Gagal menyalin Order ID</span>
+        </div>
+      `, "#f44336");
+
+    });
+}
+
+
+// ===============================
+// COPY VA BUTTON
+// ===============================
+document.addEventListener("click", function (e) {
+
+  if (e.target && e.target.id === "copyVA") {
+
+    console.log("Tombol Salin diklik");
+
+    const kodeVA =
+      document.getElementById("popupKodeVA")?.innerText.trim();
+
+    // 🔥 cek apakah VA ada
+    if (!kodeVA) {
+
+      showToast(`
+        <div class="toast-wrap">
+          <img src="Rupiah segar.jpg" class="toast-logo">
+          <span>Kode VA tidak tersedia</span>
+        </div>
+      `, "#f44336");
+
+      return;
+    }
+
+    // 🔥 copy ke clipboard
+    navigator.clipboard.writeText(kodeVA)
+
+      .then(() => {
+
+        showToast(`
+          <div class="toast-wrap">
+            <img src="Rupiah segar.jpg" class="toast-logo">
+            <span>Kode VA berhasil disalin</span>
+          </div>
+        `);
+
+      })
+
+      .catch(() => {
+
+        showToast(`
+          <div class="toast-wrap">
+            <img src="logo.png" class="toast-logo">
+            <span>Gagal menyalin Kode VA</span>
+          </div>
+        `, "#f44336");
+
+      });
+  }
+});
+
+
+
+
+
+
+
+
+
+window.logoutAkun = function(){
+
+  // hapus login
+  localStorage.removeItem("isLogin");
+  localStorage.removeItem("userData");
+
+  userData = null;
+
+  // tutup modal
+  closeModal();
+
+  // tampilkan login
+  document.getElementById("dashboard").style.display = "none";
+  document.getElementById("loginCard").style.display = "block";
+
+
+  // tampilkan footer lagi
+document.getElementById("copyright").style.display = "block";
+
+  // sembunyikan tombol keluar
+  document.getElementById("menuKeluar").style.display = "none";
+
+  // reset input
+  document.getElementById("noWa").value = "";
+
+  console.log("✅ Logout berhasil");
+
+}
+
+// buka popup
+document.getElementById("csbox").addEventListener("click", function(){
+  const popup = document.getElementById("csPopup");
+  if(popup){
+    popup.style.display = "flex";
+  }
+});
+
+// tutup popup
+function tutupCS(){
+  const popup = document.getElementById("csPopup");
+  if(popup){
+    popup.style.display = "none";
+  }
+}
+
+// kirim bantuan
+function kirimCS(){
+
+  let hp = document.getElementById("csHp").value.trim();
+  let kategori = document.getElementById("csKategori").value;
+  let pesan = document.getElementById("csPesan").value.trim();
+
+  // validasi nomor hp
+  if(!hp){
+    showToast("Masukkan nomor HP terdaftar");
+    return;
+  }
+
+  // validasi pesan
+  if(!pesan){
+    showToast("Silakan tulis pesan bantuan");
+    return;
+  }
+
+  let nomorCS = "6283863319230"; // ganti dengan nomor CS kamu
+
+  let text =
+`Halo CS Rupiah Segar, saya butuh bantuan!
+
+Nomor HP Terdaftar : ${hp}
+Kategori Bantuan : ${kategori}
+
+Pesan :
+${pesan}`;
+
+  let url = "https://wa.me/" + nomorCS + "?text=" + encodeURIComponent(text);
+
+  window.open(url, "_blank");
+
+  showToast("Menghubungkan ke Customer Service");
+
+  tutupCS();
+}
+
+
+
+
+
+
+
+// ❌ blok klik kanan
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+// ❌ blok copy
+document.addEventListener("copy", e => {
+  e.preventDefault();
+  alert("Tidak bisa menyalin konten!");
+});
+
+// ❌ blok select pakai mouse
+document.addEventListener("selectstart", e => e.preventDefault());
+
+// ❌ blok Ctrl + C, Ctrl + U, Ctrl + A
+document.addEventListener("keydown", function(e){
+  if(e.ctrlKey && ["c","u","a","s"].includes(e.key.toLowerCase())){
+    e.preventDefault();
+  }
+});
+
+
+
+
+document.getElementById("menuKeluar")
+.addEventListener("click", function(e){
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  showKeluar();
+
+});
+
+window.showKeluar = function(){
+
+  // sembunyikan dropdown
+  document.getElementById("dropdownMenu").style.display = "none";
+
+  showModal(`
+    <div style="text-align:center;font-family:sans-serif;padding:10px;">
+      
+      <div style="
+        width:70px;
+        height:70px;
+        background:#fee2e2;
+        border-radius:50%;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        margin:auto;
+        font-size:35px;
+      ">
+        🚪
+      </div>
+
+      <h2 style="margin-top:15px;color:#111;">
+        Keluar Akun
+      </h2>
+
+      <p style="color:#666;font-size:14px;">
+        Apakah Anda yakin ingin keluar?
+      </p>
+
+      <div style="display:flex;gap:10px;margin-top:20px;">
+        
+        <button onclick="closeModal()" style="
+          flex:1;
+          padding:12px;
+          border:none;
+          border-radius:12px;
+          background:#f1f5f9;
+          font-weight:600;
+          cursor:pointer;
+        ">
+          Batal
+        </button>
+
+<button onclick="logoutAkun(); location.reload();" style="
+  flex:1;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  background:#dc2626;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+">
+  Keluar
+</button>
+
+      </div>
+    </div>
+  `);
+
+
+
+
+
+
+};
+
+
+
+
+
+
+
+
+
+
+document.addEventListener('gesturestart', function (e) {
+  e.preventDefault();
+});
+
+document.addEventListener('dblclick', function (e) {
+  e.preventDefault();
+}, { passive: false });
+
+
+
+
+
+
+
+
+window.addEventListener("load", () => {
+
+  const isLogin = localStorage.getItem("isLogin");
+  const savedUser = localStorage.getItem("userData");
+
+  if(isLogin === "true" && savedUser){
+
+    userData = JSON.parse(savedUser);
+
+    // tampilkan dashboard
+    document.getElementById("loginCard").style.display = "none";
+    document.getElementById("dashboard").style.display = "block";
+    document.getElementById("menuKeluar").style.display = "block";
+    document.getElementById("copyright").style.display = "none";
+
+    // halaman default
+    showPage("pinjaman");
+
+    // ======================
+    // DATA NASABAH
+    // ======================
+
+    document.getElementById("namaNasabah").innerText =
+      userData.nama || "-";
+
+    document.getElementById("orderId").innerText =
+      "Order ID : " + (userData.orderId || "-");
+
+    document.getElementById("totalTagihan").innerText =
+      "IDR " + Number(userData.tagihan || 0).toLocaleString("id-ID");
+
+    document.getElementById("jatuhTempo").innerText =
+      userData.jatuhTempo || "-";
+
+    document.getElementById("bankNasabah").innerText =
+      userData.bank || "-";
+
+    document.getElementById("vaNasabah").innerText =
+      userData.va || "-";
+
+      // TOTAL BAYAR
+const totalBayarEl = document.getElementById("totalBayar");
+
+if(totalBayarEl && totalBayarEl.childNodes.length > 0){
+
+  totalBayarEl.childNodes[0].textContent =
+    "Rp " + Number(userData.totalBayar || 0)
+      .toLocaleString("id-ID");
+
+}
+
+
+
+      // ======================
+// POPUP PEMBAYARAN
+// ======================
+
+// Nama
+const popupNama = document.getElementById("popupNama");
+
+if(popupNama){
+  popupNama.value = userData.nama || "-";
+}
+
+// Bank
+const popupBank = document.getElementById("popupBank");
+
+if(popupBank){
+  popupBank.value = userData.bank || "-";
+}
+
+// Tagihan
+const popupTagihan = document.getElementById("popupTagihan");
+
+if(popupTagihan){
+  popupTagihan.value =
+    "IDR " + Number(userData.tagihan || 0)
+    .toLocaleString("id-ID");
+}
+
+// Kode VA
+const popupKodeVA = document.getElementById("popupKodeVA");
+
+if(popupKodeVA){
+  popupKodeVA.textContent = userData.kodeVA || "-";
+}
+
+
+
+    // ======================
+    // STATUS TAGIHAN
+    // ======================
+
+    const statusEl = document.getElementById("statusTagihan");
+
+    if(statusEl){
+
+      statusEl.innerText = userData.status || "Belum Bayar";
+
+      statusEl.classList.remove("status-belum", "status-bayar");
+
+      if(userData.status === "Lunas"){
+        statusEl.classList.add("status-bayar");
+      }else{
+        statusEl.classList.add("status-belum");
+      }
+
+    }
+
+    // ======================
+    // DATA PINJAMAN
+    // ======================
+
+    const jumlahPinjaman =
+      document.getElementById("jumlahPinjaman");
+
+    if(jumlahPinjaman){
+      jumlahPinjaman.innerText =
+        userData.totalPinjaman
+        ? "IDR " + Number(userData.totalPinjaman)
+            .toLocaleString("id-ID")
+        : "IDR 0";
+    }
+
+    const jatuhTempoPinjaman =
+      document.getElementById("jatuhTempoPinjaman");
+
+    if(jatuhTempoPinjaman){
+      jatuhTempoPinjaman.innerText =
+        userData.jatuhTempo || "-";
+    }
+
+    // ======================
+    // FOTO
+    // ======================
+
+    const ktpImg = document.getElementById("ktpImg");
+    const selfieImg = document.getElementById("selfieImg");
+
+    if(ktpImg){
+      ktpImg.src = userData.ktp || "";
+    }
+
+    if(selfieImg){
+      selfieImg.src = userData.swafoto || "";
+    }
+
+
+    const viewer = document.getElementById("imageViewer");
+const viewerImg = document.getElementById("viewerImg");
+const closeBtn = document.querySelector(".close-viewer");
+
+// tombol close
+if(closeBtn){
+  closeBtn.onclick = () => {
+    viewer.style.display = "none";
+  };
+}
+
+// klik luar gambar = close
+if(viewer){
+  viewer.onclick = (e) => {
+    if(e.target === viewer){
+      viewer.style.display = "none";
+    }
+  };
+}
+
+// fungsi buka gambar
+function showImage(src){
+  if(viewer && viewerImg){
+    viewer.style.display = "flex";
+    viewerImg.src = src;
+  }
+}
+
+// klik KTP
+if(ktpImg){
+  ktpImg.onclick = () => {
+    showImage(ktpImg.src);
+  };
+}
+
+// klik Selfie
+if(selfieImg){
+  selfieImg.onclick = () => {
+    showImage(selfieImg.src);
+  };
+}
+
+
+
+
+
+    console.log("✅ Auto login berhasil");
+
+  }
+
+    // 🔥 tampilkan halaman setelah selesai cek login
+  document.body.style.visibility = "visible";
+
+// tampilkan halaman
+document.body.style.visibility = "visible";
+
+// hilangkan loader
+const loader = document.getElementById("appLoader");
+
+if(loader){
+  loader.style.opacity = "0";
+
+  setTimeout(()=>{
+    loader.remove();
+  },300);
+}
+});
+
+
+
+
+
+</script>
+<script src="script.js"></script>
+
+
+  <!-- Footer -->
+<footer id="copyright">
+  © 2026 <span>Rupiah Segar</span> • All Rights Reserved
+</footer>
+</div>
+</body>
+</html>

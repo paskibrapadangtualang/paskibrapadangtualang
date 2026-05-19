@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Admin Layanan</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#f4f6f8;
+}
+
+.container{
+  max-width:800px;
+  margin:20px auto;
+  padding:15px;
+}
+
+.card{
+  background:#fff;
+  padding:15px;
+  border-radius:12px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.08);
+  margin-bottom:15px;
+}
+
+input, select{
+  width:100%;
+  padding:10px;
+  margin:6px 0;
+  border:1px solid #ddd;
+  border-radius:8px;
+}
+
+button{
+  padding:10px;
+  width:100%;
+  border:none;
+  border-radius:8px;
+  background:#0f6b20;
+  color:#fff;
+  cursor:pointer;
+}
+
+button:hover{background:#0c5218;}
+
+.item{
+  padding:10px;
+  border-left:4px solid #0f6b20;
+  margin-bottom:10px;
+  background:#fafafa;
+}
+
+.action{
+  display:flex;
+  gap:5px;
+  margin-top:8px;
+}
+
+.action button{
+  width:50%;
+  font-size:12px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- FORM TAMBAH -->
+  <div class="card">
+    <h3>➕ Tambah Layanan</h3>
+
+    <input id="text" placeholder="Nama layanan">
+    
+    <select id="type">
+      <option value="preview">Preview</option>
+      <option value="more">More</option>
+    </select>
+
+    <button onclick="addData()">Simpan</button>
+  </div>
+
+  <!-- LIST -->
+  <div class="card">
+    <h3>📋 Daftar Layanan</h3>
+    <div id="list"></div>
+  </div>
+
+</div>
+
+<!-- EDIT MODAL -->
+<div id="modal" style="
+display:none;
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:rgba(0,0,0,0.4);
+">
+
+  <div style="
+    background:#fff;
+    width:90%;
+    max-width:400px;
+    margin:80px auto;
+    padding:15px;
+    border-radius:12px;
+  ">
+
+    <h3>Edit Layanan</h3>
+
+    <input id="editText">
+    <select id="editType">
+      <option value="preview">Preview</option>
+      <option value="more">More</option>
+    </select>
+
+    <button onclick="saveEdit()">Simpan Perubahan</button>
+    <button onclick="closeModal()" style="background:red;margin-top:5px;">Tutup</button>
+
+  </div>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getDatabase,
+  ref,
+  set,
+  update,
+  remove,
+  onValue
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+let editId = null;
+
+/* ➕ ADD */
+window.addData = function(){
+
+  const text = document.getElementById("text").value;
+  const type = document.getElementById("type").value;
+
+  if(!text){
+    alert("Isi dulu");
+    return;
+  }
+
+  const id = "layanan_" + Date.now();
+
+  set(ref(db,"layanan/"+id),{
+    text,
+    type
+  });
+
+  document.getElementById("text").value = "";
+}
+
+/* 📋 LOAD */
+onValue(ref(db,"layanan"), (snap)=>{
+
+  const data = snap.val();
+  let html = "";
+
+  for(let id in data){
+
+    html += `
+      <div class="item">
+        <b>${data[id].text}</b><br>
+        <small>${data[id].type}</small>
+
+        <div class="action">
+          <button onclick="editData('${id}','${data[id].text}','${data[id].type}')">Edit</button>
+          <button onclick="hapusData('${id}')">Hapus</button>
+        </div>
+      </div>
+    `;
+  }
+
+  document.getElementById("list").innerHTML = html;
+});
+
+/* ✏️ EDIT */
+window.editData = function(id,text,type){
+
+  editId = id;
+
+  document.getElementById("editText").value = text;
+  document.getElementById("editType").value = type;
+
+  document.getElementById("modal").style.display = "block";
+}
+
+/* SAVE EDIT */
+window.saveEdit = function(){
+
+  const text = document.getElementById("editText").value;
+  const type = document.getElementById("editType").value;
+
+  update(ref(db,"layanan/"+editId),{
+    text,
+    type
+  });
+
+  document.getElementById("modal").style.display = "none";
+}
+
+/* ❌ DELETE + KONFIRMASI */
+window.hapusData = function(id){
+
+  if(confirm("Yakin mau hapus layanan ini?")){
+
+    remove(ref(db,"layanan/"+id));
+
+  }
+}
+
+/* CLOSE MODAL */
+window.closeModal = function(){
+  document.getElementById("modal").style.display = "none";
+}
+
+</script>
+
+</body>
+</html>

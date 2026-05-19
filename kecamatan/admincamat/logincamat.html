@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Login Admin Kecamatan</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(135deg,#eef2f3,#f4f6f8);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+
+.box{
+  width:350px;
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.1);
+}
+
+h2{
+  text-align:center;
+  color:#0f6b20;
+}
+
+input{
+  width:94%;
+  padding:12px;
+  margin:8px 0;
+  border:1px solid #ddd;
+  border-radius:10px;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:#0f6b20;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#0c5a1a;
+}
+
+.switch{
+  text-align:center;
+  margin-top:10px;
+  font-size:14px;
+  cursor:pointer;
+  color:#0f6b20;
+}
+
+.hidden{
+  display:none;
+}
+
+#panel{
+  display:none;
+  text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN / REGISTER -->
+<div class="box" id="authBox">
+
+  <h2>Admin Kecamatan</h2>
+
+  <!-- LOGIN -->
+  <div id="loginForm">
+    <input id="loginEmail" placeholder="Email">
+    <input id="loginPass" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <div class="switch" onclick="toggle()">Belum punya akun? Daftar</div>
+  </div>
+
+ <div id="registerForm" class="hidden">
+
+  <input id="regNama" placeholder="NAMA ADMIN">
+  <input id="regEmail" placeholder="EMAIL AKTIF">
+  <input id="regWa" placeholder="WHATSAPP">
+
+  <input id="regPass" type="password" placeholder="PASSWORD">
+  <input id="regPass2" type="password" placeholder="KONFIRMASI PASSWORD">
+
+  <input id="regFoto" type="file">
+
+  <select id="regRole" style="
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    border-radius:10px;
+    border:1px solid #ddd;
+  ">
+    <option value="admincamat">Admin Camat</option>
+    <option value="camat">Camat</option>
+  </select>
+
+  <input id="regToken" placeholder="TOKEN CAMAT">
+
+  <button onclick="register()">DAFTAR</button>
+
+  <div class="switch" onclick="toggle()">
+    Sudah punya akun? Login
+  </div>
+
+</div>
+
+</div>
+
+<!-- PANEL -->
+<div id="panel">
+  <h2>🔥 SELAMAT DATANG ADMIN</h2>
+  <p id="roleText"></p>
+  <button onclick="logout()">Logout</button>
+</div>
+
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+  getDatabase,
+  ref,
+  set,
+  update,
+  get,
+  child
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb",
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+/* SWITCH LOGIN / REGISTER */
+window.toggle = function(){
+  document.getElementById("loginForm").classList.toggle("hidden");
+  document.getElementById("registerForm").classList.toggle("hidden");
+}
+
+window.register = async function(){
+
+  const email = document.getElementById("regEmail").value;
+  const pass = document.getElementById("regPass").value;
+  const nama = document.getElementById("regNama").value;
+  const file = document.getElementById("regFoto").files[0];
+
+  if(!email || !pass || !nama){
+    showNotif("❌ Semua field wajib diisi","error");
+    return;
+  }
+
+  if(!file){
+    showNotif("❌ Foto wajib diupload","error");
+    return;
+  }
+
+  try {
+
+    showNotif("⏳ Upload foto...");
+
+    // ===== UPLOAD KE CLOUDINARY =====
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "uploadgambar");
+    formData.append("cloud_name", "djxlbemky");
+
+    const response = await fetch(
+      "https://api.cloudinary.com/v1_1/djxlbemky/image/upload",
+      {
+        method: "POST",
+        body: formData
+      }
+    );
+
+    const data = await response.json();
+    const fotoURL = data.secure_url;
+
+    showNotif("⏳ Membuat akun...");
+
+    // ===== FIREBASE AUTH =====
+    const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+    const user = userCredential.user;
+
+    // ===== SIMPAN KE FIREBASE DB =====
+    await set(ref(db,"admincamat/"+user.uid),{
+      nama:nama,
+      email:email,
+      foto:fotoURL,
+      role:"admincamat",
+      dibuat:Date.now()
+    });
+
+    showNotif("✅ Registrasi berhasil!");
+
+  } catch(err){
+    showNotif("❌ " + err.message,"error");
+  }
+
+}
+
+/* LOGIN */
+window.login = function(){
+
+  const email = document.getElementById("loginEmail").value;
+  const pass = document.getElementById("loginPass").value;
+
+  showNotif("⏳ Memproses login...");
+
+  signInWithEmailAndPassword(auth,email,pass)
+  .catch(err=>{
+    showNotif("❌ " + err.message, "error");
+  });
+}
+
+/* CEK LOGIN + ROLE */
+onAuthStateChanged(auth, async (user)=>{
+
+  if(user){
+
+    const snap = await get(child(ref(db), "admincamat/"+user.uid));
+
+    if(snap.exists()){
+
+      const data = snap.val();
+
+      localStorage.setItem("role", data.role);
+      localStorage.setItem("nama", data.nama);
+
+      showNotif("✅ Login berhasil! Mengalihkan...");
+
+      setTimeout(()=>{
+        window.location.href = "dashboardcamat.html";
+      }, 1200);
+
+    }else{
+      showNotif("❌ Bukan admin camat", "error");
+      signOut(auth);
+    }
+  }
+});
+
+/* LOGOUT */
+window.logout = function(){
+  signOut(auth);
+}
+
+
+
+
+
+
+
+
+function showNotif(msg, type="success") {
+  const box = document.getElementById("notif");
+
+  box.style.display = "block";
+  box.innerText = msg;
+
+  if(type === "success"){
+    box.style.background = "#0f6b20";
+  } else {
+    box.style.background = "#c0392b";
+  }
+
+  setTimeout(()=>{
+    box.style.display = "none";
+  }, 3000);
+}
+
+
+
+
+</script>
+
+
+
+
+
+<div id="notif" style="
+position:fixed;
+top:20px;
+right:20px;
+padding:12px 15px;
+border-radius:10px;
+color:white;
+display:none;
+font-size:14px;
+z-index:9999;
+"></div>
+
+
+
+
+</body>
+</html>
