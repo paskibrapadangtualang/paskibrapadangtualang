@@ -9,7 +9,16 @@
 body{
   margin:0;
   font-family:Arial;
-  background:#f4f6f8;
+
+  background:
+  linear-gradient(rgb(255 255 255 / 16%), rgba(240, 245, 242, .88)), url(assets/images/bg.jpg);
+
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  background-attachment:fixed;
+
+  min-height:100vh;
 }
 
 
@@ -17,6 +26,10 @@ body, html {
   margin: 0;
   padding: 0;
   width: 100%;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 .container, .wrapper, .main {
@@ -27,68 +40,54 @@ body, html {
 .header{
   background:#0f6b20;
   color:white;
+
   display:flex;
   align-items:center;
   justify-content:center;
   gap:10px;
+
   padding:12px 15px;
+
   font-weight:bold;
+
   position:sticky;
   top:0;
+
   z-index:1000;
-  transition:0.3s;
+
+  width:100%;
+  box-sizing:border-box;
+
+  transition:
+  padding .35s ease,
+  box-shadow .35s ease,
+  background .35s ease;
+
+  will-change:padding;
 }
 
-/* logo PNG */
+/* logo */
 .logo{
   width:35px;
   height:35px;
+
   object-fit:contain;
+
+  transition:transform .35s ease;
 }
 
-/* efek scroll (kalau kamu pakai yang sebelumnya) */
+
 .header.shrink{
-  padding:11px 15px;
-  box-shadow:0 4px 15px rgb(0 0 0 / 6%);
+  padding:9px 15px;
+  
 }
 
 .header.shrink .logo{
-  width:28px;
-  height:28px;
+  transform:scale(.82);
 }
-/* WRAPPER 3 KOLOM */
-.wrapper{
-  display:flex;
-  gap:15px;
-  max-width:1200px;
-  margin:20px auto;
-  padding:10px;
-  align-items:flex-start;
-}
-
 /* kiri lebih besar */
-.left-box{
-  flex:2;
-}
-
-/* kanan lebih kecil */
-.right-box{
-  flex:1;
-}
 
 /* responsive HP */
-@media(max-width:900px){
-  .wrapper{
-    flex-direction:column;
-  }
-
-  .left-box,
-  .right-box{
-    flex:unset;
-    width:100%;
-  }
-}
-
 @media (max-width: 500px){
   .main{
     grid-template-columns: 1fr;
@@ -101,6 +100,103 @@ body, html {
   grid-template-columns:repeat(4, 1fr);
   gap:15px;
 }
+
+
+
+
+
+/* WRAPPER */
+.wrapper{
+  display:grid;
+
+  grid-template-columns:
+  repeat(2,1fr);
+
+  gap:18px;
+
+  max-width:1200px;
+
+  margin:20px auto;
+
+  padding:12px;
+
+  align-items:start;
+}
+
+/* CARD */
+.card{
+  background:white;
+
+  border-radius:18px;
+
+  overflow:hidden;
+
+  box-shadow:
+  0 4px 14px rgb(0 0 0 / 6%);
+
+  min-height:100%;
+}
+
+/* HEADER CARD */
+.card-header{
+  background:
+  linear-gradient(
+  90deg,
+  #0f6b20,
+  #178a2d
+  );
+
+  color:white;
+
+  padding:14px;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:10px;
+
+  font-weight:bold;
+
+  font-size:15px;
+}
+
+/* ICON */
+.header-icon{
+  width:28px;
+  height:28px;
+  object-fit:contain;
+}
+
+/* ISI */
+.content{
+  padding:15px;
+}
+
+/* RESPONSIVE HP */
+@media(max-width:768px){
+
+.wrapper{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* CARD BERITA */
 .card{
@@ -198,7 +294,6 @@ body, html {
 /* CARD */
 .card{
   background:white;
-  margin-bottom:15px;
   border-radius:10px;
   overflow:hidden;
   box-shadow:0 2px 10px rgba(0,0,0,0.1);
@@ -254,7 +349,6 @@ body, html {
 
 
 /* NAVBAR */
-/* NAVBAR jadi sticky di bawah header */
 .navbar{
   display:flex;
   justify-content:center;
@@ -264,8 +358,6 @@ body, html {
   position:sticky;
   top:50px;
   z-index:999;
-  transition:all 0.3s ease;
-  box-shadow:0 2px 10px rgba(0,0,0,0.1);
 }
 
 .navbar a{
@@ -273,6 +365,72 @@ body, html {
   text-decoration:none;
   font-weight:bold;
   font-size:14px;
+}
+
+/* DROPDOWN MENU FLOATING */
+.dropdown-wrapper{
+  position:relative; /* 🔥 kunci posisi anchor */
+  display:inline-block;
+}
+
+/* tombol */
+.dropdown-wrapper a{
+  color:white;
+  font-weight:bold;
+  text-decoration:none;
+}
+
+/* menu */
+.dropdown-menu{
+  position:absolute;
+  top:160%;   /* 🔥 pas di bawah tombol */
+  left:0;
+transform:translateX(-125px); /* 👈 geser ke kiri */
+  background:white;
+  min-width:220px;
+  border-radius:10px;
+
+  display:none;
+  flex-direction:column;
+
+  z-index:9999;
+}
+
+.dropdown-menu a{
+  padding:12px 15px;
+  text-decoration:none;
+  color:#333;
+  font-size:13px;
+  border-bottom:1px solid #eee;
+  
+}
+
+.dropdown-menu a:hover{
+  background:#0f6b20;
+  color:white;
+}
+
+/* show */
+.dropdown-menu.show{
+  display:flex;
+}
+
+/* HOVER DESKTOP */
+.dropdown:hover .dropdown-content{
+  display:flex;
+}
+
+/* MOBILE FIX */
+@media(max-width:768px){
+  .dropdown-content{
+    position:static;
+    box-shadow:none;
+    border-radius:0;
+  }
+
+  .dropdown.open .dropdown-content{
+    display:flex;
+  }
 }
 
 /* SLIDER */
@@ -315,13 +473,53 @@ body, html {
 /* BOX UTAMA */
 .box{
   flex:1;
-  background:linear-gradient(145deg,#ffffff,#f2f2f2);
+  position:relative;
+  overflow:hidden;
+  background:
+  
+  /* GARIS MELINGKAR */
+  radial-gradient(circle at top right,
+  transparent 0 65px,
+  rgba(255,255,255,0.12) 66px 68px,
+  transparent 69px),
+
+  radial-gradient(circle at top right,
+  transparent 0 95px,
+  rgba(255,255,255,0.10) 96px 98px,
+  transparent 99px),
+
+  radial-gradient(circle at top right,
+  transparent 0 125px,
+  rgba(255,255,255,0.08) 126px 128px,
+  transparent 129px),
+
+  radial-gradient(circle at top right,
+  transparent 0 155px,
+  rgba(255,255,255,0.07) 156px 158px,
+  transparent 159px),
+
+  linear-gradient(145deg, #029c21, #0f3002);
+
   border-radius:15px;
   padding:18px;
   text-align:center;
-  box-shadow:0 4px 15px rgba(0,0,0,0.08);
+  box-shadow:0 4px 15px rgba(0,0,0,0.15);
   transition:0.3s;
+  color:white;
 }
+
+.box::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.05),
+    transparent
+  );
+  border-radius:15px;
+}
+
 
 .box:hover{
   transform:translateY(-3px);
@@ -344,13 +542,13 @@ body, html {
   font-weight:bold;
   margin-top:10px;
   font-size:16px;
-  color:#0f6b20;
+  color:#fff;
 }
 
 /* DESKRIPSI */
 .desc{
   font-size:13px;
-  color:#666;
+  color:#aeaeae;
   margin-top:6px;
   line-height:1.4;
 }
@@ -443,16 +641,16 @@ body, html {
 
 
 .accordion-more{
-  display:none;
-  margin-top:8px;
+display:none;
+margin-top:8px;
 }
 
 .accordion-toggle{
-  margin-top:8px;
-  font-size:13px;
-  color:#0f6b20;
-  cursor:pointer;
-  font-weight:bold;
+margin-top:10px;
+font-size:13px;
+color:#0f6b20;
+cursor:pointer;
+font-weight:bold;
 }
 
 .accordion-toggle:hover{
@@ -489,6 +687,133 @@ body, html {
   height:22px;
   object-fit:contain;
 }
+
+
+
+
+
+/* LIST LAYANAN PROFESIONAL */
+
+.accordion-preview,
+.accordion-more{
+display:flex;
+flex-direction:column;
+gap:12px;
+}
+
+/* ITEM */
+
+.layanan-item{
+
+display:flex;
+
+align-items:flex-start;
+
+gap:12px;
+
+background:#f7faf8;
+
+border:1px solid #e3eee6;
+
+border-left:5px solid #0f6b20;
+
+padding:14px;
+
+border-radius:12px;
+
+transition:.25s;
+
+box-shadow:
+0 4px 10px rgba(
+0,
+0,
+0,
+0.04
+);
+
+}
+
+/* HOVER */
+
+.layanan-item:hover{
+
+transform:translateY(-2px);
+
+box-shadow:
+0 8px 18px rgba(
+15,
+107,
+32,
+0.08
+);
+
+}
+
+/* ICON */
+
+.layanan-icon{
+
+width:42px;
+
+height:42px;
+
+border-radius:10px;
+
+background:
+linear-gradient(
+135deg,
+#0f6b20,
+#198532
+);
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+color:white;
+
+font-size:18px;
+
+flex-shrink:0;
+
+}
+
+/* TEXT */
+
+.layanan-text{
+
+flex:1;
+
+}
+
+/* JUDUL */
+
+.layanan-title{
+
+font-size:14px;
+
+font-weight:700;
+
+color:#0f6b20;
+
+margin-bottom:4px;
+
+}
+
+/* SUB */
+
+.layanan-sub{
+
+font-size:12px;
+
+color:#666;
+
+line-height:1.5;
+
+}
+
 
 
 
@@ -919,10 +1244,258 @@ font-size:12px;
 
 }
 
+
+
+
+
+
+
+
+/* SEARCH BERITA */
+
+.search-box{
+
+position:relative;
+
+max-width:700px;
+
+margin:20px auto;
+
+padding:0 12px;
+
+}
+
+#searchPostingan{
+
+width:100%;
+
+padding:14px 50px 14px 16px;
+
+border:none;
+
+outline:none;
+
+border-radius:14px;
+
+font-size:14px;
+
+background:white;
+
+box-shadow:
+0 6px 18px rgba(
+0,
+0,
+0,
+0.08
+);
+
+border:1px solid #e7ece8;
+
+box-sizing:border-box;
+
+}
+
+#searchPostingan:focus{
+
+border-color:#0f6b20;
+
+box-shadow:
+0 8px 20px rgba(
+15,
+107,
+32,
+0.15
+);
+
+}
+
+.search-icon{
+
+position:absolute;
+
+right:28px;
+
+top:50%;
+
+transform:translateY(-50%);
+
+width:22px;
+
+height:22px;
+
+opacity:.6;
+
+}
+
+
+
+
+
+
+
+
+
+/* =========================
+   PASKIBRA INFORMASI STYLE
+========================= */
+
+.PaskbbHeaderWrap{
+  width:100%;
+  margin:20px 0 10px;
+  padding:0;
+}
+
+.PaskbbHeaderBox{
+  background:linear-gradient(135deg,#0f6b20,#18a34a);
+  padding:18px 20px;
+
+  border-radius:0; /* optional: biar benar-benar full */
+
+  color:white;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.12);
+}
+
+.PaskbbHeaderIcon{
+  width:55px;
+  height:55px;
+  object-fit:contain;
+  background:rgba(255,255,255,0.15);
+  padding:8px;
+  border-radius:14px;
+}
+
+.PaskbbHeaderTitle{
+  font-size:20px;
+  font-weight:800;
+}
+
+.PaskbbHeaderSub{
+  font-size:13px;
+  opacity:.9;
+  margin-top:4px;
+}
+
+/* GRID 4 CARD */
+.PaskbbGrid{
+  max-width:1200px;
+  margin:20px auto;
+  padding:0 15px;
+
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+}
+
+/* CARD */
+.PaskbbCard{
+  background:#fff;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 5px 15px rgba(0,0,0,0.08);
+  transition:.3s;
+}
+
+.PaskbbCard:hover{
+  transform:translateY(-5px);
+}
+
+.PaskbbImg{
+  width:100%;
+  height:160px;
+  object-fit:cover;
+}
+
+.PaskbbContent{
+  padding:12px;
+}
+
+.PaskbbTitle{
+  font-size:14px;
+  font-weight:800;
+}
+
+.PaskbbDate{
+  font-size:12px;
+  color:#777;
+  margin:6px 0;
+}
+
+.PaskbbDesc{
+  font-size:13px;
+  color:#444;
+  line-height:1.5;
+}
+
+.PaskbbBtn{
+  display:inline-block;
+  margin-top:10px;
+  padding:7px 10px;
+  background:#0f6b20;
+  color:#fff;
+  text-decoration:none;
+  border-radius:8px;
+  font-size:12px;
+}
+
+/* RESPONSIVE */
+@media(max-width:1000px){
+  .PaskbbGrid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:600px){
+  .PaskbbGrid{grid-template-columns:repeat(1,1fr);}
+}
+
+
+
+
+
+
+.spinner-overlay{
+  position:fixed;
+  inset:0;
+  background:#0f6b20;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+
+.spinner{
+  width:45px;
+  height:45px;
+  border:5px solid #e5e5e5;
+  border-top:5px solid #0f6b20;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  0%{transform:rotate(0deg)}
+  100%{transform:rotate(360deg)}
+}
+
+.spinner-text{
+  margin-top:10px;
+  font-size:14px;
+  color:#ffffff;
+  font-weight:bold;
+}
 </style>
 </head>
 
 <body>
+
+
+    <div id="globalSpinner" class="spinner-overlay">
+  <div class="spinner"></div>
+  <div class="spinner-text">Memuat halaman...</div>
+</div>
+
+
 
 <div class="header">
   <img src="assets/images/logo langkat.png" alt="logo" class="logo">
@@ -934,17 +1507,34 @@ font-size:12px;
 <div class="slider">
   <div class="slides" id="slides"></div>
 </div>
-
+  <!-- TENGAH -->
+<div class="center-box">
+  <div id="runningText" class="running-text"></div>
+</div>
+</div>
 
 <!-- NAVBAR -->
 <div class="navbar">
+
   <a href="index.html">Home</a>
-  <a href="#">Berita</a>
+  <a href="#berita">Berita</a>
   <a href="grafikloporan.html">Penduduk</a>
   <a href="kontakcamat.html">Kontak</a>
+
+<div class="dropdown-wrapper">
+
+  <a href="#" id="dropdownBtn">Lainnya ▼</a>
+
+  <div id="dropdownMenu" class="dropdown-menu">
+    <a href="totalkecamatan.html">Total kecamatan</a>
+    <a href="uknoww.html">Staff Kantor Camat</a>
+    <a href="uknoww.html">Pembangunan</a>
+    <a href="uknoww.html">Periode Camat</a>
+    <a href="uknoww.html">Kata Sambutan Camat</a>
+  </div>
+
 </div>
-
-
+</div>
 
 <!-- 3 BOX SECTION -->
 <!-- 3 BOX SECTION -->
@@ -958,10 +1548,6 @@ font-size:12px;
 </div>
 
   <!-- TENGAH -->
-<div class="center-box">
-  <div id="runningText" class="running-text"></div>
-</div>
-</div>
 
   <!-- KANAN -->
   <div class="box image-box">
@@ -1048,7 +1634,7 @@ font-size:12px;
 
 
 
-<div class="berita-header">
+<div class="berita-header" id="berita">
 
 <img
 src="assets/images/logo langkat.png"
@@ -1063,14 +1649,61 @@ BERITA HARI INI
 <div class="berita-sub">
 Informasi terbaru Kecamatan Padang Tualang
 </div>
+<div class="search-box">
 
+<input
+type="text"
+id="searchPostingan"
+placeholder="Cari berita, isi, tanggal..."
+>
+
+<img
+src="assets/images/search.png"
+class="search-icon">
+
+</div>
 </div>
 
 </div>
+
+
 
 
 <!-- TENGAH (BERITA) -->
 <div class="main" id="camatContainer"></div>
+
+
+
+
+
+
+
+
+
+<!-- =========================
+   HEADER TITLE PASKIBRA
+========================= -->
+<div class="PaskbbHeaderWrap">
+  <div class="PaskbbHeaderBox">
+    <img src="assets/images/logo langkat.png" class="PaskbbHeaderIcon">
+    <div>
+      <div class="PaskbbHeaderTitle">Informasi Paskibra</div>
+      <div class="PaskbbHeaderSub">Kegiatan & Informasi Resmi Paskibra Padang Tualang</div>
+    </div>
+  </div>
+</div>
+
+<!-- GRID CARD -->
+<div id="PaskbbContainer" class="PaskbbGrid"></div>
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1109,6 +1742,91 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+
+
+
+
+
+let loaded = {
+  paskbb: false,
+  jam: false,
+  berita: false,
+  footer: false
+};
+
+
+
+
+async function loadPaskbb(){
+
+  try {
+    const snap = await get(ref(db,"postingan"));
+    const box = document.getElementById("PaskbbContainer");
+
+    box.innerHTML = "";
+
+    console.log("DATA PASKIBRA:", snap.val());
+
+    if(!snap.exists()){
+      box.innerHTML = "<p>Belum ada postingan</p>";
+      return;
+    }
+
+    const data = snap.val();
+
+    Object.entries(data).forEach(([id,item])=>{
+
+      if(!item) return;
+
+      // ✅ FIX IMAGE (sesuai data kamu: pakai "gambar")
+      let img = item.gambar || "";
+
+      // fallback kalau nanti ada gambarList array
+      if(!img && Array.isArray(item.gambarList) && item.gambarList.length){
+        img = item.gambarList.find(Boolean);
+      }
+
+      // ✅ FIX DESKRIPSI (lebih aman)
+      const desc = (item.deskripsi || "")
+        .replace(/<[^>]*>/g,"");
+
+      box.innerHTML += `
+        <div class="PaskbbCard animate">
+
+          ${img ? `<img src="${img}" class="PaskbbImg">` : ""}
+
+          <div class="PaskbbContent">
+
+            <div class="PaskbbTitle">
+              ${item.judul || "Tanpa Judul"}
+            </div>
+
+            <div class="PaskbbDate">
+              📅 ${item.tanggal || "-"}
+            </div>
+
+            <div class="PaskbbDesc">
+              ${desc.length > 120 ? desc.substring(0,120) + "..." : desc}
+            </div>
+
+            <a class="PaskbbBtn" href="detailpostingan.html?id=${id}">
+              Baca Detail
+            </a>
+
+          </div>
+        </div>
+      `;
+    });
+
+  } catch(err){
+    console.error("ERROR PASKIBRA:", err);
+  }
+
+}
+
+loadPaskbb();
+
+
 
 
 
@@ -1632,9 +2350,53 @@ onValue(ref(db,"layanan"), (snap)=>{
 
   for(let id in data){
     if(data[id].type === "preview"){
-      preview += `- ${data[id].text}<br>`;
+      preview += `
+
+<div class="layanan-item">
+
+<div class="layanan-icon">
+📄
+</div>
+
+<div class="layanan-text">
+
+<div class="layanan-title">
+${data[id].text}
+</div>
+
+<div class="layanan-sub">
+Pelayanan resmi Kecamatan Padang Tualang
+</div>
+
+</div>
+
+</div>
+
+`;
     } else {
-      more += `- ${data[id].text}<br>`;
+      more += `
+
+<div class="layanan-item">
+
+<div class="layanan-icon">
+🏢
+</div>
+
+<div class="layanan-text">
+
+<div class="layanan-title">
+${data[id].text}
+</div>
+
+<div class="layanan-sub">
+Layanan tambahan masyarakat
+</div>
+
+</div>
+
+</div>
+
+`;
     }
   }
 
@@ -1749,7 +2511,7 @@ if (Array.isArray(item.gambar)) {
           </div>
 
           <a href="detail.html?id=${key}" class="btn-read">
-            Baca selengkapnya →
+            Baca selengkapnya
           </a>
 
         </div>
@@ -1760,6 +2522,116 @@ if (Array.isArray(item.gambar)) {
   runObserver(); // aman dipanggil di sini
 }
 load();
+
+
+
+
+
+const searchInput = document.getElementById("searchPostingan");
+
+let timeout;
+
+searchInput.addEventListener("input", (e) => {
+  clearTimeout(timeout);
+
+  timeout = setTimeout(() => {
+    searchData(e.target.value);
+  }, 300);
+});
+
+async function searchData(keywordRaw){
+  const keyword = keywordRaw.toLowerCase();
+
+  const snap = await get(ref(db, "portalcamat"));
+  const container = document.getElementById("camatContainer");
+
+  container.innerHTML = "";
+
+  if (!snap.exists()){
+    container.innerHTML = "<p>Belum ada data</p>";
+    return;
+  }
+
+  const data = snap.val();
+
+  let found = false; // 🔥 penting
+
+  Object.entries(data).forEach(([key, item]) => {
+
+    const match =
+      (item.judul || "").toLowerCase().includes(keyword) ||
+      (item.isi || "").toLowerCase().includes(keyword) ||
+      (item.tanggal || "").toLowerCase().includes(keyword);
+
+    if (!match) return;
+
+    found = true; // 🔥 ketemu data
+
+    let imgHTML = "";
+
+    if (Array.isArray(item.gambar)) {
+      const firstImg = item.gambar.find(Boolean);
+      if (firstImg) {
+        imgHTML = `<img src="${firstImg}" style="width:100%;height:180px;object-fit:cover;border-radius:10px;">`;
+      }
+    } else if (item.gambar) {
+      imgHTML = `<img src="${item.gambar}" style="width:100%;height:180px;object-fit:cover;border-radius:10px;">`;
+    }
+
+    container.innerHTML += `
+      <div class="card animate">
+        ${imgHTML}
+        <div class="content">
+          <div class="title">${item.judul}</div>
+          <div class="meta">📅 ${item.tanggal}</div>
+          <div class="desc">${shortText(item.isi, 120)}</div>
+          <a href="detail.html?id=${key}" class="btn-read">
+            Baca selengkapnya →
+          </a>
+        </div>
+      </div>
+    `;
+  });
+
+  // 🔥 kalau tidak ada hasil
+  if (!found) {
+    container.innerHTML = `
+      <div style="
+        text-align:center;
+        padding:30px;
+        color:#888;
+        font-weight:bold;
+        font-size:15px;
+      ">
+        🔍 Tidak ada postingan yang anda cari
+      </div>
+    `;
+  }
+
+  runObserver();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 function shortText(text, maxLength = 120){
@@ -1773,18 +2645,49 @@ function shortText(text, maxLength = 120){
   return text.substring(0, maxLength) + "...";
 }
 
-window.addEventListener("scroll", () => {
-  const header = document.querySelector(".header");
 
-  if(window.scrollY > 30){
-    header.classList.add("shrink");
-  } else {
-    header.classList.remove("shrink");
-  }
+
+
+
+
+
+const header = document.querySelector(".header");
+
+let lastState = false;
+let ticking = false;
+
+window.addEventListener(
+"scroll",
+()=>{
+
+if(!ticking){
+
+requestAnimationFrame(()=>{
+
+const shrink = window.scrollY > 30;
+
+if(shrink !== lastState){
+
+header.classList.toggle(
+"shrink",
+shrink
+);
+
+lastState = shrink;
+
+}
+
+ticking = false;
+
 });
 
+ticking = true;
 
+}
 
+},
+{passive:true}
+);
 
 
 
@@ -1854,22 +2757,162 @@ tampilSemua
 
 
 
-document.querySelectorAll(".accordion-toggle").forEach(btn=>{
-  btn.addEventListener("click", function(){
+function updateLayananView(){
 
-    const parent = this.parentElement;
-    const more = parent.querySelector(".accordion-more");
+const mobile = window.innerWidth <= 768;
 
-    if(more.style.display === "block"){
-      more.style.display = "none";
-      this.innerHTML = "▼ Lihat lainnya";
-    } else {
-      more.style.display = "block";
-      this.innerHTML = "▲ Tutup";
-    }
+const preview =
+document.getElementById(
+"previewList"
+);
 
-  });
+const more =
+document.getElementById(
+"moreList"
+);
+
+const btn =
+document.querySelector(
+".accordion-toggle"
+);
+
+/* DESKTOP = tampil semua */
+if(!mobile){
+
+more.style.display = "block";
+
+btn.style.display = "none";
+
+return;
+
+}
+
+/* MOBILE = hanya 3 + tombol */
+more.style.display = "none";
+
+btn.style.display = "block";
+
+btn.innerHTML =
+"▼ Lihat lainnya";
+
+}
+
+/* tombol */
+document
+.querySelectorAll(
+".accordion-toggle"
+)
+
+.forEach(btn=>{
+
+btn.addEventListener(
+"click",
+function(){
+
+const parent =
+this.parentElement;
+
+const more =
+parent.querySelector(
+".accordion-more"
+);
+
+if(
+more.style.display
+=== "block"
+){
+
+more.style.display =
+"none";
+
+this.innerHTML =
+"▼ Lihat lainnya";
+
+}else{
+
+more.style.display =
+"block";
+
+this.innerHTML =
+"▲ Tutup";
+
+}
+
 });
+
+});
+
+/* jalankan saat pertama dibuka */
+updateLayananView();
+
+/* jalankan kalau ukuran layar berubah */
+window.addEventListener(
+"resize",
+updateLayananView
+);
+
+
+
+function hideSpinner(){
+  const el = document.getElementById("globalSpinner");
+  if(!el) return;
+
+  el.style.opacity = "0";
+  el.style.transition = "0.4s ease";
+
+  setTimeout(() => {
+    el.style.display = "none";
+  }, 400);
+}
+
+window.addEventListener("load", async () => {
+  try {
+    await Promise.all([
+      loadPaskbb(),
+      loadJam(),
+      loadFooter(),
+      load(),
+    ]);
+  } catch (e) {
+    console.error("INIT ERROR:", e);
+  } finally {
+    // kasih delay kecil biar render DOM sempat selesai
+    setTimeout(() => {
+      hideSpinner();
+    }, 200);
+  }
+});
+
+
+
+
+
+window.toggleDropdown = function (e){
+  e.preventDefault();
+
+  const menu = document.getElementById("dropdownMenu");
+  menu.classList.toggle("show");
+}
+
+/* klik luar untuk tutup */
+window.addEventListener("click", (e) => {
+  const menu = document.getElementById("dropdownMenu");
+  const btn = document.getElementById("dropdownBtn");
+
+  if (!menu.contains(e.target) && e.target !== btn) {
+    menu.classList.remove("show");
+  }
+});
+
+
+const btn = document.getElementById("dropdownBtn");
+const menu = document.getElementById("dropdownMenu");
+
+btn.addEventListener("click", (e) => {
+  e.preventDefault();
+  menu.classList.toggle("show");
+});
+
 
 </script>
 

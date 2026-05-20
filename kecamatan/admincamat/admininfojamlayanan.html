@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Info Jam Layanan</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#f2f5f3;
+}
+
+.header{
+  background:#0f6b20;
+  color:white;
+  padding:15px;
+  text-align:center;
+  font-weight:bold;
+  font-size:18px;
+}
+
+.container{
+  max-width:1000px;
+  margin:20px auto;
+  padding:15px;
+}
+
+.card{
+  background:white;
+  padding:15px;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+  margin-bottom:20px;
+}
+
+input, textarea{
+  width:90%;
+  padding:10px;
+  margin:5px 0;
+  border:1px solid #ddd;
+  border-radius:8px;
+  outline:none;
+}
+
+button{
+  padding:10px 14px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.btn-add{
+  background:#0f6b20;
+  color:white;
+}
+
+.btn-edit{
+  background:orange;
+  color:white;
+  margin-right:5px;
+}
+
+.btn-delete{
+  background:red;
+  color:white;
+}
+
+.list-item{
+  background:#f7faf8;
+  border-left:5px solid #0f6b20;
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:10px;
+}
+
+.title{
+  font-weight:bold;
+  font-size:16px;
+}
+
+.small{
+  font-size:13px;
+  color:#666;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+🛠 ADMIN INFO JAM LAYANAN
+</div>
+
+<div class="container">
+
+<!-- FORM -->
+<div class="card">
+  <h3>Tambah / Edit Layanan</h3>
+
+  <input id="judul" placeholder="Judul layanan">
+  <input id="jam" placeholder="Jam layanan (08.00 - 15.00 WIB)">
+  <textarea id="deskripsi" placeholder="Deskripsi layanan"></textarea>
+
+  <button class="btn-add" onclick="addData()">+ Tambah Data</button>
+</div>
+
+<!-- LIST -->
+<div class="card">
+  <h3>Data Layanan</h3>
+  <div id="list"></div>
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import {
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+const firebaseConfig = {
+apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+authDomain: "paskibra2026-300eb.firebaseapp.com",
+databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+projectId: "paskibra2026-300eb",
+storageBucket: "paskibra2026-300eb.firebasestorage.app",
+messagingSenderId: "937469132434",
+appId: "1:937469132434:web:d1924e1160350000d1b04b"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+
+
+
+
+
+
+
+/* =========================
+   🔴 BLOCK SCREEN
+========================= */
+function blockAccess(){
+  document.body.innerHTML = `
+    <div style="
+      height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      background:#b00020;
+      color:white;
+      font-family:Arial;
+      flex-direction:column;
+      text-align:center;
+    ">
+      <h1>⛔ AKSES DITOLAK</h1>
+      <p>Anda belum login sebagai Admin Camat</p>
+      <p>Mengarahkan ke login...</p>
+    </div>
+  `;
+
+  setTimeout(()=>{
+    window.location.href = "logincamat.html";
+  }, 2000);
+}
+
+/* =========================
+   🔐 AUTH CHECK (FIX FINAL)
+========================= */
+onAuthStateChanged(auth, (user)=>{
+  if(!user){
+    blockAccess();
+    return;
+  }
+
+  console.log("LOGIN OK:", user.email);
+
+  // 🔥 FIX: pastikan fungsi load() ada
+  if(typeof load === "function"){
+    setTimeout(()=>{
+      load();
+    }, 200);
+  } else {
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+let editId = null;
+
+
+
+// =========================
+// ➕ TAMBAH / UPDATE
+// =========================
+window.addData = function(){
+
+  const judul = document.getElementById("judul").value;
+  const jam = document.getElementById("jam").value;
+  const deskripsi = document.getElementById("deskripsi").value;
+
+  if(!judul || !jam || !deskripsi){
+    alert("Lengkapi data!");
+    return;
+  }
+
+  const id = editId ? editId : "item_" + Date.now();
+
+  set(ref(db, "infojamlayanan/" + id), {
+    judul,
+    jam,
+    deskripsi,
+    createdAt: Date.now()
+  });
+
+  document.getElementById("judul").value = "";
+  document.getElementById("jam").value = "";
+  document.getElementById("deskripsi").value = "";
+
+  editId = null;
+  alert("Berhasil disimpan!");
+};
+
+// =========================
+// ❌ DELETE
+// =========================
+window.hapus = function(id){
+  if(confirm("Hapus data ini?")){
+    remove(ref(db, "infojamlayanan/" + id));
+  }
+};
+
+// =========================
+// ✏️ EDIT
+// =========================
+window.edit = function(id, data){
+  document.getElementById("judul").value = data.judul;
+  document.getElementById("jam").value = data.jam;
+  document.getElementById("deskripsi").value = data.deskripsi;
+
+  editId = id;
+};
+
+// =========================
+// 📡 REALTIME LOAD
+// =========================
+const listRef = ref(db, "infojamlayanan");
+
+onValue(listRef, (snap)=>{
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+
+  if(!snap.exists()){
+    list.innerHTML = "<p>Belum ada data</p>";
+    return;
+  }
+
+  const data = snap.val();
+
+  Object.entries(data)
+  .sort((a,b)=>b[1].createdAt - a[1].createdAt)
+  .forEach(([id,item])=>{
+
+    list.innerHTML += `
+      <div class="list-item">
+
+        <div class="title">${item.judul}</div>
+        <div class="small">⏰ ${item.jam}</div>
+        <p>${item.deskripsi}</p>
+
+        <button class="btn-edit" onclick='edit("${id}", ${JSON.stringify(item)})'>
+          Edit
+        </button>
+
+        <button class="btn-delete" onclick='hapus("${id}")'>
+          Hapus
+        </button>
+
+      </div>
+    `;
+  });
+
+});
+
+</script>
+
+</body>
+</html>

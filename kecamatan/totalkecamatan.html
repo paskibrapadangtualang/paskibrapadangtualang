@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Kecamatan Langkat</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#f4f6f8;
+  margin:0;
+  padding:20px;
+}
+
+.box{
+  max-width:1100px;
+  margin:auto;
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.1);
+}
+
+h2{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+}
+
+/* 🔥 WAJIB: bikin scroll container */
+.table-wrapper{
+  max-height:70vh;
+  overflow-y:auto;
+  border:1px solid #ddd;
+}
+
+/* 🔥 STICKY HEADER */
+thead th{
+  position:sticky;
+  top:0;
+  background:#0f6b20;
+  color:white;
+  z-index:10;
+}
+
+th, td{
+  border:1px solid #ddd;
+  padding:10px;
+}
+
+th{
+  background:#0f6b20;
+  color:white;
+}
+
+tr:nth-child(even){
+  background:#f9f9f9;
+}
+
+tr:hover{
+  background:#eef6f0;
+}
+
+/* 🔥 TOTAL ROW */
+.total-row{
+  font-weight:bold;
+  background:#0f6b20 !important;
+  color:white;
+}
+
+
+
+
+/* =========================
+   INFO BANNER PROFESIONAL
+========================= */
+.info-banner{
+  background:linear-gradient(135deg,#0f6b20,#148a2c);
+  color:white;
+  padding:18px;
+  border-radius:12px;
+  margin-bottom:15px;
+  text-align:center;
+  box-shadow:0 8px 20px rgba(0,0,0,0.15);
+}
+
+.info-banner .title{
+  font-size:16px;
+  font-weight:bold;
+  letter-spacing:0.5px;
+  margin-bottom:6px;
+}
+
+.info-banner .subtitle{
+  font-size:13px;
+  opacity:0.9;
+  margin-bottom:6px;
+}
+
+.info-banner .source{
+  font-size:12px;
+  opacity:0.85;
+  line-height:1.6;
+}
+
+/* =========================
+   TABLE WRAPPER (PRO)
+========================= */
+.table-wrapper{
+  max-height:65vh;
+  overflow:auto;
+  border:1px solid #ddd;
+  border-radius:10px;
+}
+
+/* sticky header lebih clean */
+thead th{
+  position:sticky;
+  top:0;
+  background:#0f6b20;
+  color:white;
+  z-index:5;
+  border-bottom:2px solid #0a4d1a;
+}
+
+/* total row lebih profesional */
+.total-row{
+  background:#0f6b20 !important;
+  color:white;
+  font-weight:bold;
+}
+
+
+
+.footer-info{
+  margin-top:20px;
+  padding:15px;
+  background:#ffffff;
+  border-radius:10px;
+  border:1px solid #e5e5e5;
+  text-align:center;
+  font-size:13px;
+  color:#444;
+  line-height:1.8;
+}
+
+.footer-line{
+  margin:3px 0;
+}
+
+
+
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>DATA KECAMATAN KABUPATEN LANGKAT</h2>
+
+<div class="table-wrapper">
+
+<table>
+  <thead>
+    <tr>
+      <th>No</th>
+      <th>Kecamatan</th>
+      <th>Luas (Km²)</th>
+      <th>Jumlah Desa</th>
+      <th>Ibukota Kecamatan</th>
+    </tr>
+  </thead>
+
+  <tbody id="tableData">
+    <tr><td colspan="5">Loading...</td></tr>
+  </tbody>
+</table>
+
+
+</div>
+
+
+
+
+<div class="info-banner">
+  <div class="title">DATA RESMI PEMERINTAH KABUPATEN LANGKAT</div>
+
+  <div class="subtitle">
+    Tahun 2026 • Sumber: Website Resmi Pemerintah Kabupaten Langkat
+  </div>
+
+  <div class="source">
+    🌐 www.langkatkab.go.id |
+    ✉ sekretariat@langkatkab.go.id |
+    Diskominfo Kabupaten Langkat
+  </div>
+</div>
+
+
+
+
+
+
+<div class="footer-info">
+
+  <div class="footer-line">
+    🌐 www.langkatkab.go.id
+  </div>
+
+  <div class="footer-line">
+    ✉ sekretariat@langkatkab.go.id
+  </div>
+
+  <div class="footer-line">
+    📡 Diskominfo Kabupaten Langkat
+  </div>
+
+  <div class="footer-line">
+    © 2026 Pemerintah Kabupaten Langkat • Data Statistik Resmi
+  </div>
+
+</div>
+
+
+
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+getDatabase,
+ref,
+get,
+set
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+authDomain: "paskibra2026-300eb.firebaseapp.com",
+databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+projectId: "paskibra2026-300eb",
+storageBucket: "paskibra2026-300eb.appspot.com",
+messagingSenderId: "937469132434",
+appId: "1:937469132434:web:d1924e1160350000d1b04b"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+/* =========================
+   FULL DUMMY 23 KECAMATAN
+========================= */
+const dummy = [
+{nama:"Bahorok",luas:1101.83,desa:19,ibu:"Pekan Bahorok"},
+{nama:"Serapit",luas:98.50,desa:10,ibu:"Serapit"},
+{nama:"Salapian",luas:221.73,desa:17,ibu:"Minta Kasih"},
+{nama:"Kutambaru",luas:236.84,desa:8,ibu:"Kutambaru"},
+{nama:"Sei Bingei",luas:333.17,desa:16,ibu:"Namu Ukur"},
+{nama:"Kuala",luas:206.23,desa:16,ibu:"Pekan Kuala"},
+{nama:"Selesai",luas:167.73,desa:14,ibu:"Pekan Selesai"},
+{nama:"Binjai",luas:42.05,desa:7,ibu:"Kwala Begumit"},
+{nama:"Stabat",luas:108.85,desa:12,ibu:"Stabat Baru"},
+{nama:"Wampu",luas:194.21,desa:14,ibu:"Bingai"},
+{nama:"Batang Serangan",luas:899.38,desa:8,ibu:"Batang Serangan"},
+{nama:"Sawit Seberang",luas:209.10,desa:7,ibu:"Sawit Seberang"},
+{nama:"Padang Tualang",luas:221.14,desa:12,ibu:"Tanjung Selamat"},
+{nama:"Hinai",luas:105.26,desa:13,ibu:"Tanjung Beringin"},
+{nama:"Secanggang",luas:231.19,desa:17,ibu:"Hinai Kiri"},
+{nama:"Tanjung Pura",luas:179.61,desa:19,ibu:"Pekan Tanjung"},
+{nama:"Gebang",luas:178.49,desa:11,ibu:"Pekan Gebang"},
+{nama:"Babalan",luas:76.41,desa:8,ibu:"Pelawi Utara"},
+{nama:"Sei Lepan",luas:280.68,desa:14,ibu:"Alur Dua"},
+{nama:"Brandan Barat",luas:89.80,desa:7,ibu:"Tangkahan Durian"},
+{nama:"Besitang",luas:720.74,desa:9,ibu:"Pekan Besitang"},
+{nama:"Pangkalan Susu",luas:151.35,desa:11,ibu:"Pangkalan Susu"},
+{nama:"Pematang Jaya",luas:209.00,desa:8,ibu:"Pematang Jaya"}
+];
+
+/* =========================
+   HITUNG TOTAL
+========================= */
+const total = dummy.reduce((a,b)=>{
+  a.luas += b.luas;
+  a.desa += b.desa;
+  return a;
+},{luas:0,desa:0});
+
+const totalRow = {
+nama:"JUMLAH TOTAL",
+luas:total.luas.toFixed(2),
+desa:total.desa,
+ibu:"-"
+};
+
+/* =========================
+   SEED FIREBASE (AUTO REPLACE)
+========================= */
+async function seed(){
+
+  const snap = await get(ref(db,"kecamatan_langkat"));
+
+  if(snap.exists()){
+    console.log("DATA SUDAH ADA");
+    return;
+  }
+
+  await set(ref(db,"kecamatan_langkat"),{
+    data: dummy
+  });
+
+  console.log("SEED OK");
+}
+
+seed();
+/* =========================
+   LOAD TABLE + TOTAL
+========================= */
+async function load(){
+
+  const snap = await get(ref(db,"kecamatan_langkat"));
+  const tbody = document.getElementById("tableData");
+
+  if(!snap.exists()){
+    tbody.innerHTML = "<tr><td colspan='5'>Data kosong</td></tr>";
+    return;
+  }
+
+  const data = snap.val().data || [];
+
+  let html = "";
+  let totalLuas = 0;
+  let totalDesa = 0;
+
+  data.forEach((d,i)=>{
+    totalLuas += Number(d.luas || 0);
+    totalDesa += Number(d.desa || 0);
+
+    html += `
+      <tr>
+        <td>${i+1}</td>
+        <td>${d.nama}</td>
+        <td>${d.luas}</td>
+        <td>${d.desa}</td>
+        <td>${d.ibu}</td>
+      </tr>
+    `;
+  });
+
+  html += `
+    <tr class="total-row">
+      <td colspan="2">TOTAL</td>
+      <td>${totalLuas.toFixed(2)}</td>
+      <td>${totalDesa}</td>
+      <td>-</td>
+    </tr>
+  `;
+
+  tbody.innerHTML = html;
+}
+load();
+
+</script>
+
+</body>
+</html>

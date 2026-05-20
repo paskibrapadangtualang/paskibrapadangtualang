@@ -253,14 +253,14 @@ onAuthStateChanged(auth, async (user)=>{
       localStorage.setItem("role", data.role);
       localStorage.setItem("nama", data.nama);
 
-      showNotif("✅ Login berhasil! Mengalihkan...");
+      showNotif("✅Login berhasil!...");
 
       setTimeout(()=>{
         window.location.href = "dashboardcamat.html";
       }, 1200);
 
     }else{
-      showNotif("❌ Bukan admin camat", "error");
+      showNotif("Bukan admin camat", "error");
       signOut(auth);
     }
   }

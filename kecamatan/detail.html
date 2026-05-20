@@ -301,10 +301,59 @@ transition:.2s;
 opacity:.8;
 transform:translateX(4px);
 }
+
+
+.spinner-overlay{
+  position:fixed;
+  inset:0;
+  background:#0f6b20;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+  transition:0.4s ease;
+}
+
+.spinner{
+  width:45px;
+  height:45px;
+  border:5px solid #e5e5e5;
+  border-top:5px solid #ffffff;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  0%{transform:rotate(0deg)}
+  100%{transform:rotate(360deg)}
+}
+
+.spinner-text{
+  margin-top:10px;
+  font-size:14px;
+  color:#ffffff;
+  font-weight:bold;
+}
+
+
+
 </style>
 </head>
 
 <body>
+
+
+
+<div id="globalSpinner" class="spinner-overlay">
+  <div class="spinner"></div>
+  <div class="spinner-text">Memuat Postingan...</div>
+</div>
+
+
+
+
+
 <div id="lightbox" onclick="closeLightbox()" 
 style="
 position:fixed;
@@ -1204,7 +1253,37 @@ loadFooter();
 
 
 
+window.addEventListener("load", async () => {
 
+  try {
+    await Promise.all([
+      loadDetail(),
+      loadRekomendasi(),
+      loadCamat(),
+      loadYoutube(),
+      loadInfoPaskibra(),
+      loadFooter()
+    ]);
+  } catch (e) {
+    console.error("INIT ERROR:", e);
+  } finally {
+    hideSpinner();
+  }
+
+});
+
+
+function hideSpinner(){
+  const el = document.getElementById("globalSpinner");
+
+  if(!el) return;
+
+  el.style.opacity = "0";
+
+  setTimeout(() => {
+    el.style.display = "none";
+  }, 400);
+}
 
 </script>
 

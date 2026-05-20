@@ -85,7 +85,10 @@ button:hover{
 </div>
 
 <script type="module">
-
+import {
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
@@ -101,6 +104,72 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const auth = getAuth(app);
+
+
+
+
+
+/* =========================
+   🔴 BLOCK SCREEN
+========================= */
+function blockAccess(){
+  document.body.innerHTML = `
+    <div style="
+      height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      background:#b00020;
+      color:white;
+      font-family:Arial;
+      flex-direction:column;
+      text-align:center;
+    ">
+      <h1>⛔ AKSES DITOLAK</h1>
+      <p>Anda belum login sebagai Admin Camat</p>
+      <p>Mengarahkan ke login...</p>
+    </div>
+  `;
+
+  setTimeout(()=>{
+    window.location.href = "logincamat.html";
+  }, 2000);
+}
+
+/* =========================
+   🔐 AUTH CHECK (FIX FINAL)
+========================= */
+onAuthStateChanged(auth, (user)=>{
+  if(!user){
+    blockAccess();
+    return;
+  }
+
+  console.log("LOGIN OK:", user.email);
+
+  // 🔥 FIX: pastikan fungsi load() ada
+  if(typeof load === "function"){
+    setTimeout(()=>{
+      load();
+    }, 200);
+  } else {
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* SAVE RUNNING TEXT */
 window.saveRunningText = function(){

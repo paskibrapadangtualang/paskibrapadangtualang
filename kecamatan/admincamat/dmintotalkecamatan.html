@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Kecamatan Langkat</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#f4f6f8;
+  margin:0;
+  padding:20px;
+}
+
+.box{
+  max-width:1200px;
+  margin:auto;
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.1);
+}
+
+h2{
+  text-align:center;
+}
+
+.btn{
+  padding:10px 15px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:13px;
+  margin:5px;
+}
+
+.btn-add{background:#0f6b20;color:white;}
+.btn-save{background:#007bff;color:white;}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:15px;
+  font-size:14px;
+}
+
+th, td{
+  border:1px solid #ddd;
+  padding:10px;
+}
+
+th{
+  background:#0f6b20;
+  color:white;
+  position:sticky;
+  top:0;
+  z-index:2;
+}
+
+td[contenteditable="true"]{
+  background:#fffbe6;
+}
+
+.total{
+  background:#0f6b20;
+  color:white;
+  font-weight:bold;
+}
+
+
+
+#blockScreen{
+  position:fixed;
+  inset:0;
+  background:#b30000;
+  color:white;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  z-index:999999;
+  font-family:Arial;
+}
+
+.box-block{
+  background:rgba(0,0,0,0.2);
+  padding:30px;
+  border-radius:12px;
+  animation:shake 0.4s infinite alternate;
+}
+
+@keyframes shake{
+  from{transform:translateX(-3px);}
+  to{transform:translateX(3px);}
+}
+</style>
+</head>
+
+<body>
+
+
+    <!-- 🔴 BLOCK SCREEN -->
+<div id="blockScreen">
+  <div class="box-block">
+    <h1>🚫 ACCESS DENIED</h1>
+    <p>Anda belum login atau sesi telah berakhir</p>
+    <p>Mengarahkan ke halaman login...</p>
+  </div>
+</div>
+
+
+
+
+
+<div class="box">
+
+<h2>ADMIN DATA KECAMATAN LANGKAT</h2>
+
+<button class="btn btn-add" onclick="addRow()">+ Tambah</button>
+<button class="btn btn-save" onclick="saveData()">Simpan</button>
+
+<table>
+<thead>
+<tr>
+  <th>No</th>
+  <th>Kecamatan</th>
+  <th>Luas</th>
+  <th>Desa</th>
+  <th>Ibukota</th>
+  <th>Aksi</th>
+</tr>
+</thead>
+
+<tbody id="tbody"></tbody>
+
+</table>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+  getDatabase,
+  ref,
+  set,
+  get
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* =========================
+   FIREBASE CONFIG
+========================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+/* =========================
+   🔴 BLOCK SCREEN
+========================= */
+function blockAccess(){
+  document.body.innerHTML = `
+    <div style="
+      height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      background:#b00020;
+      color:white;
+      font-family:Arial;
+      flex-direction:column;
+      text-align:center;
+    ">
+      <h1>⛔ AKSES DITOLAK</h1>
+      <p>Anda belum login sebagai Admin Camat</p>
+      <p>Mengarahkan ke login...</p>
+    </div>
+  `;
+
+  setTimeout(()=>{
+    window.location.href = "logincamat.html";
+  }, 2000);
+}
+
+/* =========================
+   🔐 AUTH CHECK (FIX FINAL)
+========================= */
+onAuthStateChanged(auth, (user)=>{
+  if(!user){
+    blockAccess();
+    return;
+  }
+
+  console.log("LOGIN OK:", user.email);
+
+  // 🔥 FIX: pastikan fungsi load() ada
+  if(typeof load === "function"){
+    setTimeout(()=>{
+      load();
+    }, 200);
+  } else {
+    console.error("FUNGSI load() TIDAK DITEMUKAN");
+  }
+});
+
+
+
+
+let data = [];
+let isLoaded = false;
+
+/* =========================
+   LOAD DATA (SAFE)
+========================= */
+async function load(){
+
+  const snap = await get(ref(db,"kecamatan_langkat/data"));
+
+  if(snap.exists()){
+    const val = snap.val();
+
+    // 🔥 pastikan array
+    data = Array.isArray(val) ? val : Object.values(val);
+  }else{
+    data = [];
+  }
+
+  isLoaded = true;
+  render();
+}
+
+window.load = load;
+
+/* =========================
+   RENDER TABLE
+========================= */
+function render(){
+
+let html = "";
+let totalLuas = 0;
+let totalDesa = 0;
+
+data.forEach((d,i)=>{
+
+totalLuas += Number(d.luas || 0);
+totalDesa += Number(d.desa || 0);
+
+html += `
+<tr>
+<td>${i+1}</td>
+
+<td contenteditable="true"
+oninput="edit(${i},'nama',this.innerText)">
+${d.nama || ""}
+</td>
+
+<td contenteditable="true"
+oninput="edit(${i},'luas',this.innerText)">
+${d.luas || 0}
+</td>
+
+<td contenteditable="true"
+oninput="edit(${i},'desa',this.innerText)">
+${d.desa || 0}
+</td>
+
+<td contenteditable="true"
+oninput="edit(${i},'ibu',this.innerText)">
+${d.ibu || ""}
+</td>
+
+<td>
+<button onclick="hapus(${i})">Hapus</button>
+</td>
+
+</tr>
+`;
+});
+
+/* TOTAL */
+html += `
+<tr class="total">
+<td colspan="2">TOTAL</td>
+<td>${totalLuas.toFixed(2)}</td>
+<td>${totalDesa}</td>
+<td colspan="2">-</td>
+</tr>
+`;
+
+document.getElementById("tbody").innerHTML = html;
+}
+
+/* =========================
+   EDIT DATA
+========================= */
+window.edit = function(i,key,val){
+
+if(!data[i]) return;
+
+data[i][key] =
+(key === "luas" || key === "desa")
+? Number(val) || 0
+: val;
+
+}
+
+/* =========================
+   ADD ROW
+========================= */
+window.addRow = function(){
+
+data.push({
+nama:"Kecamatan Baru",
+luas:0,
+desa:0,
+ibu:"-"
+});
+
+render();
+}
+
+/* =========================
+   DELETE ROW
+========================= */
+window.hapus = function(i){
+
+data.splice(i,1);
+render();
+
+}
+
+/* =========================
+   SAVE (ANTI HILANG FIX)
+========================= */
+window.saveData = async function(){
+
+  if(!isLoaded) return;
+
+  const cleanData = data
+    .filter(d => d && d.nama)
+    .map(d => ({
+      nama: d.nama,
+      luas: Number(d.luas) || 0,
+      desa: Number(d.desa) || 0,
+      ibu: d.ibu || "-"
+    }));
+
+  // 🔥 ONLY overwrite array
+  await set(ref(db,"kecamatan_langkat/data"), cleanData);
+
+  alert("✅ Data berhasil disimpan");
+};
+
+load();
+
+</script>
+</body>
+</html>
