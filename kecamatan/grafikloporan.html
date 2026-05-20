@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Statistik Camat</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body{
+  font-family:Arial;
+  background:#f4f6f8;
+  margin:0;
+}
+
+.container{
+  max-width:900px;
+  margin:20px auto;
+  background:#fff;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.1);
+}
+
+.title{
+  text-align:center;
+  font-size:20px;
+  font-weight:bold;
+  color:#0f6b20;
+  margin-bottom:20px;
+}
+
+.chart-box{
+  margin-bottom:25px;
+}
+
+/* 🔥 BOX STAT */
+.stat-wrap{
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  margin:20px 0 30px;
+}
+
+.stat-box{
+  flex:1;
+  background:linear-gradient(135deg,#0f6b20,#1aa84b);
+  color:#fff;
+  padding:20px;
+  border-radius:12px;
+  text-align:center;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+.stat-box.pink{
+  background:linear-gradient(135deg,#e91e63,#ff5c8a);
+}
+
+.stat-title{
+  font-size:14px;
+  opacity:0.9;
+}
+
+.stat-value{
+  font-size:28px;
+  font-weight:bold;
+  margin-top:5px;
+}
+
+
+
+.footer{
+margin-top:40px;
+background:linear-gradient(
+135deg,
+#0f6b20,
+#0a5017
+);
+color:white;
+padding:40px 20px 20px;
+border-radius:18px 18px 0 0;
+}
+
+.footer-top{
+max-width:1300px;
+margin:auto;
+
+display:grid;
+
+grid-template-columns:
+repeat(
+auto-fit,
+minmax(240px,1fr)
+);
+
+gap:25px;
+}
+
+.footer-box h4{
+margin-bottom:15px;
+font-size:18px;
+}
+
+.footer-box p{
+line-height:1.7;
+font-size:14px;
+opacity:.9;
+}
+
+.footer-box a{
+display:block;
+margin-bottom:10px;
+color:white;
+text-decoration:none;
+font-size:14px;
+opacity:.9;
+}
+
+.footer-box a:hover{
+opacity:1;
+transform:translateX(3px);
+}
+
+.footer-logo{
+width:75px;
+height:75px;
+object-fit:contain;
+margin-bottom:10px;
+}
+
+.footer-bottom{
+margin-top:30px;
+padding-top:20px;
+border-top:
+1px solid rgba(
+255,255,255,.15
+);
+
+text-align:center;
+font-size:13px;
+opacity:.8;
+}
+
+
+.footer-item{
+display:flex;
+align-items:center;
+gap:10px;
+margin-bottom:12px;
+font-size:14px;
+line-height:1.5;
+}
+
+.footer-icon{
+width:20px;
+height:20px;
+object-fit:contain;
+flex-shrink:0;
+}
+
+.footer-link{
+text-decoration:none;
+color:white;
+padding:6px 0;
+transition:.2s;
+}
+
+.footer-link:hover{
+opacity:.8;
+transform:translateX(4px);
+}
+
+
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="title">STATISTIK PENDUDUK</div>
+
+  <!-- BAR CHART -->
+  <div class="chart-box">
+    <canvas id="barChart"></canvas>
+  </div>
+
+  <!-- 🔥 BOX STAT (KIRI KANAN) -->
+  <div class="stat-wrap">
+    <div class="stat-box">
+      <div class="stat-title">LAKI-LAKI</div>
+      <div class="stat-value" id="lakiVal">0</div>
+    </div>
+
+    <div class="stat-box pink">
+      <div class="stat-title">PEREMPUAN</div>
+      <div class="stat-value" id="perempuanVal">0</div>
+    </div>
+  </div>
+
+  <!-- PIE CHART -->
+  <div class="chart-box">
+    <canvas id="pieChart"></canvas>
+  </div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, onValue, get, set }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+
+
+
+
+/* FOOTER KONTAK */
+
+async function loadFooter(){
+
+const snap = await get(
+ref(
+db,
+"kontakcamat"
+)
+);
+
+if(!snap.exists()){
+
+document.getElementById(
+"footerKontak"
+).innerHTML = "Data kontak belum ada";
+
+document.getElementById(
+"footerSosmed"
+).innerHTML = "Belum tersedia";
+
+return;
+
+}
+
+const k = snap.val();
+
+/* KONTAK */
+
+document.getElementById(
+"footerKontak"
+).innerHTML = `
+
+<div class="footer-item">
+
+<img
+src="assets/images/gps.png"
+class="footer-icon">
+
+<span>
+${k.alamat || "-"}
+</span>
+
+</div>
+
+<div class="footer-item">
+
+<img
+src="assets/images/gmail.png"
+class="footer-icon">
+
+<span>
+${k.email || "-"}
+</span>
+
+</div>
+
+<div class="footer-item">
+
+<img
+src="assets/images/search-user.png"
+class="footer-icon">
+
+<span>
+${k.telp || "-"}
+</span>
+
+</div>
+
+<div class="footer-item">
+
+<img
+src="assets/images/support.png"
+class="footer-icon">
+
+<span>
+${k.jamLayanan || "-"}
+</span>
+
+</div>
+
+`;
+
+
+/* SOSMED */
+
+document.getElementById(
+"footerSosmed"
+).innerHTML = `
+
+<a
+href="${k.instagram || '#'}"
+target="_blank"
+class="footer-item footer-link"
+>
+
+<img
+src="assets/images/social.png"
+class="footer-icon">
+
+<span>
+Instagram
+</span>
+
+</a>
+
+<a
+href="${k.youtube || '#'}"
+target="_blank"
+class="footer-item footer-link"
+>
+
+<img
+src="assets/images/youtube.png"
+class="footer-icon">
+
+<span>
+YouTube
+</span>
+
+</a>
+
+<a
+href="${k.facebook || '#'}"
+target="_blank"
+class="footer-item footer-link"
+>
+
+<img
+src="assets/images/facebook.png"
+class="footer-icon">
+
+<span>
+Facebook
+</span>
+
+</a>
+
+<a
+href="${k.whatsapp || '#'}"
+target="_blank"
+class="footer-item footer-link"
+>
+
+<img
+src="assets/images/whatsapp.png"
+class="footer-icon">
+
+<span>
+WhatsApp
+</span>
+
+</a>
+
+`;
+
+}
+
+loadFooter();
+
+
+
+
+/* AUTO DUMMY */
+const dataRef = ref(db,"grafikcamat");
+
+get(dataRef).then(async (snap)=>{
+  if(!snap.exists()){
+    await set(ref(db,"grafikcamat"),{
+      laki:3473,
+      perempuan:3325
+    });
+  }
+});
+
+/* BAR CHART */
+const barChart = new Chart(document.getElementById("barChart"),{
+  type:"bar",
+  data:{
+    labels:["Laki-laki","Perempuan"],
+    datasets:[{
+      label:"Jumlah Jiwa",
+      data:[0,0],
+      backgroundColor:["#1f77b4","#e91e63"]
+    }]
+  },
+  options:{
+    responsive:true,
+    scales:{ y:{ beginAtZero:true } }
+  }
+});
+
+/* PIE CHART */
+const pieChart = new Chart(document.getElementById("pieChart"),{
+  type:"doughnut",
+  data:{
+    labels:["Laki-laki","Perempuan"],
+    datasets:[{
+      data:[0,0],
+      backgroundColor:["#1f77b4","#e91e63"]
+    }]
+  },
+  options:{
+    plugins:{ legend:{ position:"bottom" } }
+  }
+});
+
+/* REALTIME UPDATE */
+onValue(ref(db,"grafikcamat"), (snap)=>{
+  const data = snap.val();
+  if(!data) return;
+
+  const laki = data.laki || 0;
+  const perempuan = data.perempuan || 0;
+
+  // update chart
+  barChart.data.datasets[0].data = [laki, perempuan];
+  barChart.update();
+
+  pieChart.data.datasets[0].data = [laki, perempuan];
+  pieChart.update();
+
+  // update box
+  document.getElementById("lakiVal").innerText = laki;
+  document.getElementById("perempuanVal").innerText = perempuan;
+});
+
+</script>
+<footer class="footer">
+
+<div class="footer-top">
+
+<!-- BRAND -->
+<div class="footer-box">
+
+<img
+src="assets/images/logo langkat.png"
+class="footer-logo">
+
+<h3>
+Kecamatan Padang Tualang
+</h3>
+
+<p>
+
+Portal informasi resmi pelayanan,
+berita, kegiatan masyarakat,
+publikasi kecamatan serta
+integrasi informasi organisasi.
+
+</p>
+
+</div>
+
+<!-- MENU -->
+
+<div class="footer-box">
+
+<h4>Menu Utama</h4>
+
+<a href="index.html">
+Beranda
+</a>
+
+<a href="berita.html">
+Berita
+</a>
+
+<a href="layanan.html">
+Layanan
+</a>
+
+<a href="profil.html">
+Profil Kecamatan
+</a>
+
+<a href="kontak.html">
+Kontak
+</a>
+
+</div>
+
+<!-- KONTAK -->
+
+<div class="footer-box">
+
+<h4>Kontak Kecamatan</h4>
+
+<div id="footerKontak">
+
+Loading...
+
+</div>
+
+</div>
+
+<!-- SOSMED -->
+
+<div class="footer-box">
+
+<h4>Media Sosial</h4>
+
+<div id="footerSosmed">
+
+Loading...
+
+</div>
+
+</div>
+
+</div>
+
+<div class="footer-bottom">
+
+© 2026 Kecamatan Padang Tualang • Kabupaten Langkat Develop by ilhamkrt
+
+</div>
+
+</footer>
+
+
+
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Admin Statistik Camat</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#f4f6f8;
+  margin:0;
+}
+
+.container{
+  max-width:500px;
+  margin:40px auto;
+  background:#fff;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.1);
+}
+
+.title{
+  text-align:center;
+  font-size:18px;
+  font-weight:bold;
+  color:#0f6b20;
+  margin-bottom:20px;
+}
+
+.input-box{
+  margin-bottom:15px;
+}
+
+label{
+  font-size:14px;
+  color:#333;
+  display:block;
+  margin-bottom:5px;
+}
+
+input{
+  width:100%;
+  padding:10px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  outline:none;
+  font-size:16px;
+}
+
+.btn{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:16px;
+  margin-top:10px;
+  color:#fff;
+}
+
+.update{
+  background:#0f6b20;
+}
+
+.reset{
+  background:#e91e63;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="title">ADMIN STATISTIK PENDUDUK</div>
+
+  <div class="input-box">
+    <label>Laki-laki</label>
+    <input type="number" id="lakiInput" placeholder="Masukkan jumlah laki-laki">
+  </div>
+
+  <div class="input-box">
+    <label>Perempuan</label>
+    <input type="number" id="perempuanInput" placeholder="Masukkan jumlah perempuan">
+  </div>
+
+  <button class="btn update" onclick="updateData()">UPDATE DATA</button>
+  <button class="btn reset" onclick="resetData()">RESET</button>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, set, get }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+  authDomain: "paskibra2026-300eb.firebaseapp.com",
+  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+  projectId: "paskibra2026-300eb"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+/* LOAD DATA AWAL */
+const dataRef = ref(db,"grafikcamat");
+
+get(dataRef).then((snap)=>{
+  if(snap.exists()){
+    document.getElementById("lakiInput").value = snap.val().laki;
+    document.getElementById("perempuanInput").value = snap.val().perempuan;
+  }
+});
+
+/* UPDATE DATA */
+window.updateData = function(){
+  const laki = parseInt(document.getElementById("lakiInput").value) || 0;
+  const perempuan = parseInt(document.getElementById("perempuanInput").value) || 0;
+
+  set(ref(db,"grafikcamat"),{
+    laki:laki,
+    perempuan:perempuan
+  });
+
+  alert("Data berhasil diupdate!");
+};
+
+/* RESET DATA */
+window.resetData = function(){
+  set(ref(db,"grafikcamat"),{
+    laki:0,
+    perempuan:0
+  });
+
+  document.getElementById("lakiInput").value = 0;
+  document.getElementById("perempuanInput").value = 0;
+
+  alert("Data berhasil direset!");
+};
+
+</script>
+
+</body>
+</html>

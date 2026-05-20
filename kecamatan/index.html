@@ -58,27 +58,34 @@ body, html {
 }
 /* WRAPPER 3 KOLOM */
 .wrapper{
+  display:flex;
   gap:15px;
   max-width:1200px;
+  margin:20px auto;
   padding:10px;
+  align-items:flex-start;
 }
 
-/* SIDEBAR */
-.sidebar{
-  width:25%;
+/* kiri lebih besar */
+.left-box{
+  flex:2;
 }
 
-/* TENGAH */
-.main{
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 15px;
+/* kanan lebih kecil */
+.right-box{
+  flex:1;
 }
 
+/* responsive HP */
+@media(max-width:900px){
+  .wrapper{
+    flex-direction:column;
+  }
 
-@media (max-width: 900px){
-  .main{
-    grid-template-columns: repeat(2, 1fr);
+  .left-box,
+  .right-box{
+    flex:unset;
+    width:100%;
   }
 }
 
@@ -88,7 +95,104 @@ body, html {
   }
 }
 
+/* CONTAINER GRID */
+#camatContainer{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:15px;
+}
 
+/* CARD BERITA */
+.card{
+  background:#fff;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 5px 15px rgba(0,0,0,0.08);
+  transition:0.3s;
+  display:flex;
+  flex-direction:column;
+}
+
+.card:hover{
+  transform:translateY(-5px);
+}
+
+/* GAMBAR */
+.card img{
+
+  object-fit:cover;
+}
+
+/* CONTENT */
+.content{
+  padding:12px;
+}
+
+.title{
+  font-size:15px;
+  font-weight:bold;
+  color:#111;
+  margin-bottom:5px;
+}
+
+.meta{
+  font-size:12px;
+  color:#777;
+  margin-bottom:8px;
+}
+
+.desc{
+  font-size:13px;
+  color:#444;
+  line-height:1.5;
+  margin-bottom:10px;
+}
+
+/* BUTTON */
+.btn-read{
+  display:inline-block;
+  padding:8px 10px;
+  background:#0f6b20;
+  color:#fff;
+  text-decoration:none;
+  border-radius:8px;
+  font-size:13px;
+  text-align:center;
+  transition:0.3s;
+}
+
+.btn-read:hover{
+  background:#0c5a1a;
+}
+
+/* ANIMASI */
+.animate{
+  animation:fadeUp 0.4s ease;
+}
+
+@keyframes fadeUp{
+  from{
+    opacity:0;
+    transform:translateY(10px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+/* RESPONSIVE */
+@media(max-width:1000px){
+  #camatContainer{
+    grid-template-columns:repeat(2, 1fr);
+  }
+}
+
+@media(max-width:600px){
+  #camatContainer{
+    grid-template-columns:repeat(1, 1fr);
+  }
+}
 
 
 /* CARD */
@@ -100,11 +204,7 @@ body, html {
   box-shadow:0 2px 10px rgba(0,0,0,0.1);
 }
 
-.card img{
-  width:100%;
-  height:200px;
-  object-fit:cover;
-}
+
 
 .content{
   padding:12px;
@@ -130,9 +230,8 @@ body, html {
 /* YOUTUBE BOX */
 .youtube-box iframe{
   width:100%;
-  height:180px;
-  border-radius:10px;
-  margin-bottom:10px;
+  aspect-ratio:16/9;
+  height:auto;
 }
 
 /* LABEL */
@@ -207,7 +306,6 @@ body, html {
 
 
 .top-section{
-  display:flex;
   gap:15px;
   max-width:1200px;
   margin:20px auto;
@@ -361,6 +459,466 @@ body, html {
   opacity:0.7;
 }
 
+
+.card-header{
+  background: linear-gradient(90deg,#0f6b20,#18a34a);
+  color:white;
+  padding:12px 15px;
+  font-weight:bold;
+  font-size:14px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  border-radius:12px 12px 0 0;
+  position:relative;
+}
+
+/* efek garis putih kecil kayak profesional UI */
+.card-header::after{
+  content:"";
+  position:absolute;
+  bottom:0;
+  left:0;
+  width:100%;
+  height:2px;
+  background:rgba(255,255,255,0.25);
+}
+
+.header-icon{
+  width:22px;
+  height:22px;
+  object-fit:contain;
+}
+
+
+
+
+
+.footer{
+margin-top:40px;
+background:linear-gradient(
+135deg,
+#0f6b20,
+#0a5017
+);
+color:white;
+padding:40px 20px 20px;
+border-radius:18px 18px 0 0;
+}
+
+.footer-top{
+max-width:1300px;
+margin:auto;
+
+display:grid;
+
+grid-template-columns:
+repeat(
+auto-fit,
+minmax(240px,1fr)
+);
+
+gap:25px;
+}
+
+.footer-box h4{
+margin-bottom:15px;
+font-size:18px;
+}
+
+.footer-box p{
+line-height:1.7;
+font-size:14px;
+opacity:.9;
+}
+
+.footer-box a{
+display:block;
+margin-bottom:10px;
+color:white;
+text-decoration:none;
+font-size:14px;
+opacity:.9;
+}
+
+.footer-box a:hover{
+opacity:1;
+transform:translateX(3px);
+}
+
+.footer-logo{
+width:75px;
+height:75px;
+object-fit:contain;
+margin-bottom:10px;
+}
+
+.footer-bottom{
+margin-top:30px;
+padding-top:20px;
+border-top:
+1px solid rgba(
+255,255,255,.15
+);
+
+text-align:center;
+font-size:13px;
+opacity:.8;
+}
+
+
+.footer-item{
+display:flex;
+align-items:center;
+gap:10px;
+margin-bottom:12px;
+font-size:14px;
+line-height:1.5;
+}
+
+.footer-icon{
+width:20px;
+height:20px;
+object-fit:contain;
+flex-shrink:0;
+}
+
+.footer-link{
+text-decoration:none;
+color:white;
+padding:6px 0;
+transition:.2s;
+}
+
+.footer-link:hover{
+opacity:.8;
+transform:translateX(4px);
+}
+
+
+
+#lihatSemuaBtn{
+
+display:none;
+
+margin:15px auto 5px;
+
+padding:12px 18px;
+
+border:none;
+
+outline:none;
+
+cursor:pointer;
+
+border-radius:12px;
+
+background:
+linear-gradient(
+135deg,
+#0f6b20,
+#198532
+);
+
+color:white;
+
+font-size:14px;
+
+font-weight:700;
+
+box-shadow:
+0 6px 15px
+rgba(
+15,
+107,
+32,
+0.25
+);
+
+transition:.25s;
+
+width:100%;
+
+}
+
+#lihatSemuaBtn:hover{
+
+transform:
+translateY(-2px);
+
+box-shadow:
+0 10px 20px
+rgba(
+15,
+107,
+32,
+0.35
+);
+
+}
+
+#lihatSemuaBtn:active{
+
+transform:
+scale(.98);
+
+}
+
+#lihatSemuaBtn::after{
+
+content:" ▼";
+
+font-size:12px;
+
+margin-left:6px;
+
+}
+
+#lihatSemuaBtn.open::after{
+
+content:" ▲";
+
+}
+
+/* HP */
+
+@media(max-width:768px){
+
+#lihatSemuaBtn{
+
+padding:11px;
+
+font-size:13px;
+
+border-radius:10px;
+
+}
+
+}
+
+
+
+/* BOX ITEM JAM */
+
+.jam-item-box{
+
+background:#f7faf8;
+
+border:1px solid #e3eee6;
+
+border-left:5px solid #0f6b20;
+
+padding:14px;
+
+border-radius:12px;
+
+margin-bottom:-12px;
+
+transition:.25s;
+
+}
+
+.jam-item-box:hover{
+
+transform:translateY(-2px);
+
+box-shadow:
+0 8px 18px
+rgba(
+15,
+107,
+32,
+0.08
+);
+
+}
+
+/* JUDUL */
+
+.jam-title{
+
+font-size:14px;
+
+font-weight:700;
+
+color:#0f6b20;
+
+margin-bottom:8px;
+
+line-height:1.5;
+
+}
+
+/* JAM */
+
+.jam-time{
+
+font-size:13px;
+
+color:#555;
+
+line-height:1.6;
+
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+.jam-item-box{
+
+padding:12px;
+
+border-radius:10px;
+
+}
+
+.jam-title{
+
+font-size:13px;
+
+}
+
+.jam-time{
+
+font-size:12px;
+
+}
+
+}
+
+/* HEADER BERITA */
+
+.berita-header{
+
+display:flex;
+
+align-items:center;
+
+gap:14px;
+
+padding:16px;
+
+border-radius:16px;
+
+background:
+linear-gradient(
+135deg,
+#0f6b20,
+#198532
+);
+
+color:white;
+
+margin-bottom:18px;
+
+box-shadow:
+0 10px 25px
+rgba(
+15,
+107,
+32,
+0.18
+);
+
+}
+
+/* ICON */
+
+.berita-icon{
+
+width:55px;
+
+height:55px;
+
+object-fit:contain;
+
+background:
+rgba(
+255,
+255,
+255,
+0.15
+);
+
+padding:8px;
+
+border-radius:14px;
+
+}
+
+/* TEXT */
+
+.berita-text{
+
+flex:1;
+
+}
+
+/* TITLE */
+
+.berita-title{
+
+font-size:18px;
+
+font-weight:800;
+
+letter-spacing:.5px;
+
+margin-bottom:4px;
+
+}
+
+/* SUB */
+
+.berita-sub{
+
+font-size:13px;
+
+opacity:.9;
+
+line-height:1.5;
+
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+.berita-header{
+
+padding:14px;
+
+gap:10px;
+
+border-radius:14px;
+
+}
+
+.berita-icon{
+
+width:45px;
+
+height:45px;
+
+padding:6px;
+
+}
+
+.berita-title{
+
+font-size:15px;
+
+}
+
+.berita-sub{
+
+font-size:12px;
+
+}
+
+}
+
 </style>
 </head>
 
@@ -380,10 +938,10 @@ body, html {
 
 <!-- NAVBAR -->
 <div class="navbar">
-  <a href="#">Home</a>
+  <a href="index.html">Home</a>
   <a href="#">Berita</a>
-  <a href="#">Layanan</a>
-  <a href="#">Kontak</a>
+  <a href="grafikloporan.html">Penduduk</a>
+  <a href="kontakcamat.html">Kontak</a>
 </div>
 
 
@@ -416,15 +974,17 @@ body, html {
 <div class="wrapper">
 
   <!-- KIRI -->
-<div class="card">
-  <div class="content">
+  <div class="card left-box">
 
-    <div class="section-title">Cek Layanan</div>
+    <!-- HEADER -->
+<div class="card-header">
+  <img src="assets/images/logo langkat.png" class="header-icon">
+  Cek Layanan Kecamatan
+</div>
 
-    <div class="accordion">
+    <div class="content">
 
       <div id="previewList" class="accordion-preview"></div>
-
       <div id="moreList" class="accordion-more"></div>
 
       <div class="accordion-toggle" onclick="toggleMore()">
@@ -432,20 +992,87 @@ body, html {
       </div>
 
     </div>
-
   </div>
+
+  <!-- KANAN -->
+  <div class="card right-box">
+
+    <!-- HEADER -->
+<div class="card-header">
+  <img src="assets/images/logo langkat.png" class="header-icon">
+  Informasi & Pengumuman
 </div>
 
-    <div class="card">
-      <div class="content">
-        <div class="section-title">📢 Informasi Penting</div>
-        <div class="desc">Jam pelayanan: 08.00 - 15.00 WIB</div>
+
+
+
+ <!-- LIST JAM -->
+  <div id="jamContainer">
+
+    <div class="content">
+
+      <div class="desc">
+        Loading informasi...
       </div>
+
     </div>
+
   </div>
 
-  <!-- TENGAH (BERITA) -->
-  <div class="main" id="container"></div>
+  <!-- TOMBOL -->
+  <div
+  style="
+  text-align:center;
+  margin-top:10px;
+  ">
+
+    <button
+    id="lihatSemuaBtn"
+    onclick="toggleJam()"
+    style="display:none;">
+
+      Lihat Semua
+
+    </button>
+
+  </div>
+
+
+
+
+
+  </div>
+
+</div>
+
+
+
+
+<div class="berita-header">
+
+<img
+src="assets/images/logo langkat.png"
+class="berita-icon">
+
+<div class="berita-text">
+
+<div class="berita-title">
+BERITA HARI INI
+</div>
+
+<div class="berita-sub">
+Informasi terbaru Kecamatan Padang Tualang
+</div>
+
+</div>
+
+</div>
+
+
+<!-- TENGAH (BERITA) -->
+<div class="main" id="camatContainer"></div>
+
+
 
   <!-- KANAN (YOUTUBE) -->
   <div class="sidebar">
@@ -454,9 +1081,9 @@ body, html {
       <div class="content">
         <div class="section-title">🎥 Kanal YouTube Resmi</div>
 
-        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"></iframe>
+        <iframe src="https://youtu.be/jTc1jum7RJM?si=zTIUJ_t-fFJmHSks"></iframe>
 
-        <iframe src="https://www.youtube.com/embed/5qap5aO4i9A"></iframe>
+        <iframe src="https://youtu.be/hTocCkQb7xE?si=0iwx1M-1-80hgni2"></iframe>
       </div>
     </div>
 
@@ -482,6 +1109,431 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+
+
+
+
+
+
+
+
+async function seedJamLayanan(){
+
+const cek = await get(
+ref(
+db,
+"infojamlayanan"
+)
+);
+
+if(cek.exists()) return;
+
+const dummy = {
+
+item1:{
+judul:"Pelayanan Administrasi",
+jam:"08.00 - 15.00 WIB",
+deskripsi:"Pelayanan surat dan administrasi umum",
+createdAt:Date.now()
+},
+
+item2:{
+judul:"Pelayanan Kependudukan",
+jam:"08.00 - 14.00 WIB",
+deskripsi:"Pengurusan dokumen masyarakat",
+createdAt:Date.now()+1
+},
+
+item3:{
+judul:"Pelayanan Informasi",
+jam:"08.00 - 15.30 WIB",
+deskripsi:"Layanan informasi publik",
+createdAt:Date.now()+2
+},
+
+item4:{
+judul:"Pengaduan Masyarakat",
+jam:"09.00 - 15.00 WIB",
+deskripsi:"Penyampaian aspirasi warga",
+createdAt:Date.now()+3
+},
+
+item5:{
+judul:"Pelayanan Umum",
+jam:"08.00 - 16.00 WIB",
+deskripsi:"Pelayanan umum kecamatan",
+createdAt:Date.now()+4
+}
+
+};
+
+await set(
+ref(
+db,
+"infojamlayanan"
+),
+dummy
+);
+
+console.log(
+"Dummy infojamlayanan dibuat"
+);
+
+}
+
+seedJamLayanan();
+
+
+
+
+
+
+let semuaData = [];
+let buka = false;
+
+async function loadJam(){
+
+const snap =
+await get(
+ref(
+db,
+"infojamlayanan"
+)
+);
+
+if(
+!snap.exists()
+) return;
+
+const data =
+snap.val();
+
+const container =
+document.getElementById(
+"jamContainer"
+);
+
+container.innerHTML="";
+
+const list =
+Object.values(data)
+.reverse();
+
+list.forEach(
+(item,index)=>{
+
+const div =
+document.createElement(
+"div"
+);
+
+div.className =
+"content jam-item";
+
+if(
+index >= 2
+){
+div.style.display=
+"none";
+}
+
+div.innerHTML = `
+
+<div class="jam-item-box">
+
+<div class="jam-title">
+${item.judul || ""}
+</div>
+
+<div class="jam-time">
+${item.jam || ""}
+</div>
+
+</div>
+
+`;
+
+container.appendChild(
+div
+);
+
+});
+
+/* tombol otomatis */
+
+if(
+list.length > 2
+){
+
+document.getElementById(
+"lihatSemuaBtn"
+).style.display=
+"block";
+
+}
+
+}
+
+loadJam();
+
+
+
+
+/* FOOTER KONTAK */
+
+async function loadFooter(){
+
+const snap = await get(
+ref(
+db,
+"kontakcamat"
+)
+);
+
+if(!snap.exists()){
+
+document.getElementById(
+"footerKontak"
+).innerHTML = "Data kontak belum ada";
+
+document.getElementById(
+"footerSosmed"
+).innerHTML = "Belum tersedia";
+
+return;
+
+}
+
+const k = snap.val();
+
+/* KONTAK */
+
+document.getElementById(
+"footerKontak"
+).innerHTML = `
+
+<div class="footer-item">
+
+<img
+src="assets/images/gps.png"
+class="footer-icon">
+
+<span>
+${k.alamat || "-"}
+</span>
+
+</div>
+
+<div class="footer-item">
+
+<img
+src="assets/images/gmail.png"
+class="footer-icon">
+
+<span>
+${k.email || "-"}
+</span>
+
+</div>
+
+<div class="footer-item">
+
+<img
+src="assets/images/search-user.png"
+class="footer-icon">
+
+<span>
+${k.telp || "-"}
+</span>
+
+</div>
+
+<div class="footer-item">
+
+<img
+src="assets/images/support.png"
+class="footer-icon">
+
+<span>
+${k.jamLayanan || "-"}
+</span>
+
+</div>
+
+`;
+
+
+/* SOSMED */
+
+document.getElementById(
+"footerSosmed"
+).innerHTML = `
+
+<a
+href="${k.instagram || '#'}"
+target="_blank"
+class="footer-item footer-link"
+>
+
+<img
+src="assets/images/social.png"
+class="footer-icon">
+
+<span>
+Instagram
+</span>
+
+</a>
+
+<a
+href="${k.youtube || '#'}"
+target="_blank"
+class="footer-item footer-link"
+>
+
+<img
+src="assets/images/youtube.png"
+class="footer-icon">
+
+<span>
+YouTube
+</span>
+
+</a>
+
+<a
+href="${k.facebook || '#'}"
+target="_blank"
+class="footer-item footer-link"
+>
+
+<img
+src="assets/images/facebook.png"
+class="footer-icon">
+
+<span>
+Facebook
+</span>
+
+</a>
+
+<a
+href="${k.whatsapp || '#'}"
+target="_blank"
+class="footer-item footer-link"
+>
+
+<img
+src="assets/images/whatsapp.png"
+class="footer-icon">
+
+<span>
+WhatsApp
+</span>
+
+</a>
+
+`;
+
+}
+
+loadFooter();
+
+async function seedYoutubeCamat() {
+  const snap = await get(ref(db, "Yotubecamat"));
+
+  // kalau sudah ada data, jangan ulang
+  if (snap.exists()) return;
+
+  const dummy = {
+    video1: {
+      judul: "Kegiatan Kecamatan Padang Tualang",
+      url: "https://www.youtube.com/embed/jTc1jum7RJM"
+    },
+    video2: {
+      judul: "Pelayanan Masyarakat",
+      url: "https://www.youtube.com/embed/hTocCkQb7xE"
+    },
+    video3: {
+      judul: "Program Pemerintah Kecamatan",
+      url: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+    }
+  };
+
+  await set(ref(db, "Yotubecamat"), dummy);
+  console.log("✅ Dummy Yotubecamat berhasil dibuat");
+}
+
+seedYoutubeCamat();
+
+
+onValue(ref(db, "Yotubecamat"), (snap) => {
+  const box = document.querySelector(".youtube-box .content");
+
+  let html = `
+    <div class="section-title">🎥 Kanal YouTube Resmi</div>
+    <div style="display:flex;flex-direction:column;gap:15px;">
+  `;
+
+  const data = snap.val();
+
+  if (data) {
+    Object.values(data).forEach((item) => {
+
+      const embedUrl = convertYouTubeUrl(item.url);
+
+      html += `
+        <div style="border-radius:10px;overflow:hidden;">
+          <iframe 
+            src="${embedUrl}"
+            style="width:100%;height:200px;border-radius:10px;"
+            frameborder="0"
+            allowfullscreen>
+          </iframe>
+
+          <div style="font-size:13px;margin-top:5px;">
+            ${item.judul}
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  html += `</div>`;
+  box.innerHTML = html;
+});
+
+
+function convertYouTubeUrl(url) {
+  if (!url) return "";
+
+  try {
+    const u = new URL(url);
+
+    // youtube watch
+    if (u.hostname.includes("youtube.com")) {
+      const v = u.searchParams.get("v");
+      if (v) return `https://www.youtube.com/embed/${v}`;
+    }
+
+    // youtu.be short link
+    if (u.hostname === "youtu.be") {
+      return `https://www.youtube.com/embed${u.pathname}`;
+    }
+
+    // kalau sudah embed
+    if (url.includes("embed")) return url;
+
+  } catch (e) {
+    return "";
+  }
+
+  return url;
+}
+
+
+
+
 
 
 const runningRef = ref(db, "inforuningtext");
@@ -647,10 +1699,12 @@ function linkify(text){
 }
 
 /* LOAD BERITA */
+/* LOAD BERITA */
 async function load(){
 
   const snap = await get(ref(db,"portalcamat"));
-  const container = document.getElementById("container");
+
+  const container = document.getElementById("camatContainer");
 
   container.innerHTML = "";
 
@@ -659,32 +1713,54 @@ async function load(){
     return;
   }
 
-Object.entries(snap.val()).forEach(([key, item]) => {
+  Object.entries(snap.val()).forEach(([key, item]) => {
 
-  container.innerHTML += `
-    <div class="card animate">
-      <img src="${item.gambar}">
-      <div class="content">
-        <div class="title">${item.judul}</div>
-        <div class="meta">📅 ${item.tanggal}</div>
+    let imgHTML = "";
 
-        <div class="desc">
-          ${linkify(shortText(item.isi, 120))}
-        </div>
+if (Array.isArray(item.gambar)) {
 
-        <a href="detail.html?id=${key}" class="btn-read">
-  Baca selengkapnya →
-</a>
+  const firstImg = item.gambar.find(url => url); // ambil 1 gambar pertama yang valid
 
-      </div>
-    </div>
+  if (firstImg) {
+    imgHTML = `
+      <img src="${firstImg}" 
+           style="width:100%;height:180px;object-fit:cover;border-radius:10px;">
+    `;
+  }
+
+} else if (item.gambar) {
+  imgHTML = `
+    <img src="${item.gambar}" 
+         style="width:100%;height:180px;object-fit:cover;border-radius:10px;">
   `;
-});
+}
 
-  // 🔥 INI PENTING
-  runObserver();
+    container.innerHTML += `
+      <div class="card animate">
+
+        ${imgHTML}
+
+        <div class="content">
+          <div class="title">${item.judul}</div>
+          <div class="meta">📅 ${item.tanggal}</div>
+
+          <div class="desc">
+            ${linkify(shortText(item.isi, 120))}
+          </div>
+
+          <a href="detail.html?id=${key}" class="btn-read">
+            Baca selengkapnya →
+          </a>
+
+        </div>
+      </div>
+    `;
+  });
+
+  runObserver(); // aman dipanggil di sini
 }
 load();
+
 
 function shortText(text, maxLength = 120){
   if(!text) return "";
@@ -733,7 +1809,48 @@ function runObserver(){
 
 
 
+let tampilSemua = false;
 
+window.toggleJam = function(){
+
+const btn =
+document.getElementById(
+"lihatSemuaBtn"
+);
+
+const items =
+document.querySelectorAll(
+".jam-item"
+);
+
+tampilSemua =
+!tampilSemua;
+
+items.forEach(
+(el,index)=>{
+
+if(index>=2){
+
+el.style.display =
+tampilSemua
+? "block"
+: "none";
+
+}
+
+});
+
+btn.innerText =
+tampilSemua
+? "Tutup"
+: "Lihat Semua";
+
+btn.classList.toggle(
+"open",
+tampilSemua
+);
+
+};
 
 
 
@@ -755,6 +1872,108 @@ document.querySelectorAll(".accordion-toggle").forEach(btn=>{
 });
 
 </script>
+
+
+
+
+
+
+<footer class="footer">
+
+<div class="footer-top">
+
+<!-- BRAND -->
+<div class="footer-box">
+
+<img
+src="assets/images/logo langkat.png"
+class="footer-logo">
+
+<h3>
+Kecamatan Padang Tualang
+</h3>
+
+<p>
+
+Portal informasi resmi pelayanan,
+berita, kegiatan masyarakat,
+publikasi kecamatan serta
+integrasi informasi organisasi.
+
+</p>
+
+</div>
+
+<!-- MENU -->
+
+<div class="footer-box">
+
+<h4>Menu Utama</h4>
+
+<a href="index.html">
+Beranda
+</a>
+
+<a href="berita.html">
+Berita
+</a>
+
+<a href="layanan.html">
+Layanan
+</a>
+
+<a href="profil.html">
+Profil Kecamatan
+</a>
+
+<a href="kontak.html">
+Kontak
+</a>
+
+</div>
+
+<!-- KONTAK -->
+
+<div class="footer-box">
+
+<h4>Kontak Kecamatan</h4>
+
+<div id="footerKontak">
+
+Loading...
+
+</div>
+
+</div>
+
+<!-- SOSMED -->
+
+<div class="footer-box">
+
+<h4>Media Sosial</h4>
+
+<div id="footerSosmed">
+
+Loading...
+
+</div>
+
+</div>
+
+</div>
+
+<div class="footer-bottom">
+
+© 2026 Kecamatan Padang Tualang • Kabupaten Langkat Develop by ilhamkrt
+
+</div>
+
+</footer>
+
+
+
+
+
 
 </body>
 </html>

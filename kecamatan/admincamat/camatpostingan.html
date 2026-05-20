@@ -71,6 +71,47 @@ button:hover{
 .actions button.delete{
   background:#c0392b;
 }
+
+
+
+.quick-menu{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  margin:15px 0;
+  padding:0 10px;
+}
+
+/* BUTTON */
+.menu-btn{
+  background:linear-gradient(145deg,#0f6b20,#18a34a);
+  color:white;
+  text-decoration:none;
+  padding:12px 10px;
+  border-radius:12px;
+  text-align:center;
+  font-weight:bold;
+  font-size:13px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.08);
+  transition:0.3s;
+}
+
+/* HOVER */
+.menu-btn:hover{
+  transform:translateY(-3px);
+  background:#0c5a1a;
+}
+
+/* RESPONSIVE HP */
+@media(max-width:600px){
+  .quick-menu{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+
+
+
 </style>
 </head>
 
@@ -110,7 +151,25 @@ z-index:9999;
 
 </div>
 
+<div class="quick-menu">
 
+  <a href="linkyoutube.html" class="menu-btn">
+    Link Youtube
+  </a>
+
+  <a href="berita.html" class="menu-btn">
+    Berita
+  </a>
+
+  <a href="grafikloporan.html" class="menu-btn">
+    Penduduk
+  </a>
+
+  <a href="camatadminfooter.html" class="menu-btn">
+   Kontak footer
+  </a>
+
+</div>
 
 
 
@@ -161,7 +220,8 @@ import {
 
 import {
   getAuth,
-  onAuthStateChanged
+  onAuthStateChanged,
+  signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
@@ -175,14 +235,48 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
+
+
 let editID = null;
 
-/* 🔐 LOGIN */
-onAuthStateChanged(auth,(user)=>{
-  if(!user){
+/* 🔐 LOGIN CHECK ADMIN CAMAT */
+onAuthStateChanged(auth, async (user) => {
+
+  if (!user) {
     window.location.href = "logincamat.html";
-  }else{
-    loadPost();
+    return;
+  }
+
+  const uid = user.uid;
+
+  try {
+    const snap = await get(ref(db, "admincamat/" + uid));
+
+    if (!snap.exists()) {
+      alert("❌ Akses ditolak!");
+      await signOut(auth);
+      window.location.href = "logincamat.html";
+      return;
+    }
+
+    const data = snap.val();
+
+    if (data.role !== "admincamat") {
+      alert("❌ Kamu bukan admin camat!");
+      await signOut(auth);
+      window.location.href = "logincamat.html";
+      return;
+    }
+
+    console.log("✅ Login admin camat:", data.nama);
+
+    loadPost(); // jalankan sistem utama
+
+  } catch (err) {
+    console.error(err);
+    alert("❌ Error auth check");
+    await signOut(auth);
+    window.location.href = "logincamat.html";
   }
 });
 

@@ -1,0 +1,2441 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+
+  
+  <meta charset="UTF-8">
+<meta property="og:title" content="Seputar Paskibra" />
+<meta property="og:description" content="Postingan terbaru Paskibra Padang Tualang" />
+<meta property="og:image" content="https://paskibrapadangtualang.github.io/paskibrapadangtualang/assets/images/appicon.png" />
+<meta property="og:url" content="https://paskibrapadangtualang.github.io/paskibrapadangtualang/detailpostingan.html" />
+<meta property="og:type" content="article" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Artikel Seputar Paskibra</title>
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial,sans-serif;
+    }
+
+
+
+    *{
+  -webkit-tap-highlight-color: transparent; /* hilangkan efek biru klik mobile */
+  user-select: none; /* blok seleksi teks */
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+
+img{
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+    
+
+
+/* hilangkan highlight biru saat klik */
+a, button, div{
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* optional: cegah zoom pinch (mobile) */
+html, body{
+  touch-action: manipulation;
+}
+
+
+    body{
+      background:#e5e5e5;
+      color:#222;
+    }
+
+    /* HEADER */
+
+    .header{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:60px;
+      background:#c40000;
+      color:white;
+      display:flex;
+      align-items:center;
+      padding:0 20px;
+      z-index:1000;
+      font-weight:bold;
+      box-shadow:0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    /* CONTAINER */
+
+   /* =========================
+   PORTAL STYLE (DETIK/ KOMPAS)
+========================= */
+
+.wrapper{
+  max-width:1400px;
+  margin:auto;
+  padding:90px 20px 30px;
+  display:grid;
+  grid-template-columns:3.2fr 1fr; /* 🔥 KUNCI: detail jauh lebih lebar */
+  gap:30px;
+  align-items:start;
+}
+
+
+/* HEADLINE */
+.headline-card{
+  background:white;
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 6px 20px rgba(0,0,0,0.08);
+}
+
+.headline-img{
+  width:100%;
+  height:380px;
+  object-fit:cover;
+}
+
+.headline-content{
+  padding:20px;
+}
+
+.headline-title{
+  font-size:26px;
+  font-weight:bold;
+  line-height:1.4;
+  color:#111;
+}
+
+.headline-date{
+  font-size:12px;
+  color:#888;
+  margin-top:8px;
+}
+
+/* GRID BERITA */
+.news-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+  margin-top:20px;
+}
+
+.news-card{
+  background:white;
+  border-radius:15px;
+  overflow:hidden;
+  box-shadow:0 3px 10px rgba(0,0,0,0.06);
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.news-card:hover{
+  transform:translateY(-3px);
+}
+
+.news-card img{
+  width:100%;
+  height:150px;
+  object-fit:cover;
+}
+
+.news-info{
+  padding:12px;
+}
+
+.news-title{
+  font-size:14px;
+  font-weight:bold;
+  color:#c40000;
+  line-height:1.4;
+}
+
+.news-date{
+  font-size:11px;
+  color:#888;
+  margin-top:5px;
+}
+
+
+
+
+    /* DETAIL */
+
+ .detail-card{
+  background:white;
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 8px 25px rgba(0,0,0,0.10);
+  width:100%;
+}
+
+   /* FOTO UTAMA LEBIH BESAR */
+.detail-image{
+  width:100%;
+  height:420px;   /* 🔥 diperbesar */
+  object-fit:cover;
+}
+
+/* CONTENT LEBIH LEGAS */
+.detail-content{
+  padding:30px;
+}
+
+  /* JUDUL BESAR SEPERTI BERITA */
+.detail-title{
+  font-size:34px;   /* 🔥 lebih besar */
+  font-weight:800;
+  margin-bottom:15px;
+  line-height:1.3;
+  color:#111;
+}
+
+/* DESKRIPSI NYAMAN DIBACA */
+.detail-description{
+  font-size:17px;
+  line-height:1.9;
+  color:#444;
+  white-space:pre-line;
+}
+
+/* =========================
+   SIDEBAR FIX
+========================= */
+
+.sidebar{
+  background:white;
+  border-radius:18px;
+  padding:18px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.08);
+  position:sticky;
+  top:80px;
+  height:fit-content;
+  max-width:420px; /* 🔥 BIAR TIDAK TERLALU LEBAR */
+}
+    /* SIDEBAR */
+
+
+    .sidebar h2{
+      font-size:20px;
+      margin-bottom:20px;
+      color:#c40000;
+    }
+
+    .rekomendasi-item{
+      display:flex;
+      gap:12px;
+      margin-bottom:18px;
+      cursor:pointer;
+      transition:0.2s;
+      border-bottom:1px solid #eee;
+      padding-bottom:15px;
+    }
+
+    .rekomendasi-item:hover{
+      transform:translateY(-2px);
+    }
+
+    .rekomendasi-item img{
+      width:90px;
+      height:75px;
+      object-fit:cover;
+      border-radius:12px;
+      flex-shrink:0;
+    }
+
+    .rekomendasi-info h3{
+      font-size:14px;
+      margin-bottom:8px;
+      line-height:1.5;
+    }
+
+    .rekomendasi-info p{
+      font-size:12px;
+      color:#888;
+    }
+
+    .loading{
+      text-align:center;
+      padding:30px;
+      color:#777;
+    }
+
+    /* MOBILE */
+
+    /* =========================
+   MOBILE RESPONSIVE
+========================= */
+
+@media(max-width:900px){
+
+  .wrapper{
+    grid-template-columns:1fr;
+    padding:80px 12px 20px;
+  }
+
+.detail-image{
+  width:100%;
+  height:460px; /* 🔥 lebih "headline portal news" */
+  object-fit:cover;
+}
+
+  .detail-title{
+    font-size:24px;
+  }
+
+  .detail-content{
+    padding:20px;
+  }
+
+}
+
+
+.image-modal{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.95);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:99999;
+  overflow:hidden;
+}
+
+.image-modal.active{
+  display:flex;
+}
+
+.modal-image{
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  transition:transform 0.3s ease;
+  cursor:grab;
+  user-select:none;
+}
+
+.close-modal{
+  position:absolute;
+  top:20px;
+  right:20px;
+  width:45px;
+  height:45px;
+  border-radius:50%;
+  border:none;
+  background:rgba(255,255,255,0.2);
+  color:white;
+  font-size:28px;
+  cursor:pointer;
+  z-index:10;
+}
+
+.zoom-info{
+  position:absolute;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  color:white;
+  font-size:14px;
+  background:rgba(0,0,0,0.5);
+  padding:10px 15px;
+  border-radius:30px;
+}
+
+/* FOTO BISA DIKLIK */
+
+.detail-image{
+  cursor:pointer;
+}
+
+
+    /* ===============================
+   SLIDER FOTO
+=============================== */
+
+.slider-container{
+  position:relative;
+  width:100%;
+  overflow:hidden;
+  background:#000;
+  border-radius:20px 20px 0 0;
+}
+
+.slider-wrapper{
+  display:flex;
+  transition:0.4s ease;
+}
+
+.detail-image{
+  width:100%;
+  height:460px; /* 🔥 lebih "headline portal news" */
+  object-fit:cover;
+}
+
+/* BUTTON SLIDER */
+
+.slider-btn{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:45px;
+  height:45px;
+  border:none;
+  border-radius:50%;
+  background:rgba(0,0,0,0.5);
+  color:white;
+  font-size:24px;
+  cursor:pointer;
+  z-index:10;
+  transition:0.2s;
+}
+
+.slider-btn:hover{
+  background:rgba(0,0,0,0.8);
+}
+
+.prev-btn{
+  left:15px;
+}
+
+.next-btn{
+  right:15px;
+}
+
+/* ===============================
+   TAG POSTINGAN
+=============================== */
+
+.tag-container{
+  margin-top:25px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.post-tag{
+  background:#f1f1f1;
+  color:#c40000;
+  padding:10px 15px;
+  border-radius:30px;
+  font-size:13px;
+  font-weight:bold;
+  transition:0.2s;
+  cursor:pointer;
+}
+
+.post-tag:hover{
+  background:#c40000;
+  color:white;
+}
+
+/* ===============================
+   MOBILE
+=============================== */
+
+.image-modal{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.95);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:999999;
+  overflow:hidden;
+}
+
+.image-modal.active{
+  display:flex;
+}
+
+.modal-image{
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  transition:transform 0.2s ease;
+  cursor:zoom-in;
+  touch-action:none;
+}
+
+.close-modal{
+  position:absolute;
+  top:20px;
+  right:20px;
+  color:white;
+  font-size:40px;
+  cursor:pointer;
+  z-index:10;
+}
+
+/* FOTO POSTINGAN */
+
+.detail-image{
+  cursor:pointer;
+}
+
+
+
+
+
+.main-footer{
+  margin-top:30px;
+  background:#e6e6e6;
+  color:white;
+  border-top-left-radius:25px;
+  border-top-right-radius:25px;
+  overflow:hidden;
+}
+
+.footer-top{
+  padding:20px;
+}
+
+.footer-contact h3{
+  margin-bottom:10px;
+  color:#000000;
+}
+
+.footer-contact p{
+  font-size:14px;
+  color:#720000;
+  margin:6px 0;
+}
+
+.footer-bottom{
+  background:#111;
+  text-align:center;
+  padding:12px;
+  font-size:12px;
+  color:#aaa;
+}
+
+
+
+.icon-kontak{
+  width:18px;
+  height:18px;
+  vertical-align:middle;
+  margin-right:6px;
+}
+
+
+
+
+
+
+
+
+
+.youtube-card{
+  display:flex;
+  gap:10px;
+  margin-bottom:15px;
+  cursor:pointer;
+  padding:10px;
+  border-radius:12px;
+  background:#fff;
+  box-shadow:0 3px 10px rgba(0,0,0,0.08);
+  transition:0.2s;
+}
+
+.youtube-card:hover{
+  transform:scale(1.02);
+}
+
+.youtube-thumb{
+  width:90px;
+  height:60px;
+  border-radius:10px;
+  object-fit:cover;
+}
+
+.youtube-title{
+  font-size:13px;
+  font-weight:bold;
+  color:#c40000;
+  line-height:1.4;
+}
+
+
+
+
+/* ================= LOADER ================= */
+
+#pageLoader{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+
+background:#c40000;
+
+display:flex;
+flex-direction:column;
+
+justify-content:center;
+align-items:center;
+
+z-index:9999999;
+
+transition:.4s;
+}
+
+.loader-circle{
+
+width:70px;
+height:70px;
+
+border-radius:50%;
+
+border:6px solid
+rgba(255,255,255,.2);
+
+border-top-color:white;
+
+animation:spin .8s linear infinite;
+
+}
+
+.loader-text{
+
+margin-top:18px;
+
+color:white;
+
+font-size:15px;
+
+font-weight:bold;
+
+letter-spacing:.5px;
+
+}
+
+@keyframes spin{
+
+from{
+transform:rotate(0);
+}
+
+to{
+transform:rotate(360deg);
+}
+
+}
+
+
+
+
+
+
+
+
+
+
+/* ======================
+   FLOAT SHARE BUTTON
+====================== */
+
+.share-float{
+
+position:fixed;
+
+right:20px;
+bottom:100px;
+
+width:50px;
+height:50px;
+
+border-radius:50%;
+
+background:#c40000;
+
+display:flex;
+
+justify-content:center;
+align-items:center;
+
+box-shadow:0 6px 18px rgba(0,0,0,.25);
+
+cursor:pointer;
+
+z-index:9999;
+
+}
+
+.share-float img{
+
+width:28px;
+height:28px;
+
+object-fit:contain;
+
+filter:brightness(0) invert(1);
+
+}
+
+/* POPUP */
+
+.share-popup{
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:rgba(0,0,0,.65);
+
+display:none;
+
+justify-content:center;
+align-items:center;
+
+z-index:999999;
+
+}
+
+.share-popup.active{
+display:flex;
+}
+
+.share-box{
+
+width:92%;
+max-width:420px;
+
+background:white;
+
+border-radius:25px;
+
+padding:20px;
+
+}
+
+.share-banner{
+
+width:100%;
+height:160px;
+
+object-fit:cover;
+
+border-radius:18px;
+
+margin-bottom:15px;
+
+}
+
+.share-title{
+
+font-size:18px;
+
+font-weight:bold;
+
+margin-bottom:8px;
+
+}
+
+.share-desc{
+
+font-size:13px;
+
+color:#666;
+
+line-height:1.6;
+
+margin-bottom:20px;
+
+}
+
+.share-icons{
+
+display:flex;
+
+justify-content:space-around;
+
+}
+
+.share-item{
+
+display:flex;
+
+flex-direction:column;
+
+align-items:center;
+
+gap:8px;
+
+cursor:pointer;
+
+}
+
+.share-item img{
+
+width:42px;
+height:42px;
+
+object-fit:contain;
+
+}
+
+.close-share{
+
+float:right;
+
+font-size:22px;
+
+cursor:pointer;
+
+margin-bottom:10px;
+
+}
+
+
+.share-item span{
+
+font-size:10px;
+
+color:#444;
+
+font-weight:600;
+
+text-align:center;
+
+}
+
+  </style>
+</head>
+<body>
+
+<!-- LOADER -->
+
+<div id="pageLoader">
+
+<div class="loader-circle"></div>
+
+<div class="loader-text">
+
+Memuat postingan...
+
+</div>
+
+</div>
+
+
+
+
+
+  <!-- HEADER -->
+
+  <div class="header">
+    Postingan Paskibra
+  </div>
+  
+
+  <!-- CONTENT -->
+
+  <div class="wrapper">
+
+<!-- DETAIL -->
+
+<div class="detail-card">
+
+  <div id="detailContainer">
+
+    <div class="loading">
+      Loading postingan...
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<!-- TOMBOL SHARE -->
+
+<div
+class="share-float"
+onclick="openShare()"
+>
+
+<img src="assets/images/share.png">
+
+</div>
+
+<!-- POPUP SHARE -->
+
+<div
+id="sharePopup"
+class="share-popup"
+>
+
+<div class="share-box">
+
+<div
+class="close-share"
+onclick="closeShare()"
+>
+
+✕
+
+</div>
+
+<img
+id="shareBanner"
+class="share-banner"
+>
+
+<div
+id="shareTitle"
+class="share-title"
+>
+
+Loading...
+
+</div>
+
+<div
+id="shareDesc"
+class="share-desc"
+>
+
+Loading...
+
+</div>
+
+<div class="share-icons">
+
+<!-- FB -->
+
+<div
+class="share-item"
+onclick="shareFB()"
+>
+
+<img src="assets/images/facebook.png">
+
+<span>
+
+Facebook
+
+</span>
+
+</div>
+
+<!-- IG -->
+
+<div
+class="share-item"
+onclick="shareIG()"
+>
+
+<img src="assets/images/social.png">
+
+<span>
+
+Instagram
+
+</span>
+
+</div>
+
+<!-- COPY -->
+
+<div
+class="share-item"
+onclick="copyLink()"
+>
+
+<img src="assets/images/copy.png">
+
+<span>
+
+Salin
+
+</span>
+
+</div>
+
+<!-- WA -->
+
+<div
+class="share-item"
+onclick="shareWA()"
+>
+
+<img src="assets/images/whatsapp.png">
+
+<span>
+
+WhatsApp
+
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+
+<!-- ===================== -->
+  <!-- IKLAN -->
+  <!-- ===================== -->
+  <div id="iklanContainer" style="
+    margin-top:20px;
+    background:white;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    padding:15px;
+  ">
+
+    <div style="
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:15px;
+    ">
+
+      <img src="assets/images/advertisement.png"
+        style="width:28px;height:28px;object-fit:contain;">
+
+      <h2 style="font-size:20px;color:#c40000;">
+        Iklan & Informasi
+      </h2>
+
+    </div>
+
+    <div id="iklanList" style="
+      display:flex;
+      flex-direction:column;
+      gap:20px;
+    "></div>
+
+  </div>
+ 
+
+
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+  <!-- REKOMENDASI -->
+  <h2 style="display:flex;align-items:center;gap:8px;">
+    <img src="assets/images/recommendation.png" style="width:22px;height:22px;">
+    Rekomendasi Hari Ini
+  </h2>
+  <div id="rekomendasiContainer"></div>
+
+  <!-- YOUTUBE -->
+  <h2 style="display:flex;align-items:center;gap:8px;margin-top:15px;">
+    <img src="assets/images/youtube.png" style="width:22px;height:22px;">
+    Kanal YouTube
+  </h2>
+  <div id="youtubeContainer"></div>
+
+  
+
+  <!-- ===================== -->
+  <!-- INFO -->
+  <!-- ===================== -->
+  <div id="infoContainer" style="
+    margin-top:20px;
+    background:white;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    padding:15px;
+  ">
+
+    <div style="
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:15px;
+    ">
+
+      <img src="assets/images/info.png"
+        style="width:28px;height:28px;object-fit:contain;">
+
+      <h2 style="font-size:20px;color:#c40000;">
+        Informasi Paskibra
+      </h2>
+
+    </div>
+
+    <div id="infoList" style="
+      display:flex;
+      flex-direction:column;
+      gap:15px;
+    "></div>
+
+  </div>
+
+</div>
+
+
+
+
+
+
+  <!-- FIREBASE -->
+
+<script type="module">
+
+  import { initializeApp }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+  import {
+    getDatabase,
+    ref,
+    get,
+    set
+  }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+  // FIREBASE CONFIG
+
+  const firebaseConfig = {
+
+    apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+    authDomain: "paskibra2026-300eb.firebaseapp.com",
+    databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+    projectId: "paskibra2026-300eb",
+    storageBucket: "paskibra2026-300eb.firebasestorage.app",
+    messagingSenderId: "937469132434",
+    appId: "1:937469132434:web:d1924e1160350000d1b04b"
+
+  };
+
+  // INIT
+
+  const app = initializeApp(firebaseConfig);
+
+  const database = getDatabase(app);
+
+  const kontakRef = ref(database, "kontak");
+
+
+
+
+
+const youtubeContainer =
+  document.getElementById("youtubeContainer");
+
+// ===============================
+// DUMMY YOUTUBE
+// ===============================
+const dummyYoutube = {
+  video1: {
+    judul: "Latihan Baris Berbaris Paskibra",
+    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    createdAt: Date.now()
+  },
+  video2: {
+    judul: "Persiapan Upacara Paskibra",
+    url: "https://www.youtube.com/watch?v=3JZ_D3ELwOQ",
+    createdAt: Date.now() - 1000
+  },
+  video3: {
+    judul: "Semangat Tim Paskibra",
+    url: "https://www.youtube.com/watch?v=9bZkp7q19f0",
+    createdAt: Date.now() - 2000
+  }
+};
+
+// ===============================
+// LOAD YOUTUBE
+// ===============================
+async function loadYoutube(){
+
+  const youtubeRef = ref(database, "youtubeRekomendasi");
+
+  const snap = await get(youtubeRef);
+
+  if(!snap.exists()){
+    await set(youtubeRef, dummyYoutube);
+    return loadYoutube();
+  }
+
+  const data = snap.val();
+
+  // 🔥 FIX URUTAN
+  let list = Object.keys(data).map(key => ({
+    id: key,
+    ...data[key]
+  }));
+
+  // 🔥 TERBARU DI ATAS
+  list.sort((a,b)=> (b.createdAt || 0) - (a.createdAt || 0));
+
+  youtubeContainer.innerHTML = "";
+
+  list.forEach((item)=>{
+
+    const videoId = extractYoutubeID(item.url);
+
+    youtubeContainer.innerHTML += `
+  <div class="youtube-card" onclick="openYoutube('${item.url}')">
+
+    <img class="youtube-thumb"
+      src="https://img.youtube.com/vi/${videoId}/hqdefault.jpg">
+
+    <div>
+      <div class="youtube-title">
+        ${item.judul}
+      </div>
+
+      <div style="font-size:11px;color:#666;margin-top:5px;">
+        ${item.deskripsi || ""}
+      </div>
+    </div>
+
+  </div>
+`;
+
+  });
+}
+
+// ===============================
+// EXTRACT ID
+// ===============================
+function extractYoutubeID(url){
+  const match = url.match(/(?:v=|youtu\.be\/|embed\/)([^&?/]+)/);
+  return match ? match[1] : "";
+}
+
+// ===============================
+// OPEN VIDEO
+// ===============================
+window.openYoutube = function(url){
+  window.open(url, "_blank");
+}
+
+
+
+
+// ======================
+// LOAD KONTAK FOOTER
+// ======================
+// ======================
+// LOAD KONTAK FOOTER
+// ======================
+async function loadKontak() {
+
+  try {
+
+    const snap = await get(kontakRef);
+
+    const defaultData = {
+      alamat: "Padang Tualang, Langkat",
+      telepon: "081234567890",
+      email: "paskibrapadangtualang@gmail.com"
+    };
+
+    if (!snap.exists()) {
+      await set(kontakRef, defaultData);
+      return loadKontak();
+    }
+
+    const data = snap.val();
+
+    document.getElementById("alamat").innerHTML = `
+      <img src="assets/images/lokasi 17 (1).png" class="icon-kontak">
+      ${data.alamat}
+    `;
+
+    document.getElementById("telepon").innerHTML = `
+      <img src="assets/images/whatsapp.png" class="icon-kontak">
+      ${data.telepon}
+    `;
+
+    document.getElementById("email").innerHTML = `
+      <img src="assets/images/gmail.png" class="icon-kontak">
+      ${data.email}
+    `;
+
+  } catch (err) {
+    console.log(err);
+  }
+
+}
+
+// PANGGIL FUNCTION
+
+
+
+  // ===============================
+  // AMBIL ID URL
+  // ===============================
+
+  const params = new URLSearchParams(
+    window.location.search
+  );
+
+  const postId = params.get("id");
+
+  // ELEMENT
+
+  const detailContainer =
+    document.getElementById("detailContainer");
+
+
+    const pageLoader =
+document.getElementById(
+"pageLoader"
+);
+
+let selesaiLoad = 0;
+
+function selesai(){
+
+selesaiLoad++;
+
+if(selesaiLoad >= 6){
+
+pageLoader.style.opacity="0";
+
+setTimeout(()=>{
+
+pageLoader.style.display=
+"none";
+
+},400);
+
+}
+
+}
+
+  const rekomendasiContainer =
+    document.getElementById("rekomendasiContainer");
+
+  // ===============================
+  // LOAD DETAIL
+  // ===============================
+
+  async function loadDetail(){
+
+  try{
+
+    const snapshot = await get(
+      ref(database, "postingan/" + postId)
+    );
+
+    if(snapshot.exists()){
+
+      const post = snapshot.val();
+
+
+      window.postShare = post;
+
+let bannerShare="";
+
+if(
+post.gambarList
+){
+
+bannerShare=
+Object.values(
+post.gambarList
+)[0];
+
+}
+
+if(
+!bannerShare &&
+post.gambar
+){
+
+bannerShare=
+post.gambar;
+
+}
+
+document.getElementById(
+"shareBanner"
+).src=
+
+bannerShare;
+
+document.getElementById(
+"shareTitle"
+).innerText=
+
+(post.judul || "")
+.substring(
+0,
+50
+);
+
+document.getElementById(
+"shareDesc"
+).innerText=
+
+(post.deskripsi || "")
+.substring(
+0,
+120
+);
+
+
+
+      // ===============================
+      // AMBIL SEMUA FOTO
+      // ===============================
+
+      let semuaFoto = [];
+
+      // JIKA ADA gambarList
+      if(post.gambarList){
+
+        semuaFoto = Object.values(
+          post.gambarList
+        );
+
+      }
+
+      // FALLBACK JIKA ADA fotos
+      if(
+        semuaFoto.length === 0 &&
+        post.fotos
+      ){
+
+        semuaFoto = post.fotos;
+
+      }
+
+      // FALLBACK JIKA HANYA 1 FOTO
+      if(
+        semuaFoto.length === 0 &&
+        post.gambar
+      ){
+
+        semuaFoto = [post.gambar];
+
+        return true;
+
+      }
+
+      // ===============================
+      // RENDER
+      // ===============================
+
+      detailContainer.innerHTML = `
+
+       
+
+        <div class="slider-container">
+
+          <div
+            class="slider-wrapper"
+            id="sliderWrapper"
+          >
+
+            ${semuaFoto.map(foto => `
+
+              <img
+                src="${foto}"
+                class="detail-image"
+                onclick="openImageModal('${foto}')"
+                draggable="false"
+              >
+
+            `).join("")}
+
+          </div>
+
+          ${
+            semuaFoto.length > 1
+            ?
+            `
+            <button
+              class="slider-btn prev-btn"
+              onclick="slideFoto(-1)"
+            >
+              ❮
+            </button>
+
+            <button
+              class="slider-btn next-btn"
+              onclick="slideFoto(1)"
+            >
+              ❯
+            </button>
+            `
+            :
+            ""
+          }
+
+        </div>
+
+        <!-- THUMBNAIL -->
+
+        <div
+          style="
+            display:flex;
+            gap:10px;
+            overflow-x:auto;
+            padding:15px;
+            background:white;
+          "
+        >
+
+          ${semuaFoto.map((foto,index)=>`
+
+            <img
+              src="${foto}"
+              onclick="goToSlide(${index})"
+              style="
+                width:90px;
+                height:70px;
+                object-fit:cover;
+                border-radius:10px;
+                cursor:pointer;
+                flex-shrink:0;
+                border:2px solid #eee;
+              "
+            >
+
+          `).join("")}
+
+        </div>
+
+        <!-- CONTENT -->
+
+        <div class="detail-content">
+
+          <h1 class="detail-title">
+            ${post.judul || "-"}
+          </h1>
+
+          <div class="detail-date">
+            ${post.tanggal || "-"}
+          </div>
+
+          <div class="detail-description">
+            ${post.deskripsi || "-"}
+          </div>
+
+          <!-- TAG -->
+
+          <div class="tag-container">
+
+            <span class="post-tag">
+              #postinganhariini
+            </span>
+
+            <span class="post-tag">
+              #paskibrapadangtualang
+            </span>
+
+            <span class="post-tag">
+              #paskibra2026
+            </span>
+
+          </div>
+
+        </div>
+
+      `;
+
+    }else{
+
+      detailContainer.innerHTML = `
+        <div class="loading">
+          Postingan tidak ditemukan
+        </div>
+      `;
+
+    }
+
+  }catch(error){
+
+    console.log(error);
+
+    detailContainer.innerHTML = `
+      <div class="loading">
+        Gagal memuat postingan
+      </div>
+    `;
+
+  }
+
+}
+
+  // ===============================
+  // LOAD REKOMENDASI
+  // ===============================
+
+  async function loadRekomendasi(){
+
+    try{
+
+      const snapshot = await get(
+        ref(database, "postingan")
+      );
+
+      if(snapshot.exists()){
+
+        const data = snapshot.val();
+
+        rekomendasiContainer.innerHTML = "";
+
+        let posts = Object.keys(data)
+        .map(id => ({
+          id,
+          ...data[id]
+        }));
+
+        // HAPUS POST YANG DIBUKA
+        posts = posts.filter(
+          post => post.id !== postId
+        );
+
+        // TERBARU DI ATAS
+        posts.sort((a,b)=>
+          (b.createdAt || 0)
+          -
+          (a.createdAt || 0)
+        );
+
+        // AMBIL 5
+        posts.slice(0,5)
+        .forEach((post)=>{
+
+          rekomendasiContainer.innerHTML += `
+
+            <div
+              class="rekomendasi-item"
+              onclick="bukaPostingan('${post.id}')"
+            >
+
+              <img src="${
+                post.gambar ||
+                'https://via.placeholder.com/300'
+              }">
+
+              <div class="rekomendasi-info">
+
+                <h3>
+                  ${post.judul || "-"}
+                </h3>
+
+                <p>
+                  ${post.tanggal || "-"}
+                </p>
+
+              </div>
+
+            </div>
+
+          `;
+
+        });
+
+      }
+
+    }catch(error){
+
+      console.log(error);
+
+      rekomendasiContainer.innerHTML = `
+        <div class="loading">
+          Gagal memuat rekomendasi
+        </div>
+      `;
+
+    }
+
+  }
+
+  // ===============================
+  // SLIDER
+  // ===============================
+
+  let currentSlide = 0;
+
+  window.slideFoto = function(direction){
+
+    const wrapper =
+      document.getElementById("sliderWrapper");
+
+    if(!wrapper) return;
+
+    const totalSlide =
+      wrapper.children.length;
+
+    currentSlide += direction;
+
+    // LOOP
+
+    if(currentSlide < 0){
+
+      currentSlide =
+        totalSlide - 1;
+
+    }
+
+    if(currentSlide >= totalSlide){
+
+      currentSlide = 0;
+
+    }
+
+    wrapper.style.transform =
+      `translateX(-${currentSlide * 100}%)`;
+
+  }
+
+  // ===============================
+  // THUMBNAIL CLICK
+  // ===============================
+
+  window.goToSlide = function(index){
+
+    const wrapper =
+      document.getElementById("sliderWrapper");
+
+    if(!wrapper) return;
+
+    currentSlide = index;
+
+    wrapper.style.transform =
+      `translateX(-${currentSlide * 100}%)`;
+
+  }
+
+  // ===============================
+  // BUKA POSTINGAN
+  // ===============================
+
+  window.bukaPostingan = function(id){
+
+    window.location.href =
+      "detailpostingan.html?id=" + id;
+
+  }
+
+  // ===============================
+  // LOAD
+  // ===============================
+
+ 
+
+
+
+
+const imageModal =
+  document.getElementById(
+    "imageModal"
+  );
+
+const modalImage =
+  document.getElementById(
+    "modalImage"
+  );
+
+let scale = 1;
+
+// ===============================
+// BUKA FOTO
+// ===============================
+
+window.openImageModal = function(src){
+
+  imageModal.classList.add(
+    "active"
+  );
+
+  modalImage.src = src;
+
+  scale = 1;
+
+  modalImage.style.transform =
+    `scale(${scale})`;
+
+}
+
+// ===============================
+// TUTUP FOTO
+// ===============================
+
+window.closeImageModal = function(){
+
+  imageModal.classList.remove(
+    "active"
+  );
+
+}
+
+// ===============================
+// CLICK BACKGROUND TUTUP
+// ===============================
+
+imageModal.addEventListener(
+  "click",
+  function(e){
+
+    if(
+      e.target === imageModal
+    ){
+
+      closeImageModal();
+
+    }
+
+  }
+);
+
+// ===============================
+// ZOOM SCROLL PC
+// ===============================
+
+modalImage.addEventListener(
+  "wheel",
+  function(e){
+
+    e.preventDefault();
+
+    if(e.deltaY < 0){
+
+      scale += 0.2;
+
+    }else{
+
+      scale -= 0.2;
+
+    }
+
+    // BATAS
+
+    if(scale < 1){
+      scale = 1;
+    }
+
+    if(scale > 6){
+      scale = 6;
+    }
+
+    modalImage.style.transform =
+      `scale(${scale})`;
+
+  }
+);
+
+// ===============================
+// DOUBLE CLICK ZOOM
+// ===============================
+
+modalImage.addEventListener(
+  "dblclick",
+  function(){
+
+    if(scale === 1){
+
+      scale = 2.5;
+
+    }else{
+
+      scale = 1;
+
+    }
+
+    modalImage.style.transform =
+      `scale(${scale})`;
+
+  }
+);
+
+// ===============================
+// PINCH ZOOM HP
+// ===============================
+
+let startDistance = 0;
+
+function getDistance(touches){
+
+  return Math.sqrt(
+
+    Math.pow(
+      touches[0].clientX -
+      touches[1].clientX,
+      2
+    )
+
+    +
+
+    Math.pow(
+      touches[0].clientY -
+      touches[1].clientY,
+      2
+    )
+
+  );
+
+}
+
+modalImage.addEventListener(
+  "touchstart",
+  function(e){
+
+    if(e.touches.length === 2){
+
+      startDistance =
+        getDistance(e.touches);
+
+    }
+
+  }
+);
+
+modalImage.addEventListener(
+  "touchmove",
+  function(e){
+
+    if(e.touches.length === 2){
+
+      e.preventDefault();
+
+      const newDistance =
+        getDistance(e.touches);
+
+      if(newDistance > startDistance){
+
+        scale += 0.03;
+
+      }else{
+
+        scale -= 0.03;
+
+      }
+
+      // LIMIT
+
+      if(scale < 1){
+        scale = 1;
+      }
+
+      if(scale > 6){
+        scale = 6;
+      }
+
+      modalImage.style.transform =
+        `scale(${scale})`;
+
+      startDistance = newDistance;
+
+    }
+
+  },
+  { passive:false }
+);
+
+// ===============================
+// ESC CLOSE
+// ===============================
+
+document.addEventListener(
+  "keydown",
+  function(e){
+
+    if(e.key === "Escape"){
+
+      closeImageModal();
+
+    }
+
+  }
+);
+
+
+
+// ===============================
+// LOAD IKLAN
+// ===============================
+async function loadIklan(){
+
+  const iklanContainer =
+    document.getElementById("iklanContainer");
+
+  try{
+
+    const iklanRef =
+      ref(database, "iklan");
+
+    const snap =
+      await get(iklanRef);
+
+    // =========================
+    // DUMMY DATA
+    // =========================
+    const dummyIklan = {
+
+      iklan1:{
+        judul:"Pendaftaran Paskibra 2026",
+        deskripsi:"Pendaftaran anggota baru Paskibra Kecamatan Padang Tualang telah dibuka untuk seluruh siswa SMA/SMK sederajat.",
+        alamat:"Padang Tualang, Langkat",
+        gambarList:{
+          img1:"https://picsum.photos/600/400?1",
+          img2:"https://picsum.photos/600/400?2",
+          img3:"https://picsum.photos/600/400?3"
+        },
+        createdAt:Date.now()
+      },
+
+      iklan2:{
+        judul:"Event Kemerdekaan RI",
+        deskripsi:"Ayo ikut memeriahkan kegiatan Dirgahayu Republik Indonesia bersama Paskibra.",
+        alamat:"Lapangan Kecamatan Padang Tualang",
+        gambarList:{
+          img1:"https://picsum.photos/600/400?4",
+          img2:"https://picsum.photos/600/400?5"
+        },
+        createdAt:Date.now()-1000
+      }
+
+    };
+
+    // JIKA BELUM ADA
+    if(!snap.exists()){
+
+      await set(
+        iklanRef,
+        dummyIklan
+      );
+
+      return loadIklan();
+    }
+
+    const data = snap.val();
+
+    let items =
+      Object.keys(data).map(id => ({
+        id,
+        ...data[id]
+      }));
+
+    // TERBARU DI ATAS
+    items.sort((a,b)=>
+      (b.createdAt || 0)
+      -
+      (a.createdAt || 0)
+    );
+
+    iklanContainer.innerHTML = "";
+
+    items.forEach((item)=>{
+
+      // MAX 5 FOTO
+      let fotos = [];
+
+      if(item.gambarList){
+
+        fotos =
+          Object.values(
+            item.gambarList
+          ).slice(0,5);
+
+      }
+
+      iklanContainer.innerHTML += `
+
+        <div onclick="bukaIklan('${item.id}')" style="
+  background:#fff;
+  border-radius:20px;
+  overflow:hidden;
+  margin-bottom:25px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+  cursor:pointer;
+">
+
+          <!-- FOTO -->
+          <div style="
+            display:flex;
+            gap:10px;
+            overflow-x:auto;
+            padding:15px;
+          ">
+
+            ${fotos.map(foto => `
+
+              <img
+                src="${foto}"
+                style="
+                  width:340px;
+                  height:150px;
+                  object-fit:cover;
+                  border-radius:15px;
+                  flex-shrink:0;
+                "
+              >
+
+            `).join("")}
+
+          </div>
+
+          <!-- CONTENT -->
+          <div style="
+            padding:20px;
+          ">
+
+            <h3 style="
+              color:#c40000;
+              margin-bottom:12px;
+              font-size:22px;
+            ">
+              ${item.judul || '-'}
+            </h3>
+
+            <p style="
+              color:#555;
+              line-height:1.8;
+              margin-bottom:15px;
+            ">
+             ${(item.deskripsi || "-").length > 120 
+  ? (item.deskripsi || "-").substring(0, 120) + "..." 
+  : (item.deskripsi || "-")}
+            </p>
+
+            <div style="
+              background:#f5f5f5;
+              padding:12px;
+              border-radius:12px;
+              font-size:14px;
+              color:#444;
+              font-weight:bold;
+            ">
+              📍 ${item.alamat || '-'}
+            </div>
+
+          </div>
+
+        </div>
+
+      `;
+
+      window.bukaIklan = function(id){
+  window.location.href = "detailiklan.html?id=" + id;
+}
+
+    });
+
+  }catch(error){
+
+    console.log(error);
+
+    iklanContainer.innerHTML = `
+      <div class="loading">
+        Gagal memuat iklan
+      </div>
+    `;
+
+  }
+
+}
+
+// LOAD IKLAN
+
+
+
+
+
+
+
+
+async function loadInfo(){
+
+  const infoRef = ref(database, "info_purna");
+  const snap = await get(infoRef);
+
+  const container =
+    document.getElementById("infoList");
+
+  // kalau kosong
+  if(!snap.exists()){
+    container.innerHTML = `
+      <div class="loading">
+        Belum ada informasi
+      </div>
+    `;
+    return;
+  }
+
+  const data = snap.val();
+
+  // ubah ke array + urut terbaru di atas
+  let items = Object.keys(data).map(key => ({
+    id: key,
+    ...data[key]
+  }));
+
+  items.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+
+  container.innerHTML = "";
+
+  items.forEach(item => {
+
+    container.innerHTML += `
+      <div style="
+        background:#f9f9f9;
+        padding:15px;
+        border-radius:15px;
+        border:1px solid #eee;
+      ">
+
+        <div style="
+          font-weight:bold;
+          color:#c40000;
+          margin-bottom:6px;
+          font-size:15px;
+        ">
+          ${item.judul || "-"}
+        </div>
+
+        <div style="
+          font-size:13px;
+          color:#555;
+          line-height:1.6;
+        ">
+          ${item.deskripsi || "-"}
+        </div>
+
+      </div>
+    `;
+
+  });
+
+}
+
+// jalankan
+
+
+
+
+Promise.all([
+
+loadDetail(),
+
+loadRekomendasi(),
+
+loadYoutube(),
+
+loadKontak(),
+
+loadIklan(),
+
+loadInfo()
+
+])
+
+.then(()=>{
+
+pageLoader.style.opacity="0";
+
+setTimeout(()=>{
+
+pageLoader.style.display=
+"none";
+
+},400);
+
+})
+
+.catch(()=>{
+
+pageLoader.style.display=
+"none";
+return true;
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+document.addEventListener('contextmenu', function(e){
+  e.preventDefault(); // disable klik kanan / copy
+});
+
+document.addEventListener('selectstart', function(e){
+  e.preventDefault(); // disable blok teks
+});
+
+document.addEventListener('dragstart', function(e){
+  e.preventDefault(); // disable drag gambar
+});
+
+
+
+
+
+
+
+
+window.openShare=function(){
+
+document
+.getElementById(
+"sharePopup"
+)
+.classList.add(
+"active"
+);
+
+}
+
+window.closeShare=function(){
+
+document
+.getElementById(
+"sharePopup"
+)
+.classList.remove(
+"active"
+);
+
+}
+
+function getShareLink(postId){
+  const base = "https://paskibrapadangtualang.github.io/paskibrapadangtualang/";
+  return base + "detailpostingan.html?id=" + postId;
+}
+
+
+
+/* COPY */
+
+window.copyLink = async function(){
+  const id = postId;
+  await navigator.clipboard.writeText(getShareLink(id));
+  alert("Link disalin");
+}
+
+/* WA */
+
+window.shareWA = function(){
+  const id = postId;
+
+  window.open(
+    "https://wa.me/?text=" +
+    encodeURIComponent(getShareLink(id))
+  );
+}
+
+/* FB */
+
+window.shareFB = function(){
+  const id = postId;
+
+  window.open(
+    "https://www.facebook.com/sharer/sharer.php?u=" +
+    encodeURIComponent(getShareLink(id))
+  );
+}
+
+/* IG */
+
+window.shareIG = async function(){
+  await navigator.clipboard.writeText(getShareLink(postId));
+  alert("Link disalin, paste ke Instagram");
+  window.open("https://instagram.com");
+}
+</script>
+
+
+
+
+
+
+
+
+
+
+<div
+  id="imageModal"
+  class="image-modal"
+>
+
+  <span
+    class="close-modal"
+    onclick="closeImageModal()"
+  >
+    ✕
+  </span>
+
+  <img
+    id="modalImage"
+    class="modal-image"
+  >
+
+</div>
+
+<!-- FOOTER -->
+<footer class="main-footer">
+
+  <div class="footer-top">
+
+    <!-- KONTAK -->
+<div class="footer-contact">
+
+  <h3>Kontak</h3>
+
+  <p id="alamat">
+    <img src="assets/images/lokasi 17 (1).png" class="icon-kontak">
+    Loading...
+  </p>
+
+  <p id="telepon">
+    <img src="assets/images/whatsapp.png" class="icon-kontak">
+    Loading...
+  </p>
+
+  <p id="email">
+    <img src="assets/images/gmail.png" class="icon-kontak">
+    Loading...
+  </p>
+</div>
+</div>
+
+  </div>
+
+  <div class="footer-bottom">
+    © 2026 Paskibra Padang Tualang
+  </div>
+
+</footer>
+
+
+</body>
+</html>
+

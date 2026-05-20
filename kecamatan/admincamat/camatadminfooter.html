@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Admin Footer Kecamatan</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#eef2f5;
+}
+
+.header{
+background:
+linear-gradient(
+135deg,
+#0f6b20,
+#0a4e17
+);
+
+padding:20px;
+color:white;
+font-size:22px;
+font-weight:bold;
+
+box-shadow:
+0 5px 20px
+rgba(0,0,0,.15);
+}
+
+.wrap{
+max-width:900px;
+margin:auto;
+padding:20px;
+}
+
+.card{
+
+background:white;
+
+border-radius:20px;
+
+padding:25px;
+
+box-shadow:
+0 10px 30px
+rgba(0,0,0,.08);
+
+}
+
+.title{
+
+font-size:20px;
+
+font-weight:700;
+
+margin-bottom:20px;
+
+color:#0f6b20;
+
+}
+
+.group{
+margin-bottom:18px;
+}
+
+label{
+display:block;
+margin-bottom:8px;
+font-weight:700;
+font-size:14px;
+}
+
+input{
+
+width:100%;
+
+padding:14px;
+
+border-radius:12px;
+
+border:1px solid #ddd;
+
+box-sizing:border-box;
+
+outline:none;
+
+}
+
+input:focus{
+
+border-color:#0f6b20;
+
+}
+
+.row{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+}
+
+.btns{
+
+display:flex;
+
+gap:10px;
+
+margin-top:20px;
+
+flex-wrap:wrap;
+
+}
+
+button{
+
+border:none;
+
+padding:14px 20px;
+
+border-radius:12px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+.save{
+background:#0f6b20;
+color:white;
+}
+
+.delete{
+background:#d60000;
+color:white;
+}
+
+.reload{
+background:#f0f0f0;
+}
+
+.status{
+margin-top:15px;
+font-size:14px;
+color:#666;
+}
+
+@media(max-width:700px){
+
+.row{
+grid-template-columns:1fr;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+ADMIN FOOTER KECAMATAN
+</div>
+
+<div class="wrap">
+
+<div class="card">
+
+<div class="title">
+Pengaturan Footer & Kontak
+</div>
+
+<div class="row">
+
+<div class="group">
+<label>Instagram</label>
+<input id="instagram">
+</div>
+
+<div class="group">
+<label>YouTube</label>
+<input id="youtube">
+</div>
+
+</div>
+
+<div class="row">
+
+<div class="group">
+<label>Facebook</label>
+<input id="facebook">
+</div>
+
+<div class="group">
+<label>WhatsApp</label>
+<input id="whatsapp">
+</div>
+
+</div>
+
+<div class="group">
+<label>Alamat</label>
+<input id="alamat">
+</div>
+
+<div class="row">
+
+<div class="group">
+<label>Email</label>
+<input id="email">
+</div>
+
+<div class="group">
+<label>Telepon</label>
+<input id="telp">
+</div>
+
+</div>
+
+<div class="group">
+<label>Jam Layanan</label>
+<input id="jam">
+</div>
+
+<div class="btns">
+
+<button
+class="save"
+onclick="saveFooter()">
+
+SIMPAN
+
+</button>
+
+<button
+class="delete"
+onclick="hapusFooter()">
+
+HAPUS
+
+</button>
+
+<button
+class="reload"
+onclick="loadFooter()">
+
+REFRESH
+
+</button>
+
+</div>
+
+<div
+id="status"
+class="status">
+
+Menunggu...
+
+</div>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getAuth,
+onAuthStateChanged
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+getDatabase,
+ref,
+get,
+set,
+remove
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* FIREBASE */
+
+const firebaseConfig={
+
+apiKey:
+"AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+
+authDomain:
+"paskibra2026-300eb.firebaseapp.com",
+
+databaseURL:
+"https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+
+projectId:
+"paskibra2026-300eb",
+
+storageBucket:
+"paskibra2026-300eb.firebasestorage.app",
+
+messagingSenderId:
+"937469132434",
+
+appId:
+"1:937469132434:web:d1924e1160350000d1b04b"
+
+};
+
+const app=
+initializeApp(
+firebaseConfig
+);
+
+const auth=
+getAuth(app);
+
+const db=
+getDatabase(app);
+
+/* AUTO DUMMY */
+
+async function seed(){
+
+const cek=
+await get(
+ref(
+db,
+"kontakcamat"
+)
+);
+
+if(
+cek.exists()
+)
+return;
+
+await set(
+ref(
+db,
+"kontakcamat"
+),
+{
+
+instagram:
+"https://instagram.com/kecamatan_padangtualang",
+
+youtube:
+"https://youtube.com/@kecamatanpadangtualang",
+
+facebook:
+"https://facebook.com/kecamatanpadangtualang",
+
+whatsapp:
+"https://wa.me/6281234567890",
+
+alamat:
+"Kantor Camat Padang Tualang, Kabupaten Langkat",
+
+email:
+"padangtualang@langkatkab.go.id",
+
+telp:
+"(061)12345678",
+
+jamLayanan:
+"Senin - Jumat 08:00 - 16:00",
+
+createdAt:
+Date.now()
+
+}
+
+);
+
+}
+
+/* LOAD */
+
+window.loadFooter =
+async function(){
+
+await seed();
+
+const snap=
+await get(
+ref(
+db,
+"kontakcamat"
+)
+);
+
+if(
+!snap.exists()
+)
+return;
+
+const k=
+snap.val();
+
+/* INPUT */
+
+document.getElementById(
+"instagram"
+).value=
+k.instagram||"";
+
+document.getElementById(
+"youtube"
+).value=
+k.youtube||"";
+
+document.getElementById(
+"facebook"
+).value=
+k.facebook||"";
+
+document.getElementById(
+"whatsapp"
+).value=
+k.whatsapp||"";
+
+document.getElementById(
+"alamat"
+).value=
+k.alamat||"";
+
+document.getElementById(
+"email"
+).value=
+k.email||"";
+
+document.getElementById(
+"telp"
+).value=
+k.telp||"";
+
+document.getElementById(
+"jam"
+).value=
+k.jamLayanan||"";
+
+/* STATUS */
+
+document.getElementById(
+"status"
+).innerHTML=
+"✅ Data dimuat";
+
+};
+
+/* SIMPAN */
+
+window.saveFooter=
+async function(){
+
+await set(
+ref(
+db,
+"kontakcamat"
+),
+{
+
+instagram:
+document.getElementById(
+"instagram"
+).value,
+
+youtube:
+document.getElementById(
+"youtube"
+).value,
+
+facebook:
+document.getElementById(
+"facebook"
+).value,
+
+whatsapp:
+document.getElementById(
+"whatsapp"
+).value,
+
+alamat:
+document.getElementById(
+"alamat"
+).value,
+
+email:
+document.getElementById(
+"email"
+).value,
+
+telp:
+document.getElementById(
+"telp"
+).value,
+
+jamLayanan:
+document.getElementById(
+"jam"
+).value,
+
+updatedAt:
+Date.now()
+
+}
+
+);
+
+document.getElementById(
+"status"
+).innerHTML=
+"✅ Footer berhasil disimpan";
+
+};
+
+/* HAPUS */
+
+window.hapusFooter=
+async function(){
+
+const ok=
+confirm(
+"Hapus footer?"
+);
+
+if(!ok)
+return;
+
+await remove(
+ref(
+db,
+"kontakcamat"
+)
+);
+
+document.getElementById(
+"status"
+).innerHTML=
+"🗑 Footer dihapus";
+
+};
+
+/* LOGIN */
+
+onAuthStateChanged(
+auth,
+async(user)=>{
+
+if(
+!user
+){
+
+location.href=
+"logincamat.html";
+
+return;
+
+}
+
+const snap=
+await get(
+ref(
+db,
+"admincamat/"
++user.uid
+)
+);
+
+if(
+!snap.exists()
+){
+
+alert(
+"Akses ditolak"
+);
+
+location.href=
+"logincamat.html";
+
+return;
+
+}
+
+const admin=
+snap.val();
+
+console.log(
+"DATA ADMIN:",
+admin
+);
+
+if(
+admin.role!=="admincamat"
+&&
+admin.role!=="camat"
+){
+
+alert(
+"Akses ditolak"
+);
+
+location.href=
+"logincamat.html";
+
+return;
+
+}
+
+/* MASUK */
+
+loadFooter();
+
+}
+
+);
+
+</script>
+
+</body>
+</html>

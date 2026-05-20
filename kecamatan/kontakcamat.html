@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Kontak Kecamatan</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:Arial, sans-serif;
+  background:#f3f5f7;
+  color:#222;
+}
+
+/* ================= HEADER ================= */
+
+.header{
+
+position:sticky;
+
+top:0;
+
+z-index:9999;
+
+background:linear-gradient(
+135deg,
+#0f6b20,
+#198532
+);
+
+padding:30px 20px;
+
+color:white;
+
+text-align:center;
+
+box-shadow:
+0 4px 15px
+rgba(0,0,0,.15);
+
+}
+
+.header h1{
+
+font-size:28px;
+
+margin-bottom:10px;
+
+}
+
+.header p{
+
+opacity:.9;
+
+font-size:15px;
+
+}
+
+/* HP */
+
+@media(max-width:768px){
+
+.header{
+
+padding:22px 15px;
+
+}
+
+.header h1{
+
+font-size:22px;
+
+}
+
+.header p{
+
+font-size:13px;
+
+}
+
+}
+/* ================= WRAPPER ================= */
+
+.wrap{
+  max-width:1200px;
+  margin:auto;
+  padding:20px;
+}
+
+/* ================= GRID ================= */
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+/* ================= CARD ================= */
+
+.card{
+  background:white;
+  border-radius:20px;
+  padding:22px;
+
+  box-shadow:
+  0 10px 25px
+  rgba(0,0,0,.08);
+}
+
+/* ================= TITLE ================= */
+
+.title{
+  font-size:20px;
+  font-weight:700;
+  color:#0f6b20;
+  margin-bottom:20px;
+}
+
+/* ================= ITEM ================= */
+
+.item{
+  display:flex;
+  gap:15px;
+  align-items:flex-start;
+  margin-bottom:20px;
+}
+
+.icon{
+  width:50px;
+  height:50px;
+
+  flex-shrink:0;
+
+  background:#eaf7ed;
+
+  border-radius:14px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.icon img{
+  width:24px;
+  height:24px;
+  object-fit:contain;
+}
+
+.txt{
+  flex:1;
+}
+
+.txt b{
+  display:block;
+  margin-bottom:6px;
+  color:#0f6b20;
+}
+
+.txt span{
+  font-size:14px;
+  line-height:1.6;
+  color:#555;
+}
+
+/* ================= MAP ================= */
+
+.map-box{
+  position:relative;
+
+  width:100%;
+  height:550px;
+
+  overflow:hidden;
+
+  border-radius:20px;
+
+  box-shadow:
+  0 10px 25px
+  rgba(0,0,0,.08);
+}
+
+.map-box iframe{
+  width:100%;
+  height:100%;
+  border:none;
+
+  position:relative;
+  z-index:1;
+}
+
+/* ================= FOTO CAMAT ================= */
+
+.camat-box{
+
+  position:absolute;
+
+  top:12px;
+  right:12px;
+
+  width:95px;
+
+  padding:6px;
+
+  background:
+  rgba(255,255,255,.95);
+
+  border-radius:14px;
+
+  box-shadow:
+  0 6px 18px
+  rgba(0,0,0,.18);
+
+  z-index:9999;
+
+  backdrop-filter:blur(4px);
+
+}
+
+.camat-box img{
+  width:100%;
+  height:115px;
+
+  object-fit:cover;
+
+  border-radius:10px;
+
+  display:block;
+}
+
+/* sembunyikan teks */
+
+.camat-name,
+.camat-role{
+  display:none;
+}
+
+/* ================= SOSMED ================= */
+
+.sosmed{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:12px;
+
+  margin-top:20px;
+}
+
+.sosmed a{
+  text-decoration:none;
+
+  background:#f3f5f7;
+
+  padding:14px;
+
+  border-radius:14px;
+
+  color:#222;
+
+  text-align:center;
+
+  font-size:14px;
+
+  transition:.2s;
+}
+
+.sosmed a:hover{
+  background:#dff1e4;
+}
+
+/* ================= TABLET ================= */
+
+@media(max-width:900px){
+
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .map-box{
+    height:450px;
+  }
+
+}
+
+/* ================= HP ================= */
+
+@media(max-width:768px){
+
+  .header{
+    padding:25px 15px;
+  }
+
+  .header h1{
+    font-size:22px;
+  }
+
+  .wrap{
+    padding:15px;
+  }
+
+  .card{
+    padding:18px;
+  }
+
+  .map-box{
+    height:380px;
+  }
+
+  .camat-box{
+
+    top:8px;
+    right:8px;
+
+    width:75px;
+
+    padding:5px;
+
+  }
+
+  .camat-box img{
+    height:90px;
+  }
+
+  .sosmed{
+    grid-template-columns:2fr 1fr;
+  }
+
+}
+
+/* ================= HP KECIL ================= */
+
+@media(max-width:480px){
+
+  .header h1{
+    font-size:20px;
+  }
+
+  .header p{
+    font-size:13px;
+  }
+
+  .title{
+    font-size:18px;
+  }
+
+  .item{
+    gap:12px;
+  }
+
+  .icon{
+    width:45px;
+    height:45px;
+  }
+
+  .icon img{
+    width:20px;
+    height:20px;
+  }
+
+  .map-box{
+    height:320px;
+  }
+
+  .camat-box{
+
+    width:65px;
+
+    top:6px;
+    right:6px;
+
+  }
+
+  .camat-box img{
+    height:75px;
+  }
+
+}
+
+
+
+
+.map-info{
+
+margin-top:18px;
+
+background:white;
+
+padding:20px;
+
+border-radius:18px;
+
+box-shadow:
+0 8px 20px
+rgba(0,0,0,.08);
+
+line-height:1.8;
+
+}
+
+.map-info h3{
+
+color:#0f6b20;
+
+margin-bottom:12px;
+
+font-size:20px;
+
+}
+
+.map-info p{
+
+font-size:14px;
+
+color:#555;
+
+text-align:justify;
+
+}
+
+@media(max-width:768px){
+
+.map-info{
+
+padding:16px;
+
+}
+
+.map-info h3{
+
+font-size:17px;
+
+}
+
+.map-info p{
+
+font-size:13px;
+
+}
+
+}
+
+
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+
+<h1>
+Kontak Kecamatan Padang Tualang
+</h1>
+
+<p>
+Kabupaten Langkat • Sumatera Utara
+</p>
+
+</div>
+
+
+
+
+<div class="wrap">
+
+<div class="grid">
+
+<!-- KONTAK -->
+
+<div class="card">
+
+<div class="title">
+Informasi Kontak
+</div>
+
+<div id="kontakBox">
+
+Loading...
+
+</div>
+
+<div class="title">
+Media Sosial
+</div>
+
+<div
+id="sosmedBox"
+class="sosmed">
+
+Loading...
+
+</div>
+
+</div>
+
+<!-- MAP -->
+
+<div class="map-box">
+
+<iframe
+src="https://maps.google.com/maps?q=Kantor%20Camat%20Padang%20Tualang%20Tanjung%20Selamat%20Kabupaten%20Langkat&t=&z=15&ie=UTF8&iwloc=&output=embed">
+</iframe>
+
+<div class="camat-box">
+
+<img
+id="fotoCamat"
+src="assets/images/camat.jpeg">
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+<!-- PENJELASAN -->
+
+<div class="map-info">
+
+<h3>
+Tentang Lokasi Kantor Camat
+</h3>
+
+<p>
+
+Kantor Camat Padang Tualang berlokasi di Desa Tanjung Selamat, Kabupaten Langkat, Sumatera Utara. Lokasi ini menjadi pusat pelayanan administrasi dan koordinasi pemerintahan kecamatan, meliputi pelayanan masyarakat, informasi publik, kegiatan pemerintahan, serta berbagai program pembangunan daerah.
+
+Peta di atas membantu masyarakat menemukan lokasi kantor secara lebih mudah. Pada bagian kanan peta juga ditampilkan profil Camat sebagai identitas resmi pemerintahan Kecamatan Padang Tualang.
+
+</p>
+
+</div>
+</div>
+
+
+
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig={
+
+apiKey:
+"AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+
+authDomain:
+"paskibra2026-300eb.firebaseapp.com",
+
+databaseURL:
+"https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+
+projectId:
+"paskibra2026-300eb",
+
+storageBucket:
+"paskibra2026-300eb.firebasestorage.app",
+
+messagingSenderId:
+"937469132434",
+
+appId:
+"1:937469132434:web:d1924e1160350000d1b04b"
+
+};
+
+const app=
+initializeApp(
+firebaseConfig
+);
+
+const db=
+getDatabase(app);
+
+/* KONTAK */
+
+async function loadKontak(){
+
+const snap=
+await get(
+ref(
+db,
+"kontakcamat"
+)
+);
+
+if(!snap.exists()) return;
+
+const k=
+snap.val();
+
+document.getElementById(
+"kontakBox"
+).innerHTML=`
+
+<div class="item">
+
+<div class="icon">
+<img src="assets/images/gps.png">
+</div>
+
+<div class="txt">
+<b>Alamat</b>
+${k.alamat||"-"}
+</div>
+
+</div>
+
+<div class="item">
+
+<div class="icon">
+<img src="assets/images/gmail.png">
+</div>
+
+<div class="txt">
+<b>Email</b>
+${k.email||"-"}
+</div>
+
+</div>
+
+<div class="item">
+
+<div class="icon">
+<img src="assets/images/hp.png">
+</div>
+
+<div class="txt">
+<b>Telepon</b>
+${k.telp||"-"}
+</div>
+
+</div>
+
+<div class="item">
+
+<div class="icon">
+<img src="assets/images/ajb.png">
+</div>
+
+<div class="txt">
+<b>Jam Layanan</b>
+${k.jamLayanan||"-"}
+</div>
+
+</div>
+
+`;
+
+document.getElementById(
+"sosmedBox"
+).innerHTML=`
+
+<a href="${k.instagram}" target="_blank">
+Instagram
+</a>
+
+<a href="${k.youtube}" target="_blank">
+YouTube
+</a>
+
+<a href="${k.facebook}" target="_blank">
+Facebook
+</a>
+
+<a href="${k.whatsapp}" target="_blank">
+WhatsApp
+</a>
+
+`;
+
+}
+
+/* CAMAT */
+
+async function loadCamat(){
+
+const snap=
+await get(
+ref(
+db,
+"camat"
+)
+);
+
+if(!snap.exists()) return;
+
+const data=
+Object.values(
+snap.val()
+)[0];
+
+namaCamat.innerHTML=
+data.nama||"-";
+
+visiCamat.innerHTML=
+data.visi||"";
+
+if(data.foto){
+
+fotoCamat.src=
+data.foto;
+
+}
+
+}
+
+loadKontak();
+loadCamat();
+
+</script>
+
+</body>
+</html>
