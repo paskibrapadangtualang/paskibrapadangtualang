@@ -1,185 +1,433 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <title>404 | Halaman Tidak Ditemukan</title>
+<title>404 | Halaman Tidak Ditemukan</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <style>
+<style>
 
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-    }
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
 
-    body{
-      font-family:'Poppins',sans-serif;
-      background:#0f172a;
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      overflow:hidden;
-      color:white;
-      position:relative;
-    }
+body{
+  font-family:'Poppins',sans-serif;
+  background:#0f172a;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  color:white;
+  position:relative;
+}
 
-    /* Background Blur */
-    .blur1,
-    .blur2{
-      position:absolute;
-      border-radius:50%;
-      filter:blur(120px);
-      opacity:.25;
-    }
+.blur1,
+.blur2{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(120px);
+  opacity:.25;
+}
 
-    .blur1{
-      width:300px;
-      height:300px;
-      background:#dc2626;
-      top:-100px;
-      left:-100px;
-    }
+.blur1{
+  width:300px;
+  height:300px;
+  background:#dc2626;
+  top:-100px;
+  left:-100px;
+}
 
-    .blur2{
-      width:350px;
-      height:350px;
-      background:#2563eb;
-      bottom:-120px;
-      right:-120px;
-    }
+.blur2{
+  width:350px;
+  height:350px;
+  background:#2563eb;
+  bottom:-120px;
+  right:-120px;
+}
 
-    .card{
-      width:90%;
-      max-width:520px;
-      background:rgba(255,255,255,0.05);
-      border:1px solid rgba(255,255,255,0.08);
-      backdrop-filter:blur(12px);
-      border-radius:28px;
-      padding:50px 35px;
-      text-align:center;
-      position:relative;
-      z-index:2;
-      box-shadow:
-      0 10px 40px rgba(0,0,0,.35);
-    }
+.card{
+  width:90%;
+  max-width:520px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+  backdrop-filter:blur(12px);
+  border-radius:28px;
+  padding:50px 35px;
+  text-align:center;
+  position:relative;
+  z-index:2;
+  box-shadow:0 10px 40px rgba(0,0,0,.35);
+}
 
-    .error-code{
-      font-size:110px;
-      font-weight:700;
-      line-height:1;
-      background:linear-gradient(
-      135deg,
-      #ffffff,
-      #94a3b8
-      );
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
-      margin-bottom:15px;
-    }
+.error-code{
+  font-size:110px;
+  font-weight:700;
+  line-height:1;
 
-    .title{
-      font-size:28px;
-      font-weight:600;
-      margin-bottom:12px;
-    }
+  background:linear-gradient(
+    135deg,
+    #ffffff,
+    #94a3b8
+  );
 
-    .desc{
-      font-size:15px;
-      color:#cbd5e1;
-      line-height:1.7;
-      margin-bottom:35px;
-    }
+  background-clip:text;
+  -webkit-background-clip:text;
 
-    .btn{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      padding:14px 28px;
-      border-radius:14px;
-      text-decoration:none;
-      color:white;
-      background:linear-gradient(
-      135deg,
-      #dc2626,
-      #b91c1c
-      );
-      font-weight:500;
-      transition:.3s;
-      box-shadow:
-      0 10px 20px rgba(220,38,38,.25);
-    }
+  color:transparent;
+  -webkit-text-fill-color:transparent;
 
-    .btn:hover{
-      transform:translateY(-3px);
-      box-shadow:
-      0 14px 30px rgba(220,38,38,.35);
-    }
+  margin-bottom:20px;
+}
 
-    .footer{
-      margin-top:28px;
-      font-size:13px;
-      color:#94a3b8;
-    }
+.error-img{
+  width:220px;
+  max-width:90%;
+  display:block;
+  margin:auto;
+  margin-bottom:20px;
+  border-radius: 10px;
+}
 
-    @media(max-width:600px){
+.title{
+  font-size:28px;
+  font-weight:600;
+  margin-bottom:12px;
+}
 
-      .card{
-        padding:40px 25px;
-      }
+.desc{
+  font-size:15px;
+  color:#cbd5e1;
+  line-height:1.7;
+  margin-bottom:35px;
+}
 
-      .error-code{
-        font-size:85px;
-      }
+.btn{
+  display:inline-flex;
+  align-items:center;
+  padding:14px 28px;
+  border-radius:14px;
+  text-decoration:none;
+  color:white;
 
-      .title{
-        font-size:22px;
-      }
+  background:linear-gradient(
+    135deg,
+    #dc2626,
+    #b91c1c
+  );
+}
 
-      .desc{
-        font-size:14px;
-      }
+.footer{
+  background:#0f172a;
+  color:white;
+  text-align:center;
+  padding:30px 20px;
+  font-size:14px;
+  line-height:1.8;
+}
 
-    }
+.hubungi-dev{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
 
-  </style>
+  margin-top:20px;
+  padding:14px 30px;
+
+  border-radius:18px;
+
+  background:
+  linear-gradient(
+    135deg,
+    #0f172a,
+    #1e293b
+  );
+
+  color:white;
+  text-decoration:none;
+
+  font-size:15px;
+  font-weight:600;
+  letter-spacing:.3px;
+
+  border:1px solid rgba(255,255,255,0.08);
+
+  box-shadow:
+  0 10px 25px rgba(0,0,0,0.25),
+  inset 0 1px 0 rgba(255,255,255,0.08);
+
+  cursor:pointer;
+  transition:.3s;
+  overflow:hidden;
+  position:relative;
+}
+
+.hubungi-dev::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:-120%;
+  width:100%;
+  height:100%;
+
+  background:linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,0.15),
+    transparent
+  );
+
+  transition:.6s;
+}
+
+.hubungi-dev:hover::before{
+  left:120%;
+}
+
+.hubungi-dev:hover{
+  transform:translateY(-3px) scale(1.02);
+
+  box-shadow:
+  0 14px 30px rgba(0,0,0,0.35),
+  inset 0 1px 0 rgba(255,255,255,0.12);
+}
+
+.hubungi-dev:active{
+  transform:scale(.98);
+}
+.dev-popup{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.65);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:99999;
+  padding:20px;
+}
+
+.dev-box{
+  width:100%;
+  max-width:420px;
+  background:white;
+  border-radius:24px;
+  padding:25px;
+  animation:popupDev .3s ease;
+  box-shadow:0 10px 35px rgba(0,0,0,0.3);
+}
+
+@keyframes popupDev{
+  from{
+    transform:scale(.8);
+    opacity:0;
+  }
+  to{
+    transform:scale(1);
+    opacity:1;
+  }
+}
+
+.dev-title{
+  font-size:22px;
+  font-weight:700;
+  text-align:center;
+  color:#111827;
+}
+
+.dev-line{
+  width:100%;
+  height:2px;
+  background:linear-gradient(to right,
+  transparent,
+  #c40000,
+  transparent);
+  margin:18px 0 22px;
+}
+
+.dev-box input,
+.dev-box textarea{
+  width:100%;
+  border:none;
+  outline:none;
+  background:#f1f5f9;
+  padding:15px;
+  border-radius:14px;
+  margin-bottom:14px;
+  font-size:14px;
+}
+
+.dev-box textarea{
+  min-height:120px;
+  resize:none;
+}
+
+.dev-box button{
+  width:100%;
+  border:none;
+  background:#c40000;
+  color:white;
+  padding:15px;
+  border-radius:14px;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.dev-box button:hover{
+  transform:translateY(-2px);
+}
+
+.close-dev{
+  text-align:center;
+  margin-top:15px;
+  color:#64748b;
+  cursor:pointer;
+  font-size:14px;
+}
+
+</style>
 </head>
+
 <body>
 
-  <div class="blur1"></div>
-  <div class="blur2"></div>
+<div class="blur1"></div>
+<div class="blur2"></div>
 
-  <div class="card">
+<div class="card">
 
-    <div class="error-code">
-      404
+<div class="error-code">
+404
+</div>
+
+<img
+src="assets/images/lemparpeci.jpg"
+class="error-img"
+alt="404"
+/>
+
+<div class="title">
+Halaman Tidak Ditemukan
+</div>
+
+<div class="desc">
+Maaf, halaman yang kamu cari mungkin sudah dipindahkan,
+dihapus, atau URL tidak tersedia.
+</div>
+
+<a href="https://paskibrapadangtualang.net/" class="btn">
+Kembali ke Beranda
+</a>
+
+<div class="footer">
+  <div>© 2026 Paskibra Padang Tualang</div>
+  <div>Developer By. ilhamkrt</div>
+
+  <div class="hubungi-dev" onclick="openDevPopup()">
+    Hubungi Developer
+  </div>
+</div>
+
+<!-- POPUP -->
+<div class="dev-popup" id="devPopup">
+
+  <div class="dev-box">
+
+    <div class="dev-title">
+      Hubungi Developer
     </div>
 
-    <div class="title">
-      Halaman Tidak Ditemukan
-    </div>
+    <div class="dev-line"></div>
 
-    <div class="desc">
-      Maaf, halaman yang kamu cari mungkin sudah dipindahkan,
-      dihapus, atau URL yang dimasukkan tidak tersedia.
-    </div>
+    <input type="text"
+    id="namaDev"
+    placeholder="Nama Lengkap">
 
-    <a href="https://paskibrapadangtualang.net/" class="btn">
-      Kembali ke Beranda
-    </a>
+    <input type="email"
+    id="emailDev"
+    placeholder="Email Aktif">
 
-    <div class="footer">
-      © 2026 Paskibra Padang Tualang
+    <input type="number"
+    id="waDev"
+    placeholder="Nomor WhatsApp">
+
+    <textarea
+    id="pesanDev"
+    placeholder="Tulis pesan anda..."></textarea>
+
+    <button onclick="kirimDeveloper()">
+      Kirim Pesan
+    </button>
+
+    <div class="close-dev"
+    onclick="closeDevPopup()">
+      Tutup
     </div>
 
   </div>
 
+</div>
+
+</div>
+<script>
+
+function openDevPopup(){
+  document.getElementById("devPopup").style.display="flex";
+}
+
+function closeDevPopup(){
+  document.getElementById("devPopup").style.display="none";
+}
+
+function kirimDeveloper(){
+
+  let nama =
+  document.getElementById("namaDev").value;
+
+  let email =
+  document.getElementById("emailDev").value;
+
+  let wa =
+  document.getElementById("waDev").value;
+
+  let pesan =
+  document.getElementById("pesanDev").value;
+
+  let nomorDeveloper = "+905016624646";
+
+  let text =
+`Halo Developer Paskibra Padang Tualang
+
+----------------------------
+
+Nama : ${nama}
+
+Email : ${email}
+
+No WhatsApp : ${wa}
+
+Pesan :
+${pesan}
+
+----------------------------`;
+
+  let url =
+`https://wa.me/${nomorDeveloper}?text=${encodeURIComponent(text)}`;
+
+  window.open(url,"_blank");
+
+}
+
+</script>
 </body>
 </html>
