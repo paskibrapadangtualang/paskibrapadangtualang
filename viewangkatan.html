@@ -297,6 +297,111 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =========================
+MAINTENANCE GLOBAL
+========================= */
+
+async function cekMaintenance(){
+
+try{
+
+const snap =
+await get(
+ref(
+db,
+"maintenance"
+)
+);
+
+if(
+!snap.exists()
+)
+return;
+
+const data =
+snap.val();
+
+// maintenance OFF
+
+if(
+data.aktif !== true
+)
+return;
+
+// halaman sekarang
+
+const page =
+window.location.pathname
+.toLowerCase();
+
+// sudah di halaman maintenance
+
+if(
+page.includes(
+"maintenance.html"
+)
+){
+return;
+}
+
+// bypass admin
+
+if(
+
+page.includes(
+"admin"
+)
+
+||
+
+page.includes(
+"bendahara"
+)
+
+){
+return;
+}
+
+// redirect
+
+window.location.href =
+"https://paskibrapadangtualang.net/maintenance.html";
+
+}catch(err){
+
+console.log(
+"Maintenance Error:",
+err
+);
+
+}
+
+}
+
+cekMaintenance();
+
+
+
+
+
+
+
+
+
+
 function formatStatus(status){
   if(!status) return "Menunggu Seleksi";
 

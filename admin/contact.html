@@ -2,226 +2,540 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
 <title>Admin Kontak Paskibra</title>
 
 <style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
 body{
-  font-family:Arial;
-  background:#f4f6fb;
-  margin:0;
-  padding:20px;
+background:
+linear-gradient(
+135deg,
+#fff5f5,
+#f1f5ff
+);
+
+padding:20px;
 }
 
-h2{
-  text-align:center;
-  color:#c40000;
-  margin-bottom:20px;
+.header{
+
+background:
+linear-gradient(
+135deg,
+#c40000,
+#8a0000
+);
+
+padding:25px;
+
+border-radius:25px;
+
+color:white;
+
+margin-bottom:20px;
+
+box-shadow:
+0 10px 30px
+rgba(196,0,0,.2);
 }
 
-/* FORM */
+.header h2{
+font-size:24px;
+}
+
+.header p{
+margin-top:8px;
+opacity:.9;
+}
+
 .box{
-  max-width:500px;
-  margin:auto;
-  background:white;
-  padding:15px;
-  border-radius:15px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+
+background:white;
+
+padding:20px;
+
+border-radius:25px;
+
+margin-bottom:20px;
+
+box-shadow:
+0 8px 25px
+rgba(0,0,0,.08);
+
 }
 
-input, textarea{
-  width:50%;
-  padding:10px;
-  margin:8px 0;
-  border:1px solid #ddd;
-  border-radius:8px;
+.input{
+
+margin-bottom:14px;
+}
+
+.input label{
+display:block;
+margin-bottom:6px;
+font-weight:bold;
+color:#444;
+}
+
+input,textarea{
+
+width:100%;
+
+padding:13px;
+
+border-radius:14px;
+
+border:1px solid #ddd;
+
+outline:none;
+
+font-size:14px;
+}
+
+textarea{
+resize:none;
+height:90px;
+}
+
+.btns{
+display:grid;
+
+grid-template-columns:
+1fr 1fr;
+
+gap:10px;
+
+margin-top:10px;
 }
 
 button{
-  width:100%;
-  padding:10px;
-  background:#c40000;
-  color:white;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  margin-top:5px;
+
+padding:13px;
+
+border:none;
+
+border-radius:14px;
+
+cursor:pointer;
+
+font-weight:bold;
+
+color:white;
 }
 
-button:hover{
-  background:#a00000;
+.save{
+background:#c40000;
 }
 
-/* MONITOR */
-.monitor{
-  max-width:500px;
-  margin:20px auto;
-  background:white;
-  padding:15px;
-  border-radius:15px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+.reset{
+background:#555;
 }
 
-.item{
-  background:#f9f9f9;
-  padding:10px;
-  border-radius:10px;
-  margin-top:10px;
-  font-size:14px;
+.delete{
+background:black;
+margin-top:12px;
+width:100%;
 }
 
-.item b{
-  color:#c40000;
+.preview{
+
+background:white;
+
+padding:20px;
+
+border-radius:25px;
+
+box-shadow:
+0 8px 25px
+rgba(0,0,0,.08);
+
 }
 
-.del{
-  background:black;
-  font-size:12px;
-  margin-top:8px;
+.preview h3{
+color:#c40000;
+margin-bottom:15px;
 }
+
+.card{
+
+background:
+linear-gradient(
+135deg,
+#c40000,
+#700000
+);
+
+color:white;
+
+padding:20px;
+
+border-radius:20px;
+}
+
+.row{
+margin-bottom:12px;
+line-height:1.7;
+}
+
+.social{
+
+display:flex;
+gap:10px;
+
+flex-wrap:wrap;
+
+margin-top:15px;
+}
+
+.tag{
+
+background:
+rgba(255,255,255,.15);
+
+padding:8px 12px;
+
+border-radius:30px;
+
+font-size:12px;
+}
+
 </style>
 </head>
 
 <body>
 
-<h2>ADMIN KONTAK PASKIBRA</h2>
+<div class="header">
 
-<!-- FORM -->
-<div class="box">
+<h2>
+ADMIN KONTAK PASKIBRA
+</h2>
 
-  <input id="alamat" placeholder="Alamat">
-  <input id="telepon" placeholder="Telepon">
-  <input id="email" placeholder="Email">
-
-  <button onclick="saveKontak()">
-    Simpan / Update Kontak
-  </button>
-
-  <button onclick="resetKontak()" style="background:#333;">
-    Reset Dummy
-  </button>
+<p>
+Kelola footer website dan media sosial
+</p>
 
 </div>
 
-<!-- MONITOR -->
-<div class="monitor">
+<div class="box">
 
-  <h3 style="color:#c40000;text-align:center;">
-    Monitoring Kontak
-  </h3>
+<div class="input">
+<label>Alamat</label>
+<textarea id="alamat"></textarea>
+</div>
 
-  <div id="list"></div>
+<div class="input">
+<label>Telepon</label>
+<input id="telepon">
+</div>
+
+<div class="input">
+<label>Email</label>
+<input id="email">
+</div>
+
+<div class="input">
+<label>Facebook</label>
+<input id="facebook">
+</div>
+
+<div class="input">
+<label>Instagram</label>
+<input id="instagram">
+</div>
+
+<div class="input">
+<label>WhatsApp</label>
+<input id="whatsapp">
+</div>
+
+<div class="input">
+<label>YouTube</label>
+<input id="youtube">
+</div>
+
+<div class="input">
+<label>Deskripsi</label>
+<textarea id="deskripsi"></textarea>
+</div>
+
+<div class="btns">
+
+<button
+class="save"
+onclick="saveKontak()">
+
+Simpan
+
+</button>
+
+<button
+class="reset"
+onclick="resetKontak()">
+
+Reset Dummy
+
+</button>
+
+</div>
+
+<button
+class="delete"
+onclick="hapus()">
+
+Hapus Kontak
+
+</button>
+
+</div>
+
+<div class="preview">
+
+<h3>
+Preview Footer
+</h3>
+
+<div
+class="card"
+id="list">
+
+Loading...
+
+</div>
 
 </div>
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, get, set, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
-  authDomain: "paskibra2026-300eb.firebaseapp.com",
-  databaseURL: "https://paskibra2026-300eb-default-rtdb.firebaseio.com",
-  projectId: "paskibra2026-300eb",
-  storageBucket: "paskibra2026-300eb.firebasestorage.app",
-  messagingSenderId: "937469132434",
-  appId: "1:937469132434:web:d1924e1160350000d1b04b"
+import {
+getDatabase,
+ref,
+get,
+set,
+remove
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig={
+
+apiKey:"AIzaSyBextWTeGMT1x9c1MHOv4GoHXP8OgW2WsY",
+
+authDomain:"paskibra2026-300eb.firebaseapp.com",
+
+databaseURL:"https://paskibra2026-300eb-default-rtdb.firebaseio.com",
+
+projectId:"paskibra2026-300eb",
+
+storageBucket:"paskibra2026-300eb.firebasestorage.app",
+
+messagingSenderId:"937469132434",
+
+appId:"1:937469132434:web:d1924e1160350000d1b04b"
+
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const app=
+initializeApp(firebaseConfig);
 
-const kontakRef = ref(db, "kontak");
+const db=
+getDatabase(app);
 
-// =========================
-// LOAD DATA
-// =========================
+const kontakRef=
+ref(db,"kontak");
+
 async function load(){
 
-  const snap = await get(kontakRef);
+const snap=
+await get(kontakRef);
 
-  const defaultData = {
-    alamat:"Padang Tualang, Langkat",
-    telepon:"081234567890",
-    email:"paskibrapadangtualang@gmail.com"
-  };
+if(!snap.exists()){
 
-  if(!snap.exists()){
-    await set(kontakRef, defaultData);
-    return load();
-  }
+await resetKontak();
 
-  const data = snap.val();
+return;
 
-  document.getElementById("alamat").value = data.alamat;
-  document.getElementById("telepon").value = data.telepon;
-  document.getElementById("email").value = data.email;
-
-  document.getElementById("list").innerHTML = `
-    <div class="item">
-      <b>Alamat:</b> ${data.alamat}<br>
-      <b>Telepon:</b> ${data.telepon}<br>
-      <b>Email:</b> ${data.email}<br>
-
-      <button class="del" onclick="hapus()">
-        Hapus Kontak
-      </button>
-    </div>
-  `;
 }
 
-// =========================
-// SIMPAN / UPDATE
-// =========================
-window.saveKontak = async function(){
+const d=
+snap.val();
 
-  const alamat = document.getElementById("alamat").value;
-  const telepon = document.getElementById("telepon").value;
-  const email = document.getElementById("email").value;
+for(
+let k in d
+){
 
-  if(!alamat || !telepon || !email){
-    alert("Lengkapi data!");
-    return;
-  }
+const el=
+document.getElementById(k);
 
-  await set(kontakRef,{
-    alamat,
-    telepon,
-    email
-  });
+if(el)
+el.value=d[k];
 
-  alert("Kontak berhasil disimpan");
-  load();
 }
 
-// =========================
-// RESET DUMMY
-// =========================
-window.resetKontak = async function(){
+render(d);
 
-  const dummy = {
-    alamat:"Padang Tualang, Langkat",
-    telepon:"081234567890",
-    email:"paskibrapadangtualang@gmail.com"
-  };
-
-  await set(kontakRef, dummy);
-
-  alert("Kontak reset ke default");
-  load();
 }
 
-// =========================
-// HAPUS
-// =========================
-window.hapus = async function(){
+function render(d){
 
-  await remove(kontakRef);
+document.getElementById(
+"list"
+).innerHTML=`
 
-  alert("Kontak dihapus");
-  load();
+<div class=row>
+📍 ${d.alamat||"-"}
+</div>
+
+<div class=row>
+☎ ${d.telepon||"-"}
+</div>
+
+<div class=row>
+✉ ${d.email||"-"}
+</div>
+
+<div class=row>
+${d.deskripsi||""}
+</div>
+
+<div class=social>
+
+<div class=tag>
+Facebook
+</div>
+
+<div class=tag>
+Instagram
+</div>
+
+<div class=tag>
+WhatsApp
+</div>
+
+<div class=tag>
+YouTube
+</div>
+
+</div>
+
+`;
+
 }
+
+window.saveKontak=
+async function(){
+
+const data={
+
+alamat:
+alamat.value,
+
+telepon:
+telepon.value,
+
+email:
+email.value,
+
+facebook:
+facebook.value,
+
+instagram:
+instagram.value,
+
+whatsapp:
+whatsapp.value,
+
+youtube:
+youtube.value,
+
+deskripsi:
+deskripsi.value
+
+};
+
+await set(
+kontakRef,
+data
+);
+
+alert(
+"Berhasil disimpan"
+);
+
+load();
+
+};
+
+window.resetKontak=
+async function(){
+
+const dummy={
+
+alamat:
+"Padang Tualang, Langkat, Sumatra Utara",
+
+email:
+"paskibrapadangtualang@gmail.com",
+
+telepon:
+"+62319",
+
+facebook:
+"https://facebook.com/PaskibraPadangTualang",
+
+instagram:
+"https://instagram.com/paskibrapadangtualang",
+
+whatsapp:
+"https://wa.me/6262319",
+
+youtube:
+"https://youtube.com/@paskibrapadangtualang",
+
+deskripsi:
+"Portal resmi informasi kegiatan Paskibra Padang Tualang"
+
+};
+
+await set(
+kontakRef,
+dummy
+);
+
+load();
+
+};
+
+window.hapus=
+async function(){
+
+if(
+!confirm(
+"Hapus kontak?"
+)
+)return;
+
+await remove(
+kontakRef
+);
+
+load();
+
+};
 
 load();
 

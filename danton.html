@@ -456,7 +456,8 @@ from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
     getDatabase,
     ref,
-    onValue
+    onValue,
+    get
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
@@ -479,6 +480,113 @@ const app =
 
 const db =
   getDatabase(app);
+
+
+
+
+
+
+
+
+/* =========================
+MAINTENANCE GLOBAL
+========================= */
+
+async function cekMaintenance(){
+
+try{
+
+const snap =
+await get(
+ref(
+db,
+"maintenance"
+)
+);
+
+if(
+!snap.exists()
+)
+return;
+
+const data =
+snap.val();
+
+// maintenance OFF
+
+if(
+data.aktif !== true
+)
+return;
+
+// halaman sekarang
+
+const page =
+window.location.pathname
+.toLowerCase();
+
+// sudah di halaman maintenance
+
+if(
+page.includes(
+"maintenance.html"
+)
+){
+return;
+}
+
+// bypass admin
+
+if(
+
+page.includes(
+"admin"
+)
+
+||
+
+page.includes(
+"bendahara"
+)
+
+){
+return;
+}
+
+// redirect
+
+window.location.href =
+"https://paskibrapadangtualang.net/maintenance.html";
+
+}catch(err){
+
+console.log(
+"Maintenance Error:",
+err
+);
+
+}
+
+}
+
+cekMaintenance();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const listDanton =
   document.getElementById("listDanton");

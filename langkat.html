@@ -102,6 +102,151 @@ body{
   margin-bottom:15px;
   color:#222;
 }
+
+
+
+
+.footer-profesional{
+margin-top:30px;
+background:linear-gradient(
+180deg,
+#b00000,
+#700000
+);
+
+color:white;
+
+padding:30px 20px 90px;
+
+border-radius:25px 25px 0 0;
+}
+
+.footer-top{
+display:flex;
+flex-direction:column;
+gap:25px;
+}
+
+.footer-brand{
+text-align:center;
+}
+
+.footer-logo{
+width:80px;
+height:80px;
+object-fit:contain;
+
+background:white;
+
+padding:8px;
+
+border-radius:20px;
+
+margin-bottom:12px;
+}
+
+.footer-brand h2{
+font-size:20px;
+margin-bottom:8px;
+}
+
+.footer-brand p{
+font-size:13px;
+line-height:1.7;
+opacity:.9;
+}
+
+.footer-grid{
+display:grid;
+grid-template-columns:1fr;
+gap:20px;
+}
+
+.footer-box{
+background:rgba(255,255,255,.08);
+
+padding:18px;
+
+border-radius:18px;
+
+backdrop-filter:blur(10px);
+}
+
+.footer-box h3{
+margin-bottom:15px;
+font-size:16px;
+}
+
+.footer-item{
+display:flex;
+align-items:flex-start;
+gap:10px;
+
+margin-bottom:12px;
+}
+
+.footer-item img{
+width:20px;
+height:20px;
+}
+
+.footer-item span{
+font-size:13px;
+line-height:1.6;
+}
+
+.footer-social{
+display:flex;
+gap:15px;
+flex-wrap:wrap;
+}
+
+.footer-social a{
+width:50px;
+height:50px;
+
+background:white;
+
+border-radius:14px;
+
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.footer-social img{
+width:25px;
+height:25px;
+}
+
+.footer-box a{
+display:block;
+
+color:white;
+
+text-decoration:none;
+
+margin-bottom:10px;
+
+font-size:13px;
+}
+
+.footer-bottom{
+margin-top:25px;
+
+padding-top:20px;
+
+border-top:1px solid rgba(255,255,255,.2);
+
+text-align:center;
+
+font-size:12px;
+
+line-height:1.8;
+}
+
+
+
 </style>
 </head>
 
@@ -114,11 +259,180 @@ body{
 <!-- SEMUA CARD MASUK SINI -->
 <div id="container"></div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- FOOTER -->
+<footer class="footer-profesional">
+
+<div class="footer-top">
+
+<div class="footer-brand">
+
+<img
+src="assets/images/logopaskib.png"
+class="footer-logo"
+>
+
+<h2>
+PASKIBRA PADANG TUALANG
+</h2>
+
+<p id="footerDesc">
+Organisasi Paskibra resmi Kecamatan Padang Tualang.
+</p>
+
+</div>
+
+<div class="footer-grid">
+
+<!-- KONTAK -->
+<div class="footer-box">
+
+<h3>
+Kontak
+</h3>
+
+<div class="footer-item">
+
+<img src="assets/images/search-user.png">
+
+<span id="footerTel">
+Loading...
+</span>
+
+</div>
+
+<div class="footer-item">
+
+<img src="assets/images/gmail.png">
+
+<span id="footerEmail">
+Loading...
+</span>
+
+</div>
+
+<div class="footer-item">
+
+<img src="assets/images/lokasi 17 (1).png">
+
+<span id="footerAlamat">
+Loading...
+</span>
+
+</div>
+
+</div>
+
+<!-- SOSMED -->
+<div class="footer-box">
+
+<h3>
+Media Sosial
+</h3>
+
+<div class="footer-social">
+
+<a id="fbLink" target="_blank">
+
+<img src="assets/images/facebook.png">
+
+</a>
+
+<a id="igLink" target="_blank">
+
+<img src="assets/images/social.png">
+
+</a>
+
+<a id="waLink" target="_blank">
+
+<img src="assets/images/whatsapp.png">
+
+</a>
+
+<a id="ytLink" target="_blank">
+
+<img src="assets/images/youtube.png">
+
+</a>
+
+</div>
+
+</div>
+
+<!-- MENU -->
+<div class="footer-box">
+
+<h3>
+Menu Cepat
+</h3>
+
+<a href="home.html">
+Beranda
+</a>
+
+<a href="postingan.html">
+Postingan
+</a>
+
+<a href="tentangkami.html">
+Tentang Kami
+</a>
+
+<a href="bantuan.html">
+Bantuan
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="footer-bottom">
+
+© 2026 Paskibra Padang Tualang
+
+<br>
+
+Website Resmi Kecamatan Padang Tualang
+
+</div>
+
+</footer>
+
+
+
+
+
+
+
+
+
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
+import {
+getDatabase,
+ref,
+get,
+set
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 const firebaseConfig = {
   apiKey: "AIzaSyBextWTeGMT1x1MHOv4GoHXP8OgW2WsY",
   authDomain: "paskibra2026-300eb.firebaseapp.com",
@@ -131,6 +445,245 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+
+
+
+
+/* =========================
+MAINTENANCE AUTO DUMMY
+========================= */
+
+async function seedMaintenance(){
+
+const maintenanceRef =
+ref(
+db,
+"maintenance"
+);
+
+const snap =
+await get(
+maintenanceRef
+);
+
+// BUAT OTOMATIS
+
+if(
+!snap.exists()
+){
+
+await set(
+maintenanceRef,
+{
+
+aktif:false,
+
+judul:
+"Website Sedang Maintenance",
+
+pesan:
+"Paskibra Kecamatan Padang Tualang sedang melakukan pembaruan sistem",
+
+gambar:
+"assets/images/maintenance.png",
+
+updatedAt:
+Date.now()
+
+}
+);
+
+console.log(
+"Maintenance dummy dibuat"
+);
+
+}
+
+}
+
+/* =========================
+CEK MAINTENANCE
+========================= */
+
+async function cekMaintenance(){
+
+try{
+
+await seedMaintenance();
+
+const snap =
+await get(
+ref(
+db,
+"maintenance"
+)
+);
+
+if(
+!snap.exists()
+)
+return;
+
+const data =
+snap.val();
+
+// kalau OFF
+
+if(
+data.aktif !== true
+)
+return;
+
+// halaman sekarang
+
+const page =
+window.location.pathname
+.toLowerCase();
+
+// jangan redirect
+// kalau sudah maintenance
+
+if(
+page.includes(
+"maintenance.html"
+)
+){
+return;
+}
+
+// redirect
+
+window.location.href =
+"https://paskibrapadangtualang.net/maintenance.html";
+
+}catch(err){
+
+console.log(
+"Maintenance Error:",
+err
+);
+
+}
+
+}
+
+cekMaintenance();
+
+
+
+
+
+
+
+
+
+
+/* =========================
+FOOTER FIREBASE
+========================= */
+
+async function loadFooter(){
+
+try{
+
+const snap =
+await get(
+ref(db,"kontak")
+);
+
+if(!snap.exists()){
+
+console.log(
+"Kontak belum ada"
+);
+
+return;
+
+}
+
+const data =
+snap.val();
+
+// alamat
+document.getElementById(
+"footerAlamat"
+).innerText =
+data.alamat || "-";
+
+// email
+document.getElementById(
+"footerEmail"
+).innerText =
+data.email || "-";
+
+// telepon
+document.getElementById(
+"footerTel"
+).innerText =
+data.telepon || "-";
+
+// deskripsi
+document.getElementById(
+"footerDesc"
+).innerText =
+data.deskripsi ||
+"Portal resmi Paskibra Padang Tualang";
+
+// sosial media
+document.getElementById(
+"fbLink"
+).href =
+data.facebook || "#";
+
+document.getElementById(
+"igLink"
+).href =
+data.instagram || "#";
+
+document.getElementById(
+"waLink"
+).href =
+data.whatsapp || "#";
+
+document.getElementById(
+"ytLink"
+).href =
+data.youtube || "#";
+
+}catch(err){
+
+console.log(
+"Footer Error:",
+err
+);
+
+}
+
+}
+
+loadFooter();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const container = document.getElementById("container");
 
