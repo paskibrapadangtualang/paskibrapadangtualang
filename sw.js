@@ -1,17 +1,19 @@
 console.log("SW FILE BERHASIL DIBACA");
 
-const CACHE_NAME = "paskib-cache-v5";
+const CACHE_NAME = "paskib-cache-v8";
 
 const urlsToCache = [
 
   "./",
   "./index.html",
-  "./home.html",
+  "./offline.html",
+
   "./user.html",
   "./akun.html",
   "./postingan.html",
   "./detailpostingan.html",
   "./info.html",
+
   "./manifest.json",
 
   "./assets/images/launchericon-192x192.png",
@@ -90,12 +92,10 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
 
-  // ❌ JANGAN CACHE NON GET
   if (event.request.method !== "GET") {
     return;
   }
 
-  // ❌ JANGAN CACHE FIREBASE / FCM
   if (
 
     event.request.url.includes("firebase") ||
@@ -107,73 +107,131 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  event.respondWith(
+event.respondWith(
 
-    caches.match(event.request)
+(async()=>{
 
-    .then((cachedResponse) => {
+try{
 
-      // CACHE ADA
+// coba ambil dari internet dulu
+const networkResponse =
+await fetch(
+event.request
+);
 
-      if (cachedResponse) {
+// simpan ke cache
+if(
 
-        console.log(
-          "AMBIL DARI CACHE:",
-          event.request.url
-        );
+event.request.url.startsWith(
+self.location.origin
+)
 
-        return cachedResponse;
+){
 
-      }
+const cache =
+await caches.open(
+CACHE_NAME
+);
 
-      // FETCH NETWORK
+cache.put(
+event.request,
+networkResponse.clone()
+);
 
-      return fetch(event.request)
+}
 
-      .then((networkResponse) => {
+// kirim hasil network
+return networkResponse;
 
-        return caches.open(CACHE_NAME)
+}
 
-        .then((cache) => {
+catch(error){
 
-          // CACHE SAME ORIGIN ONLY
+// kalau buka halaman html
+if(
 
-          if (
+event.request.mode ===
+"navigate"
 
-            event.request.url.startsWith(
-              self.location.origin
-            )
+||
 
-          ) {
+event.request.destination ===
+"document"
 
-            console.log(
-              "SIMPAN CACHE:",
-              event.request.url
-            );
+){
 
-            cache.put(
-              event.request,
-              networkResponse.clone()
-            );
+const offlinePage =
+await caches.match(
+"./offline.html"
+);
 
-          }
+if(
+offlinePage
+){
 
-          return networkResponse;
+return offlinePage;
 
-        });
+}
 
-      })
+return new Response(
 
-      .catch(() => {
+"Offline",
 
-        return caches.match(
-          "./home.html"
-        );
+{
 
-      });
+status:503,
 
-    })
+headers:{
 
-  );
+"Content-Type":
+"text/plain"
+
+}
+
+}
+
+);
+
+}
+
+// file lain ambil dari cache
+const cachedFile =
+await caches.match(
+event.request
+);
+
+if(
+cachedFile
+){
+
+return cachedFile;
+
+}
+
+// fallback terakhir
+return new Response(
+
+"Offline",
+
+{
+
+status:503,
+
+headers:{
+
+"Content-Type":
+"text/plain"
+
+}
+
+}
+
+);
+
+}
+
+})()
+
+);
 
 });
