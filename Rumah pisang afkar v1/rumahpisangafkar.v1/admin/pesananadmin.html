@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Admin Pesanan</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#f5f5f5;
+padding:15px;
+padding-bottom:100px;
+}
+
+.title{
+font-size:24px;
+font-weight:bold;
+margin-bottom:20px;
+color:#ff6f00;
+}
+
+.card{
+background:white;
+padding:16px;
+border-radius:18px;
+margin-bottom:15px;
+box-shadow:0 4px 12px rgba(0,0,0,.06);
+}
+
+.row{
+display:flex;
+justify-content:space-between;
+margin-bottom:8px;
+gap:10px;
+}
+
+.label{
+font-weight:bold;
+color:#444;
+}
+
+.value{
+color:#666;
+text-align:right;
+}
+
+.status{
+display:inline-block;
+padding:6px 12px;
+border-radius:999px;
+font-size:13px;
+font-weight:bold;
+margin-top:10px;
+}
+
+.pending{
+background:#fff3cd;
+color:#856404;
+}
+
+.dikirim{
+background:#d1ecf1;
+color:#0c5460;
+}
+
+.selesai{
+background:#d4edda;
+color:#155724;
+}
+
+.cod{
+background:#ffe0b2;
+color:#e65100;
+}
+
+.dibatalkan{
+background:#ffd6d6;
+color:#b71c1c;
+}
+
+.produk{
+margin-top:12px;
+padding:12px;
+background:#fafafa;
+border-radius:12px;
+line-height:1.7;
+}
+
+button{
+width:100%;
+height:48px;
+border:none;
+border-radius:14px;
+font-size:14px;
+font-weight:bold;
+margin-top:12px;
+cursor:pointer;
+}
+
+.btnBatalkan{
+background:#ff3b30;
+color:white;
+}
+
+.btnProses{
+background:#ff9800;
+color:white;
+}
+
+.btnKirim{
+background:#2196f3;
+color:white;
+}
+
+.btnSelesai{
+background:#4caf50;
+color:white;
+}
+
+.loading{
+text-align:center;
+padding:40px;
+color:#777;
+}
+
+</style>
+</head>
+<body>
+
+<div class="title">
+Admin Pesanan
+</div>
+
+<div id="listPesanan" class="loading">
+Memuat pesanan...
+</div>
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get,
+update
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig={
+
+apiKey:"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+
+authDomain:
+"shoponline-93646.firebaseapp.com",
+
+databaseURL:
+"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"shoponline-93646"
+
+};
+
+const app=
+initializeApp(firebaseConfig);
+
+const db=
+getDatabase(app);
+
+const list =
+document.getElementById("listPesanan");
+
+/* =========================
+LOAD PESANAN
+========================= */
+
+async function loadPesanan(){
+
+const snap =
+await get(ref(db,"pesanan"));
+
+if(!snap.exists()){
+
+list.innerHTML = `
+<div class="loading">
+Belum ada pesanan
+</div>
+`;
+
+return;
+
+}
+
+list.innerHTML = "";
+
+const data = snap.val();
+
+Object.keys(data)
+.reverse()
+.forEach((id)=>{
+
+const d = data[id];
+
+let produkHtml = "";
+
+if(d.items){
+
+Object.values(d.items)
+.forEach((p)=>{
+
+produkHtml += `
+<div>
+<b>${p.nama || "-"}</b><br>
+Qty : ${p.qty || 1}<br>
+Harga : Rp ${Number(p.harga || 0)
+.toLocaleString("id-ID")}
+</div>
+<hr style="margin:10px 0;border:none;border-top:1px solid #eee;">
+`;
+
+});
+
+}
+
+list.innerHTML += `
+
+<div class="card">
+
+<div class="row">
+<div class="label">Order ID</div>
+<div class="value">${d.id || "-"}</div>
+</div>
+
+<div class="row">
+<div class="label">Nama</div>
+<div class="value">${d.nama || "-"}</div>
+</div>
+
+<div class="row">
+<div class="label">Metode</div>
+<div class="value">${d.metode || "-"}</div>
+</div>
+
+<div class="row">
+<div class="label">Total</div>
+<div class="value">
+Rp ${Number(d.total || 0)
+.toLocaleString("id-ID")}
+</div>
+</div>
+
+<div class="status ${d.status}">
+${d.status}
+</div>
+
+<div class="produk">
+${produkHtml}
+</div>
+
+${
+d.status !== "dibatalkan"
+&&
+d.status !== "selesai"
+?
+`
+<button
+class="btnBatalkan"
+onclick="batalkanPesanan('${id}')">
+Batalkan Pesanan
+</button>
+
+<button
+class="btnProses"
+onclick="ubahStatus('${id}','diproses')">
+Proses
+</button>
+
+<button
+class="btnKirim"
+onclick="ubahStatus('${id}','dikirim')">
+Kirim
+</button>
+
+<button
+class="btnSelesai"
+onclick="ubahStatus('${id}','selesai')">
+Selesai
+</button>
+`
+:
+""
+}
+
+</div>
+
+`;
+
+});
+
+}
+
+/* =========================
+UBAH STATUS
+========================= */
+
+window.ubahStatus =
+async(id,status)=>{
+
+try{
+
+await update(
+ref(db,"pesanan/"+id),
+{
+status:status
+}
+);
+
+alert("Status berhasil diubah");
+
+loadPesanan();
+
+}catch(err){
+
+console.log(err);
+
+alert("Gagal update status");
+
+}
+
+};
+
+/* =========================
+BATALKAN PESANAN
+========================= */
+
+window.batalkanPesanan =
+async(orderId)=>{
+
+try{
+
+const snap =
+await get(
+ref(db,"pesanan/"+orderId)
+);
+
+if(!snap.exists()){
+
+alert("Pesanan tidak ditemukan");
+
+return;
+
+}
+
+const order =
+snap.val();
+
+/* JIKA SUDAH DIBATALKAN */
+
+if(order.status === "dibatalkan"){
+
+alert("Pesanan sudah dibatalkan");
+
+return;
+
+}
+
+/* UPDATE STATUS */
+
+await update(
+ref(db,"pesanan/"+orderId),
+{
+status:"dibatalkan"
+}
+);
+
+/* =========================
+REFUND SALDO
+========================= */
+
+if(order.metode === "SALDO"){
+
+const userRef =
+ref(db,"users/"+order.user);
+
+const userSnap =
+await get(userRef);
+
+if(userSnap.exists()){
+
+const userData =
+userSnap.val();
+
+const saldoSekarang =
+Number(userData.saldo || 0);
+
+const totalOrder =
+Number(order.total || 0);
+
+const saldoBaru =
+saldoSekarang + totalOrder;
+
+/* KEMBALIKAN SALDO */
+
+await update(userRef,{
+saldo: saldoBaru
+});
+
+}
+
+}
+
+/* =========================
+REFUND POIN
+========================= */
+
+if(order.metode === "POIN"){
+
+const userRef =
+ref(db,"users/"+order.user);
+
+const userSnap =
+await get(userRef);
+
+if(userSnap.exists()){
+
+const userData =
+userSnap.val();
+
+const poinSekarang =
+Number(userData.poinAfkar || 0);
+
+const totalOrder =
+Number(order.total || 0);
+
+const poinBaru =
+poinSekarang + totalOrder;
+
+await update(userRef,{
+poinAfkar: poinBaru
+});
+
+}
+
+}
+
+alert(
+"Pesanan dibatalkan & saldo dikembalikan"
+);
+
+loadPesanan();
+
+}catch(err){
+
+console.log(err);
+
+alert("Gagal membatalkan");
+
+}
+
+};
+
+loadPesanan();
+
+</script>
+
+</body>
+</html>

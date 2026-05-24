@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Login Store Vendor</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#f5f5f5;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.box{
+width:360px;
+background:white;
+padding:20px;
+border-radius:14px;
+box-shadow:0 10px 25px rgba(0,0,0,.1);
+}
+
+h2{text-align:center;margin-bottom:15px;}
+
+input{
+width:100%;
+padding:12px;
+margin:8px 0;
+border:1px solid #ddd;
+border-radius:10px;
+outline:none;
+}
+
+button{
+width:100%;
+padding:12px;
+border:none;
+background:#ff6f00;
+color:white;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+}
+
+button:hover{background:#e65f00;}
+
+#toast{
+position:fixed;
+top:20px;
+right:20px;
+padding:12px 16px;
+border-radius:10px;
+color:white;
+display:none;
+font-size:14px;
+box-shadow:0 5px 15px rgba(0,0,0,.2);
+}
+
+.success{background:#22c55e;}
+.error{background:#ef4444;}
+.info{background:#3b82f6;}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h2>Login Store</h2>
+
+<input id="email" placeholder="Email Store">
+<input id="password" type="password" placeholder="Password">
+
+<button onclick="loginStore()">Login</button>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { 
+getAuth, 
+signInWithEmailAndPassword 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import { 
+getDatabase, 
+ref, 
+get 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+authDomain:"shoponline-93646.firebaseapp.com",
+databaseURL:"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"shoponline-93646",
+storageBucket:"shoponline-93646.firebasestorage.app",
+messagingSenderId:"435032364443",
+appId:"1:435032364443:web:5f76384f794693a892bd3e"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+function toast(msg,type="info"){
+const el = document.getElementById("toast");
+el.innerText = msg;
+el.className = type;
+el.style.display = "block";
+setTimeout(()=> el.style.display="none",2500);
+}
+
+window.loginStore = async () => {
+
+try {
+
+const email = document.getElementById("email").value.trim();
+const pass = document.getElementById("password").value;
+
+if(!email || !pass){
+toast("Isi semua data!", "error");
+return;
+}
+
+/* LOGIN FIREBASE AUTH */
+const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+const uid = userCredential.user.uid;
+
+/* AMBIL DATA STORE */
+const snap = await get(ref(db,"stores"));
+
+if(!snap.exists()){
+toast("Belum ada data store", "error");
+return;
+}
+
+let found = null;
+
+snap.forEach(child => {
+const data = child.val();
+
+if(data.uid === uid){
+found = { key: child.key, data };
+}
+});
+
+if(!found){
+toast("Data store tidak ditemukan", "error");
+return;
+}
+
+const data = found.data;
+
+/* ❌ TIDAK ADA BLOKIR STATUS LAGI */
+
+/* SIMPAN SESSION */
+localStorage.setItem("storeId", found.key);
+localStorage.setItem("storeStatus", data.status);
+localStorage.setItem("storeRole", data.role);
+localStorage.setItem("storeName", data.nama);
+
+toast("Login berhasil!", "success");
+
+setTimeout(()=>{
+location.href = "dashboardstore.html";
+},1200);
+
+} catch(err){
+console.error(err);
+toast(err.message, "error");
+}
+
+};
+
+</script>
+
+</body>
+</html>

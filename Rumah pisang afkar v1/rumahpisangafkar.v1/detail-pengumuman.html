@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detail Pengumuman</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#eef2f7;
+}
+
+/* HEADER */
+.header{
+background:linear-gradient(135deg,#ff6f00,#ff8c00);
+color:white;
+padding:18px;
+font-size:18px;
+font-weight:bold;
+display:flex;
+align-items:center;
+gap:10px;
+box-shadow:0 3px 10px rgba(0,0,0,.1);
+}
+
+/* CONTAINER */
+.container{
+padding:15px;
+padding-bottom:100px;
+}
+
+/* CHAT STYLE */
+.chatBox{
+display:flex;
+flex-direction:column;
+gap:12px;
+}
+
+/* BUBLE ADMIN */
+.bubble{
+max-width:90%;
+padding:14px;
+border-radius:18px;
+line-height:1.5;
+font-size:14px;
+box-shadow:0 3px 10px rgba(0,0,0,.05);
+}
+
+.bubble.admin{
+background:white;
+align-self:flex-start;
+border-top-left-radius:5px;
+}
+
+/* TITLE */
+.title{
+font-weight:bold;
+font-size:16px;
+margin-bottom:5px;
+}
+
+/* TIME */
+.time{
+font-size:11px;
+color:#888;
+margin-top:8px;
+}
+
+/* ICON TAG */
+.tag{
+display:inline-flex;
+align-items:center;
+gap:5px;
+font-size:12px;
+padding:4px 10px;
+border-radius:20px;
+margin-bottom:10px;
+font-weight:bold;
+}
+
+.tag.admin{
+background:#e8f1ff;
+color:#1e6fff;
+}
+
+.tag.promo{
+background:#fff0f5;
+color:#d63384;
+}
+
+/* BACK */
+.back{
+position:fixed;
+bottom:15px;
+left:15px;
+right:15px;
+background:#ff6f00;
+color:white;
+text-align:center;
+padding:14px;
+border-radius:14px;
+font-weight:bold;
+box-shadow:0 5px 15px rgba(0,0,0,.15);
+}
+
+.empty{
+text-align:center;
+color:#888;
+padding:40px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<i class="fa fa-bullhorn"></i>
+Detail Pengumuman
+</div>
+
+<div class="container">
+<div class="chatBox" id="content">
+<div class="empty">Loading...</div>
+</div>
+</div>
+
+<div class="back" onclick="history.back()">Kembali</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+authDomain:"shoponline-93646.firebaseapp.com",
+databaseURL:"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"shoponline-93646",
+storageBucket:"shoponline-93646.firebasestorage.app",
+messagingSenderId:"435032364443",
+appId:"1:435032364443:web:5f76384f794693a892bd3e"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const uid = "uid_user_001";
+const id = new URLSearchParams(location.search).get("id");
+
+const box = document.getElementById("content");
+
+async function load(){
+
+if(!id){
+box.innerHTML = `<div class="empty">ID tidak ditemukan</div>`;
+return;
+}
+
+const snap = await get(ref(db, `notifications/${uid}/${id}`));
+
+if(!snap.exists()){
+box.innerHTML = `<div class="empty">Pengumuman tidak ditemukan</div>`;
+return;
+}
+
+const d = snap.val();
+
+const type = d.type || "admin";
+
+box.innerHTML = `
+<div class="chatBox">
+
+<div class="tag ${type}">
+<i class="fa ${type === "promo" ? "fa-gift" : "fa-bullhorn"}"></i>
+${type === "promo" ? "PROMO" : "PENGUMUMAN"}
+</div>
+
+<div class="bubble admin">
+
+<div class="title">${d.title || "-"}</div>
+
+<div>${d.message || "-"}</div>
+
+<div class="time">
+${new Date(d.createdAt).toLocaleString("id-ID")}
+</div>
+
+</div>
+
+</div>
+`;
+
+}
+
+load();
+
+</script>
+
+</body>
+</html>

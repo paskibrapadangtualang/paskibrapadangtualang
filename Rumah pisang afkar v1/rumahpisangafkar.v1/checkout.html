@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Checkout</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#f5f5f5;
+padding:15px;
+padding-bottom:100px;
+}
+
+.box{
+
+background:white;
+
+padding:18px;
+
+border-radius:20px;
+
+margin-bottom:15px;
+
+box-shadow:
+0 3px 12px rgba(0,0,0,.05);
+
+}
+
+.title{
+
+font-size:17px;
+
+font-weight:bold;
+
+margin-bottom:12px;
+
+}
+
+.userRow{
+
+display:flex;
+
+gap:12px;
+
+align-items:center;
+
+margin-bottom:12px;
+
+}
+
+.userRow img{
+
+width:55px;
+
+height:55px;
+
+border-radius:50%;
+
+object-fit:cover;
+
+}
+
+.nama{
+font-weight:bold;
+}
+
+.email{
+font-size:13px;
+color:#777;
+}
+
+.alamat{
+
+line-height:1.7;
+
+font-size:14px;
+
+color:#444;
+
+}
+
+.total{
+
+font-size:22px;
+
+font-weight:bold;
+
+color:#ff6f00;
+
+}
+
+.bottom{
+
+position:fixed;
+
+left:0;
+right:0;
+bottom:0;
+
+background:white;
+
+padding:12px;
+
+box-shadow:
+0 -3px 15px rgba(0,0,0,.08);
+
+}
+
+button{
+
+width:100%;
+
+height:55px;
+
+border:none;
+
+border-radius:18px;
+
+background:#ff9800;
+
+color:white;
+
+font-size:16px;
+
+}
+
+
+
+
+
+
+.payItem{
+
+display:flex;
+
+gap:10px;
+
+padding:12px;
+
+background:#fafafa;
+
+border-radius:14px;
+
+margin-bottom:10px;
+
+align-items:center;
+
+}
+
+.groupTitle{
+
+font-weight:bold;
+
+margin:12px 0;
+
+}
+
+
+
+
+
+
+
+.confirmWrap{
+
+position:fixed;
+
+top:0;
+left:0;
+right:0;
+bottom:0;
+
+background:
+rgba(
+0,0,0,.45
+);
+
+display:none;
+
+justify-content:center;
+
+align-items:center;
+
+padding:20px;
+
+z-index:99999;
+
+backdrop-filter:
+blur(4px);
+
+}
+
+
+.confirmCard{
+
+width:100%;
+
+max-width:420px;
+
+background:white;
+
+border-radius:24px;
+
+padding:22px;
+
+box-shadow:
+0 20px 50px rgba(
+0,0,0,.18
+);
+
+animation:
+showPopup .22s ease;
+
+max-height:85vh;
+
+overflow:auto;
+
+}
+
+
+@keyframes showPopup{
+
+from{
+
+opacity:0;
+
+transform:
+scale(.92);
+
+}
+
+to{
+
+opacity:1;
+
+transform:
+scale(1);
+
+}
+
+}
+
+
+.confirmTitle{
+
+font-size:20px;
+
+font-weight:700;
+
+margin-bottom:15px;
+
+color:#ff8c00;
+
+text-align:center;
+
+}
+
+
+.confirmText{
+
+font-size:14px;
+
+line-height:1.7;
+
+color:#444;
+
+margin-bottom:18px;
+
+}
+
+
+.confirmText b{
+
+font-size:15px;
+
+color:#111;
+
+}
+
+
+.confirmBtn{
+
+display:flex;
+
+gap:12px;
+
+margin-top:10px;
+
+}
+
+
+.confirmBtn button{
+
+flex:1;
+
+height:50px;
+
+border:none;
+
+border-radius:14px;
+
+font-size:14px;
+
+font-weight:700;
+
+cursor:pointer;
+
+transition:.2s;
+
+}
+
+
+.btnBatal{
+
+background:#f1f1f1;
+
+color:#555;
+
+}
+
+
+.btnBatal:hover{
+
+transform:
+translateY(-1px);
+
+}
+
+
+.btnYa{
+
+background:
+linear-gradient(
+135deg,
+#ff9800,
+#ff6f00
+);
+
+color:white;
+
+box-shadow:
+0 8px 20px rgba(
+255,
+140,
+0,
+.25
+);
+
+}
+
+
+.btnYa:hover{
+
+transform:
+translateY(-1px);
+
+}
+
+
+
+
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<div class="title">
+
+Alamat Penerima
+
+</div>
+
+<div class="userRow">
+
+<img
+id="foto">
+
+<div>
+
+<div
+class="nama"
+id="nama">
+-
+</div>
+
+<div
+class="email"
+id="email">
+-
+</div>
+
+</div>
+
+</div>
+
+<div
+class="alamat"
+id="alamat">
+
+Memuat alamat...
+
+</div>
+
+</div>
+
+<div class="box">
+
+<div class="title">
+
+Metode Pembayaran
+
+</div>
+
+<div id="paymentBox">
+
+<div class="groupTitle">
+Bank & E-Wallet
+</div>
+
+<label class="payItem">
+<input type="radio"
+name="pay"
+value="BRI">
+BRI
+</label>
+
+<label class="payItem">
+<input type="radio"
+name="pay"
+value="BCA">
+BCA
+</label>
+
+<label class="payItem">
+<input type="radio"
+name="pay"
+value="MANDIRI">
+MANDIRI
+</label>
+
+<label class="payItem">
+<input type="radio"
+name="pay"
+value="DANA">
+DANA
+</label>
+
+<label class="payItem">
+<input type="radio"
+name="pay"
+value="GOPAY">
+GOPAY
+</label>
+
+<label class="payItem">
+<input type="radio"
+name="pay"
+value="OVO">
+OVO
+</label>
+
+<label class="payItem">
+<input type="radio"
+name="pay"
+value="LINKAJA">
+LINKAJA
+</label>
+
+<label class="payItem">
+<input type="radio"
+name="pay"
+value="SHOPEEPAY">
+SHOPEEPAY
+</label>
+
+<label class="payItem">
+<input type="radio"
+name="pay"
+value="QRIS">
+QRIS
+</label>
+
+<hr>
+
+<div class="groupTitle">
+
+COD
+
+</div>
+
+<label class="payItem">
+
+<input
+type="radio"
+name="pay"
+value="COD">
+
+Cash On Delivery
+
+</label>
+
+<div
+id="codInfo"
+style="
+display:none;
+margin-top:10px;
+padding:12px;
+background:#fff3dc;
+border-radius:12px;
+">
+
+-
+
+</div>
+
+<hr>
+
+<div class="groupTitle">
+
+Saldo Internal
+
+</div>
+
+<label class="payItem">
+
+<input
+id="saldoRadio"
+type="radio"
+name="pay"
+value="SALDO">
+
+Saldo Utama :
+Rp <span id="saldoUser">
+
+0
+
+</span>
+
+</label>
+
+<label class="payItem">
+
+<input
+id="poinRadio"
+type="radio"
+name="pay"
+value="POIN">
+
+Poin Afkar :
+Rp <span id="poinUser">
+
+0
+
+</span>
+
+</label>
+
+</div>
+
+</div>
+
+<div class="box">
+
+<div class="title">
+
+Total Belanja
+
+</div>
+
+<div
+class="total"
+id="total">
+
+Rp 0
+
+</div>
+
+</div>
+
+<div class="box">
+
+<div class="title">
+
+Produk
+
+</div>
+
+<div id="produkCheckout">
+
+Memuat...
+
+</div>
+
+</div>
+
+
+
+<div class="bottom">
+
+<button
+onclick="
+buatPesanan()
+">
+
+Buat Pesanan
+
+</button>
+
+</div>
+
+<script type="module">
+
+import {
+initializeApp
+}
+
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+
+getDatabase,
+
+ref,
+
+get,
+
+push,
+
+set
+
+}
+
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+
+const firebaseConfig={
+
+apiKey:"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+
+authDomain:
+"shoponline-93646.firebaseapp.com",
+
+databaseURL:
+"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"shoponline-93646"
+
+};
+
+const app=
+initializeApp(
+firebaseConfig
+);
+
+const db=
+getDatabase(
+app
+);
+
+
+
+const pesananRef=
+ref(
+db,
+"pesanan"
+);
+
+async function createDummyPesanan(){
+
+try{
+
+const snap=
+await get(
+pesananRef
+);
+
+if(
+snap.exists() &&
+Object.keys(
+snap.val()
+).length >= 3
+){
+
+console.log(
+"Pesanan dummy sudah ada"
+);
+
+return;
+
+}
+
+console.log(
+"MEMBUAT DUMMY PESANAN"
+);
+
+const dummyPesanan={
+
+ord1:{
+
+id:"ord1",
+
+user:
+"usr1",
+
+nama:
+"Ilham Test",
+
+status:
+"pending",
+
+tanggal:
+"2026-05-23",
+
+metode:
+"QRIS",
+
+ongkir:
+10000,
+
+subtotal:
+20000,
+
+total:
+30000,
+
+createdAt:
+Date.now(),
+
+alamat:{
+
+alamat:
+"Jl. Jwalisaongo padang tualang",
+
+dusun:
+"walidongoo",
+
+kecamatan:
+"padang tualang",
+
+kabupaten:
+"langkat",
+
+provinsi:
+"Sumatera Utara",
+
+kodepos:
+"20218"
+
+},
+
+items:{
+
+prd1:{
+
+id:"prd1",
+
+nama:
+"Keripik Pisang Original Premium",
+
+harga:
+15000,
+
+qty:
+1,
+
+gambar:
+"https://images.unsplash.com/photo-1576618148400-f54bed99fcfd"
+
+},
+
+prd2:{
+
+id:"prd2",
+
+nama:
+"Keripik Pisang Balado",
+
+harga:
+5000,
+
+qty:
+1,
+
+gambar:
+"https://images.unsplash.com/photo-1509440159596-0249088772ff"
+
+}
+
+}
+
+},
+
+ord2:{
+
+id:"ord2",
+
+user:
+"usr1",
+
+nama:
+"Ilham Test",
+
+status:
+"dikirim",
+
+tanggal:
+"2026-05-22",
+
+metode:
+"OVO",
+
+ongkir:
+8000,
+
+subtotal:
+42000,
+
+total:
+50000,
+
+createdAt:
+Date.now()-86400000,
+
+alamat:{
+
+alamat:
+"Padang Tualang",
+
+kabupaten:
+"Langkat",
+
+provinsi:
+"Sumatera Utara"
+
+},
+
+items:{
+
+prd3:{
+
+id:"prd3",
+
+nama:
+"Pisang Coklat Mini",
+
+harga:
+12000,
+
+qty:
+2
+
+},
+
+prd4:{
+
+id:"prd4",
+
+nama:
+"Banana Crispy Keju",
+
+harga:
+18000,
+
+qty:
+1
+
+}
+
+}
+
+},
+
+ord3:{
+
+id:"ord3",
+
+user:
+"usr1",
+
+nama:
+"Ilham Test",
+
+status:
+"selesai",
+
+tanggal:
+"2026-05-21",
+
+metode:
+"BRI",
+
+ongkir:
+10000,
+
+subtotal:
+35000,
+
+total:
+45000,
+
+createdAt:
+Date.now()-172800000,
+
+alamat:{
+
+alamat:
+"Padang Tualang"
+
+},
+
+items:{
+
+prd5:{
+
+id:"prd5",
+
+nama:
+"Paket Hemat Rumah Pisang",
+
+harga:
+45000,
+
+qty:
+1
+
+}
+
+}
+
+}
+
+};
+
+await set(
+pesananRef,
+dummyPesanan
+);
+
+console.log(
+"Dummy pesanan selesai dibuat"
+);
+
+}
+catch(err){
+
+console.log(
+"ERROR PESANAN:",
+err
+);
+
+}
+
+}
+
+
+
+
+/* GANTI NANTI DENGAN AUTH */
+function getUID(){
+  return localStorage.getItem("userId");
+}
+
+function requireLogin(){
+  const uid = getUID();
+  if(!uid){
+    alert("Kamu harus login dulu!");
+    window.location.href = "index.html";
+    return null;
+  }
+  return uid;
+}
+
+/* =========================
+   AMBIL USER LOGIN
+========================= */
+
+const uidUser = requireLogin();
+if(!uidUser) throw new Error("Not logged in");
+
+/* USER DATA */
+
+const userSnap = await get(
+  ref(db, "users/" + uidUser)
+);
+
+if(!userSnap.exists()){
+  alert("User tidak ditemukan");
+  throw new Error("User not found");
+}
+
+const user = userSnap.val();
+
+document.getElementById("nama").innerHTML = user.nama || "-";
+document.getElementById("email").innerHTML = user.email || "-";
+document.getElementById("foto").src = user.foto || "";
+
+/* =========================
+   ALAMAT
+========================= */
+
+const a = user.alamatLengkap || {};
+
+document.getElementById("alamat").innerHTML = `
+${a.alamat || ""}
+
+<br><br>
+
+Dusun : ${a.dusun || "-"}
+
+<br>
+
+Kecamatan : ${a.kecamatan || "-"}
+
+<br>
+
+Kabupaten : ${a.kabupaten || "-"}
+
+<br>
+
+Provinsi : ${a.provinsi || "-"}
+
+<br>
+
+Kode Pos : ${a.kodepos || "-"}
+`;
+
+/* =========================
+   CART USER (FIX PENTING)
+========================= */
+let checkoutMode = localStorage.getItem("checkoutMode") || "cart";
+let rawCart = {};
+let totalBelanja = 0;
+
+try {
+
+  /* =========================
+     AMBIL DATA CHECKOUT
+  ========================= */
+
+  if (checkoutMode === "buynow") {
+
+    const buyNowData = JSON.parse(
+      localStorage.getItem("buyNowCart") || "{}"
+    );
+
+    rawCart = buyNowData;
+
+  } else {
+
+    const cartSnap = await get(
+      ref(db, "cart/" + uidUser)
+    );
+
+    if (Object.keys(rawCart).length > 0) {
+      rawCart = cartSnap.val();
+    }
+  }
+
+  /* =========================
+     HITUNG TOTAL
+  ========================= */
+
+  if (rawCart && typeof rawCart === "object") {
+
+    Object.values(rawCart).forEach((item) => {
+      totalBelanja +=
+        (Number(item.harga) || 0) *
+        (Number(item.qty) || 1);
+    });
+
+  }
+
+  /* =========================
+     TAMPIL TOTAL
+  ========================= */
+
+  document.getElementById("total").innerHTML =
+    "Rp " + totalBelanja.toLocaleString("id-ID");
+
+} catch (err) {
+  console.log("CHECKOUT ERROR:", err);
+}
+
+/* ===========================
+POPUP CUSTOM
+=========================== */
+
+let orderTemp=null;
+
+window.closeConfirm=()=>{
+document.getElementById(
+"confirmBox"
+).style.display="none";
+
+orderTemp=null;
+};
+
+
+window.confirmOrderNow=
+async()=>{
+
+try{
+
+if(!orderTemp) return;
+
+
+/* simpan pesanan */
+
+await set(
+
+ref(
+db,
+"pesanan/"+orderTemp.id
+),
+
+orderTemp
+
+);
+
+
+
+
+/* =========================
+KURANGI STOCK PRODUK
+========================= */
+/* =========================
+KURANGI STOCK PRODUK
+========================= */
+
+const itemsOrder = orderTemp.items || {};
+
+for(const key in itemsOrder){
+
+  const item = itemsOrder[key];
+
+  // FIX UTAMA: pastikan ambil ID dengan aman
+  const produkId = item.id || item.produkId;
+
+  if(!produkId){
+    console.log("❌ Produk ID tidak ditemukan di item:", item);
+    continue;
+  }
+
+  const qtyBeli = Number(item.qty || 1);
+
+  const produkRef = ref(db, "produk/" + produkId);
+  const produkSnap = await get(produkRef);
+
+  if(!produkSnap.exists()){
+    console.log("❌ Produk tidak ditemukan di Firebase:", produkId);
+    continue;
+  }
+
+  const produk = produkSnap.val();
+
+  const stockLama = Number(produk.stock || 0);
+  const stockBaru = Math.max(stockLama - qtyBeli, 0);
+
+await Promise.all([
+
+  set(
+    ref(db, "produk/" + produkId + "/stock"),
+    stockBaru
+  ),
+
+  set(
+    ref(db, "produk/" + produkId + "/stok"),
+    stockBaru
+  )
+
+]);
+  console.log(
+    "✅ STOCK BERKURANG:",
+    produkId,
+    stockLama,
+    "→",
+    stockBaru
+  );
+}
+
+
+
+
+
+
+
+
+
+/* =========================
+KURANGI SALDO UTAMA
+========================= */
+
+/* =========================
+KURANGI SALDO UTAMA + HISTORY
+========================= */
+
+if (orderTemp.metode === "SALDO") {
+
+  const transaksiId = "SAL" + Date.now();
+
+  const total = Number(totalBelanja || 0);
+  const saldoSekarang = Number(saldoUtama || 0);
+
+  // ❗ CEK SALDO AMAN
+  if (saldoSekarang < total) {
+    alert("Saldo tidak cukup");
+    return;
+  }
+
+  // =========================
+  // SIMPAN HISTORY (MUTASI)
+  // =========================
+await set(
+  ref(db, "saldoHistory/" + uidUser + "/" + transaksiId),
+  {
+    id: transaksiId,
+    type: "out", // keluar uang
+    category: "purchase",
+    amount: total,
+    desc: "Pembayaran produk",
+    metode: "SALDO",
+    status: "approved", // 🔥 FIX DI SINI
+    createdAt: Date.now()
+  }
+);
+
+  // =========================
+  // KURANGI SALDO USER
+  // =========================
+  const sisaSaldo = saldoSekarang - total;
+
+  await set(
+    ref(db, "users/" + uidUser + "/saldo"),
+    sisaSaldo
+  );
+}
+
+/* =========================
+KOSONGKAN CART
+========================= */
+
+await set(
+  ref(db, "cart/" + uidUser),
+  null
+);
+
+/* =========================
+SELESAI ORDER
+========================= */
+
+document.getElementById("confirmBox").style.display = "none";
+
+alert("Pesanan berhasil dibuat");
+
+location.href = "orderan.html";
+
+}
+catch(err){
+
+console.log(err);
+
+alert(
+"Gagal membuat pesanan"
+);
+
+}
+
+};
+
+
+
+/* ===========================
+PRODUK CHECKOUT
+=========================== */
+const produkBox = document.getElementById("produkCheckout");
+produkBox.innerHTML = "";
+
+/* gabungkan semua sumber data aman */
+let itemsArray = [];
+
+if (rawCart && typeof rawCart === "object") {
+  itemsArray = Object.values(rawCart);
+}
+
+if (itemsArray.length > 0) {
+
+  let grouped = {};
+
+  itemsArray.forEach(item => {
+
+    const storeId = item.storeId || "unknown_store";
+
+    if (!grouped[storeId]) {
+      grouped[storeId] = [];
+    }
+
+    grouped[storeId].push(item);
+
+  });
+
+  Object.keys(grouped).forEach(storeId => {
+
+    let items = grouped[storeId];
+    let storeTotal = 0;
+
+    produkBox.innerHTML += `
+      <div style="
+        margin-bottom:15px;
+        padding:12px;
+        background:#f9f9f9;
+        border-radius:12px;
+      ">
+        <b>🛒 Store: ${storeId}</b>
+        <hr style="margin:8px 0;">
+    `;
+
+    items.forEach(d => {
+
+      storeTotal += (Number(d.harga) || 0) * (Number(d.qty) || 1);
+
+      produkBox.innerHTML += `
+        <div style="
+          padding:10px 0;
+          border-bottom:1px solid #eee;
+          line-height:1.6;
+        ">
+          <b>${d.nama || "-"}</b><br>
+          Qty: ${d.qty || 1}<br>
+          Harga: Rp ${(Number(d.harga) || 0).toLocaleString("id-ID")}
+        </div>
+      `;
+
+    });
+
+    produkBox.innerHTML += `
+        <div style="
+          margin-top:10px;
+          font-weight:bold;
+          color:#ff6f00;
+        ">
+          Total Store: Rp ${storeTotal.toLocaleString("id-ID")}
+        </div>
+      </div>
+    `;
+
+  });
+
+} else {
+  produkBox.innerHTML = `
+    <div style="padding:20px;text-align:center;color:#888;">
+      Keranjang kosong
+    </div>
+  `;
+}
+
+/* ===========================
+SALDO DAN POIN
+=========================== */
+
+const saldoUtama =
+Number(user.saldo || 0);
+
+saldoUser.innerHTML =
+saldoUtama.toLocaleString("id-ID");
+
+
+poinUser.innerHTML=
+
+(
+user.poinAfkar || 0
+)
+
+.toLocaleString(
+"id-ID"
+);
+
+
+if(saldoUtama <= 0){
+
+saldoRadio.disabled = true;
+
+saldoRadio.parentElement.style.opacity = .5;
+
+}else{
+
+saldoRadio.disabled = false;
+
+saldoRadio.parentElement.style.opacity = 1;
+
+}
+
+
+
+
+
+
+if(
+(user.poinAfkar||0)<=0
+){
+
+poinRadio.disabled=true;
+
+poinRadio.parentElement.style.opacity=.5;
+
+}
+
+
+/* ===========================
+PILIH PEMBAYARAN (FIX: ONLY COD)
+=========================== */
+
+document.querySelectorAll("input[name='pay']").forEach((x) => {
+
+  /* NONAKTIFKAN SEMUA
+     KECUALI COD & SALDO */
+  if (
+    x.value !== "COD" &&
+    x.value !== "SALDO"
+  ) {
+
+    x.disabled = true;
+
+    x.parentElement.style.opacity = 0.4;
+
+    x.parentElement.style.pointerEvents = "none";
+  }
+
+  x.onchange = () => {
+
+    /* COD */
+    if (x.value === "COD") {
+
+      codInfo.style.display = "block";
+
+      codInfo.innerHTML = `
+        💵 Siapkan uang tunai sebesar <br><br>
+        <b>Rp ${totalBelanja.toLocaleString("id-ID")}</b>
+      `;
+    }
+
+    /* SALDO */
+    else if (x.value === "SALDO") {
+
+      codInfo.style.display = "block";
+
+      codInfo.innerHTML = `
+        💰 Pembayaran menggunakan saldo utama<br><br>
+
+        Saldo Anda :
+        <b>
+        Rp ${saldoUtama.toLocaleString("id-ID")}
+        </b>
+      `;
+    }
+
+    else {
+
+      codInfo.style.display = "none";
+
+    }
+
+  };
+
+});
+
+
+
+// auto pilih COD
+const saldoCukup =
+saldoUtama >= totalBelanja;
+
+if(saldoCukup){
+
+  saldoRadio.checked = true;
+
+  codInfo.style.display = "block";
+
+  codInfo.innerHTML = `
+    💰 Pembayaran menggunakan saldo utama<br><br>
+
+    Saldo Anda :
+    <b>
+    Rp ${saldoUtama.toLocaleString("id-ID")}
+    </b>
+  `;
+
+}else{
+
+  const codRadio =
+  document.querySelector("input[value='COD']");
+
+  if (codRadio) {
+
+    codRadio.checked = true;
+
+    codInfo.style.display = "block";
+
+    codInfo.innerHTML = `
+      💵 Siapkan uang tunai sebesar <br><br>
+      <b>Rp ${totalBelanja.toLocaleString("id-ID")}</b>
+    `;
+  }
+
+}
+
+
+/* ===========================
+BUAT PESANAN
+=========================== */
+window.buatPesanan = async () => {
+
+  try {
+
+    const metode = document.querySelector("input[name='pay']:checked");
+
+    if (!metode) {
+      alert("Pilih metode pembayaran");
+      return;
+    }
+
+    /* CEK ORDER AKTIF */
+    const cek = await get(ref(db, "pesanan"));
+
+    let aktif = 0;
+
+    if (cek.exists()) {
+      cek.forEach((x) => {
+        const d = x.val();
+
+        if (d.user === uidUser) {
+          if (
+            d.status === "pending" ||
+            d.status === "diproses" ||
+            d.status === "dikirim" ||
+            d.status === "cod"
+          ) {
+            aktif++;
+          }
+        }
+      });
+    }
+
+    if (aktif >= 2) {
+      alert("Anda hanya bisa order 2x dalam pembelian yang belum selesai.");
+      return;
+    }
+
+    /* VALIDASI SALDO */
+    if (metode.value === "SALDO") {
+      if ((user.saldo || 0) < totalBelanja) {
+        alert("Saldo utama tidak cukup");
+        return;
+      }
+    }
+
+    if (metode.value === "POIN") {
+      if ((user.poinAfkar || 0) < totalBelanja) {
+        alert("Poin Afkar tidak cukup");
+        return;
+      }
+    }
+
+    /* 🔥 FIX UTAMA: AMBIL ITEMS DARI rawCart (BUKAN cartSnap) */
+    const itemsData = rawCart || {};
+
+    const orderId = "ORD" + Date.now();
+
+    orderTemp = {
+      id: orderId,
+      user: uidUser,
+      nama: user.nama || "",
+      foto: user.foto || "",
+      metode: metode.value,
+      status: metode.value === "COD" ? "cod" : "pending",
+      alamat: user.alamatLengkap || {},
+      total: totalBelanja,
+      createdAt: Date.now(),
+      items: itemsData   // ✅ FIX DISINI
+    };
+
+    /* popup */
+    let html = `
+      <div style="line-height:1.8;">
+        <b>Metode</b><br>${metode.value}<br><br>
+        <b>Total</b><br>
+        Rp ${totalBelanja.toLocaleString("id-ID")}
+    `;
+
+    if (metode.value === "COD") {
+      html += `
+        <br><br>
+        <div style="padding:14px;background:#fff3dc;border-radius:14px;">
+          💵 Siapkan uang tunai<br><br>
+          <b>Rp ${totalBelanja.toLocaleString("id-ID")}</b>
+        </div>
+      `;
+    }
+
+    html += `</div>`;
+
+    document.getElementById("confirmText").innerHTML = html;
+    document.getElementById("confirmBox").style.display = "flex";
+
+  } catch (err) {
+    console.log("ERROR BUAT PESANAN:", err);
+    alert("Gagal membuat pesanan");
+  }
+};
+
+
+
+await createDummyPesanan();
+
+</script>
+
+
+
+
+
+
+
+
+<!-- POPUP KONFIRMASI -->
+
+<div id="confirmBox" class="confirmWrap">
+
+<div class="confirmCard">
+
+<div class="confirmTitle">
+Konfirmasi Pesanan
+</div>
+
+<div id="confirmText"
+class="confirmText">
+
+-
+
+</div>
+
+<div class="confirmBtn">
+
+<button
+class="btnBatal"
+onclick="closeConfirm()">
+
+Batal
+
+</button>
+
+<button
+class="btnYa"
+onclick="confirmOrderNow()">
+
+Buat Pesanan
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+
+
+
+</body>
+
+</html>

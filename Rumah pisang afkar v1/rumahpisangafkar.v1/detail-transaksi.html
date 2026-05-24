@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Detail Transaksi</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f5f6fa;
+padding-bottom:90px;
+}
+
+/* HEADER */
+.header{
+background:#ff9800;
+color:white;
+padding:18px;
+font-size:18px;
+font-weight:bold;
+display:flex;
+align-items:center;
+gap:12px;
+position:sticky;
+top:0;
+z-index:10;
+}
+
+.back{
+width:38px;
+height:38px;
+background:rgba(255,255,255,.2);
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:12px;
+cursor:pointer;
+}
+
+/* LIST */
+.list{
+padding:15px;
+display:flex;
+flex-direction:column;
+gap:12px;
+}
+
+.card{
+background:white;
+border-radius:18px;
+padding:14px;
+box-shadow:0 3px 10px rgba(0,0,0,.05);
+}
+
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:8px;
+}
+
+.title{
+font-weight:bold;
+font-size:14px;
+}
+
+.badge{
+font-size:11px;
+padding:5px 10px;
+border-radius:8px;
+font-weight:bold;
+}
+
+.in{background:#dcfce7;color:#16a34a;}
+.out{background:#fee2e2;color:#ef4444;}
+
+.desc{
+font-size:12px;
+color:#666;
+line-height:1.5;
+}
+
+.amount{
+margin-top:8px;
+font-weight:bold;
+font-size:14px;
+}
+
+.plus{color:#16a34a;}
+.minus{color:#ef4444;}
+
+.date{
+font-size:11px;
+color:#999;
+margin-top:6px;
+}
+
+/* EMPTY */
+.empty{
+padding:80px 20px;
+text-align:center;
+color:#888;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<div class="back" onclick="history.back()">
+<i class="fa fa-arrow-left"></i>
+</div>
+Notifikasi Transaksi
+</div>
+
+<div class="list" id="list"></div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+authDomain: "shoponline-93646.firebaseapp.com",
+databaseURL: "https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId: "shoponline-93646"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const uid = localStorage.getItem("userId");
+
+if (!uid) location.href = "index.html";
+
+const list = document.getElementById("list");
+
+let dataAll = [];
+
+/* =========================
+AMBIL DATA TRANSAKSI
+========================= */
+const snap = await get(ref(db, "saldoHistory/" + uid));
+
+if (snap.exists()) {
+
+snap.forEach(x => {
+
+const d = x.val();
+
+let title = "Transaksi";
+
+if (d.category === "topup") title = "Top Up Saldo";
+if (d.category === "refund") title = "Refund Saldo";
+if (d.category === "purchase") title = "Pembelian Produk";
+
+dataAll.push({
+title,
+desc: d.desc 
+  || (d.category === "topup" ? "Top Up Saldo berhasil" :
+      d.category === "refund" ? "Pengembalian saldo" :
+      d.category === "purchase" ? "Pembelian produk" :
+      "Transaksi berhasil"),
+amount: Number(d.amount || 0),
+type: d.type,
+createdAt: d.createdAt || Date.now()
+});
+
+});
+
+}
+
+
+
+const topupSnap = await get(ref(db, "topup"));
+
+if (topupSnap.exists()) {
+
+topupSnap.forEach(x => {
+
+const d = x.val();
+
+if (d.uid !== uid) return;
+
+dataAll.push({
+title: "Top Up Saldo",
+desc: "Pengisian saldo~",
+amount: Number(d.nominal || 0),
+type: "in",
+createdAt: d.createdAt || Date.now(),
+metode: d.metode || "-"
+});
+
+});
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* SORT */
+dataAll.sort((a,b)=>b.createdAt - a.createdAt);
+
+/* RENDER */
+if(!dataAll.length){
+
+list.innerHTML = `
+<div class="empty">
+<h3>Belum ada transaksi</h3>
+</div>
+`;
+
+}else{
+
+dataAll.forEach(d=>{
+
+const isIn = d.type === "in";
+
+list.innerHTML += `
+<div class="card">
+
+<div class="top">
+
+<div class="title">${d.title}</div>
+
+<div class="badge ${isIn ? "in" : "out"}">
+${isIn ? "MASUK" : "KELUAR"}
+</div>
+
+</div>
+
+<div class="desc">${d.desc}</div>
+
+<div class="amount ${isIn ? "plus" : "minus"}">
+${isIn ? "+" : "-"} Rp ${d.amount.toLocaleString("id-ID")}
+</div>
+
+<div class="date">
+${new Date(d.createdAt).toLocaleString("id-ID")}
+</div>
+
+</div>
+`;
+
+});
+
+}
+
+</script>
+
+</body>
+</html>

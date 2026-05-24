@@ -1,0 +1,668 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Riwayat Top Up</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f5f5f5;
+padding-bottom:100px;
+}
+
+.header{
+position:sticky;
+top:0;
+z-index:99;
+background:white;
+padding:18px;
+display:flex;
+align-items:center;
+gap:15px;
+box-shadow:0 2px 10px rgba(0,0,0,.05);
+}
+
+.back{
+width:38px;
+height:38px;
+border-radius:12px;
+background:#f4f4f4;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:15px;
+}
+
+.headerTitle{
+font-size:20px;
+font-weight:bold;
+}
+
+.topCard{
+margin:15px;
+background:linear-gradient(135deg,#ff9800,#ff6f00);
+padding:20px;
+border-radius:24px;
+color:white;
+box-shadow:0 10px 30px rgba(255,120,0,.25);
+}
+
+.small{
+font-size:13px;
+opacity:.9;
+}
+
+.balance{
+font-size:33px;
+font-weight:bold;
+margin-top:8px;
+}
+
+.filterWrap{
+display:flex;
+gap:8px;
+padding:0 15px;
+overflow:auto;
+margin-bottom:15px;
+}
+
+.filterBtn{
+min-width:max-content;
+padding:12px 18px;
+border-radius:14px;
+background:white;
+font-size:13px;
+font-weight:bold;
+box-shadow:0 2px 8px rgba(0,0,0,.05);
+}
+
+.filterBtn.active{
+background:#ff9800;
+color:white;
+}
+
+.list{
+padding:0 15px;
+}
+
+.card{
+background:white;
+border-radius:22px;
+padding:16px;
+margin-bottom:14px;
+box-shadow:0 4px 12px rgba(0,0,0,.05);
+}
+
+.topRow{
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+gap:10px;
+}
+
+.leftRow{
+display:flex;
+gap:12px;
+flex:1;
+}
+
+.icon{
+width:55px;
+height:55px;
+border-radius:18px;
+background:#fff3e0;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:22px;
+color:#ff9800;
+flex-shrink:0;
+}
+
+.title{
+font-size:15px;
+font-weight:bold;
+margin-bottom:4px;
+}
+
+.desc{
+font-size:12px;
+color:#777;
+line-height:1.5;
+}
+
+.amount{
+font-size:17px;
+font-weight:bold;
+text-align:right;
+}
+
+.amount.plus{
+color:#16a34a;
+}
+
+.amount.pending{
+color:#ff9800;
+}
+
+.amount.reject{
+color:#ef4444;
+}
+
+.badge{
+padding:7px 12px;
+border-radius:10px;
+font-size:11px;
+font-weight:bold;
+margin-top:8px;
+display:inline-block;
+}
+
+.badge.pending{
+background:#fff3dc;
+color:#ff9800;
+}
+
+.badge.approved{
+background:#dcfce7;
+color:#16a34a;
+}
+
+.badge.rejected{
+background:#fee2e2;
+color:#ef4444;
+}
+
+.bottomInfo{
+margin-top:14px;
+padding-top:12px;
+border-top:1px dashed #eee;
+display:flex;
+justify-content:space-between;
+font-size:12px;
+color:#777;
+}
+
+.empty{
+padding:70px 20px;
+text-align:center;
+}
+
+.empty img{
+width:170px;
+margin-bottom:15px;
+}
+
+.empty h3{
+font-size:18px;
+margin-bottom:8px;
+}
+
+.empty p{
+font-size:13px;
+color:#777;
+line-height:1.6;
+}
+
+.detailPopup{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.55);
+z-index:99999;
+display:none;
+align-items:flex-end;
+}
+
+.detailCard{
+width:100%;
+background:white;
+border-radius:28px 28px 0 0;
+padding:22px;
+max-height:90vh;
+overflow:auto;
+animation:up .25s ease;
+}
+
+@keyframes up{
+from{
+transform:translateY(100%);
+}
+
+to{
+transform:translateY(0);
+}
+}
+
+.popupTitle{
+font-size:21px;
+font-weight:bold;
+margin-bottom:18px;
+text-align:center;
+}
+
+.receipt{
+background:#fafafa;
+border-radius:20px;
+padding:18px;
+}
+
+.row{
+display:flex;
+justify-content:space-between;
+padding:10px 0;
+font-size:14px;
+border-bottom:1px dashed #e5e5e5;
+}
+
+.row:last-child{
+border:none;
+}
+
+.label{
+color:#777;
+}
+
+.value{
+font-weight:500;
+text-align:right;
+max-width:60%;
+word-break:break-word;
+}
+
+.bukti{
+width:100%;
+border-radius:18px;
+margin-top:18px;
+}
+
+.closeBtn{
+margin-top:20px;
+width:100%;
+height:55px;
+border:none;
+border-radius:18px;
+background:linear-gradient(135deg,#ff9800,#ff6f00);
+color:white;
+font-size:15px;
+font-weight:bold;
+}
+
+</style>
+</head>
+<body>
+
+<div class="header">
+
+<div class="back"
+onclick="history.back()">
+<i class="fa fa-arrow-left"></i>
+</div>
+
+<div class="headerTitle">
+Riwayat Top Up
+</div>
+
+</div>
+
+<div class="topCard">
+
+<div class="small">
+Saldo Utama Saat Ini
+</div>
+
+<div class="balance"
+id="saldoText">
+Rp 0
+</div>
+
+</div>
+
+<div class="filterWrap">
+
+<div class="filterBtn active"
+data-filter="all">
+Semua
+</div>
+
+<div class="filterBtn"
+data-filter="pending">
+Pending
+</div>
+
+<div class="filterBtn"
+data-filter="approved">
+Berhasil
+</div>
+
+<div class="filterBtn"
+data-filter="rejected">
+Ditolak
+</div>
+
+</div>
+
+<div class="list"
+id="list">
+</div>
+
+<div class="detailPopup"
+id="popup">
+
+<div class="detailCard">
+
+<div class="popupTitle">
+Detail Transaksi
+</div>
+
+<div id="detailContent">
+</div>
+
+<button class="closeBtn"
+onclick="tutupPopup()">
+Tutup
+</button>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import {
+initializeApp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+authDomain: "shoponline-93646.firebaseapp.com",
+databaseURL: "https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId: "shoponline-93646"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const uid = localStorage.getItem("userId");
+
+if (!uid) {
+location.href = "index.html";
+}
+
+const list = document.getElementById("list");
+
+/* =========================
+   SALDO USER
+========================= */
+
+const userSnap = await get(ref(db, "users/" + uid));
+
+if (userSnap.exists()) {
+const user = userSnap.val();
+
+saldoText.innerHTML =
+"Rp " + Number(user.saldo || 0).toLocaleString("id-ID");
+}
+
+/* =========================
+   AMBIL DATA HISTORY
+========================= */
+
+let semuaData = [];
+
+/* ================= TOPUP ================= */
+const topupSnap = await get(ref(db, "topup"));
+
+if (topupSnap.exists()) {
+topupSnap.forEach(item => {
+const d = item.val();
+
+if (d.uid === uid) {
+
+semuaData.push({
+id: d.id,
+type: "in",
+category: "topup",
+amount: Number(d.nominal || 0),
+metode: d.metode || "-",
+status: d.status || "pending",
+desc: d.desc || "Top up saldo",   // 🔥 TAMBAHAN PENTING
+createdAt: d.createdAt || Date.now()
+});
+
+}
+
+});
+}
+
+/* ================= SALDO HISTORY (CHECKOUT) ================= */
+const historySnap = await get(ref(db, "saldoHistory/" + uid));
+if (historySnap.exists()) {
+historySnap.forEach(item => {
+const d = item.val();
+
+semuaData.push({
+id: d.id,
+type: d.type || "out",
+category: d.category || "purchase",
+amount: Number(d.amount || 0),
+metode: d.metode || "-",
+status: d.status || "pending",
+desc: d.desc || "-",   // 🔥 INI YANG KURANG
+createdAt: d.createdAt || Date.now()
+});
+
+});
+}
+/* ================= SORT ================= */
+semuaData.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+/* ================= RENDER ================= */
+
+function renderData(filter = "all") {
+
+list.innerHTML = "";
+
+let dataFilter = semuaData;
+
+/* FILTER STATUS */
+if (filter !== "all") {
+dataFilter = semuaData.filter(x => (x.status || "pending") === filter);
+}
+
+if (!dataFilter.length) {
+list.innerHTML = `
+<div class="empty">
+<img src="https://cdn-icons-png.flaticon.com/512/7486/7486740.png">
+<h3>Belum Ada Riwayat</h3>
+<p>Riwayat top up & transaksi akan muncul di sini</p>
+</div>
+`;
+return;
+}
+
+for (const d of dataFilter) {
+
+const isMinus = d.type === "out";
+
+const icon = isMinus ? "fa-cart-shopping" : "fa-wallet";
+
+const title =
+d.category === "topup"
+? "Top Up Saldo"
+: "Pembelian Produk";
+
+const nominal = Number(d.amount || 0);
+
+const tanggal = new Date(d.createdAt)
+.toLocaleString("id-ID");
+
+/* STATUS */
+let badge = "pending";
+let text = "Menunggu";
+
+if (d.status === "approved") {
+badge = "approved";
+text = "Berhasil";
+}
+
+if (d.status === "rejected") {
+badge = "rejected";
+text = "Ditolak";
+}
+
+list.innerHTML += `
+<div class="card" onclick='lihatDetail(${JSON.stringify(d)})'>
+
+  <div class="topRow">
+
+    <div class="leftRow">
+
+      <div class="icon">
+        <i class="fa ${icon}"></i>
+      </div>
+
+      <div>
+
+        <div class="title">
+          ${title}
+        </div>
+
+<div class="desc">
+  ${d.desc || "Tidak ada deskripsi"}
+  <br>
+  Metode : ${d.metode || "-"}
+  <br>
+  ID : ${d.id || "-"}
+</div>
+
+        <div class="badge ${badge}">
+          ${text}
+        </div>
+
+      </div>
+
+    </div>
+
+    <div>
+      <div class="amount ${isMinus ? "reject" : "plus"}">
+        ${isMinus ? "-" : "+"} Rp ${nominal.toLocaleString("id-ID")}
+      </div>
+    </div>
+
+  </div>
+
+  <div class="bottomInfo">
+    <div>${tanggal}</div>
+    <div>${d.metode}</div>
+  </div>
+
+</div>
+`;
+}
+
+}
+
+renderData();
+
+/* ================= FILTER ================= */
+
+document.querySelectorAll(".filterBtn").forEach(btn => {
+
+btn.onclick = () => {
+
+document.querySelectorAll(".filterBtn")
+.forEach(x => x.classList.remove("active"));
+
+btn.classList.add("active");
+
+renderData(btn.dataset.filter);
+
+};
+
+});
+
+/* ================= DETAIL POPUP ================= */
+
+window.lihatDetail = (data) => {
+
+const tanggal = new Date(data.createdAt)
+.toLocaleString("id-ID");
+
+const nominal = Number(data.amount || 0);
+
+let statusText = "Menunggu";
+
+if (data.status === "approved") statusText = "Berhasil";
+if (data.status === "rejected") statusText = "Ditolak";
+
+let html = `
+<div class="receipt">
+
+<div class="row">
+<div class="label">ID</div>
+<div class="value">${data.id}</div>
+</div>
+
+<div class="row">
+<div class="label">Nominal</div>
+<div class="value">Rp ${nominal.toLocaleString("id-ID")}</div>
+</div>
+
+<div class="row">
+<div class="label">Tipe</div>
+<div class="value">${data.category}</div>
+</div>
+
+<div class="row">
+<div class="label">Note</div>
+<div class="value">${data.desc || "-"}</div>
+</div>
+
+<div class="row">
+<div class="label">Status</div>
+<div class="value">${statusText}</div>
+</div>
+
+<div class="row">
+<div class="label">Tanggal</div>
+<div class="value">${tanggal}</div>
+</div>
+
+</div>
+`;
+
+if (data.bukti) {
+html += `<img src="${data.bukti}" class="bukti">`;
+}
+
+detailContent.innerHTML = html;
+popup.style.display = "flex";
+};
+
+window.tutupPopup = () => {
+popup.style.display = "none";
+};
+
+</script>
+
+</body>
+</html>

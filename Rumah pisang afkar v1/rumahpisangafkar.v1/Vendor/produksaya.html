@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Produk Saya</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#f5f5f5;
+padding-bottom:80px;
+}
+
+.header{
+background:#ff6f00;
+color:white;
+padding:15px;
+font-weight:bold;
+position:sticky;
+top:0;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.header img{
+width:28px;
+height:28px;
+cursor:pointer;
+filter:brightness(0) invert(1);
+}
+
+.container{
+padding:15px;
+}
+
+.card{
+background:white;
+padding:12px;
+border-radius:12px;
+margin-bottom:10px;
+box-shadow:0 5px 15px rgba(0,0,0,0.08);
+display:flex;
+gap:10px;
+align-items:center;
+}
+
+.card img{
+width:60px;
+height:60px;
+object-fit:cover;
+border-radius:10px;
+border:1px solid #eee;
+}
+
+.name{
+font-weight:bold;
+font-size:14px;
+}
+
+.price{
+color:#ff6f00;
+font-weight:bold;
+margin-top:4px;
+}
+
+.empty{
+text-align:center;
+margin-top:50px;
+color:#888;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div>Produk Saya</div>
+
+  <!-- tombol tambah -->
+  <img src="assets/images/shopping.png" onclick="location.href='tambahproduk.html'">
+</div>
+
+<div class="container" id="list">
+  <div class="empty">Loading produk...</div>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyD3DTcca7yZKVtllc3TQOUe6Yv2hSyG_g",
+authDomain:"shoponline-93646.firebaseapp.com",
+databaseURL:"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"shoponline-93646",
+storageBucket:"shoponline-93646.firebasestorage.app",
+messagingSenderId:"435032364443",
+appId:"1:435032364443:web:5f76384f794693a892bd3e"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const storeId = localStorage.getItem("storeId");
+const list = document.getElementById("list");
+
+if(!storeId){
+list.innerHTML = `<div class="empty">Store belum login</div>`;
+throw new Error("No store");
+}
+
+async function loadProduk(){
+
+const snap = await get(ref(db, "produk"));
+
+if(!snap.exists()){
+list.innerHTML = `<div class="empty">Belum ada produk</div>`;
+return;
+}
+
+let html = "";
+let found = false;
+
+snap.forEach(item => {
+
+const p = item.val();
+
+if(p.storeId !== storeId) return;
+
+found = true;
+
+// =====================
+// AMBIL GAMBAR PERTAMA
+// =====================
+let img = "assets/images/default.png";
+
+if (p.gambar) {
+  if (typeof p.gambar === "object") {
+    img = Object.values(p.gambar)[0] || img;
+  } else {
+    img = p.gambar;
+  }
+}
+
+html += `
+<div class="card" onclick="location.href='detailproduksaya.html?id=${p.id}'">
+
+  <img src="${img}"
+  onerror="this.src='assets/images/default.png'">
+
+  <div style="flex:1;">
+
+    <div class="name">${p.nama || "-"}</div>
+
+    <div class="price">
+      Rp ${(p.harga || 0).toLocaleString("id-ID")}
+    </div>
+
+    <div style="font-size:12px;color:#777;margin-top:4px;">
+      Stok: ${p.stok || 0}
+    </div>
+
+    <!-- 🔥 TAMBAHAN KATEGORI -->
+    <div style="font-size:11px;color:#999;margin-top:3px;">
+      ${p.kategori || "Tanpa Kategori"}
+    </div>
+
+  </div>
+
+</div>
+`;
+});
+
+if(!found){
+list.innerHTML = `<div class="empty">Belum ada produk kamu</div>`;
+return;
+}
+
+list.innerHTML = html;
+}
+
+loadProduk();
+
+</script>
+
+</body>
+</html>

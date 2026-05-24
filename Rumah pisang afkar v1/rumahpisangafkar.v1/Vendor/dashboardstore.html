@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard Store</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#f5f5f5;
+padding-bottom:70px;
+
+}
+
+/* TOP BAR */
+.topbar{
+background:#ff6f00;
+color:white;
+padding:15px;
+font-weight:bold;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+/* CONTAINER */
+.container{
+padding:15px;
+}
+
+/* CARD */
+.card{
+background:white;
+padding:15px;
+border-radius:12px;
+margin-bottom:10px;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
+
+.btn{
+display:inline-block;
+padding:10px 12px;
+background:#ff6f00;
+color:white;
+border-radius:8px;
+text-decoration:none;
+font-size:14px;
+}
+
+.btn-danger{
+background:#ef4444;
+}
+
+
+
+
+
+
+
+.modal{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.5);
+justify-content:center;
+align-items:center;
+z-index:9999;
+}
+
+.modal-box{
+background:white;
+padding:20px;
+border-radius:12px;
+width:280px;
+text-align:center;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+.modal-btn{
+display:flex;
+justify-content:space-between;
+margin-top:15px;
+gap:10px;
+}
+
+.modal-btn button{
+flex:1;
+padding:10px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.btn-red{
+background:#ef4444;
+color:white;
+}
+
+.btn-gray{
+background:#ddd;
+}
+
+
+
+.bottom-nav{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+height:65px;
+background:#ff6f00;
+border-top:1px solid #eee;
+display:flex;
+justify-content:space-around;
+align-items:center;
+}
+
+.nav-item{
+text-decoration:none;
+color:#000000;
+font-size:11px;
+display:flex;
+flex-direction:column;
+align-items:center;
+flex:1;
+font-size: 14px;
+
+}
+
+.nav-icon{
+width:32px;
+height:32px;
+object-fit:contain;
+filter: brightness(0) invert(1);
+}
+
+
+.nav-item.active{
+color:#ffffff;
+font-weight:bold;
+font-size: 14px;
+}
+
+
+
+
+
+</style>
+</head>
+
+<body>
+
+
+<div id="logoutModal" class="modal">
+  <div class="modal-box">
+    <h3>Konfirmasi Logout</h3>
+    <p>Yakin ingin keluar dari dashboard?</p>
+
+    <div class="modal-btn">
+      <button class="btn-red" onclick="confirmLogout()">Logout</button>
+      <button class="btn-gray" onclick="closeLogout()">Batal</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+<div class="topbar">
+<div>Dashboard Store</div>
+<div onclick="logout()" style="cursor:pointer;">Logout</div>
+</div>
+
+<div class="container">
+
+<div class="card">
+<h3 id="storeName">Loading...</h3>
+<p id="storeStatus">Status: ...</p>
+</div>
+
+<div class="card">
+<h4>Menu Store</h4>
+
+<div id="menu">
+
+<a href="produksaya.html" class="btn">Produk Saya</a>
+<a href="#" class="btn">Tambah Produk</a>
+<a href="#" class="btn">Pesanan</a>
+
+</div>
+
+</div>
+
+<div class="card">
+<h4>Akses Status</h4>
+<p id="accessInfo"></p>
+</div>
+
+</div>
+
+
+
+
+
+<div class="bottom-nav">
+
+<a href="gudangproduk.html" class="nav-item">
+<img src="assets/images/shopping.png" class="nav-icon">
+<span>Gudang produk</span>
+</a>
+
+<a href="pesanansaya.html" class="nav-item">
+<img src="assets/images/shopping-list.png" class="nav-icon">
+<span>Pesanan</span>
+</a>
+
+<a href="dashboardstore.html" class="nav-item active">
+<img src="assets/images/shope.png" class="nav-icon">
+<span>Vendor</span>
+</a>
+
+</div>
+
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* =========================
+FIREBASE CONFIG
+========================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+  authDomain: "shoponline-93646.firebaseapp.com",
+  databaseURL: "https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "shoponline-93646"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+/* =========================
+AUTH LOCALSTORAGE
+========================= */
+const storeId = localStorage.getItem("storeId");
+const role = localStorage.getItem("storeRole");
+
+function logout(){
+  document.getElementById("logoutModal").style.display = "flex";
+}
+
+function closeLogout(){
+  document.getElementById("logoutModal").style.display = "none";
+}
+
+function confirmLogout(){
+  localStorage.clear();
+  location.href = "loginvendor.html";
+}
+
+/* ❌ BLOCK IF NOT LOGIN */
+if(!storeId){
+  logout();
+}
+
+/* ❌ BLOCK IF NOT STORE */
+if(role !== "store"){
+  logout();
+}
+
+/* =========================
+LOAD STORE FROM FIREBASE
+========================= */
+let status = "loading";
+let name = "";
+
+async function loadStore(){
+
+  try{
+
+    const snap = await get(ref(db, "stores/" + storeId));
+
+    if(!snap.exists()){
+      alert("Store tidak ditemukan");
+      logout();
+      return;
+    }
+
+    const data = snap.val();
+
+    status = data.status || "unknown";
+    name = data.name || "Store";
+
+    renderUI();
+
+  }catch(err){
+    console.log(err);
+    alert("Gagal load store");
+  }
+
+}
+
+/* =========================
+RENDER UI
+========================= */
+function renderUI(){
+
+  document.getElementById("storeName").innerText = name;
+  document.getElementById("storeStatus").innerText = "Status: " + status;
+
+  const menu = document.getElementById("menu");
+  const accessInfo = document.getElementById("accessInfo");
+
+  if(status === "approved"){
+    accessInfo.innerHTML = "✅ Akses penuh aktif";
+    menu.style.opacity = "1";
+    menu.style.pointerEvents = "auto";
+  }
+
+  else if(status === "pending"){
+    accessInfo.innerHTML = "⏳ Menunggu approval admin (fitur terbatas)";
+    menu.style.opacity = "0.5";
+    menu.style.pointerEvents = "none";
+  }
+
+  else if(status === "ditolak"){
+    accessInfo.innerHTML = "❌ Akun ditolak";
+    menu.style.opacity = "0.3";
+    menu.style.pointerEvents = "none";
+  }
+
+  else{
+    accessInfo.innerHTML = "⚠ Status tidak dikenal";
+    menu.style.opacity = "0.3";
+    menu.style.pointerEvents = "none";
+  }
+}
+
+/* =========================
+LOAD DATA
+========================= */
+loadStore();
+
+/* =========================
+BOTTOM NAV ACTIVE FIX
+========================= */
+const path = window.location.pathname;
+
+let page = "";
+
+if(path.includes("home")) page = "home";
+else if(path.includes("pesanan")) page = "pesanan";
+else if(path.includes("vendor")) page = "vendor";
+
+document.querySelectorAll(".nav-item").forEach(item=>{
+  if(item.dataset.page === page){
+    item.classList.add("active");
+  }
+});
+
+
+
+
+window.logout = function(){
+  document.getElementById("logoutModal").style.display = "flex";
+};
+
+window.closeLogout = function(){
+  document.getElementById("logoutModal").style.display = "none";
+};
+
+window.confirmLogout = function(){
+  localStorage.clear();
+  location.href = "loginvendor.html";
+};
+
+
+
+</script>
+
+</body>
+</html>

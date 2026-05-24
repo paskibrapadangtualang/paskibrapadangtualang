@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Daftar | Rumah Pisang AFKAR</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+
+min-height:100vh;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+padding:20px;
+
+background:
+linear-gradient(
+135deg,
+#fff7e8,
+#ffd891,
+#ffb84d
+);
+
+}
+
+.card{
+
+width:100%;
+max-width:430px;
+
+background:white;
+
+padding:35px;
+
+border-radius:30px;
+
+box-shadow:
+0 20px 60px rgba(0,0,0,.12);
+
+}
+
+.logo{
+
+width:100px;
+height:100px;
+
+margin:auto;
+
+margin-bottom:20px;
+
+border-radius:25px;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+font-size:50px;
+
+background:
+linear-gradient(
+135deg,
+#ffb300,
+#ff7b00
+);
+
+color:white;
+
+}
+
+h1{
+text-align:center;
+margin-bottom:10px;
+}
+
+.desc{
+
+text-align:center;
+
+font-size:14px;
+
+color:#666;
+
+margin-bottom:25px;
+
+}
+
+input{
+
+width:100%;
+
+padding:15px;
+
+margin-bottom:15px;
+
+border:none;
+
+outline:none;
+
+border-radius:15px;
+
+background:#f4f4f4;
+
+}
+
+button{
+
+width:100%;
+
+padding:16px;
+
+border:none;
+
+border-radius:18px;
+
+background:#ff8f00;
+
+color:white;
+
+font-size:15px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+.bottom{
+
+margin-top:20px;
+
+text-align:center;
+
+font-size:14px;
+
+}
+
+.bottom a{
+
+text-decoration:none;
+
+color:#ff7b00;
+
+font-weight:bold;
+
+}
+
+#status{
+
+margin-top:15px;
+
+text-align:center;
+
+font-size:13px;
+
+color:#666;
+
+}
+
+
+
+
+select,
+textarea{
+
+width:100%;
+
+padding:15px;
+
+margin-bottom:15px;
+
+border:none;
+
+background:#f4f4f4;
+
+border-radius:15px;
+
+outline:none;
+
+}
+
+textarea{
+height:120px;
+resize:none;
+}
+
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<div class="logo">
+🍌
+</div>
+
+<h1>
+RUMAH PISANG AFKAR
+</h1>
+
+<div class="desc">
+
+Daftar akun baru
+
+</div>
+
+<form id="registerForm">
+
+<input type="text"
+id="nama"
+placeholder="Nama lengkap"
+required>
+
+<input type="email"
+id="email"
+placeholder="Email aktif"
+required>
+
+<input type="text"
+id="wa"
+placeholder="No Whatsapp"
+required>
+
+<select id="jk" required>
+
+<option value="">
+Jenis Kelamin
+</option>
+
+<option>
+Laki-Laki
+</option>
+
+<option>
+Perempuan
+</option>
+
+</select>
+
+<input
+type="password"
+id="password"
+placeholder="Password"
+required>
+
+<input
+type="password"
+id="konfirmasi"
+placeholder="Konfirmasi Password"
+required>
+
+<h3>
+Alamat Lengkap
+</h3>
+
+<input
+type="text"
+id="kecamatan"
+placeholder="Kecamatan"
+required>
+
+<input
+type="text"
+id="kabupaten"
+placeholder="Kabupaten"
+required>
+
+<input
+type="text"
+id="provinsi"
+placeholder="Provinsi"
+required>
+
+<input
+type="text"
+id="dusun"
+placeholder="Dusun"
+required>
+
+<input
+type="text"
+id="kodepos"
+placeholder="Kode Pos"
+required>
+
+<textarea
+id="alamat"
+placeholder="Ketik alamat lengkap disini"
+required
+></textarea>
+
+<label>
+Foto Profil
+</label>
+
+<input
+type="file"
+id="foto"
+accept="image/*"
+required>
+
+<button type="submit">
+
+Daftar
+
+</button>
+
+
+
+</form>
+
+<div id="status">
+
+Menunggu pendaftaran...
+
+</div>
+
+<div class="bottom">
+
+Sudah punya akun?
+
+<a href="index.html">
+
+Login
+
+</a>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+
+getAuth,
+
+createUserWithEmailAndPassword
+
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+
+getDatabase,
+ref,
+set
+
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig={
+
+apiKey:
+"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+
+authDomain:
+"shoponline-93646.firebaseapp.com",
+
+databaseURL:
+"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"shoponline-93646",
+
+storageBucket:
+"shoponline-93646.firebasestorage.app",
+
+messagingSenderId:
+"435032364443",
+
+appId:
+"1:435032364443:web:5f76384f794693a892bd3e"
+
+};
+
+const app=
+initializeApp(
+firebaseConfig
+);
+
+const auth=
+getAuth(app);
+
+const db=
+getDatabase(app);
+
+const status =
+document.getElementById(
+"status"
+);
+
+document
+.getElementById(
+"registerForm"
+)
+
+.addEventListener(
+"submit",
+
+async(e)=>{
+
+e.preventDefault();
+
+try{
+
+status.innerText =
+"Memproses...";
+
+const CLOUD_NAME =
+"djxlbemky";
+
+const UPLOAD_PRESET =
+"uploadgambar";
+
+const nama =
+document
+.getElementById(
+"nama"
+).value;
+
+const email =
+document
+.getElementById(
+"email"
+).value;
+
+const wa =
+document
+.getElementById(
+"wa"
+).value;
+
+const jk =
+document
+.getElementById(
+"jk"
+).value;
+
+const password =
+document
+.getElementById(
+"password"
+).value;
+
+const konfirmasi =
+document
+.getElementById(
+"konfirmasi"
+).value;
+
+const kecamatan =
+document
+.getElementById(
+"kecamatan"
+).value;
+
+const kabupaten =
+document
+.getElementById(
+"kabupaten"
+).value;
+
+const provinsi =
+document
+.getElementById(
+"provinsi"
+).value;
+
+const dusun =
+document
+.getElementById(
+"dusun"
+).value;
+
+const kodepos =
+document
+.getElementById(
+"kodepos"
+).value;
+
+const alamat =
+document
+.getElementById(
+"alamat"
+).value;
+
+const foto =
+document
+.getElementById(
+"foto"
+).files[0];
+
+if(
+password !== konfirmasi
+){
+
+status.innerText =
+"Password tidak sama";
+
+return;
+
+}
+
+if(!foto){
+
+status.innerText =
+"Pilih foto profil";
+
+return;
+
+}
+
+// =======================
+// UPLOAD CLOUDINARY
+// =======================
+
+status.innerText =
+"Upload foto...";
+
+const formData =
+new FormData();
+
+formData.append(
+"file",
+foto
+);
+
+formData.append(
+"upload_preset",
+UPLOAD_PRESET
+);
+
+const cloudinaryResponse =
+
+await fetch(
+
+`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+
+{
+
+method:"POST",
+
+body:formData
+
+}
+
+);
+
+const imageResult =
+await cloudinaryResponse.json();
+
+const fotoURL =
+imageResult.secure_url;
+
+// =======================
+// FIREBASE AUTH
+// =======================
+
+status.innerText =
+"Membuat akun...";
+
+const userCredential =
+
+await createUserWithEmailAndPassword(
+
+auth,
+email,
+password
+
+);
+
+const uid =
+userCredential.user.uid;
+
+// =======================
+// SIMPAN DATABASE
+// =======================
+
+await set(
+
+ref(
+db,
+"users/"+uid
+),
+
+{
+
+uid:uid,
+
+nama:nama,
+
+email:email,
+
+wa:wa,
+
+jk:jk,
+
+foto:fotoURL,
+
+alamatLengkap:{
+
+kecamatan:
+kecamatan,
+
+kabupaten:
+kabupaten,
+
+provinsi:
+provinsi,
+
+dusun:
+dusun,
+
+kodepos:
+kodepos,
+
+alamat:
+alamat
+
+},
+
+role:
+"customer",
+
+saldo:0,
+
+status:
+"aktif",
+
+createdAt:
+Date.now()
+
+}
+
+);
+
+status.innerText =
+"Pendaftaran berhasil";
+
+setTimeout(()=>{
+
+location.href =
+"index.html";
+
+},1500);
+
+}
+
+catch(err){
+
+console.log(err);
+
+status.innerText =
+err.message;
+
+}
+
+}
+
+);
+
+</script>
+
+</body>
+</html>

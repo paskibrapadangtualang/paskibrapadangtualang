@@ -1,0 +1,2279 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Orderan Saya</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#f5f5f5;
+padding-bottom:90px;
+}
+
+.header{
+
+background:white;
+
+padding:18px;
+
+font-size:22px;
+
+font-weight:bold;
+
+position:sticky;
+
+top:0;
+
+z-index:99;
+
+box-shadow:
+0 2px 10px rgba(0,0,0,.06);
+
+}
+
+.list{
+padding:15px;
+}
+
+.card{
+
+background:white;
+
+padding:15px;
+
+border-radius:18px;
+
+margin-bottom:12px;
+
+box-shadow:
+0 3px 10px rgba(0,0,0,.05);
+
+cursor:pointer;
+
+}
+
+.top{
+
+display:flex;
+
+justify-content:space-between;
+
+margin-bottom:10px;
+
+}
+
+.status{
+
+padding:6px 12px;
+
+border-radius:10px;
+
+font-size:12px;
+
+font-weight:bold;
+
+background:#fff3dc;
+
+color:#ff7b00;
+
+}
+
+.total{
+
+font-weight:bold;
+
+color:#ff6f00;
+
+margin-top:8px;
+
+}
+
+.popup{
+
+position:fixed;
+
+top:0;
+left:0;
+right:0;
+bottom:0;
+
+display:none;
+
+background:white;
+
+z-index:99999;
+
+overflow:auto;
+
+animation:
+showPopup .25s ease;
+
+}
+
+
+@keyframes showPopup{
+
+from{
+
+opacity:0;
+
+transform:
+translateY(
+100%
+);
+
+}
+
+to{
+
+opacity:1;
+
+transform:
+translateY(0);
+
+}
+
+}
+
+
+.box{
+
+width:100%;
+
+min-height:100vh;
+
+background:white;
+
+padding:20px;
+
+padding-bottom:100px;
+
+overflow:auto;
+
+}
+
+
+.judul{
+
+font-size:22px;
+
+font-weight:700;
+
+margin-bottom:20px;
+
+padding-bottom:15px;
+
+border-bottom:
+1px solid #eee;
+
+position:sticky;
+
+top:0;
+
+background:white;
+
+z-index:20;
+
+}
+
+
+.produk{
+
+padding:14px 0;
+
+border-bottom:
+1px solid #eee;
+
+line-height:1.8;
+
+font-size:14px;
+
+}
+
+
+.close{
+
+position:fixed;
+
+left:15px;
+right:15px;
+bottom:20px;
+
+height:55px;
+
+border:none;
+
+border-radius:18px;
+
+background:
+linear-gradient(
+135deg,
+#ff9800,
+#ff6f00
+);
+
+color:white;
+
+font-size:15px;
+
+font-weight:700;
+
+box-shadow:
+0 8px 20px rgba(
+255,
+152,
+0,
+.25
+);
+
+z-index:999;
+
+}
+
+.nav{
+
+position:fixed;
+
+left:0;
+right:0;
+bottom:0;
+
+height:75px;
+
+background:white;
+
+display:flex;
+
+justify-content:space-around;
+
+align-items:center;
+
+box-shadow:
+0 -3px 15px rgba(0,0,0,.08);
+
+z-index:999;
+
+}
+
+.navItem{
+
+display:flex;
+
+flex-direction:column;
+
+align-items:center;
+
+font-size:12px;
+
+color:#777;
+
+gap:5px;
+
+}
+
+.active{
+color:#ff9800;
+}
+
+.navItem i{
+font-size:20px;
+}
+
+
+
+
+
+
+
+
+
+.detail-wrapper{
+  font-family:Arial;
+  max-width:420px;
+  margin:auto;
+}
+
+/* ================= TRACKING ================= */
+.tracking{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:15px;
+  position:relative;
+}
+
+.step{
+  text-align:center;
+  flex:1;
+  position:relative;
+  opacity:.4;
+}
+
+.step.active{
+  opacity:1;
+}
+
+.circle{
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  background:#ddd;
+  margin:auto;
+  line-height:28px;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.step.active .circle{
+  background:#0a7cff;
+  color:#fff;
+}
+
+.txt{
+  font-size:11px;
+  margin-top:5px;
+}
+
+.line{
+  top:14px;
+  left:50%;
+  width:100%;
+  height:2px;
+  background:#eee;
+  z-index:-1;
+}
+
+/* ================= RECEIPT ================= */
+.receipt{
+  background:#fff;
+  border-radius:14px;
+  padding:16px;
+  box-shadow:0 5px 18px rgba(0,0,0,0.08);
+}
+
+.receipt-header{
+  text-align:center;
+  border-bottom:1px dashed #ddd;
+  padding-bottom:10px;
+  margin-bottom:10px;
+}
+
+.receipt-header h3{
+  margin:0;
+  font-size:16px;
+}
+
+.receipt-header p{
+  font-size:12px;
+  margin:4px 0 0;
+  color:#888;
+}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  padding:6px 0;
+  font-size:13px;
+}
+
+.row span:first-child{
+  color:#777;
+}
+
+.status{
+  font-weight:bold;
+}
+
+.status.pending{ color:orange; }
+.status.disetujui{ color:#0a7cff; }
+.status.diproses{ color:#8e44ad; }
+.status.dikirim{ color:#e67e22; }
+.status.selesai{ color:#2ecc71; }
+
+.divider{
+  border-top:1px dashed #ddd;
+  margin:10px 0;
+}
+
+.total span{
+  font-size:15px;
+  font-weight:bold;
+}
+
+.section-title{
+  font-weight:bold;
+  margin-top:10px;
+}
+
+.step.active .circle{
+
+background:#ff9800;
+
+}
+
+.txt{
+
+font-size:11px;
+
+text-align:center;
+
+margin-top:8px;
+
+line-height:1.4;
+
+color:#777;
+
+}
+
+.step.active .txt{
+
+color:#ff9800;
+
+font-weight:bold;
+
+}
+
+
+
+.line.active{
+
+background:#ff9800;
+
+}
+
+
+.receipt{
+  background:#fff;
+  border-radius:12px;
+  padding:16px;
+  max-width:420px;
+  margin:auto;
+  font-family:Arial, sans-serif;
+  box-shadow:0 4px 15px rgba(0,0,0,0.08);
+}
+
+.receipt-header{
+  text-align:center;
+  border-bottom:1px dashed #ddd;
+  padding-bottom:10px;
+  margin-bottom:12px;
+}
+
+.receipt-header h3{
+  margin:0;
+  font-size:18px;
+}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  padding:6px 0;
+  font-size:14px;
+}
+
+.label{
+  color:#666;
+}
+
+.value{
+  font-weight:600;
+  color:#222;
+  text-align:right;
+}
+
+.status{
+  color:#0a7cff;
+}
+
+.total{
+  margin-top:8px;
+  font-size:15px;
+}
+
+.total .value{
+  color:#111;
+  font-size:16px;
+}
+
+.divider{
+  border-top:1px dashed #ddd;
+  margin:12px 0;
+}
+
+.section-title{
+  font-weight:700;
+  font-size:14px;
+  margin-bottom:8px;
+  color:#333;
+}
+
+
+</style>
+
+</head>
+<body>
+
+<div class="header">
+Orderan Saya
+</div>
+
+
+<!-- LIST ORDER -->
+<div
+class="list"
+id="orderList">
+
+</div>
+
+
+
+<!-- POPUP DETAIL -->
+<div
+class="popup"
+id="popup">
+
+<div class="box">
+
+<div class="judul">
+Detail Order
+</div>
+
+
+<!-- TRACKING -->
+
+
+
+<!-- DETAIL ORDER -->
+<div id="detailBox">
+
+</div>
+
+
+
+<button
+class="close"
+onclick="tutup()">
+
+Tutup
+
+</button>
+
+</div>
+
+</div>
+
+
+<!-- NAVIGATION -->
+
+<div class="nav">
+
+  <div class="navItem" onclick="location.href='home.html'">
+    <i class="fa fa-house"></i>
+    <span>Home</span>
+  </div>
+
+  <div class="navItem active" onclick="location.href='orderan.html'">
+    <i class="fa fa-bell"></i>
+    <span>Oderan saya</span>
+  </div>
+
+  <div class="navItem" onclick="location.href='saya.html'">
+    <i class="fa fa-user"></i>
+    <span>Saya</span>
+  </div>
+
+</div>
+
+</div>
+
+
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get,
+set
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+import {
+getAuth,
+onAuthStateChanged
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+
+const firebaseConfig={
+
+apiKey:"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+
+authDomain:
+"shoponline-93646.firebaseapp.com",
+
+databaseURL:
+"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"shoponline-93646",
+
+storageBucket:
+"shoponline-93646.firebasestorage.app",
+
+messagingSenderId:
+"435032364443",
+
+appId:
+"1:435032364443:web:5f76384f794693a892bd3e"
+
+};
+
+
+const app=
+initializeApp(
+firebaseConfig
+);
+
+const db=
+getDatabase(app);
+
+
+/* USER LOGIN */
+
+
+
+
+
+
+const auth = getAuth(app);
+
+/* SEMBUNYIKAN HALAMAN */
+document.body.style.display = "none";
+
+/* CEK LOGIN */
+onAuthStateChanged(auth,(user)=>{
+
+if(user){
+
+document.body.style.display = "block";
+
+/* LANJUT LOAD ORDER */
+startApp(user.uid);
+
+}else{
+
+localStorage.clear();
+sessionStorage.clear();
+
+location.replace("index.html");
+
+}
+
+});
+
+/* CEGAH CACHE BACK */
+window.addEventListener("pageshow",(event)=>{
+
+if(event.persisted){
+
+window.location.reload();
+
+}
+
+});
+
+
+let uidUser = "";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* BUAT ORDER LIST */
+
+document.body.insertAdjacentHTML(
+"beforeend",
+
+`
+
+<div
+class="list"
+id="orderList">
+
+</div>
+
+`
+
+);
+
+
+const orderList=
+document.getElementById(
+"orderList"
+);
+
+
+
+/* ===========================
+DUMMY ORDER
+=========================== */
+
+async function createDummyOrder() {
+
+  const cek = await get(ref(db, "pesanan"));
+
+  if (cek.exists()) return;
+
+  /* TEST SUDAH LEWAT 2 MENIT */
+  const now = Date.now() - 120000;
+
+  const dummy = {
+
+    ORD001: {
+      id: "ORD001",
+      user: uidUser,
+      storeId: "STORE001",
+      nama: "Ilham Test",
+      status: "pending",
+      metode: "COD",
+      total: 35000,
+      createdAt: now,
+      alamat: {
+        alamat: "Jl Padang Tualang",
+        dusun: "Walidongo",
+        kecamatan: "Padang Tualang",
+        kabupaten: "Langkat",
+        provinsi: "Sumatera Utara",
+        kodepos: "20218"
+      },
+      items: {
+        prd1: {
+          nama: "Keripik Pisang Original",
+          qty: 1,
+          harga: 15000,
+          storeId: "STORE001"
+        },
+        prd2: {
+          nama: "Banana Crispy",
+          qty: 1,
+          harga: 20000,
+          storeId: "STORE001"
+        }
+      }
+    },
+
+    ORD002: {
+      id: "ORD002",
+      user: uidUser,
+      storeId: "STORE002",
+      nama: "Ilham Test",
+      status: "disetujui",
+      metode: "QRIS",
+      total: 42000,
+      createdAt: now,
+      alamat: {
+        alamat: "Padang Tualang"
+      },
+      items: {
+        prd3: {
+          nama: "Pisang Coklat",
+          qty: 2,
+          harga: 21000,
+          storeId: "STORE002"
+        }
+      }
+    },
+
+    ORD003: {
+      id: "ORD003",
+      user: uidUser,
+      storeId: "STORE001",
+      nama: "Ilham Test",
+      status: "diproses",
+      metode: "OVO",
+      total: 50000,
+      createdAt: now,
+      alamat: {
+        alamat: "Langkat"
+      },
+      items: {
+        prd4: {
+          nama: "Banana Roll",
+          qty: 2,
+          harga: 25000,
+          storeId: "STORE001"
+        }
+      }
+    },
+
+    ORD004: {
+      id: "ORD004",
+      user: uidUser,
+      storeId: "STORE003",
+      nama: "Ilham Test",
+      status: "dikirim",
+      metode: "DANA",
+      total: 65000,
+      createdAt: now,
+      alamat: {
+        alamat: "Medan"
+      },
+      items: {
+        prd5: {
+          nama: "Paket Rumah Pisang",
+          qty: 1,
+          harga: 65000,
+          storeId: "STORE003"
+        }
+      }
+    },
+
+    ORD005: {
+      id: "ORD005",
+      user: uidUser,
+      storeId: "STORE001",
+      nama: "Ilham Test",
+      status: "selesai",
+      metode: "BCA",
+      total: 90000,
+      createdAt: now,
+      alamat: {
+        alamat: "Binjai"
+      },
+      items: {
+        prd6: {
+          nama: "Keripik Pisang Premium",
+          qty: 3,
+          harga: 30000,
+          storeId: "STORE001"
+        }
+      }
+    }
+
+  };
+
+  await set(ref(db, "pesanan"), dummy);
+}
+
+
+
+
+
+
+async function startApp(uid){
+
+uidUser = uid;
+
+/* BUAT DUMMY SETELAH LOGIN */
+await createDummyOrder();
+
+/* LOAD ORDER */
+const snap =
+await get(
+ref(
+db,
+"pesanan"
+)
+);
+
+orderList.innerHTML = "";
+
+
+/* CEK ADA ORDER ATAU TIDAK */
+let adaOrder = false;
+
+
+/* LOOP DATA */
+const ordersBaru = [];
+const ordersSelesai = [];
+const ordersBatal = [];
+const ordersDibatalkan = [];
+
+/* AMBIL DATA */
+snap.forEach(item => {
+
+  const d = item.val();
+
+  if(d.user !== uidUser) return;
+
+  adaOrder = true;
+
+  // simpan berdasarkan status
+
+
+
+
+const realStatus =
+d.status === "cod"
+? "pending"
+: d.status;
+
+/* STATUS */
+if(realStatus === "dibatalkan"){
+
+  ordersDibatalkan.push(d);
+
+}
+else if(realStatus === "selesai"){
+
+  ordersSelesai.push(d);
+
+}
+else{
+
+  ordersBaru.push(d);
+
+}
+
+
+
+
+
+
+});
+
+/* SORT TERBARU */
+ordersBaru.sort((a,b)=>
+(b.createdAt || 0) - (a.createdAt || 0)
+);
+
+ordersSelesai.sort((a,b)=>
+(b.createdAt || 0) - (a.createdAt || 0)
+);
+
+/* RENDER FUNCTION */
+function renderOrder(d){
+
+let warna = "#ff9800";
+
+if(d.status==="selesai")
+warna="#4caf50";
+
+if(d.status==="dikirim")
+warna="#2196f3";
+
+if(d.status==="diproses")
+warna="#9c27b0";
+
+if(d.status==="disetujui")
+warna="#00bcd4";
+
+if(d.status==="dibatalkan")
+warna="#ef4444";
+
+return `
+
+<div class="card"
+onclick='lihatDetail(${JSON.stringify(d)})'>
+
+<div class="top">
+
+<div>
+
+<b>${d.id}</b>
+<br>
+
+${d.metode}
+
+</div>
+
+<div class="status "
+style="
+background:${warna}20;
+color:${warna};
+">
+
+${d.status}
+
+</div>
+
+</div>
+
+<div class="total">
+Rp ${(d.total||0).toLocaleString("id-ID")}
+</div>
+
+</div>
+
+`;
+
+}
+
+/* =========================
+PESANAN BARU
+========================= */
+
+if(ordersBaru.length){
+
+orderList.innerHTML += `
+
+<div style="
+font-size:18px;
+font-weight:bold;
+margin-bottom:15px;
+color:#222;
+">
+Pesanan Baru
+</div>
+
+`;
+
+ordersBaru.forEach(d=>{
+orderList.innerHTML += renderOrder(d);
+});
+
+}
+
+/* =========================
+PESANAN SELESAI
+========================= */
+
+if(ordersSelesai.length){
+
+orderList.innerHTML += `
+
+<div style="
+font-size:18px;
+font-weight:bold;
+margin:
+25px 0 15px;
+color:#22c55e;
+">
+Pesanan Selesai
+</div>
+
+`;
+
+ordersSelesai.forEach(d=>{
+orderList.innerHTML += renderOrder(d);
+});
+
+}
+
+
+
+
+
+/* =========================
+PESANAN DIBATALKAN
+========================= */
+/* =========================
+PESANAN DIBATALKAN
+========================= */
+
+if(ordersDibatalkan.length){
+
+orderList.innerHTML += `
+
+<div style="
+font-size:18px;
+font-weight:bold;
+margin:
+25px 0 15px;
+color:#ef4444;
+">
+Pesanan Dibatalkan
+</div>
+
+`;
+
+ordersDibatalkan.forEach(d=>{
+orderList.innerHTML += renderOrder(d);
+});
+
+}
+
+
+
+
+
+
+/* KALAU BELUM ADA ORDER */
+if(!adaOrder){
+
+orderList.innerHTML = `
+
+<div style="
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+padding:70px 20px;
+text-align:center;
+">
+
+<img
+src="assets/images/4751043c866ed52f9661.png"
+style="
+width:180px;
+margin-bottom:20px;
+">
+
+<div style="
+font-size:15px;
+font-weight:400;
+margin-bottom:15px;
+">
+
+Belum ada orderan
+
+</div>
+
+<button
+
+onclick="
+location.href='home.html'
+"
+
+style="
+border:none;
+background:#ff9800;
+color:white;
+padding:14px 24px;
+border-radius:14px;
+font-weight:bold;
+font-size:15px;
+">
+
+Belanja Sekarang
+
+</button>
+
+</div>
+
+`;
+
+}
+
+
+
+
+/* ===========================
+DETAIL ORDER
+=========================== */
+/* ===========================
+DETAIL ORDER
+=========================== */
+window.lihatDetail = async (data) => {
+
+const urutan = {
+  pending: 1,
+  disetujui: 2,
+  diproses: 3,
+  dikirim: 4,
+  selesai: 5,
+  dibatalkan: 0
+};
+
+const realStatus =
+  data.status === "cod" ? "pending" : data.status;
+
+const level = urutan[realStatus] ?? 1;
+
+/* =========================
+TITLE STATUS
+========================= */
+
+let titleStatus = "Detail Pesanan";
+let bgStatus = "#ff9800";
+let descStatus = "";
+
+if (realStatus === "pending") {
+  titleStatus = "Pesanan Menunggu";
+  bgStatus = "#ff9800";
+  descStatus = "Pesanan sedang menunggu konfirmasi dari penjual.";
+}
+
+if (realStatus === "disetujui") {
+  titleStatus = "Pesanan Disetujui";
+  bgStatus = "#00bcd4";
+  descStatus = "Pesanan telah diterima dan disetujui oleh penjual.";
+}
+
+if (realStatus === "diproses") {
+  titleStatus = "Pesanan Diproses";
+  bgStatus = "#9c27b0";
+  descStatus = "Pesanan sedang diproses dan disiapkan oleh penjual.";
+}
+
+if (realStatus === "dikirim") {
+  titleStatus = "Pesanan Dikirim";
+  bgStatus = "#2196f3";
+  descStatus = "Pesanan sedang diantar ke alamat tujuan.";
+}
+
+if (realStatus === "selesai") {
+  titleStatus = "Pesanan Selesai";
+  bgStatus = "#22c55e";
+  descStatus = "Pesanan telah selesai dan diterima dengan baik.";
+}
+
+if (realStatus === "dibatalkan") {
+  titleStatus = "Pesanan Dibatalkan";
+  bgStatus = "#ef4444";
+  descStatus = "Pesanan ini telah dibatalkan dan tidak dapat diproses kembali.";
+}
+
+/* =========================
+BUILD HTML
+========================= */
+
+let html = `
+<div class="detail-wrapper">
+
+  <div class="tracking">
+`;
+
+/* step tracking */
+const langkah = ["Pesanan","Disetujui","Diproses","Diantar","Selesai"];
+
+langkah.forEach((x, i) => {
+  const aktif = (i + 1) <= level;
+
+  html += `
+    <div class="step ${aktif ? "active" : ""}">
+      <div class="circle">${i + 1}</div>
+      <div class="line"></div>
+      <div class="txt">${x}</div>
+    </div>
+  `;
+});
+
+html += `
+  </div>
+
+  <div class="receipt">
+
+    <div style="
+      background:${bgStatus}15;
+      border:1px solid ${bgStatus}35;
+      padding:18px;
+      border-radius:18px;
+      margin-bottom:18px;
+    ">
+
+      <div style="
+        font-size:21px;
+        font-weight:bold;
+        color:${bgStatus};
+        margin-bottom:8px;
+      ">
+        ${titleStatus}
+      </div>
+
+      <div style="
+        font-size:13px;
+        line-height:1.7;
+        color:#555;
+      ">
+        ${descStatus}
+      </div>
+
+    </div>
+
+    <div class="receipt-header">
+      <h3>${realStatus.toUpperCase()}</h3>
+      <p>Tracking Pesanan</p>
+    </div>
+
+    <div class="receipt-body">
+
+      <div class="row">
+        <span>ID</span>
+        <span>${data.id}</span>
+      </div>
+
+      <div class="row">
+        <span>Status</span>
+        <span class="status ${realStatus}">${realStatus}</span>
+      </div>
+
+      <div class="row">
+        <span>Metode</span>
+        <span>${data.metode}</span>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="row total">
+        <span>Total</span>
+        <span>Rp ${(data.total || 0).toLocaleString("id-ID")}</span>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-title">Produk</div>
+`;
+
+/* =========================
+LIST PRODUK
+========================= */
+
+Object.values(data.items || {}).forEach(x => {
+
+let img = x.gambar || "assets/images/default.png";
+
+html += `
+<div class="produk" style="
+display:flex;
+gap:10px;
+align-items:center;
+border-bottom:1px dashed #ddd;
+padding:10px 0;
+">
+
+  <img src="${img}"
+  onerror="this.src='assets/images/default.png'"
+  style="
+  width:55px;
+  height:55px;
+  object-fit:cover;
+  border-radius:10px;
+  border:1px solid #eee;
+  ">
+
+  <div style="flex:1;">
+    <b style="font-size:13px;">${x.nama}</b>
+    <div style="font-size:12px;color:#666;margin-top:4px;">
+      Qty: ${x.qty}
+    </div>
+    <div style="font-size:12px;font-weight:bold;margin-top:2px;color:#ff6f00;">
+      Rp ${(x.harga || 0).toLocaleString("id-ID")}
+    </div>
+  </div>
+
+</div>
+`;
+});
+
+/* =========================
+BUTTON AKSI
+========================= */
+
+const created = Number(data.createdAt || 0);
+const sekarang = Date.now();
+const batasPembatalan = 20 * 60 * 1000;
+
+const bisaBatalkan =
+(realStatus === "pending" &&
+(sekarang - created) <= batasPembatalan);
+
+html += `
+
+${
+bisaBatalkan
+? `
+<button
+onclick="batalkanPesanan('${data.id}')"
+style="
+width:100%;
+height:52px;
+border:none;
+border-radius:16px;
+background:#ef4444;
+color:white;
+font-weight:bold;
+font-size:15px;
+margin-top:18px;
+margin-bottom:10px;
+">
+Batalkan Pesanan
+</button>
+`
+: ""
+}
+
+${
+realStatus === "dikirim"
+? `
+<button
+onclick="terimaPesanan('${data.id}')"
+style="
+width:100%;
+height:52px;
+border:none;
+border-radius:16px;
+background:#22c55e;
+color:white;
+font-weight:bold;
+font-size:15px;
+margin-top:18px;
+margin-bottom:10px;
+">
+Sudah Menerima Pesanan
+</button>
+`
+: ""
+}
+
+${
+realStatus === "selesai"
+? `
+<button
+onclick="goReview('${data.id}')"
+style="
+width:100%;
+height:52px;
+border:none;
+border-radius:16px;
+background:#ff9800;
+color:white;
+font-weight:bold;
+font-size:15px;
+margin-top:18px;
+">
+Berikan Ulasan
+</button>
+`
+: ""
+}
+
+`;
+
+document.getElementById("detailBox").innerHTML = html;
+document.getElementById("popup").style.display = "flex";
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const langkah = [
+  "Pesanan",
+  "Disetujui",
+  "Diproses",
+  "Diantar",
+  "Selesai"
+];
+
+let html = `
+<div class="detail-wrapper">
+
+  <div class="tracking">
+`;
+
+langkah.forEach((x, i) => {
+
+  const aktif = (i + 1) <= level;
+
+  html += `
+    <div class="step ${aktif ? "active" : ""}">
+      <div class="circle">${i + 1}</div>
+      <div class="line"></div>
+      <div class="txt">${x}</div>
+    </div>
+  `;
+});
+
+html += `
+  </div>
+
+  <div class="receipt">
+
+<div style="
+background:${bgStatus}15;
+border:1px solid ${bgStatus}35;
+padding:18px;
+border-radius:18px;
+margin-bottom:18px;
+">
+
+<div style="
+font-size:21px;
+font-weight:bold;
+color:${bgStatus};
+margin-bottom:8px;
+">
+${titleStatus}
+</div>
+
+<div style="
+font-size:13px;
+line-height:1.7;
+color:#555;
+">
+${descStatus}
+</div>
+
+</div>
+
+<div class="receipt-header">
+
+<h3>
+${realStatus.toUpperCase()}
+</h3>
+
+<p>
+Tracking Pesanan
+</p>
+
+</div>
+
+    <div class="receipt-body">
+
+      <div class="row">
+        <span>ID</span>
+        <span>${data.id}</span>
+      </div>
+
+      <div class="row">
+        <span>Status</span>
+        <span class="status ${realStatus}">${realStatus}</span>
+      </div>
+
+      <div class="row">
+        <span>Metode</span>
+        <span>${data.metode}</span>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="row total">
+        <span>Total</span>
+        <span>Rp ${(data.total || 0).toLocaleString("id-ID")}</span>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Store</div>
+`;
+
+/* =========================
+AMBIL NAMA STORE (FIX)
+========================= */
+
+const storeSet = new Set();
+Object.values(data.items || {}).forEach(item => {
+  if (item.storeId) storeSet.add(item.storeId);
+});
+
+const storeCache = {};
+
+// hanya tampil NAMA STORE
+for (const storeId of storeSet) {
+
+  if (!storeCache[storeId]) {
+    const snap = await get(ref(db, "stores/" + storeId));
+
+    storeCache[storeId] = snap.exists()
+      ? snap.val()
+      : { nama: storeId };
+  }
+
+const storeData = storeCache[storeId];
+
+const fotoStore =
+storeData.foto ||
+storeData.logo ||
+storeData.gambar ||
+"assets/images/default-store.png";
+
+html += `
+
+<div class="row" style="
+align-items:center;
+margin-top:10px;
+">
+
+  <span>Store</span>
+
+  <div style="
+  display:flex;
+  align-items:center;
+  gap:10px;
+  ">
+
+    <img
+    src="${fotoStore}"
+    onerror="this.src='assets/images/default-store.png'"
+    style="
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    object-fit:cover;
+    border:1px solid #eee;
+    ">
+
+    <div style="
+    font-weight:bold;
+    color:#222;
+    ">
+      ${storeData.nama}
+    </div>
+
+  </div>
+
+</div>
+
+`;
+}
+
+/* =========================
+PRODUK LIST (TETAP)
+========================= */
+
+Object.values(data.items || {}).forEach(x => {
+
+let img = x.gambar || "assets/images/default.png";
+
+html += `
+<div class="produk" style="
+display:flex;
+gap:10px;
+align-items:center;
+border-bottom:1px dashed #ddd;
+padding:10px 0;
+">
+
+  <img src="${img}"
+  onerror="this.src='assets/images/default.png'"
+  style="
+  width:55px;
+  height:55px;
+  object-fit:cover;
+  border-radius:10px;
+  border:1px solid #eee;
+  ">
+
+  <div style="flex:1;">
+
+    <b style="font-size:13px;">
+      ${x.nama}
+    </b>
+
+    <div style="font-size:12px;color:#666;margin-top:4px;">
+      Qty: ${x.qty}
+    </div>
+
+    <div style="font-size:12px;font-weight:bold;margin-top:2px;color:#ff6f00;">
+      Rp ${(x.harga || 0).toLocaleString("id-ID")}
+    </div>
+
+  </div>
+
+</div>
+`;
+});
+
+/* TOMBOL TERIMA PESANAN */
+/* =========================
+TOMBOL AKSI ORDER
+========================= */
+
+const created =
+Number(data.createdAt || 0);
+
+const sekarang =
+Date.now();
+
+/* 20 MENIT */
+const batasPembatalan =
+20 * 60 * 1000;
+
+const bisaBatalkan =
+(
+  realStatus === "pending"
+  &&
+  (sekarang - created) <= batasPembatalan
+);
+
+console.log("SEKARANG:", sekarang);
+console.log("CREATED:", created);
+console.log("SELISIH:", sekarang - created);
+console.log("STATUS:", data.status);
+
+
+html += `
+
+${
+bisaBatalkan
+?
+`
+<button
+onclick="batalkanPesanan('${data.id}')"
+style="
+width:100%;
+height:52px;
+border:none;
+border-radius:16px;
+background:#ef4444;
+color:white;
+font-weight:bold;
+font-size:15px;
+margin-top:18px;
+margin-bottom:10px;
+">
+Batalkan Pesanan
+</button>
+
+<div style="
+font-size:12px;
+color:#ef4444;
+text-align:center;
+margin-bottom:10px;
+line-height:1.5;
+">
+Pesanan masih menunggu konfirmasi penjual.
+Anda dapat membatalkan pesanan maksimal 20 menit setelah checkout.
+</div>
+`
+:
+""
+}
+
+${
+  data.status === "dikirim"
+  ?
+  `
+  <button
+    onclick="terimaPesanan('${data.id}')"
+    style="
+      width:100%;
+      height:52px;
+      border:none;
+      border-radius:16px;
+      background:#22c55e;
+      color:white;
+      font-weight:bold;
+      font-size:15px;
+      margin-top:18px;
+      margin-bottom:10px;
+    "
+  >
+    Sudah Menerima Pesanan
+  </button>
+  `
+  :
+  ""
+}
+`;
+
+document.getElementById("detailBox").innerHTML = html;
+document.getElementById("popup").style.display = "flex";
+
+};
+
+window.terimaPesanan = async (id) => {
+
+const popup = document.createElement("div");
+
+popup.innerHTML = `
+
+<div style="
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.55);
+z-index:999999;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+backdrop-filter:blur(3px);
+">
+
+  <div style="
+  width:100%;
+  max-width:420px;
+  background:white;
+  border-radius:24px;
+  overflow:hidden;
+  animation:showConfirm .25s ease;
+  box-shadow:0 15px 40px rgba(0,0,0,.18);
+  ">
+
+    <!-- HEADER -->
+    <div style="
+    background:linear-gradient(135deg,#ff9800,#ff6f00);
+    padding:22px;
+    text-align:center;
+    color:white;
+    ">
+
+      <img
+      src="assets/images/aaq.png"
+      style="
+      width:70px;
+      height:70px;
+      object-fit:contain;
+      margin-bottom:10px;
+      ">
+
+      <div style="
+      font-size:22px;
+      font-weight:bold;
+      ">
+      Konfirmasi Pesanan
+      </div>
+
+      <div style="
+      font-size:13px;
+      opacity:.95;
+      margin-top:6px;
+      line-height:1.5;
+      ">
+      Pastikan barang benar-benar sudah diterima
+      </div>
+
+    </div>
+
+    <!-- CONTENT -->
+    <div style="
+    padding:22px;
+    font-size:13px;
+    color:#444;
+    line-height:1.8;
+    ">
+
+      Dengan menekan tombol
+      <b>"Ya, Pesanan Sudah Diterima"</b>,
+      maka Anda menyatakan bahwa:
+
+      <div style="
+      margin-top:15px;
+      border:1px dashed #ff9800;
+      border-radius:16px;
+      padding:15px;
+      background:#fff8ef;
+      ">
+
+        • Barang sudah diterima dengan benar<br>
+        • Produk sesuai pesanan Anda<br>
+        • Tidak ada kekurangan item<br>
+        • Kondisi produk diterima dengan baik<br>
+        • Anda menyetujui keaslian dan kelayakan barang<br>
+        • Dana akan diteruskan ke penjual/store<br>
+        • Status pesanan akan berubah menjadi selesai secara permanen
+
+      </div>
+
+      <div style="
+      margin-top:15px;
+      color:#d97706;
+      font-size:12px;
+      font-weight:bold;
+      line-height:1.7;
+      ">
+      ⚠️ Setelah dikonfirmasi, pesanan tidak dapat dibatalkan kembali.
+      </div>
+
+    </div>
+
+    <!-- BUTTON -->
+    <div style="
+    display:flex;
+    gap:10px;
+    padding:0 20px 20px;
+    ">
+
+      <button
+      id="batalTerima"
+      style="
+      flex:1;
+      height:52px;
+      border:none;
+      border-radius:16px;
+      background:#f1f1f1;
+      font-weight:bold;
+      font-size:14px;
+      ">
+      Batal
+      </button>
+
+      <button
+      id="yaTerima"
+      style="
+      flex:1;
+      height:52px;
+      border:none;
+      border-radius:16px;
+      background:linear-gradient(135deg,#22c55e,#16a34a);
+      color:white;
+      font-weight:bold;
+      font-size:14px;
+      ">
+      Ya, Sudah Diterima
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<style>
+
+@keyframes showConfirm{
+
+from{
+transform:translateY(40px) scale(.95);
+opacity:0;
+}
+
+to{
+transform:translateY(0) scale(1);
+opacity:1;
+}
+
+}
+
+</style>
+
+`;
+
+document.body.appendChild(popup);
+
+/* BATAL */
+popup.querySelector("#batalTerima").onclick = () => {
+popup.remove();
+};
+
+/* SETUJU */
+popup.querySelector("#yaTerima").onclick = async () => {
+
+popup.remove();
+
+try{
+
+const snap = await get(ref(db, "pesanan/" + id));
+
+if(!snap.exists()){
+alert("Pesanan tidak ditemukan");
+return;
+}
+
+const data = snap.val();
+
+await set(
+ref(db, "pesanan/" + id),
+{
+...data,
+status:"selesai"
+}
+);
+
+alert("Pesanan berhasil diselesaikan");
+
+document.getElementById("popup").style.display = "none";
+
+startApp(uidUser);
+
+}catch(err){
+
+console.log(err);
+alert("Gagal update pesanan");
+
+}
+
+};
+
+};
+
+
+
+/* =========================
+BATALKAN PESANAN
+========================= */
+
+window.batalkanPesanan = async (id) => {
+
+const popup = document.createElement("div");
+
+popup.innerHTML = `
+
+<div style="
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.55);
+z-index:999999;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+backdrop-filter:blur(3px);
+">
+
+  <div style="
+  width:100%;
+  max-width:420px;
+  background:white;
+  border-radius:24px;
+  overflow:hidden;
+  box-shadow:0 15px 40px rgba(0,0,0,.18);
+  ">
+
+    <div style="
+    background:linear-gradient(135deg,#ef4444,#dc2626);
+    padding:22px;
+    text-align:center;
+    color:white;
+    ">
+
+      <div style="
+      font-size:22px;
+      font-weight:bold;
+      ">
+      Batalkan Pesanan
+      </div>
+
+      <div style="
+      font-size:13px;
+      margin-top:6px;
+      line-height:1.5;
+      ">
+      Pesanan akan dibatalkan permanen
+      </div>
+
+    </div>
+
+    <div style="
+    padding:22px;
+    font-size:13px;
+    line-height:1.8;
+    color:#444;
+    ">
+
+      Anda yakin ingin membatalkan pesanan ini?
+
+      <div style="
+      margin-top:15px;
+      background:#fff5f5;
+      border:1px dashed #ef4444;
+      padding:15px;
+      border-radius:14px;
+      ">
+
+      • Pesanan akan dibatalkan otomatis<br>
+      • Status order berubah menjadi dibatalkan<br>
+      • Penjual tidak dapat memproses order ini<br>
+      • Pembatalan tidak dapat dikembalikan
+
+      </div>
+
+    </div>
+
+    <div style="
+    display:flex;
+    gap:10px;
+    padding:0 20px 20px;
+    ">
+
+      <button
+      id="closeBatal"
+      style="
+      flex:1;
+      height:52px;
+      border:none;
+      border-radius:16px;
+      background:#f1f1f1;
+      font-weight:bold;
+      ">
+      Tutup
+      </button>
+
+      <button
+      id="yaBatal"
+      style="
+      flex:1;
+      height:52px;
+      border:none;
+      border-radius:16px;
+      background:#ef4444;
+      color:white;
+      font-weight:bold;
+      ">
+      Ya, Batalkan
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+`;
+
+document.body.appendChild(popup);
+
+/* TUTUP */
+popup.querySelector("#closeBatal").onclick = () => {
+popup.remove();
+};
+
+/* KONFIRMASI */
+popup.querySelector("#yaBatal").onclick = async () => {
+
+try{
+
+const snap = await get(ref(db, "pesanan/" + id));
+
+if(!snap.exists()){
+alert("Pesanan tidak ditemukan");
+return;
+}
+
+const data = snap.val();
+
+/* JIKA SUDAH DITERIMA STORE */
+const statusAsli =
+data.status === "cod"
+? "pending"
+: data.status;
+
+if(statusAsli !== "pending"){
+
+alert("Pesanan sudah diproses penjual");
+
+popup.remove();
+
+return;
+
+}
+
+
+/* =========================
+KEMBALIKAN SALDO
+========================= */
+if (data.metode === "SALDO") {
+
+  const userRef = ref(db, "users/" + data.user);
+  const userSnap = await get(userRef);
+
+  if (userSnap.exists()) {
+
+    const userData = userSnap.val();
+
+    const saldoSekarang = Number(userData.saldo || 0);
+    const totalOrder = Number(data.total || 0);
+
+    const transaksiId = "REFUND" + Date.now();
+
+    // 1. update saldo user
+    await set(
+      ref(db, "users/" + data.user + "/saldo"),
+      saldoSekarang + totalOrder
+    );
+
+    // 2. SIMPAN HISTORY REFUND (INI YANG KURANG SEBELUMNYA)
+    await set(
+      ref(db, "saldoHistory/" + data.user + "/" + transaksiId),
+      {
+        id: transaksiId,
+        type: "in", // uang masuk
+        category: "refund",
+        amount: totalOrder,
+        metode: "REFUND",
+        status: "approved",
+        desc: "Pengembalian saldo dari pembatalan pesanan",
+        createdAt: Date.now()
+      }
+    );
+
+  }
+}
+
+/* =========================
+UPDATE STATUS PESANAN
+========================= */
+
+await set(
+ref(db, "pesanan/" + id),
+{
+...data,
+status:"dibatalkan"
+}
+);
+
+popup.remove();
+
+document.getElementById("popup").style.display = "none";
+
+alert("Pesanan berhasil dibatalkan");
+
+startApp(uidUser);
+
+}catch(err){
+
+console.log(err);
+alert("Gagal membatalkan pesanan");
+
+}
+
+};
+
+};
+
+
+
+
+window.tutup=
+()=>{
+
+document
+.getElementById(
+"popup"
+)
+
+.style.display=
+"none";
+
+};
+
+
+
+
+
+window.goReview = (orderId) => {
+
+  // simpan order yang mau direview
+  localStorage.setItem("reviewOrderId", orderId);
+
+  // arahkan ke halaman review
+  location.href = "ulasansaya.html";
+};
+
+</script>
+</body>
+</html>

@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Rumah Pisang AFKAR</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#f5f5f5;
+padding-top:85px;
+padding-bottom:90px;
+}
+
+/* HEADER */
+
+.header{
+
+position:fixed;
+
+top:0;
+left:0;
+right:0;
+
+height:80px;
+
+background:#d29a01;
+
+display:flex;
+
+align-items:center;
+
+padding:15px;
+
+gap:12px;
+
+box-shadow:
+0 2px 15px rgba(0,0,0,.08);
+
+z-index:1000;
+
+}
+
+.search{
+
+flex:1;
+
+height:45px;
+
+background:#f3f3f3;
+
+border-radius:15px;
+
+display:flex;
+
+align-items:center;
+
+padding:0 15px;
+
+gap:10px;
+
+}
+
+.search input{
+
+border:none;
+
+outline:none;
+
+background:none;
+
+width:100%;
+
+}
+
+.iconBtn{
+
+width:45px;
+height:45px;
+
+border-radius:15px;
+
+background:#fff3dc;
+
+display:flex;
+
+justify-content:center;
+align-items:center;
+
+color:#ff9800;
+
+font-size:18px;
+
+}
+
+/* CONTENT */
+
+.banner{
+
+margin:15px;
+
+background:
+linear-gradient(
+135deg,
+#ffb300,
+#ff7b00
+);
+
+padding:25px;
+
+border-radius:25px;
+
+color:white;
+
+}
+
+.banner h2{
+margin-bottom:8px;
+}
+
+.menu{
+
+display:grid;
+
+grid-template-columns:
+repeat(4,1fr);
+
+gap:12px;
+
+padding:15px;
+
+}
+
+.menuItem{
+
+background:white;
+
+padding:18px 10px;
+
+border-radius:20px;
+
+text-align:center;
+
+box-shadow:
+0 3px 12px rgba(0,0,0,.05);
+
+}
+
+.menuItem i{
+
+font-size:22px;
+
+color:#ff9800;
+
+margin-bottom:10px;
+
+}
+
+.menuItem p{
+
+font-size:12px;
+
+}
+
+/* PRODUK */
+
+.title{
+
+padding:0 15px;
+
+margin-top:10px;
+
+margin-bottom:12px;
+
+font-weight:bold;
+
+font-size:18px;
+
+}
+
+.list{
+
+padding:5px;
+
+display:grid;
+
+grid-template-columns:
+repeat(2,1fr);
+
+gap:15px;
+
+}
+
+.card{
+
+background:white;
+
+border-radius:18px;
+
+overflow:hidden;
+
+box-shadow:
+0 3px 12px rgba(0,0,0,.06);
+
+position:relative;
+
+}
+
+.card img{
+
+width:100%;
+
+height:170px;
+
+object-fit:cover;
+
+}
+
+.promo{
+
+position:absolute;
+
+top:10px;
+left:10px;
+
+background:#ff3d00;
+
+color:white;
+
+padding:5px 10px;
+
+border-radius:10px;
+
+font-size:11px;
+
+font-weight:bold;
+
+}
+
+.info{
+padding:10px;
+}
+
+.nama{
+
+font-size:14px;
+
+font-weight:600;
+
+margin-bottom:8px;
+
+height:36px;
+
+overflow:hidden;
+
+}
+
+.harga{
+
+font-size:18px;
+
+font-weight:bold;
+
+color:#ff5a00;
+
+margin-bottom:4px;
+
+}
+
+.coret{
+
+font-size:12px;
+
+text-decoration:line-through;
+
+color:#888;
+
+}
+
+.row{
+
+display:flex;
+
+gap:6px;
+
+flex-wrap:wrap;
+
+margin-top:8px;
+
+}
+
+.tag{
+
+background:#fff1e6;
+
+padding:4px 8px;
+
+border-radius:8px;
+
+font-size:10px;
+
+color:#ff6f00;
+
+}
+
+.lokasi{
+
+margin-top:8px;
+
+font-size:11px;
+
+color:#777;
+
+}
+
+.info{
+padding:12px;
+}
+
+.nama{
+
+font-size:14px;
+
+font-weight:bold;
+
+margin-bottom:8px;
+
+}
+
+.harga{
+
+color:#ff6f00;
+
+font-weight:bold;
+
+}
+
+/* NAVIGATION */
+
+.nav{
+
+position:fixed;
+
+left:0;
+right:0;
+bottom:0;
+
+height:75px;
+
+background:white;
+
+display:flex;
+
+justify-content:space-around;
+
+align-items:center;
+
+box-shadow:
+0 -3px 15px rgba(0,0,0,.08);
+
+z-index:999;
+
+}
+
+.navItem{
+
+display:flex;
+
+flex-direction:column;
+
+align-items:center;
+
+font-size:12px;
+
+color:#777;
+
+gap:5px;
+
+}
+
+.active{
+color:#ff9800;
+}
+
+.navItem i{
+font-size:20px;
+}
+
+
+
+
+
+
+
+
+
+.sliderWrap{
+
+position:relative;
+
+margin:15px;
+
+overflow:hidden;
+
+}
+
+.bannerSlider{
+
+display:flex;
+
+overflow-x:auto;
+
+scroll-behavior:smooth;
+
+scroll-snap-type:x mandatory;
+
+gap:12px;
+
+-ms-overflow-style:none;
+
+scrollbar-width:none;
+
+}
+
+.bannerSlider::-webkit-scrollbar{
+display:none;
+}
+
+.bannerItem{
+
+min-width:100%;
+
+height:180px;
+
+border-radius:25px;
+
+overflow:hidden;
+
+scroll-snap-align:start;
+
+flex-shrink:0;
+
+box-shadow:
+0 5px 20px rgba(
+0,0,0,.1
+);
+
+}
+
+.bannerItem img{
+
+width:100%;
+height:100%;
+
+object-fit:cover;
+
+}
+
+.navSlide{
+
+position:absolute;
+
+top:50%;
+
+transform:
+translateY(-50%);
+
+width:42px;
+
+height:42px;
+
+border:none;
+
+border-radius:50%;
+
+background:
+rgba(
+255,
+255,
+255,
+.9
+);
+
+font-size:18px;
+
+z-index:10;
+
+cursor:pointer;
+
+}
+
+.left{
+left:10px;
+}
+
+.right{
+right:10px;
+}
+
+.dots{
+
+display:flex;
+
+justify-content:center;
+
+gap:8px;
+
+margin-top:10px;
+
+}
+
+.dot{
+
+width:8px;
+
+height:8px;
+
+border-radius:50%;
+
+background:#ccc;
+
+}
+
+.dot.active{
+
+background:#ff9800;
+
+}
+
+
+
+
+#searchResult{
+position:absolute;
+top:80px;
+left:0;
+right:0;
+background:white;
+z-index:9999;
+max-height:300px;
+overflow:auto;
+border-radius:10px;
+box-shadow:0 5px 20px rgba(0,0,0,.1);
+}
+
+#searchResult div{
+padding:12px;
+border-bottom:1px solid #eee;
+font-size:14px;
+cursor:pointer;
+}
+
+#searchResult div:hover{
+background:#f5f5f5;
+}
+
+
+</style>
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<div class="header">
+
+<div class="search">
+
+<i class="fa fa-search"></i>
+
+<input
+placeholder="Cari produk..."
+>
+
+</div>
+
+<div id="searchResult"></div>
+
+<div
+class="iconBtn"
+
+onclick="
+location.href=
+'detailcart.html'
+"
+
+>
+
+<i class="fa fa-shopping-cart"></i>
+
+</div>
+
+
+
+
+
+
+
+
+<div class="iconBtn">
+
+<i class="fa fa-message"></i>
+
+</div>
+
+</div>
+
+<!-- BANNER -->
+
+<div class="sliderWrap">
+
+<button
+class="navSlide left"
+onclick="prevBanner()"
+>
+
+❮
+
+</button>
+
+<div
+class="bannerSlider"
+id="bannerSlider"
+>
+
+</div>
+
+<button
+class="navSlide right"
+onclick="nextBanner()"
+>
+
+❯
+
+</button>
+
+<div
+class="dots"
+id="bannerDots"
+>
+
+</div>
+
+</div>
+
+<!-- MENU -->
+<div class="menu">
+
+<div class="menuItem" onclick="window.location.href='produk.html'">
+
+<i class="fa fa-box"></i>
+
+<p>
+Produk
+</p>
+
+</div>
+
+<div class="menuItem" onclick="window.location.href='orderan.html'">
+
+<i class="fa fa-receipt"></i>
+
+<p>
+Pesanan
+</p>
+
+</div>
+
+<div class="menuItem" onclick="window.location.href='saldo.html'">
+
+<i class="fa fa-wallet"></i>
+
+<p>
+Saldo
+</p>
+
+</div>
+
+<div class="menuItem" onclick="window.location.href='store.html'">
+
+<i class="fa fa-store"></i>
+
+<p>
+Toko
+</p>
+
+</div>
+
+</div>
+
+
+
+<div class="title">
+
+Produk Pilihan
+
+</div>
+
+<div
+class="list"
+id="produkList"
+>
+
+</div>
+
+
+
+
+
+
+
+<!-- NAVIGATION -->
+
+<div class="nav">
+
+  <div class="navItem active" onclick="location.href='home.html'">
+    <i class="fa fa-house"></i>
+    <span>Home</span>
+  </div>
+
+  <div class="navItem" onclick="location.href='notifikasi.html'">
+    <i class="fa fa-bell"></i>
+    <span>Notifikasi</span>
+  </div>
+
+<div class="navItem" onclick="cekLoginSaya()">
+  <i class="fa fa-user"></i>
+  <span>Saya</span>
+</div>
+
+</div>
+
+</div>
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get,
+set,
+onValue
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+import {
+getAuth,
+onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+// =========================
+// FIREBASE CONFIG
+// =========================
+
+const firebaseConfig = {
+apiKey:"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+authDomain:"shoponline-93646.firebaseapp.com",
+databaseURL:"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"shoponline-93646",
+storageBucket:"shoponline-93646.firebasestorage.app",
+messagingSenderId:"435032364443",
+appId:"1:435032364443:web:5f76384f794693a892bd3e"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+
+
+
+
+
+
+
+
+
+
+const auth = getAuth(app);
+
+// CEK STATUS LOGIN (TANPA REDIRECT)
+onAuthStateChanged(auth,(user)=>{
+
+if(user){
+
+console.log("User login:", user.email);
+
+}else{
+
+console.log("Guest mode");
+
+}
+
+});
+
+
+
+
+
+window.cekLoginSaya = function(){
+
+const uid = localStorage.getItem("userId");
+
+if(uid){
+
+location.href = "saya.html";
+
+}else{
+
+location.href = "index.html";
+
+}
+
+}
+
+
+
+
+
+
+
+
+
+const produkRef = ref(db,"produk");
+const produkList = document.getElementById("produkList");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// =========================
+// DATA DUMMY OTOMATIS
+// =========================
+
+
+async function createDummyProducts(){
+
+const snap = await get(ref(db, "produk"));
+
+/* ✅ FIX: benar-benar kosong baru dibuat */
+if (snap.exists() && Object.keys(snap.val() || {}).length > 0) {
+console.log("Produk sudah ada, skip dummy");
+return;
+}
+
+/* ❌ jangan set ulang full kalau tidak kosong */
+await set(ref(db, "produk"), {
+prd1:{
+id:"prd1",
+nama:"Keripik Pisang Original Premium",
+harga:15000,
+hargaAwal:22000,
+diskon:30,
+stok:32,
+promo:true,
+cod:true,
+kupon:true,
+lokasi:"Jakarta",
+deskripsi:"Keripik pisang premium rasa original renyah dan manis.",
+gambar:[
+"https://images.unsplash.com/photo-1576618148400-f54bed99fcfd"
+]
+},
+prd2:{
+id:"prd2",
+nama:"Keripik Pisang Balado",
+harga:18000,
+hargaAwal:25000,
+diskon:20,
+stok:14,
+promo:true,
+cod:true,
+kupon:true,
+lokasi:"Medan",
+deskripsi:"Keripik pisang balado pedas manis.",
+gambar:[
+"https://images.unsplash.com/photo-1509440159596-0249088772ff"
+]
+}
+});
+
+}
+
+
+
+
+
+
+
+
+// =========================
+// TEMPLATE PRODUK
+// =========================
+function createCard(data,key){
+
+const harga=
+(data.harga||0)
+.toLocaleString(
+"id-ID"
+);
+
+const hargaAwal=
+(data.hargaAwal||0)
+.toLocaleString(
+"id-ID"
+);
+
+const produkId=
+data.id || key;
+
+const gambarUtama=
+
+Array.isArray(
+data.gambar
+)
+
+?
+
+data.gambar[0]
+
+:
+
+(
+data.gambar ||
+
+"https://via.placeholder.com/300"
+);
+
+
+return `
+
+<div
+
+class="card"
+
+data-id="${produkId}"
+
+>
+
+${data.promo ? `
+
+<div class="promo">
+
+🔥 PROMO
+
+</div>
+
+` : ""}
+
+<img src="${gambarUtama}">
+
+<div class="info">
+
+<div class="nama">
+
+${data.nama||"-"}
+
+</div>
+
+<div class="harga">
+
+Rp ${harga}
+
+</div>
+
+<div class="coret">
+
+Rp ${hargaAwal}
+
+</div>
+
+<div class="row">
+
+${
+data.cod ?
+
+'<div class="tag">🚚 COD</div>'
+
+:
+
+''
+}
+
+${
+data.kupon ?
+
+'<div class="tag">🎫 Kupon</div>'
+
+:
+
+''
+}
+
+<div class="tag">
+
+⚡ ${data.stok||0}
+
+</div>
+
+</div>
+
+<div class="lokasi">
+
+📍 ${data.lokasi||"-"}
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+}
+
+// =========================
+// LOAD PRODUK
+// =========================
+
+let produkListener = null;
+
+function loadProducts(){
+
+// cegah listener dobel
+if(produkListener) return;
+
+produkListener = onValue(produkRef, (snapshot)=>{
+
+let html = "";
+
+// kalau kosong
+if(!snapshot.exists()){
+produkList.innerHTML = "<div style='text-align:center;color:#888'>Tidak ada produk</div>";
+return;
+}
+
+snapshot.forEach((item)=>{
+
+const data = item.val();
+const key = item.key;
+
+// safety data
+const harga = data.harga ?? 0;
+const hargaAwal = data.hargaAwal ?? 0;
+
+html += createCard(data, key);
+
+});
+
+// render sekali saja
+produkList.innerHTML = html;
+
+// event klik pakai delegation (WAJIB FIX)
+produkList.onclick = function(e){
+
+const card = e.target.closest(".card");
+if(!card) return;
+
+const id = card.dataset.id;
+if(id){
+location.href = `detailproduk.html?id=${id}`;
+}
+
+};
+
+});
+
+}
+
+// =========================
+// START
+// =========================
+
+
+
+
+const bannerDummy = [
+
+{
+gambar:
+"https://images.unsplash.com/photo-1515003197210-e0cd71810b5f"
+},
+
+{
+gambar:
+"https://images.unsplash.com/photo-1499028344343-cd173ffc68a9"
+},
+
+{
+gambar:
+"https://images.unsplash.com/photo-1482049016688-2d3e1b311543"
+},
+
+{
+gambar:
+"https://images.unsplash.com/photo-1464306076886-da185f6a9d05"
+},
+
+{
+gambar:
+"https://images.unsplash.com/photo-1504754524776-8f4f37790ca0"
+}
+
+];
+
+const slider =
+document.getElementById(
+"bannerSlider"
+);
+
+const dots =
+document.getElementById(
+"bannerDots"
+);
+
+let current = 0;
+
+
+// BUAT BANNER
+
+bannerDummy.forEach(
+(item,index)=>{
+
+slider.innerHTML += `
+
+<div class="bannerItem">
+
+<img src="${item.gambar}">
+
+</div>
+
+`;
+
+dots.innerHTML += `
+
+<div class="
+dot
+${index===0 ?
+"active" :
+""
+}
+">
+
+</div>
+
+`;
+
+});
+
+
+// UPDATE DOT
+
+function updateDot(){
+
+document
+.querySelectorAll(
+".dot"
+)
+
+.forEach(
+x=>x.classList.remove(
+"active"
+)
+);
+
+document
+.querySelectorAll(
+".dot"
+)
+
+[current]
+
+.classList.add(
+"active"
+);
+
+}
+
+
+// NEXT
+
+window.nextBanner =
+function(){
+
+current++;
+
+if(
+current >=
+bannerDummy.length
+){
+
+current = 0;
+
+}
+
+slider.scrollTo({
+
+left:
+slider.offsetWidth
+*
+current,
+
+behavior:
+"smooth"
+
+});
+
+updateDot();
+
+};
+
+
+// PREV
+
+window.prevBanner =
+function(){
+
+current--;
+
+if(
+current < 0
+){
+
+current =
+bannerDummy.length - 1;
+
+}
+
+slider.scrollTo({
+
+left:
+slider.offsetWidth
+*
+current,
+
+behavior:
+"smooth"
+
+});
+
+updateDot();
+
+};
+
+
+// AUTO SLIDE
+
+setInterval(()=>{
+
+nextBanner();
+
+},4000);
+
+
+// GESER MANUAL
+
+slider.addEventListener(
+"scroll",
+
+()=>{
+
+current =
+Math.round(
+
+slider.scrollLeft /
+slider.offsetWidth
+
+);
+
+updateDot();
+
+}
+
+);
+
+
+
+
+
+
+
+
+
+
+
+
+await createDummyProducts();
+
+loadProducts();
+
+
+
+
+let allProduk = [];
+let allStore = [];
+
+// AMBIL DATA PRODUK
+const produkSnap = await get(ref(db, "produk"));
+if (produkSnap.exists()) {
+produkSnap.forEach(x => {
+allProduk.push({ id: x.key, ...x.val() });
+});
+}
+
+// AMBIL DATA STORE
+const storeSnap = await get(ref(db, "stores"));
+if (storeSnap.exists()) {
+storeSnap.forEach(x => {
+allStore.push({ id: x.key, ...x.val() });
+});
+}
+
+console.log("READY SEARCH DATA:", allProduk.length, allStore.length);
+
+
+// =========================
+// SEARCH PRODUK + STORE
+// =========================
+const searchInput = document.querySelector(".search input");
+const searchResult = document.getElementById("searchResult");
+
+searchInput.addEventListener("input", (e) => {
+
+const q = e.target.value.toLowerCase().trim();
+
+if (!q) {
+searchResult.innerHTML = "";
+return;
+}
+
+let hasilProduk = allProduk.filter(p =>
+(p.nama || "").toLowerCase().includes(q)
+);
+
+let hasilStore = allStore.filter(s =>
+(s.nama || "").toLowerCase().includes(q)
+);
+
+let html = "";
+
+// PRODUK
+hasilProduk.slice(0,10).forEach(p => {
+html += `
+<div onclick="location.href='detailproduk.html?id=${p.id}'">
+🛒 ${p.nama}
+</div>
+`;
+});
+
+// STORE
+hasilStore.slice(0,10).forEach(s => {
+
+html += `
+<div onclick="location.href='detailstore.html?id=${s.id}'"
+style="display:flex;align-items:center;gap:10px;">
+
+<img src="${s.logo || 'https://picsum.photos/50'}"
+style="width:40px;height:40px;border-radius:10px;object-fit:cover;">
+
+<div>
+<div style="font-weight:bold;font-size:14px;">
+${s.nama}
+</div>
+
+<div style="font-size:12px;color:#777;">
+Store
+</div>
+</div>
+
+</div>
+`;
+
+});
+
+searchResult.innerHTML = html;
+
+});
+
+
+
+</script>
+
+</body>
+</html>

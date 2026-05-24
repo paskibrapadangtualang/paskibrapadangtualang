@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Saya | Rumah Pisang AFKAR</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#f5f5f5;
+padding-bottom:95px;
+}
+
+/* HEADER */
+
+.header{
+  position:relative;
+  padding:20px;
+  color:white;
+  border-radius:0 0 25px 25px;
+  overflow:hidden;
+  min-height:220px;
+  background-size:cover;
+  background-position:center;
+    z-index:1;
+
+}
+.profile{
+  display:flex;
+  position:relative;
+  align-items:center;
+  gap:15px;
+
+  margin-top:70px; /* 🔥 ini yang nurunin posisi */
+}
+
+.profile img{
+
+width:75px;
+height:75px;
+
+border-radius:50%;
+
+object-fit:cover;
+
+border:3px solid white;
+
+}
+
+.nama{
+
+font-size:22px;
+font-weight:bold;
+}
+
+.level{
+
+margin-top:5px;
+
+display:inline-block;
+
+padding:5px 12px;
+
+background:white;
+
+color:#ff6f00;
+
+border-radius:20px;
+
+font-size:12px;
+
+}
+
+.stats{
+
+display:flex;
+
+gap:25px;
+
+margin-top:15px;
+
+font-size:14px;
+
+}
+
+/* ICON PNG */
+
+.iconRow{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:10px;
+  padding:1px;
+
+  margin-top:-15px;
+
+  position:relative;
+  z-index:10; /* 🔥 ini kunci */
+}
+
+.iconBox{
+
+background:white;
+
+padding:6px;
+
+border-radius:18px;
+
+text-align:center;
+
+box-shadow:
+0 4px 12px rgba(
+0,0,0,.05
+);
+
+}
+
+.iconBox img{
+
+width:32px;
+height:32px;
+
+object-fit:contain;
+
+margin-bottom:8px;
+
+}
+
+.iconBox p{
+font-size:11px;
+}
+
+/* CARD */
+
+.card{
+
+background:white;
+
+margin:15px;
+
+padding:18px;
+
+border-radius:22px;
+
+
+
+}
+
+.title{
+
+display:flex;
+
+justify-content:space-between;
+
+margin-bottom:18px;
+
+font-weight:bold;
+
+}
+
+.menu4{
+
+display:grid;
+
+grid-template-columns:
+repeat(4,1fr);
+
+gap:12px;
+
+text-align:center;
+
+}
+
+.menu4 i{
+
+font-size:25px;
+
+color:#ff6f00;
+
+margin-bottom:8px;
+
+}
+
+.menu4 p{
+
+font-size:12px;
+
+}
+
+/* DOMPET */
+
+.wallet{
+
+display:grid;
+
+grid-template-columns:
+repeat(2,1fr);
+
+gap:12px;
+
+}
+
+.walletItem{
+
+background:#fff4ec;
+
+padding:15px;
+
+border-radius:18px;
+
+}
+
+.walletItem h4{
+
+color:#ff6f00;
+
+margin-bottom:5px;
+
+}
+
+/* AKTIVITAS */
+
+.activity{
+
+display:grid;
+
+grid-template-columns:
+repeat(2,1fr);
+
+gap:12px;
+
+}
+
+.activity div{
+
+background:#fafafa;
+
+padding:18px;
+
+border-radius:16px;
+
+}
+
+/* NAV */
+
+.nav{
+
+position:fixed;
+
+left:0;
+right:0;
+bottom:0;
+
+height:78px;
+
+background:white;
+
+display:flex;
+
+justify-content:space-around;
+
+align-items:center;
+
+box-shadow:
+0 -3px 15px rgba(
+0,0,0,.08
+);
+
+}
+
+.navItem{
+
+display:flex;
+
+flex-direction:column;
+
+align-items:center;
+
+gap:5px;
+
+font-size:12px;
+
+color:#777;
+
+}
+
+.active{
+color:#ff6f00;
+}
+
+.navItem i{
+font-size:20px;
+}
+
+
+.headerOverlay{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg, rgba(0,0,0,.4), rgba(0,0,0,.7));
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* CARD */
+#afkarCardActivity{
+  background:#fff;
+
+  margin:15px 0;   /* ✔ hanya atas bawah */
+  padding:18px;
+
+  border-radius:0;  /* 🔥 full kiri kanan */
+  
+}
+
+/* TITLE */
+#afkarTitleActivity{
+  font-size:15px;
+  font-weight:bold;
+  margin-bottom:15px;
+  color:#222;
+}
+
+/* GRID */
+#afkarActivityGrid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+
+/* ITEM */
+.afkarActivityItem{
+  background:#f8f8f8;
+  border-radius:14px;
+  padding:14px;
+
+  display:flex;
+  align-items:center;
+  gap:10px;
+
+  transition:.2s;
+  cursor:pointer;
+}
+
+.afkarActivityItem:hover{
+  transform:translateY(-2px);
+  background:#fff3e6;
+}
+
+/* ICON */
+.afkarIcon{
+  font-size:20px;
+  width:34px;
+  height:34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#fff;
+  border-radius:10px;
+  box-shadow:0 2px 6px rgba(0,0,0,.05);
+}
+
+/* TEXT */
+.afkarText{
+  font-size:13px;
+  font-weight:600;
+  color:#333;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header" id="headerBox">
+
+    <div class="headerOverlay"></div>
+
+
+
+<div class="profile">
+
+<img id="foto">
+
+<div>
+
+<div
+class="nama"
+id="namaUser"
+>
+
+Memuat...
+
+</div>
+
+<div class="level">
+
+Silver Member
+
+</div>
+
+<div class="stats">
+
+<div>
+
+<b id="ikut">
+
+0
+
+</b>
+
+Mengikuti
+
+</div>
+
+<div>
+
+<b id="pengikut">
+
+0
+
+</b>
+
+Pengikut
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- 5 ICON PNG -->
+
+<div class="iconRow">
+
+<div class="iconBox" onclick="window.location.href='orderan.html'">
+    <img src="assets/images/f0049e9df4e536bc3e7f140d071e9078.png">
+    <p>Pesanan</p>
+</div>
+
+<div class="iconBox">
+<img src="assets/images/a0ef4bd8e16e481b4253bd0eb563f784.png">
+<p>Coin Afkar</p>
+</div>
+
+<div class="iconBox">
+<img src="assets/images/84feaa363ce325071c0a66d3c9a88748.png">
+<p>Voucher</p>
+</div>
+
+<div class="iconBox" onclick="window.location.href='store.html'">
+    <img src="assets/images/748adc5e75595200c51b (1).png">
+    <p>Toko</p>
+</div>
+
+<div class="iconBox" onclick="window.location.href='datasaya.html'">
+    <img src="assets/images/ba61750a46794d8847c3f463c5e71cc4.png">
+    <p>Data saya</p>
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="title">
+
+<span>
+
+Pesanan Saya
+
+</span>
+
+<span>
+
+Lihat Semua
+
+</span>
+
+</div>
+
+<div class="menu4">
+
+<div>
+<i class="fa fa-wallet"></i>
+<p>Belum Bayar</p>
+</div>
+
+<div>
+<i class="fa fa-box"></i>
+<p>Dikemas</p>
+</div>
+
+<div>
+<i class="fa fa-truck"></i>
+<p>Dikirim</p>
+</div>
+
+<div>
+<i class="fa fa-star"></i>
+<p>Ulasan</p>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="title">
+
+Dompet Saya
+
+</div>
+
+<div class="wallet">
+
+<div class="walletItem">
+
+<h4>
+
+Saldo
+
+</h4>
+
+<p id="saldo">
+
+Rp0
+
+</p>
+
+</div>
+
+<div class="walletItem">
+
+<h4>
+
+Voucher
+
+</h4>
+
+<p>
+
+0 Voucher
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="card" id="afkarCardActivity">
+
+  <div class="title" id="afkarTitleActivity">
+    Aktivitas Saya
+  </div>
+
+  <div id="afkarActivityGrid">
+
+    <div class="afkarActivityItem">
+      <div class="afkarIcon">🍌</div>
+      <div class="afkarText">Mulai Jual</div>
+    </div>
+
+    <div class="afkarActivityItem">
+      <div class="afkarIcon">🤝</div>
+      <div class="afkarText">Affiliate</div>
+    </div>
+
+    <div class="afkarActivityItem">
+      <div class="afkarIcon">🎁</div>
+      <div class="afkarText">Promo</div>
+    </div>
+
+    <div class="afkarActivityItem">
+      <div class="afkarIcon">⭐</div>
+      <div class="afkarText">Favorit</div>
+    </div>
+
+  </div>
+
+</div>
+
+
+
+
+
+<div class="nav">
+
+  <div class="navItem" onclick="location.href='home.html'">
+    <i class="fa fa-house"></i>
+    <span>Home</span>
+  </div>
+
+  <div class="navItem" onclick="location.href='notifikasi.html'">
+    <i class="fa fa-bell"></i>
+    <span>Notifikasi</span>
+  </div>
+
+  <div class="navItem active" onclick="location.href='saya.html'">
+    <i class="fa fa-user"></i>
+    <span>Saya</span>
+  </div>
+
+</div>
+
+
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get,
+set
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+
+const firebaseConfig={
+
+apiKey:
+"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+
+authDomain:
+"shoponline-93646.firebaseapp.com",
+
+databaseURL:
+"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"shoponline-93646",
+
+storageBucket:
+"shoponline-93646.firebasestorage.app",
+
+messagingSenderId:
+"435032364443",
+
+appId:
+"1:435032364443:web:5f76384f794693a892bd3e"
+
+};
+
+
+const app=
+initializeApp(
+firebaseConfig
+);
+
+const db=
+getDatabase(
+app
+);
+
+
+/* USER LOGIN */
+
+const uidUser=
+
+localStorage.getItem(
+"userId"
+)
+
+||
+
+"OPMxN10uM3XCKIfRD02Mvd7PdK72";
+
+
+
+/* REF USER */
+
+const userRef = ref(db, "users/"+uidUser);
+
+/* =========================
+DUMMY BANNER PROFIL (AMAN)
+========================= */
+async function ensureBanner(){
+
+  const snap = await get(userRef);
+
+  if(!snap.exists()) return;
+
+  const data = snap.val();
+
+  if(!data.bannerProfil){
+
+    await set(userRef, {
+      ...data,
+      bannerProfil:
+        "https://picsum.photos/800/300?random=" + uidUser
+    });
+
+    console.log("Banner dummy dibuat");
+  }
+
+}
+await ensureBanner();
+
+
+/* BUAT DATA TAMBAHAN OTOMATIS */
+async function createExtraData(){
+
+const snap = await get(userRef);
+console.log("USER SNAP:", snap.val());
+if(!snap.exists()) return;
+
+const data = snap.val();
+
+let updateData = {};
+
+/* FOLLOW */
+if(data.mengikuti === undefined)
+  updateData.mengikuti = 0;
+
+if(data.pengikut === undefined)
+  updateData.pengikut = 0;
+
+/* SALDO */
+/* SALDO UTAMA */
+if (data.saldo === undefined) {
+  updateData.saldo = 0;
+}
+
+/* POIN */
+if(data.poinAfkar === undefined)
+  updateData.poinAfkar = 0;
+
+/* LEVEL */
+if(!data.level)
+  updateData.level = "Silver Member";
+
+/* BANNER (INI YANG KAMU MAU) */
+if(!data.bannerProfil){
+  updateData.bannerProfil =
+    "https://picsum.photos/800/300?random=" + uidUser;
+}
+
+/* SAVE KE FIREBASE */
+if(Object.keys(updateData).length > 0){
+  await set(ref(db,"users/"+uidUser),{
+    ...data,
+    ...updateData
+  });
+}
+
+}
+
+
+await createExtraData();
+
+
+
+
+
+
+
+/* AMBIL DATA USER */
+
+const snap=
+await get(
+userRef
+);
+
+
+if(
+!snap.exists()
+){
+
+document
+.getElementById(
+"namaUser"
+)
+
+.innerHTML=
+"User tidak ditemukan";
+
+throw new Error(
+"user kosong"
+);
+
+}
+
+
+const user=
+snap.val();
+
+
+
+
+document.getElementById("headerBox").style.backgroundImage =
+`url(${user.bannerProfil})`;`
+
+
+
+linear-gradient(135deg, rgba(0,0,0,.3), rgba(0,0,0,.6)),
+url(${user.bannerProfil || "https://picsum.photos/800/300"})
+center/cover no-repeat
+`;
+
+/* PROFIL */
+
+document
+.getElementById(
+"namaUser"
+)
+
+.innerHTML=
+
+user.nama
+||
+
+"Tanpa Nama";
+
+
+document
+.getElementById(
+"foto"
+)
+
+.src=
+
+user.foto
+||
+
+"https://ui-avatars.com/api/?name=AFKAR";
+
+
+document
+.getElementById(
+"ikut"
+)
+
+.innerHTML=
+
+user.mengikuti
+||
+
+0;
+
+
+document
+.getElementById(
+"pengikut"
+)
+
+.innerHTML=
+
+user.pengikut
+||
+
+0;
+
+
+/* LEVEL */
+document.querySelector(".level").innerHTML =
+  user.level || "Silver Member";
+
+/* SALDO UTAMA */
+document.getElementById("saldo").innerHTML =
+  "Rp " + (user.saldo || 0).toLocaleString("id-ID");
+
+
+/* HITUNG ORDER */
+
+const orderSnap=
+
+await get(
+
+ref(
+db,
+"pesanan"
+)
+
+);
+
+
+let belumBayar=0;
+let dikemas=0;
+let dikirim=0;
+let selesai=0;
+
+
+if(
+orderSnap.exists()
+){
+
+orderSnap.forEach(
+
+(x)=>{
+
+const d=
+x.val();
+
+
+if(
+d.user!==uidUser
+)
+return;
+
+
+/* BELUM BAYAR */
+
+if(
+
+d.status==="pending"
+
+||
+
+d.status==="cod"
+
+)
+
+belumBayar++;
+
+
+/* DIKEMAS */
+
+if(
+
+d.status==="diproses"
+
+||
+
+d.status==="disetujui"
+
+)
+
+dikemas++;
+
+
+/* DIKIRIM */
+
+if(
+d.status==="dikirim"
+)
+dikirim++;
+
+
+/* SELESAI */
+
+if(
+d.status==="selesai"
+)
+selesai++;
+
+}
+
+);
+
+}
+
+
+/* UPDATE MENU ORDER */
+
+const menu=
+
+document.querySelectorAll(
+".menu4 p"
+);
+
+
+menu[0].innerHTML=
+
+"Belum Bayar<br><b>"+belumBayar+"</b>";
+
+
+menu[1].innerHTML=
+
+"Dikemas<br><b>"+dikemas+"</b>";
+
+
+menu[2].innerHTML=
+
+"Dikirim<br><b>"+dikirim+"</b>";
+
+
+menu[3].innerHTML=
+
+"Ulasan<br><b>"+selesai+"</b>";
+
+
+
+/* AKTIVITAS OTOMATIS */
+
+document
+.querySelector(
+".activity"
+)
+
+.innerHTML=
+
+`
+
+<div>
+
+🍌
+Mulai Jual
+
+<br><br>
+
+<b>
+
+${belumBayar}
+
+</b>
+
+Pesanan Aktif
+
+</div>
+
+
+<div>
+
+🤝
+Affiliate
+
+<br><br>
+
+<b>
+
+${user.pengikut || 0}
+
+</b>
+
+Pengikut
+
+</div>
+
+
+<div>
+
+🎁
+Promo
+
+<br><br>
+
+<b>
+
+${user.poinAfkar || 0}
+
+</b>
+
+Poin
+
+</div>
+
+
+<div>
+
+⭐
+Favorit
+
+<br><br>
+
+<b>
+
+${selesai}
+
+</b>
+
+Selesai
+
+</div>
+
+`;
+
+
+
+
+
+
+const uid = localStorage.getItem("userId");
+
+if (!uid) {
+  location.href = "index.html";
+}
+
+
+
+
+
+
+
+
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gudang Produk</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#f5f5f5;
+padding-bottom:90px;
+}
+
+.header{
+background:#ff6f00;
+color:white;
+padding:15px;
+font-weight:bold;
+text-align:center;
+position:relative;
+}
+
+/* CART */
+.cart{
+position:absolute;
+right:15px;
+top:12px;
+background:white;
+color:#ff6f00;
+padding:5px 10px;
+border-radius:20px;
+font-size:12px;
+font-weight:bold;
+}
+
+/* PRODUCT */
+.container{
+padding:15px;
+display:grid;
+grid-template-columns:1fr;
+gap:10px;
+}
+
+.card{
+background:white;
+border-radius:12px;
+padding:10px;
+box-shadow:0 5px 15px rgba(0,0,0,0.08);
+}
+
+.card img{
+width:100%;
+border-radius:10px;
+height:160px;
+object-fit:cover;
+}
+
+.title{
+font-weight:bold;
+margin-top:8px;
+}
+
+.price{
+color:#ff6f00;
+font-weight:bold;
+margin-top:5px;
+}
+
+.btn{
+display:inline-block;
+margin-top:10px;
+padding:8px 10px;
+background:#ff6f00;
+color:white;
+border-radius:8px;
+font-size:12px;
+cursor:pointer;
+}
+
+/* NAV */
+.bottom-nav{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+height:65px;
+background:white;
+border-top:1px solid #eee;
+display:flex;
+justify-content:space-around;
+align-items:center;
+}
+
+.nav-item{
+text-decoration:none;
+color:#666;
+font-size:11px;
+display:flex;
+flex-direction:column;
+align-items:center;
+flex:1;
+}
+
+.nav-icon{
+width:22px;
+height:22px;
+}
+
+.nav-item.active{
+color:#ff6f00;
+font-weight:bold;
+}
+
+/* TOP ACTION */
+.top-action{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:10px 15px;
+}
+
+.btn-right{
+background:#22c55e;
+color:white;
+padding:8px 12px;
+border-radius:8px;
+font-size:12px;
+cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+Gudang Produk
+<div class="cart" id="cart">🛒 0</div>
+</div>
+
+<div class="top-action">
+<div>Produk tersedia</div>
+<div class="btn-right" onclick="checkout()">Tambahkan Sekarang</div>
+</div>
+
+<div class="container" id="list">
+Loading...
+</div>
+
+<!-- NAV -->
+<div class="bottom-nav">
+
+<a href="gudangproduk.html" class="nav-item active">
+<img src="assets/images/shopping.png" class="nav-icon">
+<span>Gudang produk</span>
+</a>
+
+<a href="pesanansaya.html" class="nav-item">
+<img src="assets/images/shopping-list.png" class="nav-icon">
+<span>Pesanan</span>
+</a>
+
+<a href="dashboardstore.html" class="nav-item">
+<img src="assets/images/shope.png" class="nav-icon">
+<span>Vendor</span>
+</a>
+
+</div>
+
+
+
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, push, set, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyD3DTcca7yZKVtllcK3TQOUe6Yv2hSyG_g",
+authDomain:"shoponline-93646.firebaseapp.com",
+databaseURL:"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"shoponline-93646",
+storageBucket:"shoponline-93646.firebasestorage.app",
+messagingSenderId:"435032364443",
+appId:"1:435032364443:web:5f76384f794693a892bd3e"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const storeId = localStorage.getItem("storeId");
+
+/* 🔥 AUTO DUMMY (OPTIONAL) */
+async function createDummy(){
+
+const snap = await get(ref(db,"Gudangproduk"));
+
+if(!snap.exists()){
+
+await set(ref(db,"Gudangproduk"), {
+product100:{
+nama:"Produk 100",
+deskripsi:"Produk premium kualitas terbaik",
+harga:56274,
+hargaAwal:210900,
+diskon:42,
+promo:true,
+stok:5,
+lokasi:"Jakarta",
+cod:true,
+kupon:true,
+gambar:[
+"https://picsum.photos/300/200",
+"https://picsum.photos/301/200"
+],
+storeId:"store_1779561538090",
+id:"produk100"
+}
+});
+
+}
+}
+
+/* 🔥 ADD TO PRODUK */
+window.addToStore = async function(productString){
+
+if(!storeId){
+alert("Login sebagai store dulu!");
+return;
+}
+
+try {
+
+const product = JSON.parse(productString);
+
+const newId = "produk" + Date.now();
+
+const data = {
+id: newId,
+nama: product.nama || "Tanpa Nama",
+deskripsi: product.deskripsi || "-",
+
+harga: product.hargaPromo || product.harga || product.hargaAwal || 0,
+hargaAwal: product.hargaAwal || product.harga || 0,
+
+diskon: product.diskon || 0,
+promo: product.promo || false,
+stok: product.stok || 0,
+lokasi: product.lokasi || "-",
+cod: product.cod || false,
+kupon: product.kupon || false,
+gambar: product.gambar || [],
+storeId: storeId
+};
+
+await set(ref(db, "produk/" + newId), data);
+
+alert("Produk berhasil ditambahkan!");
+
+} catch(err){
+console.error(err);
+alert("Gagal menambahkan produk");
+}
+
+}
+
+createDummy();
+
+
+
+
+
+
+
+async function load(){
+
+await createDummy();
+
+const snap = await get(ref(db,"Gudangproduk"));
+const list = document.getElementById("list");
+
+if(!snap.exists()){
+list.innerHTML = "<div style='text-align:center;color:#888'>Tidak ada produk</div>";
+return;
+}
+
+let dataArray = [];
+
+/* 🔥 UBAH KE ARRAY (AMAN) */
+snap.forEach(item => {
+dataArray.push({
+key: item.key,
+...item.val()
+});
+});
+
+/* FORMAT RUPIAH */
+const format = (num) =>
+new Intl.NumberFormat('id-ID').format(num || 0);
+
+let html = "";
+
+/* 🔥 LOOP NORMAL */
+for(let p of dataArray){
+
+/* AUTO FIX LOCAL (AMAN TANPA RUSAK FIREBASE) */
+p.nama = p.nama ?? "-";
+p.deskripsi = p.deskripsi ?? "-";
+
+const hargaPromo = p.hargaPromo ?? 0;
+const hargaNormal = p.hargaNormal ?? p.hargaModal ?? 0;
+
+p.stok = p.stok ?? 5;
+p.lokasi = p.lokasi ?? "-";
+p.gambar = Array.isArray(p.gambar) ? p.gambar : [];
+
+html += `
+<div class="card">
+
+<img src="${p.gambar[0] || 'https://via.placeholder.com/300'}">
+
+<div class="title">${p.nama}</div>
+<div>${p.deskripsi}</div>
+
+<div class="price">
+Rp ${format(hargaPromo)}
+</div>
+
+<small style="color:#888">
+Stok: ${p.stok} | Lokasi: ${p.lokasi}
+</small>
+
+<div class="btn"
+data-product='${JSON.stringify(p).replace(/'/g, "&apos;")} '
+onclick="addToStore(this.dataset.product)">
++ Tambahkan ke toko
+</div>
+
+</div>
+`;
+}
+
+list.innerHTML = html;
+
+}
+
+load();
+</script>
+
+
+
+
+
+
+</body>
+</html>

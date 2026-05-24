@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Detail Produk</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#f5f5f5;
+padding-bottom:100px;
+}
+
+.slider{
+display:flex;
+overflow-x:auto;
+scroll-snap-type:x mandatory;
+background:white;
+height:360px;
+scroll-behavior:smooth;
+}
+
+.slideItem{
+flex:0 0 100%;
+width:100%;
+height:360px;
+position:relative;
+scroll-snap-align:start;
+}
+
+.slideItem img{
+width:100%;
+height:100%;
+object-fit:cover;
+display:block;
+}
+.reportBtn{
+position:absolute;
+top:10px;
+right:10px;
+width:38px;
+height:38px;
+border-radius:12px;
+background:rgba(255,255,255,.95);
+display:flex;
+align-items:center;
+justify-content:center;
+box-shadow:0 3px 10px rgba(0,0,0,.1);
+z-index:10;
+cursor:pointer;
+}
+
+.reportBtn img{
+width:22px;
+height:22px;
+object-fit:contain;
+}
+
+.info{
+margin-top:10px;
+background:white;
+padding:20px;
+}
+
+.nama{
+font-size:22px;
+font-weight:bold;
+margin-bottom:10px;
+}
+
+.harga{
+font-size:28px;
+font-weight:bold;
+color:#ff6f00;
+}
+
+.coret{
+margin-top:5px;
+color:#888;
+text-decoration:line-through;
+}
+
+.desc{
+margin-top:20px;
+line-height:1.7;
+font-size:14px;
+}
+
+.zoom{
+position:fixed;
+inset:0;
+background:black;
+display:none;
+justify-content:center;
+align-items:center;
+z-index:9999;
+}
+
+.zoom img{
+width:100%;
+max-height:100%;
+object-fit:contain;
+}
+
+.bottom{
+
+position:fixed;
+
+bottom:0;
+left:0;
+right:0;
+
+height:80px;
+
+background:white;
+
+display:flex;
+
+gap:10px;
+
+padding:10px;
+
+box-shadow:
+0 -3px 15px rgba(0,0,0,.1);
+
+}
+
+.cartBtn{
+
+width:80px;
+
+border:none;
+
+background:#fff3dc;
+
+border-radius:18px;
+}
+
+.buyBtn{
+
+flex:1;
+
+border:none;
+
+background:#ff9800;
+
+color:white;
+
+font-size:16px;
+
+border-radius:18px;
+}
+
+
+
+
+/* STORE */
+
+.storeBox{
+
+background:white;
+
+margin-top:12px;
+
+padding:15px;
+
+}
+
+.storeTop{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+}
+
+.storeLogo{
+
+width:70px;
+height:70px;
+
+border-radius:20px;
+
+object-fit:cover;
+
+}
+
+.storeInfo{
+flex:1;
+}
+
+.storeNama{
+
+font-size:18px;
+
+font-weight:bold;
+
+margin-bottom:6px;
+
+}
+
+.storeKategori{
+
+font-size:13px;
+
+color:#666;
+
+margin-bottom:6px;
+
+}
+
+.storeRating{
+
+font-size:13px;
+
+color:#ff9800;
+
+font-weight:bold;
+
+}
+
+.visitStore{
+
+border:none;
+
+background:#ff9800;
+
+color:white;
+
+padding:12px 18px;
+
+border-radius:14px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+/* REVIEW */
+
+.reviewBox{
+
+margin-top:12px;
+
+background:white;
+
+padding:15px;
+
+}
+
+.reviewTitle{
+
+font-size:18px;
+
+font-weight:bold;
+
+margin-bottom:15px;
+
+}
+
+.reviewItem{
+
+padding:14px 0;
+
+border-bottom:1px solid #eee;
+
+}
+
+.reviewItem:last-child{
+
+border-bottom:none;
+
+}
+
+.reviewHead{
+
+display:flex;
+
+justify-content:space-between;
+
+margin-bottom:6px;
+
+}
+
+.reviewNama{
+
+font-weight:bold;
+
+font-size:14px;
+
+}
+
+.reviewBintang{
+
+color:#ff9800;
+
+font-size:13px;
+
+}
+
+.reviewText{
+
+font-size:13px;
+
+line-height:1.6;
+
+color:#444;
+
+margin-top:5px;
+
+}
+
+
+
+
+.reportBtn{
+
+position:absolute;
+
+top:10px;
+right:10px;
+
+width:38px;
+height:38px;
+
+border-radius:12px;
+
+background:rgba(255,255,255,.95);
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+box-shadow:
+0 3px 10px rgba(0,0,0,.1);
+
+z-index:10;
+
+cursor:pointer;
+
+transition:.2s;
+
+}
+
+.reportBtn:hover{
+
+transform:scale(1.05);
+
+}
+
+.reportBtn img{
+
+width:22px;
+height:22px;
+
+object-fit:contain;
+
+}
+
+
+.slider img{
+position:relative;
+}
+
+.slider > *{
+position:relative;
+flex-shrink:0;
+width:100%;
+height:360px;
+}
+
+
+
+
+
+</style>
+</head>
+
+<body>
+
+<div id="slider" class="slider"></div>
+
+<div class="info">
+<div id="kategori"></div>
+<div id="nama" class="nama"></div>
+
+<div id="harga" class="harga"></div>
+
+<div id="coret" class="coret"></div>
+
+<div id="stok"></div>
+
+<div id="desc" class="desc"></div>
+
+<!-- STORE -->
+<div class="storeBox">
+
+<div class="storeTop">
+
+<img
+id="storeLogo"
+class="storeLogo"
+>
+
+<div class="storeInfo">
+
+<div
+id="storeNama"
+class="storeNama"
+>
+
+Nama Store
+
+</div>
+
+<div
+id="storeKategori"
+class="storeKategori"
+>
+
+Kategori
+
+</div>
+
+
+
+
+
+
+<div
+id="storeRating"
+class="storeRating"
+>
+
+⭐ 4.9 • 120 Ulasan
+
+</div>
+
+</div>
+
+<button
+class="visitStore"
+id="visitStore"
+>
+
+Kunjungi
+
+</button>
+
+</div>
+
+</div>
+
+
+
+
+
+
+<div class="reviewBox">
+
+  <div class="reviewTitle">
+    Ulasan Pembeli
+  </div>
+
+  <div id="reviewList"></div>
+
+  <!-- INPUT REVIEW -->
+  <div id="reviewForm" style="margin-top:15px; display:none;">
+
+    <div style="font-weight:bold;margin-bottom:8px;">
+      Beri Ulasan
+    </div>
+
+    <!-- BINTANG -->
+    <div id="starRating" style="font-size:25px;color:#ccc;cursor:pointer;">
+      ★★★★★
+    </div>
+
+    <textarea id="reviewText"
+      placeholder="Tulis komentar..."
+      style="width:100%;margin-top:10px;padding:10px;border-radius:10px;border:1px solid #ddd;resize:none;height:80px;">
+    </textarea>
+
+    <button onclick="submitReview()"
+      style="margin-top:10px;width:100%;padding:12px;border:none;background:#ff9800;color:white;border-radius:10px;">
+      Kirim Ulasan
+    </button>
+
+  </div>
+
+</div>
+
+
+
+
+
+
+
+
+</div>
+
+<div class="zoom"
+id="zoom"
+onclick="hideZoom()">
+
+<img id="zoomImg">
+
+</div>
+
+<div class="bottom">
+
+<button
+class="cartBtn"
+onclick="addCart()">
+
+<img
+src="assets/images/shopping-cart.png"
+width="28">
+
+</button>
+
+<button
+class="buyBtn"
+
+onclick="checkoutNow()">
+
+Checkout Sekarang
+
+</button>
+
+</div>
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get,
+set
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig={
+
+apiKey:"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+
+authDomain:"shoponline-93646.firebaseapp.com",
+
+databaseURL:"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:"shoponline-93646"
+
+};
+
+const app=
+initializeApp(
+firebaseConfig
+);
+
+const db=
+getDatabase(app);
+
+
+
+async function getUserData(uid) {
+  const snap = await get(ref(db, "users/" + uid));
+
+  if (!snap.exists()) {
+    return {
+      nama: "User",
+      foto: "https://i.ibb.co/2kR1YkP/default-user.png"
+    };
+  }
+
+  return snap.val();
+}
+
+// force refresh user session tiap buka halaman
+if(!localStorage.getItem("userId")){
+  console.log("USER BELUM LOGIN");
+}
+
+
+function getUID(){
+  return localStorage.getItem("userId");
+}
+
+function isLogin(){
+  return !!localStorage.getItem("userId");
+}
+
+function requireLogin(){
+  if(!isLogin()){
+    alert("Kamu harus login dulu!");
+    window.location.href = "index.html";
+    return false;
+  }
+  return true;
+}
+
+
+
+
+
+// =========================
+// TAMBAH ICON LAPOR DI GAMBAR PRODUK
+// =========================
+// =========================
+// ICON LAPOR DI GAMBAR PRODUK (FIX)
+// =========================
+
+setTimeout(() => {
+
+const slides = document.querySelectorAll("#slider img");
+
+slides.forEach((img) => {
+
+// pastikan parent img (slider item) relative
+img.style.position = "relative";
+
+// ambil parent container slide (DIV wrapper dari flex)
+const parent = img.parentElement;
+parent.style.position = "relative";
+
+// buat tombol report
+const report = document.createElement("div");
+report.className = "reportBtn";
+
+report.innerHTML = `<img src="assets/images/analyst.png">`;
+
+report.onclick = (e) => {
+e.stopPropagation();
+alert("Laporan produk dikirim");
+};
+
+// pastikan tidak dobel
+if (!parent.querySelector(".reportBtn")) {
+parent.appendChild(report);
+}
+
+});
+
+}, 500);
+
+
+
+
+
+
+
+
+const id=
+new URLSearchParams(
+location.search
+)
+
+.get(
+"id"
+);
+
+const snap=
+await get(
+ref(
+db,
+"produk/"+id
+)
+);
+
+const data=
+snap.val();
+
+window.dataProduk=
+data;
+
+
+
+
+
+
+
+
+
+
+
+
+/* =========================
+LOAD STORE
+========================= */
+
+const storeId =
+data.storeId;
+
+if(storeId){
+
+const storeSnap =
+await get(
+ref(
+db,
+"stores/"+storeId
+)
+);
+
+if(storeSnap.exists()){
+
+const store =
+storeSnap.val();
+
+document
+.getElementById(
+"storeLogo"
+)
+.src =
+store.logo ||
+"https://picsum.photos/200";
+
+document
+.getElementById(
+"storeNama"
+)
+.innerHTML =
+store.nama || "Store";
+
+document
+.getElementById(
+"storeKategori"
+)
+.innerHTML =
+store.kategori || "-";
+
+/* BUTTON */
+
+document
+.getElementById(
+"visitStore"
+)
+
+.onclick = ()=>{
+
+location.href =
+"detailstore.html?id="+
+storeId;
+
+};
+
+}
+
+}
+
+
+let desc = data.deskripsi || "Tidak ada deskripsi";
+
+// enter jadi baris baru
+desc = desc.replace(/\n/g, "<br>");
+
+// bold **teks**
+desc = desc.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
+
+// underline __teks__
+desc = desc.replace(/__(.*?)__/g, "<u>$1</u>");
+
+document.getElementById("desc").innerHTML = desc;
+
+
+
+
+
+async function getNamaUser(uid) {
+  const snap = await get(ref(db, "users/" + uid));
+  return snap.exists() ? snap.val().nama : "User";
+}
+
+/* =========================
+LOAD REVIEW
+========================= */
+/* =========================
+LOAD REVIEW (FIX FINAL)
+========================= */
+const reviewList = document.getElementById("reviewList");
+const reviewSnap = await get(ref(db, "review/" + id));
+
+reviewList.innerHTML = "";
+
+let totalRating = 0;
+let totalReview = 0;
+
+if (reviewSnap.exists()) {
+
+  reviewSnap.forEach((x) => {
+
+    const r = x.val();
+
+    if (!r.rating || !r.komentar) return;
+
+    totalReview++;
+    totalRating += Number(r.rating || 0);
+
+    // ambil data user dari review (atau fallback)
+    const namaUser = r.nama || "User";
+    const fotoUser = r.foto || "assets/images/feedback.png";
+
+    reviewList.innerHTML += `
+      <div class="reviewItem" style="display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;">
+
+        <img src="${fotoUser}"
+          onerror="this.src='assets/images/feedback.png'"
+          style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:1px solid #ddd;">
+
+        <div style="flex:1;">
+
+          <div style="display:flex;justify-content:space-between;">
+            <b>${namaUser}</b>
+            <span style="display:flex;align-items:center;gap:3px;">
+  ${renderStars(r.rating)}
+  <small style="color:#666;margin-left:4px;">(${r.rating})</small>
+</span>
+          </div>
+
+          <div style="font-size:13px;color:#555;margin-top:4px;">
+            ${r.komentar}
+          </div>
+
+        </div>
+
+      </div>
+    `;
+  });
+
+}
+
+
+function renderStars(rating) {
+  let stars = "";
+  const r = Math.round(Number(rating));
+
+  for (let i = 1; i <= 5; i++) {
+
+    let size = "10px"; // kecil
+    if (i === 2) size = "14px"; // sedang
+    if (i >= 3) size = "18px"; // besar
+
+    if (i <= r) {
+      stars += `<span style="color:#ff9800;font-size:${size};">★</span>`;
+    } else {
+      stars += `<span style="color:#ccc;font-size:${size};">★</span>`;
+    }
+  }
+
+  return stars;
+}
+
+
+
+/* RATING STORE */
+const avg = totalReview
+  ? (totalRating / totalReview).toFixed(1)
+  : "0.0";
+
+document.getElementById("storeRating").innerHTML =
+  `⭐ ${avg} • ${totalReview} Ulasan`;
+
+
+
+
+
+nama.innerHTML=
+data.nama;
+
+harga.innerHTML=
+"Rp "+
+data.harga.toLocaleString(
+"id-ID"
+);
+
+coret.innerHTML=
+"Rp "+
+data.hargaAwal.toLocaleString(
+"id-ID"
+);
+
+stok.innerHTML=
+"Stok : "+
+data.stok;
+
+
+document.getElementById("kategori").innerHTML = `
+<span style="
+background:#ff6f00;
+color:white;
+padding:4px 10px;
+border-radius:8px;
+font-size:12px;
+">
+${data.kategori || "-"}
+</span>
+`;
+
+const gambarList =
+
+Array.isArray(
+data.gambar
+)
+
+?
+
+data.gambar
+
+:
+
+[
+data.gambar
+];
+
+gambarList
+.slice(0,5)
+.forEach((img)=>{
+
+slider.innerHTML += `
+
+<div class="slideItem" onclick="showZoom('${img}')">
+    <img src="${img}">
+    <div class="reportBtn" onclick="event.stopPropagation(); alert('Laporan terkirim')">
+        <img src="assets/images/analyst.png">
+    </div>
+</div>
+
+`;
+
+});
+
+window.showZoom=
+img=>{
+
+zoom.style.display=
+"flex";
+
+zoomImg.src=
+img;
+
+}
+
+window.hideZoom=
+()=>{
+
+zoom.style.display=
+"none";
+
+}
+
+window.addCart = async () => {
+
+  if(!requireLogin()) return;
+
+  const uid = getUID();
+
+  try {
+
+    const produkId =
+      data.id ||
+      id ||
+      "produk_" + Date.now();
+
+    const gambarUtama =
+      Array.isArray(data.gambar)
+        ? data.gambar[0]
+        : data.gambar;
+
+    await set(
+      ref(db, "cart/" + uid + "/" + produkId),
+      {
+        id: produkId,
+        nama: data.nama || "",
+        harga: data.harga || 0,
+        qty: 1,
+        stok: data.stok || 0,
+        gambar: gambarUtama || "",
+        hargaAwal: data.hargaAwal || 0,
+
+        // 🔥 INI YANG KURANG KEMARIN
+        storeId: data.storeId || "unknown_store"
+      }
+    );
+
+    alert("Produk ditambahkan ke keranjang");
+
+  } catch (err) {
+    console.log("CART ERROR:", err);
+    alert("Gagal menambahkan");
+  }
+};
+
+
+
+
+window.checkoutNow = () => {
+
+  if (!requireLogin()) return;
+
+  const productId =
+    data.id ||
+    new URLSearchParams(location.search).get("id") ||
+    "prod_" + Date.now();
+
+  const product = {
+    id: productId,
+    nama: data.nama || "",
+    harga: Number(data.harga) || 0,
+    qty: 1,
+    gambar: Array.isArray(data.gambar)
+      ? data.gambar[0]
+      : (data.gambar || "")
+  };
+
+  localStorage.setItem("checkoutMode", "buynow");
+
+  localStorage.setItem("buyNowCart", JSON.stringify({
+    [product.id]: {
+      id: product.id,
+      nama: product.nama,
+      harga: product.harga,
+      qty: 1,
+      gambar: product.gambar,
+      storeId: data.storeId || "unknown_store"
+    }
+  }));
+
+  location.href = "checkout.html";
+};
+</script>
+
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Login | Rumah Pisang AFKAR</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+
+min-height:100vh;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+padding:20px;
+
+background:
+linear-gradient(
+135deg,
+#fff7e8,
+#ffd891,
+#ffb84d
+);
+
+}
+
+.card{
+
+width:100%;
+max-width:420px;
+
+background:white;
+
+padding:35px;
+
+border-radius:30px;
+
+box-shadow:
+0 20px 60px rgba(0,0,0,.12);
+
+}
+
+.logo{
+
+width:100px;
+height:100px;
+
+margin:auto;
+
+margin-bottom:20px;
+
+border-radius:25px;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+font-size:50px;
+
+background:
+linear-gradient(
+135deg,
+#ffb300,
+#ff7b00
+);
+
+color:white;
+
+}
+
+h1{
+text-align:center;
+margin-bottom:10px;
+}
+
+.desc{
+
+text-align:center;
+
+font-size:14px;
+
+color:#777;
+
+margin-bottom:25px;
+
+}
+
+input{
+
+width:100%;
+
+padding:16px;
+
+margin-bottom:15px;
+
+border:none;
+
+outline:none;
+
+background:#f4f4f4;
+
+border-radius:16px;
+
+}
+
+button{
+
+width:100%;
+
+padding:16px;
+
+border:none;
+
+border-radius:18px;
+
+background:#ff8f00;
+
+color:white;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+.bottom{
+
+margin-top:20px;
+
+text-align:center;
+
+}
+
+.bottom a{
+
+text-decoration:none;
+
+color:#ff7b00;
+
+font-weight:bold;
+
+}
+
+#status{
+
+margin-top:15px;
+
+text-align:center;
+
+font-size:13px;
+
+color:#666;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<div class="logo">
+🍌
+</div>
+
+<h1>
+RUMAH PISANG AFKAR
+</h1>
+
+<div class="desc">
+
+Login sistem toko online
+
+</div>
+
+<form id="loginForm">
+
+<input
+type="email"
+id="email"
+placeholder="Email"
+required
+>
+
+<input
+type="password"
+id="password"
+placeholder="Password"
+required
+>
+
+<button type="submit">
+
+Masuk
+
+</button>
+
+</form>
+
+<div id="status">
+
+Menunggu login...
+
+</div>
+
+<div class="bottom">
+
+Belum punya akun?
+
+<a href="daftar.html">
+
+Daftar
+
+</a>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+getAuth,
+signInWithEmailAndPassword,
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig={
+
+apiKey:
+"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+
+authDomain:
+"shoponline-93646.firebaseapp.com",
+
+databaseURL:
+"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"shoponline-93646",
+
+storageBucket:
+"shoponline-93646.firebasestorage.app",
+
+messagingSenderId:
+"435032364443",
+
+appId:
+"1:435032364443:web:5f76384f794693a892bd3e"
+
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+const status = document.getElementById("status");
+
+
+// =========================
+// AUTO LOGIN CHECK
+// =========================
+onAuthStateChanged(auth, (user) => {
+
+if (user) {
+localStorage.setItem("userId", user.uid);
+
+// supaya tidak redirect loop
+if (!location.href.includes("home.html")) {
+location.replace("home.html");
+}
+
+}
+
+});
+
+
+// =========================
+// LOGIN FORM
+// =========================
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
+e.preventDefault();
+
+const email = document.getElementById("email").value;
+const password = document.getElementById("password").value;
+
+status.innerText = "Login...";
+
+try {
+
+const userCredential = await signInWithEmailAndPassword(
+auth,
+email,
+password
+);
+
+const user = userCredential.user;
+
+// RESET CLEAN + SET UID BARU
+localStorage.clear();
+localStorage.setItem("userId", user.uid);
+
+status.innerText = "Berhasil login";
+
+location.replace("home.html");
+
+} catch (err) {
+status.innerText = err.message;
+}
+
+});
+
+</script>
+
+</body>
+</html>

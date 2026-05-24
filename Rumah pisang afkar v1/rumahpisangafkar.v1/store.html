@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Store</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f5f5f5;
+padding-bottom:90px;
+}
+
+.header{
+
+padding:18px;
+
+background:#d29a01;
+color: #ffffff;
+font-size:22px;
+
+font-weight:bold;
+
+position:sticky;
+
+top:0;
+
+z-index:99;
+
+box-shadow:
+0 2px 10px rgba(0,0,0,.05);
+
+}
+
+.list{
+padding:15px;
+}
+
+.card{
+
+background:white;
+
+border-radius:20px;
+
+overflow:hidden;
+
+margin-bottom:15px;
+
+box-shadow:
+0 3px 12px rgba(0,0,0,.06);
+
+}
+
+.banner{
+
+width:100%;
+
+height:150px;
+
+object-fit:cover;
+
+}
+
+.content{
+padding:15px;
+}
+
+.top{
+
+display:flex;
+
+align-items:center;
+
+justify-content:space-between;
+
+margin-bottom:12px;
+
+}
+
+.profil{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+}
+
+.logo{
+
+width:60px;
+
+height:60px;
+
+border-radius:18px;
+
+object-fit:cover;
+
+border:3px solid white;
+
+margin-top:-45px;
+
+background:white;
+
+}
+
+.nama{
+
+font-size:17px;
+
+font-weight:bold;
+
+}
+
+.kategori{
+
+font-size:12px;
+
+color:#777;
+
+margin-top:4px;
+
+}
+
+.status{
+
+padding:7px 12px;
+
+border-radius:12px;
+
+font-size:12px;
+
+font-weight:bold;
+
+}
+
+.buka{
+background:#e8fff1;
+color:#16a34a;
+}
+
+.tutup{
+background:#ffeaea;
+color:#dc2626;
+}
+
+.desc{
+
+font-size:13px;
+
+line-height:1.6;
+
+color:#666;
+
+margin:14px 0;
+
+}
+
+.bottom{
+
+display:flex;
+
+gap:10px;
+
+}
+
+.btn{
+
+flex:1;
+
+height:45px;
+
+border:none;
+
+border-radius:14px;
+
+font-weight:bold;
+
+font-size:13px;
+
+cursor:pointer;
+
+}
+
+.kunjungi{
+
+background:#ff9800;
+
+color:white;
+
+}
+
+.lapor{
+
+background:#f1f1f1;
+
+color:#444;
+
+}
+
+.nav{
+
+position:fixed;
+
+left:0;
+right:0;
+bottom:0;
+
+height:75px;
+
+background:white;
+
+display:flex;
+
+justify-content:space-around;
+
+align-items:center;
+
+box-shadow:
+0 -3px 15px rgba(0,0,0,.08);
+
+z-index:999;
+
+}
+
+.navItem{
+
+display:flex;
+
+flex-direction:column;
+
+align-items:center;
+
+gap:5px;
+
+font-size:12px;
+
+color:#777;
+
+text-decoration:none;
+
+}
+
+.active{
+color:#ff9800;
+}
+
+.navItem i{
+font-size:20px;
+}
+
+
+
+
+
+.storeList{
+
+display:grid;
+
+grid-template-columns:repeat(5,minmax(0,1fr));
+
+gap:15px;
+
+padding:15px;
+
+align-items:stretch;
+
+}
+
+
+.storeCard{
+
+background:white;
+
+border-radius:18px;
+
+padding:12px;
+
+min-width:0;
+
+overflow:hidden;
+
+box-shadow:
+0 3px 10px rgba(0,0,0,.05);
+
+display:flex;
+
+flex-direction:column;
+
+}
+
+
+.status{
+
+display:inline-flex;
+
+align-items:center;
+
+justify-content:center;
+
+padding:6px 10px;
+
+border-radius:10px;
+
+font-size:12px;
+
+font-weight:bold;
+
+white-space:nowrap;
+
+width:max-content;
+
+max-width:100%;
+
+}
+
+
+/* MOBILE */
+@media(max-width:768px){
+
+.storeList{
+
+grid-template-columns:repeat(2,minmax(0,1fr));
+
+gap:12px;
+
+padding:12px;
+
+}
+
+.storeCard{
+
+padding:10px;
+
+}
+
+.status{
+
+font-size:11px;
+
+padding:5px 8px;
+
+}
+
+}
+.searchBox{
+position:relative;
+padding:10px;
+background:white;
+}
+
+.searchBox i{
+position:absolute;
+left:22px;
+top:50%;
+transform:translateY(-50%);
+color:#888;
+font-size:14px;
+}
+
+.searchBox input{
+width:100%;
+padding:12px 12px 12px 35px;
+border:none;
+border-radius:10px;
+background:#f3f3f3;
+outline:none;
+}
+
+</style>
+</head>
+<body>
+
+<div class="header">
+Store
+</div>
+
+
+<div class="searchBox">
+<i class="fa fa-search"></i>
+<input id="searchStore" placeholder="Cari store...">
+</div>
+
+
+
+
+<div class="storeList" id="storeList">
+</div>
+</div>
+
+
+
+<div class="nav">
+
+<a class="navItem"
+href="home.html">
+
+<i class="fa fa-house"></i>
+<span>Home</span>
+
+</a>
+
+<a class="navItem active"
+href="store.html">
+
+<i class="fa fa-store"></i>
+<span>Store</span>
+
+</a>
+
+<a class="navItem"
+href="saya.html">
+
+<i class="fa fa-user"></i>
+<span>Saya</span>
+
+</a>
+
+</div>
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get,
+set,
+onValue
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig={
+
+apiKey:
+"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+
+authDomain:
+"shoponline-93646.firebaseapp.com",
+
+databaseURL:
+"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"shoponline-93646",
+
+storageBucket:
+"shoponline-93646.firebasestorage.app",
+
+messagingSenderId:
+"435032364443",
+
+appId:
+"1:435032364443:web:5f76384f794693a892bd3e"
+
+};
+
+const app=
+initializeApp(firebaseConfig);
+
+const db=
+getDatabase(app);
+
+const list=
+document.getElementById(
+"storeList"
+);
+
+/* =========================
+AUTO DUMMY STORE
+========================= */
+
+async function createDummyStore(){
+
+const cek=
+await get(
+ref(db,"stores")
+);
+
+if(
+cek.exists()
+)
+return;
+
+const dummy={
+
+store1:{
+nama:"Food Nusantara",
+kategori:"Food",
+deskripsi:"Menjual makanan nusantara terbaik dan terenak setiap hari.",
+status:"buka",
+logo:"https://picsum.photos/200?1",
+banner:"https://picsum.photos/600/300?1"
+},
+
+store2:{
+nama:"Fashion Style",
+kategori:"Fashion",
+deskripsi:"Fashion kekinian dengan harga terjangkau dan kualitas premium.",
+status:"buka",
+logo:"https://picsum.photos/200?2",
+banner:"https://picsum.photos/600/300?2"
+},
+
+store3:{
+nama:"Gaming Store",
+kategori:"Gaming",
+deskripsi:"Top up game dan perlengkapan gaming lengkap.",
+status:"tutup",
+logo:"https://picsum.photos/200?3",
+banner:"https://picsum.photos/600/300?3"
+},
+
+store4:{
+nama:"Elektronik Kita",
+kategori:"Elektronik",
+deskripsi:"Menjual gadget dan elektronik original.",
+status:"buka",
+logo:"https://picsum.photos/200?4",
+banner:"https://picsum.photos/600/300?4"
+},
+
+store5:{
+nama:"Coffee Time",
+kategori:"Cafe",
+deskripsi:"Cafe modern dengan menu kopi pilihan.",
+status:"buka",
+logo:"https://picsum.photos/200?5",
+banner:"https://picsum.photos/600/300?5"
+},
+
+store6:{
+nama:"Rumah Pisang",
+kategori:"Food",
+deskripsi:"Aneka olahan pisang crispy dan premium.",
+status:"buka",
+logo:"https://picsum.photos/200?6",
+banner:"https://picsum.photos/600/300?6"
+},
+
+store7:{
+nama:"Sport Center",
+kategori:"Sport",
+deskripsi:"Peralatan olahraga lengkap dan murah.",
+status:"tutup",
+logo:"https://picsum.photos/200?7",
+banner:"https://picsum.photos/600/300?7"
+},
+
+store8:{
+nama:"Beauty Glow",
+kategori:"Beauty",
+deskripsi:"Skincare dan kosmetik original terpercaya.",
+status:"buka",
+logo:"https://picsum.photos/200?8",
+banner:"https://picsum.photos/600/300?8"
+},
+
+store9:{
+nama:"Otomotif Jaya",
+kategori:"Otomotif",
+deskripsi:"Aksesoris motor dan mobil terlengkap.",
+status:"buka",
+logo:"https://picsum.photos/200?9",
+banner:"https://picsum.photos/600/300?9"
+},
+
+store10:{
+nama:"Toko Serba Ada",
+kategori:"Marketplace",
+deskripsi:"Semua kebutuhan harian tersedia lengkap.",
+status:"tutup",
+logo:"https://picsum.photos/200?10",
+banner:"https://picsum.photos/600/300?10"
+}
+
+};
+
+await set(
+ref(db,"stores"),
+dummy
+);
+
+}
+
+await createDummyStore();
+
+/* =========================
+LOAD STORE
+========================= */
+
+onValue(
+
+ref(db,"stores"),
+
+(snap)=>{
+
+list.innerHTML="";
+
+if(!snap.exists()){
+
+list.innerHTML=`
+
+<div style="
+padding:40px;
+text-align:center;
+color:#777;
+">
+
+Belum ada store
+
+</div>
+
+`;
+
+return;
+
+}
+
+snap.forEach((x)=>{
+
+const d=x.val();
+
+list.innerHTML += `
+
+<div class="card">
+
+<img
+src="${d.banner}"
+class="banner">
+
+<div class="content">
+
+<div class="top">
+
+<div class="profil">
+
+<img
+src="${d.logo}"
+class="logo">
+
+<div>
+
+<div class="nama">
+${d.nama}
+</div>
+
+<div class="kategori">
+${d.kategori}
+</div>
+
+</div>
+
+</div>
+
+<div class="status
+${d.status==="buka"
+? "buka"
+: "tutup"}">
+
+${d.status}
+
+</div>
+
+</div>
+
+<div class="desc">
+${d.deskripsi}
+</div>
+
+<div class="bottom">
+
+<button
+class="btn lapor">
+
+<img
+src="icon.png"
+style="
+width:18px;
+height:18px;
+vertical-align:middle;
+margin-right:6px;
+">
+
+Laporkan
+
+</button>
+
+<button
+class="btn kunjungi"
+onclick="
+location.href='detailstore.html?id=${x.key}'
+">
+
+Kunjungi Store
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+);
+
+
+
+
+
+const storeList = document.getElementById("storeList");
+const searchStore = document.getElementById("searchStore");
+
+let allStores = [];
+
+// ambil data store
+const snap = await get(ref(db, "stores"));
+
+if (snap.exists()) {
+snap.forEach(x => {
+
+const data = x.val();
+
+// 🔥 AUTO DUMMY LOKASI JIKA KOSONG
+const lokasiDummy = [
+"Jakarta",
+"Medan",
+"Bandung",
+"Surabaya",
+"Yogyakarta",
+"Semarang"
+];
+
+allStores.push({
+id: x.key,
+...data,
+lokasi: data.lokasi || lokasiDummy[Math.floor(Math.random() * lokasiDummy.length)]
+});
+
+});
+}
+
+// render function
+function render(data) {
+
+storeList.innerHTML = "";
+
+data.forEach(s => {
+
+storeList.innerHTML += `
+<div onclick="location.href='detailstore.html?id=${s.id}'"
+style="display:flex;align-items:center;gap:12px;
+background:white;margin:10px;padding:12px;border-radius:12px;">
+
+<img src="${s.logo || 'https://picsum.photos/60'}"
+style="width:50px;height:50px;border-radius:12px;object-fit:cover;">
+
+<div>
+<div style="font-weight:bold;font-size:15px;">
+${s.nama}
+</div>
+
+<div style="font-size:12px;color:#777;">
+Store • ${s.lokasi || 'Tidak ada lokasi'}
+</div>
+
+</div>
+
+</div>
+`;
+
+});
+
+}
+
+// load awal
+render(allStores);
+
+// SEARCH KHUSUS NAMA STORE
+searchStore.addEventListener("input", (e) => {
+
+const q = e.target.value.toLowerCase().trim();
+
+const filtered = allStores.filter(s => {
+
+const nama = (s.nama || "").toLowerCase();
+const lokasi = (s.lokasi || "").toLowerCase();
+
+// SEARCH NAMA + LOKASI
+return nama.includes(q) || lokasi.includes(q);
+
+});
+
+render(filtered);
+
+});
+
+
+
+
+
+
+
+</script>
+</body>
+</html>

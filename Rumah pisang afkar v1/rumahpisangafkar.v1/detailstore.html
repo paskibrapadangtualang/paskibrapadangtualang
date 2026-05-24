@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Detail Store</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#f5f5f5;
+padding-bottom:90px;
+}
+
+/* BANNER */
+
+.banner{
+
+position:relative;
+
+width:100%;
+height:230px;
+
+overflow:hidden;
+
+}
+
+
+
+.overlay{
+
+position:absolute;
+
+inset:0;
+
+background:
+linear-gradient(
+to top,
+rgba(0,0,0,.7),
+rgba(0,0,0,.1)
+);
+
+}
+
+.back{
+position:absolute;
+top:15px;
+left:15px;
+width:40px;
+height:40px;
+border-radius:50%;
+background:white;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:18px;
+z-index:999; /* 🔥 FIX UTAMA */
+cursor:pointer;
+}
+
+.status{
+
+position:absolute;
+
+right:15px;
+top:15px;
+
+padding:7px 12px;
+
+border-radius:12px;
+
+font-size:12px;
+
+font-weight:bold;
+
+color:white;
+
+z-index:5;
+
+}
+
+.buka{
+background:#16a34a;
+}
+
+.tutup{
+background:#ef4444;
+}
+
+.info{
+position:absolute;
+left:20px;
+bottom:15px;
+right:15px;
+color:white;
+z-index:5;
+padding-top:60px; /* 🔥 kasih ruang atas */
+}
+
+.nama{
+
+font-size:25px;
+
+font-weight:bold;
+
+margin-bottom:6px;
+
+}
+
+.kategori{
+
+font-size:13px;
+
+opacity:.9;
+
+margin-bottom:6px;
+
+}
+
+.desc{
+
+font-size:13px;
+
+line-height:1.5;
+
+max-width:90%;
+
+}
+
+
+
+
+
+
+
+/* =========================
+PRODUK
+========================= */
+
+.title{
+
+padding:18px 15px 5px;
+
+font-size:20px;
+
+font-weight:bold;
+
+}
+
+.productList{
+
+padding:15px;
+
+display:grid;
+
+grid-template-columns:
+repeat(5,1fr);
+
+gap:15px;
+
+}
+
+/* CARD */
+
+.card{
+
+background:white;
+
+border-radius:18px;
+
+overflow:hidden;
+
+box-shadow:
+0 3px 12px rgba(0,0,0,.06);
+
+position:relative;
+
+cursor:pointer;
+
+transition:.2s;
+
+}
+
+.card:hover{
+
+transform:
+translateY(-3px);
+
+}
+
+.card img{
+
+width:100%;
+
+height:170px;
+
+object-fit:cover;
+
+display:block;
+
+}
+
+/* PROMO */
+
+.promo{
+
+position:absolute;
+
+top:10px;
+left:10px;
+
+background:#ff3d00;
+
+color:white;
+
+padding:5px 10px;
+
+border-radius:10px;
+
+font-size:11px;
+
+font-weight:bold;
+
+z-index:2;
+
+}
+
+/* CONTENT */
+
+.productInfo{
+
+padding:12px;
+
+}
+
+.productName{
+
+font-size:14px;
+
+font-weight:600;
+
+line-height:1.4;
+
+height:38px;
+
+overflow:hidden;
+
+margin-bottom:8px;
+
+}
+
+.productPrice{
+
+font-size:18px;
+
+font-weight:bold;
+
+color:#ff5a00;
+
+margin-bottom:4px;
+
+}
+
+.productOld{
+
+font-size:12px;
+
+text-decoration:line-through;
+
+color:#888;
+
+margin-bottom:8px;
+
+}
+
+/* TAG */
+
+.row{
+
+display:flex;
+
+gap:6px;
+
+flex-wrap:wrap;
+
+}
+
+.tag{
+
+background:#fff1e6;
+
+padding:4px 8px;
+
+border-radius:8px;
+
+font-size:10px;
+
+color:#ff6f00;
+
+font-weight:bold;
+
+}
+
+/* LOKASI */
+
+.lokasi{
+
+margin-top:8px;
+
+font-size:11px;
+
+color:#777;
+
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+.productList{
+
+grid-template-columns:
+repeat(2,1fr);
+
+gap:12px;
+
+}
+
+.banner{
+
+height:200px;
+
+}
+
+.card img{
+
+height:140px;
+
+}
+
+.productName{
+
+font-size:13px;
+
+height:36px;
+
+}
+
+.productPrice{
+
+font-size:16px;
+
+}
+
+}
+
+
+
+.storeHeader{
+display:flex;
+align-items:center;
+gap:10px;
+margin-bottom:6px;
+margin-top:10px;
+}
+
+.storeLogoMini{
+width:42px;
+height:42px;
+border-radius:50%;
+object-fit:cover;
+border:2px solid white;
+box-shadow:0 2px 8px rgba(0,0,0,.2);
+}
+
+
+
+
+
+</style>
+</head>
+<body>
+
+
+<div id="loginModal"
+style="
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.5);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:9999;
+">
+
+<div style="
+background:white;
+padding:20px;
+border-radius:15px;
+width:80%;
+max-width:300px;
+text-align:center;
+">
+
+<h3>Belum Login</h3>
+<p style="font-size:13px;color:#666;margin:10px 0;">
+Kamu harus login untuk mengikuti store
+</p>
+
+<button onclick="location.href='index.html'"
+style="
+width:100%;
+padding:10px;
+border:none;
+background:#ff6f00;
+color:white;
+border-radius:10px;
+margin-top:10px;
+">
+Login Sekarang
+</button>
+
+<button onclick="closeModal()"
+style="
+width:100%;
+padding:10px;
+border:none;
+background:#eee;
+border-radius:10px;
+margin-top:8px;
+">
+Mungkin Nanti
+</button>
+
+</div>
+
+</div>
+
+
+
+
+
+
+<!-- BANNER -->
+<div class="banner">
+
+<div class="back"
+onclick="history.back()">
+
+<i class="fa fa-arrow-left"></i>
+
+</div>
+
+<img id="bannerImg">
+
+<div class="overlay"></div>
+
+<div class="status"
+id="statusBox">
+
+Buka
+
+</div>
+
+<div class="info">
+
+
+
+
+
+    
+<div class="storeHeader">
+
+<img id="storeLogoMini" class="storeLogoMini">
+
+<div>
+  <div class="nama" id="namaStore">Store</div>
+  <div class="kategori"></div>
+</div>
+
+</div>
+
+
+
+
+
+
+
+
+<div class="kategori"
+id="kategoriStore">
+
+Food
+
+</div>
+
+
+<div style="margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+
+<div style="font-size:12px;color:white;">
+<span id="followers">0</span> Pengikut• 
+<span id="following">0</span> Mengikuti
+</div>
+
+<button id="followBtn"
+style="
+padding:6px 12px;
+border:none;
+border-radius:10px;
+font-size:12px;
+cursor:pointer;
+font-weight:bold;
+">
+Ikuti
+</button>
+
+</div>
+
+
+
+
+<div class="desc"
+id="descStore">
+
+Deskripsi store
+
+</div>
+
+</div>
+
+</div>
+
+<!-- PRODUK -->
+<div class="title">
+Produk Store
+</div>
+
+<div class="productList"
+id="productList">
+
+</div>
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get,
+set
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig={
+
+apiKey:
+"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+
+authDomain:
+"shoponline-93646.firebaseapp.com",
+
+databaseURL:
+"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"shoponline-93646",
+
+storageBucket:
+"shoponline-93646.firebasestorage.app",
+
+messagingSenderId:
+"435032364443",
+
+appId:
+"1:435032364443:web:5f76384f794693a892bd3e"
+
+};
+
+const app=
+initializeApp(
+firebaseConfig
+);
+
+const db=
+getDatabase(app);
+
+
+if(!localStorage.getItem("userLogin")){
+  console.log("USER BELUM LOGIN");
+}
+
+
+
+
+const loginModal = document.getElementById("loginModal");
+
+function openModal(){
+loginModal.style.display = "flex";
+}
+
+window.closeModal = function(){
+document.getElementById("loginModal").style.display = "none";
+};
+
+
+
+
+
+
+
+
+
+
+
+
+/* =========================
+AMBIL ID STORE
+========================= */
+
+const params=
+new URLSearchParams(
+location.search
+);
+
+const id=
+params.get("id");
+
+/* =========================
+DUMMY PRODUK OTOMATIS
+========================= */
+/* =========================
+AUTO CREATE + UPDATE PRODUK
+========================= */
+
+async function createDummyProducts(){
+
+const snap =
+await get(
+ref(db,"produk")
+);
+
+const lama =
+snap.exists()
+? snap.val()
+: {};
+
+const storeSnap =
+await get(
+ref(db,"stores")
+);
+
+if(!storeSnap.exists())
+return;
+
+let finalData = {...lama};
+
+let nomor =
+Object.keys(finalData).length + 1;
+
+/* =========================
+UPDATE PRODUK LAMA
+========================= */
+
+Object.keys(finalData).forEach((key)=>{
+
+const p = finalData[key];
+
+finalData[key] = {
+
+...p,
+
+hargaAwal:
+p.hargaAwal ||
+
+(
+(p.harga || 10000) + 50000
+),
+
+diskon:
+p.diskon || 20,
+
+promo:
+p.promo ?? true,
+
+cod:
+p.cod ?? true,
+
+kupon:
+p.kupon ?? true,
+
+lokasi:
+p.lokasi || "Jakarta",
+
+stok:
+p.stok || 10,
+
+gambar:
+
+Array.isArray(p.gambar)
+
+?
+
+p.gambar
+
+:
+
+[
+p.gambar ||
+"https://picsum.photos/400/400?random="+nomor,
+
+"https://picsum.photos/401/400?random="+nomor,
+
+"https://picsum.photos/402/400?random="+nomor
+]
+
+};
+
+});
+
+/* =========================
+TAMBAH PRODUK BARU
+========================= */
+
+storeSnap.forEach((s)=>{
+
+const storeId = s.key;
+
+let jumlah = 0;
+
+Object.values(finalData).forEach((p)=>{
+
+if(p.storeId === storeId){
+
+jumlah++;
+
+}
+
+});
+
+/* MINIMAL 8 PRODUK */
+
+if(jumlah < 8){
+
+for(let i=1;i<=8-jumlah;i++){
+
+const idProduk =
+"produk"+nomor;
+
+finalData[idProduk] = {
+
+id:idProduk,
+
+storeId:storeId,
+
+nama:"Produk "+nomor,
+
+harga:
+Math.floor(
+Math.random()*90000
+)+10000,
+
+hargaAwal:
+Math.floor(
+Math.random()*120000
+)+120000,
+
+diskon:
+Math.floor(
+Math.random()*50
+)+10,
+
+stok:
+Math.floor(
+Math.random()*50
+)+1,
+
+promo:true,
+
+cod:true,
+
+kupon:true,
+
+lokasi:[
+
+"Jakarta",
+"Medan",
+"Bandung",
+"Surabaya",
+"Padang",
+"Aceh",
+"Bekasi",
+"Bogor"
+
+][
+Math.floor(
+Math.random()*8
+)
+],
+
+deskripsi:
+"Produk premium kualitas terbaik",
+
+gambar:[
+
+"https://picsum.photos/400/400?random="+nomor,
+
+"https://picsum.photos/401/400?random="+nomor,
+
+"https://picsum.photos/402/400?random="+nomor
+
+]
+
+};
+
+nomor++;
+
+}
+
+}
+
+});
+
+/* =========================
+SAVE KE FIREBASE
+========================= */
+
+await set(
+ref(db,"produk"),
+finalData
+);
+
+console.log(
+"PRODUK BERHASIL UPDATE"
+);
+
+}
+
+// await createDummyProducts(); // DI-MATIKAN AGAR TIDAK DUPLIKAT
+/* =========================
+LOAD STORE
+========================= */
+
+const storeSnap=
+await get(
+ref(
+db,
+"stores/"+id
+)
+);
+
+if(
+storeSnap.exists()
+){
+
+const d=
+storeSnap.val();
+
+
+document.getElementById("storeLogoMini").src =
+d.logo || "https://picsum.photos/200";
+
+
+
+document
+.getElementById(
+"bannerImg"
+)
+.src=
+d.banner;
+
+document.getElementById("namaStore").innerHTML =
+d.nama ?? "Store";
+
+document.getElementById("kategoriStore").innerHTML =
+d.kategori ?? "-";
+
+document.getElementById("descStore").innerHTML =
+d.deskripsi ?? "Belum ada deskripsi";
+
+const status=
+document
+.getElementById(
+"statusBox"
+);
+
+status.innerHTML=
+d.status;
+
+status.className=
+"status "+
+(
+d.status==="buka"
+? "buka"
+: "tutup"
+);
+
+}
+
+
+
+function getUID(){
+  return localStorage.getItem("userId");
+}
+
+
+
+// ref
+const followBtn = document.getElementById("followBtn");
+const followersEl = document.getElementById("followers");
+const followingEl = document.getElementById("following");
+
+// =========================
+// INIT DUMMY DATA FOLLOWERS
+// =========================
+async function initFollowDummy(){
+
+const uid = getUID();
+
+if(!uid){
+  console.log("USER BELUM LOGIN");
+  return;
+}
+
+const snap = await get(ref(db,"followers/"+id));
+
+if(!snap.exists()){
+  await set(ref(db,"followers/"+id), {
+    u1:true,
+    u2:true,
+    u3:true
+  });
+}
+
+const snap2 = await get(ref(db,"following/"+uid));
+
+if(!snap2.exists()){
+  await set(ref(db,"following/"+uid), {
+    store1:true
+  });
+}
+
+}
+
+await initFollowDummy();
+
+// =========================
+// UPDATE COUNTER
+// =========================
+async function updateCount(){
+
+const f = await get(ref(db,"followers/"+id));
+
+followersEl.innerText =
+f.exists() ? Object.keys(f.val()).length : 0;
+
+}
+
+await updateCount();
+
+// =========================
+// CHECK STATUS FOLLOW
+// =========================
+async function checkFollow(){
+
+const uid = getUID();
+
+if(!uid){
+  console.log("USER BELUM LOGIN");
+  return;
+}
+
+const snap = await get(ref(db,"following/"+uid+"/"+id));
+
+if(snap.exists()){
+  followBtn.innerText = "Batal Mengikuti";
+  followBtn.style.background = "#eee";
+  followBtn.style.color = "#333";
+}else{
+  followBtn.innerText = "Ikuti";
+  followBtn.style.background = "#ff6f00";
+  followBtn.style.color = "white";
+}
+
+}
+await checkFollow();
+
+// =========================
+// CLICK FOLLOW
+// =========================
+followBtn.onclick = async () => {
+
+const uid = getUID();
+
+if(!uid){
+  openModal();
+  return;
+}
+
+const followRef = ref(db,"following/"+uid+"/"+id);
+const snap = await get(followRef);
+
+if(snap.exists()){
+
+  await set(ref(db,"following/"+uid+"/"+id), null);
+
+// KURANGI MENGIKUTI USER
+const userRef = ref(db,"users/"+uid);
+const userSnap = await get(userRef);
+
+if(userSnap.exists()){
+  const u = userSnap.val();
+
+  await set(userRef,{
+    ...u,
+    mengikuti: Math.max((u.mengikuti || 0) - 1, 0)
+  });
+}
+
+
+
+  const fSnap = await get(ref(db,"followers/"+id));
+  let data = fSnap.val() || {};
+  delete data[uid];
+  await set(ref(db,"followers/"+id), data);
+
+}else{
+
+  await set(ref(db,"following/"+uid+"/"+id), true);
+// TAMBAH MENGIKUTI USER
+const userRef = ref(db,"users/"+uid);
+const userSnap = await get(userRef);
+
+if(userSnap.exists()){
+  const u = userSnap.val();
+
+  await set(userRef,{
+    ...u,
+    mengikuti: (u.mengikuti || 0) + 1
+  });
+}
+  const fSnap = await get(ref(db,"followers/"+id));
+  let data = fSnap.val() || {};
+  data[uid] = true;
+  await set(ref(db,"followers/"+id), data);
+
+}
+
+await updateCount();
+await checkFollow();
+
+};
+console.log("LOGIN:", localStorage.getItem("userId"));
+
+
+
+/* =========================
+LOAD PRODUK
+========================= */
+
+const productList=
+document.getElementById(
+"productList"
+);
+
+const produkSnap=
+await get(
+ref(
+db,
+"produk"
+)
+);
+
+if(
+produkSnap.exists()
+){
+
+produkSnap.forEach((x)=>{
+
+const d = x.val();
+
+if(d.storeId !== id)
+return;
+
+/* GAMBAR UTAMA */
+
+const gambarUtama =
+
+Array.isArray(d.gambar)
+
+?
+
+d.gambar[0]
+
+:
+
+d.gambar;
+
+/* TEMPLATE */
+
+
+
+
+
+
+productList.innerHTML += `
+
+<div class="card"
+
+onclick="
+location.href=
+'detailproduk.html?id=${d.id}'
+">
+
+${d.promo ? `
+
+<div class="promo">
+
+🔥 PROMO
+
+</div>
+
+` : ""}
+
+<img src="${gambarUtama}">
+
+<div class="productInfo">
+
+<div class="productName">
+
+${d.nama}
+
+</div>
+
+<div class="productPrice">
+
+Rp ${
+
+(d.harga||0)
+
+.toLocaleString(
+"id-ID"
+)
+
+}
+
+</div>
+
+<div class="productOld">
+
+Rp ${
+
+(d.hargaAwal||0)
+
+.toLocaleString(
+"id-ID"
+)
+
+}
+
+</div>
+
+<div class="row">
+
+${
+d.cod ?
+
+'<div class="tag">🚚 COD</div>'
+
+:
+
+''
+}
+
+${
+d.kupon ?
+
+'<div class="tag">🎫 Kupon</div>'
+
+:
+
+''
+}
+
+<div class="tag">
+
+⚡ ${d.stok||0}
+
+</div>
+
+</div>
+
+<div class="lokasi">
+
+📍 ${d.lokasi||"-"}
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+});
+
+}
+
+
+
+
+</script>
+</body>
+</html>

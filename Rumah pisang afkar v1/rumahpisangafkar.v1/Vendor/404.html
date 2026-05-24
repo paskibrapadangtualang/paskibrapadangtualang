@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>404 - Akses Ditolak</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#f5f5f5;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+text-align:center;
+padding:20px;
+}
+
+.box{
+background:white;
+padding:25px;
+border-radius:16px;
+box-shadow:0 10px 25px rgba(0,0,0,0.1);
+max-width:350px;
+width:100%;
+}
+
+img{
+width:80px;
+height:80px;
+object-fit:contain;
+margin-bottom:15px;
+}
+
+h2{
+margin:10px 0;
+color:#ff6f00;
+}
+
+p{
+color:#555;
+font-size:14px;
+line-height:1.5;
+}
+
+button{
+margin-top:15px;
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
+background:#ff6f00;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+button:hover{
+background:#e65f00;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<!-- ICON -->
+<img src="gambar.png" alt="icon">
+
+<!-- TEXT -->
+<h2>Akses Ditolak</h2>
+
+<p>
+Menu ini tidak dapat diakses oleh <b>akun vendor</b>.<br><br>
+
+Silakan login sebagai <b>akun pembeli</b> untuk mengakses fitur ini.
+</p>
+
+<!-- BUTTON -->
+<button onclick="goLogin()">Login Pembeli</button>
+
+</div>
+
+<script>
+function goLogin(){
+window.location.href = "loginvendor.html";
+}
+</script>
+
+</body>
+</html>

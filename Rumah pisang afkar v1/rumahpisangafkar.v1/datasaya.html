@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Saya</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#f4f6f9;
+}
+
+/* HEADER */
+.header{
+background:linear-gradient(135deg,#ff6f00,#ff8c00);
+color:white;
+padding:18px;
+font-size:18px;
+font-weight:bold;
+}
+
+/* PROFILE CARD */
+.profileCard{
+background:white;
+margin:15px;
+padding:15px;
+border-radius:18px;
+box-shadow:0 3px 12px rgba(0,0,0,.05);
+display:flex;
+gap:15px;
+align-items:center;
+}
+
+.profileCard img{
+width:70px;
+height:70px;
+border-radius:50%;
+object-fit:cover;
+border:3px solid #ff6f00;
+}
+
+.name{
+font-size:18px;
+font-weight:bold;
+}
+
+.role{
+font-size:12px;
+color:#777;
+margin-top:3px;
+}
+
+/* INFO GRID */
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+padding:15px;
+}
+
+.card{
+background:white;
+padding:15px;
+border-radius:15px;
+box-shadow:0 3px 10px rgba(0,0,0,.05);
+}
+
+.card h4{
+margin:0;
+font-size:13px;
+color:#888;
+}
+
+.card p{
+margin-top:6px;
+font-weight:bold;
+}
+
+/* FULL INFO */
+.infoBox{
+background:white;
+margin:15px;
+padding:15px;
+border-radius:15px;
+box-shadow:0 3px 10px rgba(0,0,0,.05);
+}
+
+.row{
+display:flex;
+justify-content:space-between;
+padding:10px 0;
+border-bottom:1px solid #eee;
+font-size:14px;
+}
+
+.row:last-child{
+border:none;
+}
+
+/* BUTTON */
+.btn{
+margin:15px;
+background:#ff6f00;
+color:white;
+text-align:center;
+padding:14px;
+border-radius:12px;
+font-weight:bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<i class="fa fa-user"></i> Data Saya
+</div>
+
+<!-- PROFILE -->
+<div class="profileCard">
+<img id="foto">
+<div>
+<div class="name" id="nama">Loading...</div>
+<div class="role" id="role">User</div>
+</div>
+</div>
+
+<!-- QUICK STATS -->
+<div class="grid">
+
+<div class="card">
+<h4>Saldo</h4>
+<p id="saldo">Rp0</p>
+</div>
+
+<div class="card">
+<h4>Status</h4>
+<p id="status">-</p>
+</div>
+
+<div class="card">
+<h4>Email</h4>
+<p id="email">-</p>
+</div>
+
+<div class="card">
+<h4>JK</h4>
+<p id="jk">-</p>
+</div>
+
+</div>
+
+<!-- DETAIL INFO -->
+<div class="infoBox">
+
+<div class="row">
+<span>Alamat</span>
+<span id="alamat">-</span>
+</div>
+
+<div class="row">
+<span>Dusun</span>
+<span id="dusun">-</span>
+</div>
+
+<div class="row">
+<span>Kecamatan</span>
+<span id="kecamatan">-</span>
+</div>
+
+<div class="row">
+<span>Kabupaten</span>
+<span id="kabupaten">-</span>
+</div>
+
+<div class="row">
+<span>Provinsi</span>
+<span id="provinsi">-</span>
+</div>
+
+<div class="row">
+<span>Kode Pos</span>
+<span id="kodepos">-</span>
+</div>
+
+<div class="row">
+<span>Dibuat</span>
+<span id="createdAt">-</span>
+</div>
+
+</div>
+
+<div class="btn" onclick="logout()">
+Logout
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+const firebaseConfig = {
+apiKey:"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+authDomain:"shoponline-93646.firebaseapp.com",
+databaseURL:"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"shoponline-93646",
+storageBucket:"shoponline-93646.firebasestorage.app",
+messagingSenderId:"435032364443",
+appId:"1:435032364443:web:5f76384f794693a892bd3e"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+
+const uid = localStorage.getItem("userId");
+
+if(!uid){
+  location.replace("index.html");
+}
+
+async function load(){
+
+const snap = await get(ref(db, "users/" + uid));
+
+if(!snap.exists()){
+alert("User tidak ditemukan");
+return;
+}
+
+const d = snap.val();
+
+/* PROFILE */
+document.getElementById("foto").src = d.foto || "https://i.pravatar.cc/300";
+document.getElementById("nama").innerText = d.nama || "-";
+document.getElementById("role").innerText = d.role || "customer";
+
+/* GRID */
+document.getElementById("saldo").innerText = "Rp " + (d.saldo || 0).toLocaleString("id-ID");
+document.getElementById("status").innerText = d.status || "-";
+document.getElementById("email").innerText = d.email || "-";
+document.getElementById("jk").innerText = d.jk || "-";
+
+/* ALAMAT */
+document.getElementById("alamat").innerText = d.alamatLengkap?.alamat || "-";
+document.getElementById("dusun").innerText = d.alamatLengkap?.dusun || "-";
+document.getElementById("kecamatan").innerText = d.alamatLengkap?.kecamatan || "-";
+document.getElementById("kabupaten").innerText = d.alamatLengkap?.kabupaten || "-";
+document.getElementById("provinsi").innerText = d.alamatLengkap?.provinsi || "-";
+document.getElementById("kodepos").innerText = d.alamatLengkap?.kodepos || "-";
+
+/* TIME */
+document.getElementById("createdAt").innerText =
+d.createdAt ? new Date(d.createdAt).toLocaleString("id-ID") : "-";
+
+}
+
+
+load();
+
+
+
+
+
+
+
+
+
+
+
+
+
+async function logout(){
+
+try{
+
+await signOut(auth);
+
+localStorage.clear();
+sessionStorage.clear();
+
+window.location.href = "index.html";
+
+}catch(err){
+
+console.log(err);
+
+}
+
+}
+
+// WAJIB
+window.logout = logout;
+</script>
+
+</body>
+</html>

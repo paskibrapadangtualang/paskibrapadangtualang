@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pesanan Saya</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#f5f5f5;
+padding-bottom:80px;
+}
+
+.header{
+background:#ff6f00;
+color:white;
+padding:15px;
+font-weight:bold;
+text-align:center;
+}
+
+.container{
+padding:15px;
+}
+
+.card{
+background:white;
+padding:12px;
+border-radius:12px;
+margin-bottom:10px;
+box-shadow:0 5px 15px rgba(0,0,0,0.08);
+}
+
+.status{
+font-size:12px;
+padding:4px 8px;
+border-radius:6px;
+display:inline-block;
+}
+
+.pending{background:#facc15;}
+.proses{background:#3b82f6;color:white;}
+.selesai{background:#22c55e;color:white;}
+
+.empty{
+text-align:center;
+color:#888;
+margin-top:40px;
+}
+
+.bottom-nav{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+height:65px;
+background:#ff6f00;
+border-top:1px solid #eee;
+display:flex;
+justify-content:space-around;
+align-items:center;
+}
+
+.nav-item{
+text-decoration:none;
+color:#000000;
+font-size:11px;
+display:flex;
+flex-direction:column;
+align-items:center;
+flex:1;
+font-size: 14px;
+
+}
+
+.nav-icon{
+width:32px;
+height:32px;
+object-fit:contain;
+filter: brightness(0) invert(1);
+}
+
+.nav-item.active{
+color:#ffffff;
+font-weight:bold;
+font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+
+<div id="orderPopup" style="
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.5);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:99999;
+padding:15px;
+">
+
+  <div style="
+  width:100%;
+  max-width:420px;
+  background:white;
+  border-radius:16px;
+  padding:15px;
+  max-height:85vh;
+  overflow:auto;
+  ">
+
+<div style="font-weight:bold;font-size:16px;margin-bottom:10px;">
+  Detail Order
+</div>
+
+<div style="display:flex;gap:8px;margin-bottom:10px;">
+
+  <button onclick="acceptOrder()" style="
+    flex:1;
+    padding:8px;
+    background:#22c55e;
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-size:12px;
+  ">
+    Terima
+  </button>
+
+  <button onclick="rejectOrder()" style="
+    flex:1;
+    padding:8px;
+    background:#ef4444;
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-size:12px;
+  ">
+    Tolak
+  </button>
+  
+
+  <button onclick="sendOrder()" style="
+  flex:1;
+  padding:8px;
+  background:#f59e0b;
+  color:white;
+  border:none;
+  border-radius:8px;
+  font-size:12px;
+">
+  Diantar
+</button>
+
+
+  <button onclick="chatBuyer()" style="
+    flex:1;
+    padding:8px;
+    background:#3b82f6;
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-size:12px;
+  ">
+    Chat
+  </button>
+
+</div>
+
+    <div id="popupContent"></div>
+
+    <button onclick="closePopup()" style="
+      width:100%;
+      margin-top:10px;
+      padding:12px;
+      border:none;
+      background:#ff6f00;
+      color:white;
+      border-radius:10px;
+      font-weight:bold;
+    ">
+      Tutup
+    </button>
+
+  </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="header">Pesanan Saya</div>
+
+<div class="container" id="list">
+<div class="empty">Loading pesanan...</div>
+</div>
+
+<div class="bottom-nav">
+
+<a href="gudangproduk.html" class="nav-item">
+<img src="assets/images/shopping.png" class="nav-icon">
+<span>Gudang produk</span>
+</a>
+
+<a href="pesanansaya.html" class="nav-item active">
+<img src="assets/images/shopping-list.png" class="nav-icon">
+<span>Pesanan</span>
+</a>
+
+<a href="dashboardstore.html" class="nav-item">
+<img src="assets/images/shope.png" class="nav-icon">
+<span>Vendor</span>
+</a>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase,update , ref, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyD3DTcca7yZKVtllcK3TQOUe6Yv2hSyG_g",
+authDomain:"shoponline-93646.firebaseapp.com",
+databaseURL:"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"shoponline-93646",
+storageBucket:"shoponline-93646.firebasestorage.app",
+messagingSenderId:"435032364443",
+appId:"1:435032364443:web:5f76384f794693a892bd3e"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+
+
+
+let currentOrderId = null;
+
+
+
+
+const storeId = localStorage.getItem("storeId");
+const list = document.getElementById("list");
+
+if(!storeId){
+  list.innerHTML = `<div class="empty">Kamu belum login</div>`;
+  throw new Error("No login");
+}
+
+async function loadOrders() {
+
+  const snap = await get(ref(db, "pesanan"));
+
+  if (!snap.exists()) {
+    list.innerHTML = `<div class="empty">Belum ada pesanan</div>`;
+    return;
+  }
+
+  let baru = "";
+  let proses = "";
+  let selesai = "";
+
+  let found = false;
+
+  snap.forEach(item => {
+
+    const data = item.val();
+    const items = data.items || {};
+
+    const filteredItems = Object.values(items).filter(p => p.storeId === storeId);
+
+    if (filteredItems.length === 0) return;
+
+    found = true;
+
+    let totalStore = 0;
+    filteredItems.forEach(p => {
+      totalStore += (p.harga || 0) * (p.qty || 1);
+    });
+
+    let status = data.status || "pending";
+
+    let statusClass = "pending";
+    if (status === "diproses" || status === "dikirim") statusClass = "proses";
+    if (status === "selesai") statusClass = "selesai";
+
+    const card = `
+      <div class="card" onclick="openOrder('${data.id}')">
+
+        <div style="font-weight:bold;margin-bottom:5px;">
+          ${data.id}
+        </div>
+
+        <div style="font-size:12px;color:#666;">
+          ${filteredItems.length} produk
+        </div>
+
+        <div style="margin-top:8px;font-weight:bold;color:#ff6f00;">
+          Rp ${totalStore.toLocaleString("id-ID")}
+        </div>
+
+        <span class="status ${statusClass}">
+          ${status}
+        </span>
+
+      </div>
+    `;
+
+    // 🔥 PEMISAH SECTION
+    if (status === "selesai") {
+      selesai += card;
+    } else if (status === "diproses" || status === "dikirim") {
+      proses += card;
+    } else {
+      baru += card;
+    }
+
+  });
+
+  if (!found) {
+    list.innerHTML = `<div class="empty">Belum ada pesanan masuk</div>`;
+    return;
+  }
+
+  // 🔥 FINAL OUTPUT SECTION STYLE
+  list.innerHTML = `
+    ${baru ? `<h3 style="margin:10px 0;">🟠 Pesanan Baru</h3>` + baru : ""}
+
+    ${proses ? `<h3 style="margin:20px 0 10px;">🔵 Pesanan Diproses</h3>` + proses : ""}
+
+    ${selesai ? `<h3 style="margin:20px 0 10px;">🟢 Pesanan Selesai</h3>` + selesai : ""}
+  `;
+}
+
+
+function shortId(id){
+  if(!id) return "-";
+  return id.slice(0, 6) + "..." + id.slice(-3);
+}
+
+window.openOrder = async (orderId) => {
+
+  currentOrderId = orderId;
+
+  const snap = await get(ref(db, "pesanan/" + orderId));
+  if (!snap.exists()) return;
+
+  const data = snap.val();
+
+  const items = Object.values(data.items || {})
+    .filter(p => p.storeId === storeId);
+
+  const statusMap = {
+    pending: 1,
+    disetujui: 2,
+    diproses: 3,
+    dikirim: 4,
+    selesai: 5
+  };
+
+  const steps = ["Pesanan", "Disetujui", "Diproses", "Dikirim", "Selesai"];
+  const level = statusMap[data.status] || 1;
+
+  let total = 0;
+  let html = "";
+
+  // =========================
+  // TRACKING (tetap 1-5)
+  // =========================
+  html += `<div style="display:flex;justify-content:space-between;margin-bottom:15px;">`;
+
+  steps.forEach((s, i) => {
+    html += `
+      <div style="text-align:center;flex:1;">
+        <div style="
+          width:26px;height:26px;
+          border-radius:50%;
+          margin:auto;
+          background:${i < level ? '#ff6f00' : '#ddd'};
+          color:white;
+          font-size:12px;
+          line-height:26px;
+        ">
+          ${i + 1}
+        </div>
+        <div style="font-size:10px;margin-top:5px;color:${i < level ? '#ff6f00' : '#999'}">
+          ${s}
+        </div>
+      </div>
+    `;
+  });
+
+  html += `</div>`;
+
+  // =========================
+  // SECTION HELPER
+  // =========================
+  const section = (img, title) => `
+    <div style="display:flex;align-items:center;gap:8px;margin:10px 0;font-weight:bold;">
+      <img src="assets/images/${img}" style="width:18px;height:18px;">
+      <span>${title}</span>
+    </div>
+    <div>------------------------</div>
+  `;
+
+  // =========================
+  // DATA PEMBELI
+  // =========================
+  html += section("ba61750a46794d8847c3f463c5e71cc4.png", "DATA PEMBELI");
+
+html += `
+  <div style="font-size:13px;line-height:1.6;">
+    <b>${data.nama || "Tanpa Nama"}</b><br>
+    <span style="font-size:11px;color:#777;">
+      ID: ${shortId(data.user)}
+    </span>
+  </div>
+  <div>------------------------</div>
+`;
+
+  // =========================
+  // ALAMAT
+  // =========================
+const a = data.alamat || {};
+
+html += `
+  <div style="
+    border:1px dashed #ff6f00;
+    border-radius:12px;
+    padding:12px;
+    background:linear-gradient(135deg,#fff7f0,#fff);
+    position:relative;
+    overflow:hidden;
+  ">
+
+    <!-- HEADER LABEL -->
+    <div style="
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-weight:bold;
+      font-size:13px;
+      color:#ff6f00;
+      margin-bottom:10px;
+    ">
+      <img src="assets/images/lokasi 17 (1).png" style="width:18px;height:18px;">
+      ALAMAT PENGIRIMAN
+    </div>
+
+    <div style="
+      font-size:13px;
+      line-height:1.7;
+      color:#333;
+    ">
+      <b style="font-size:14px;">
+        ${data.nama || "-"}
+      </b><br>
+
+      ${a.alamat || "-"}<br>
+      ${a.dusun || ""}<br>
+      ${a.kecamatan || "-"}<br>
+      ${a.kabupaten || "-"}<br>
+      ${a.provinsi || "-"}<br>
+
+      <div style="margin-top:6px;font-weight:bold;">
+        Kode Pos: ${a.kodepos || "-"}
+      </div>
+    </div>
+
+    <!-- STAMP STYLE (LIKE ENVELOPE) -->
+    <div style="
+      position:absolute;
+      top:10px;
+      right:10px;
+      font-size:10px;
+      padding:4px 8px;
+      border:1px solid #ff6f00;
+      border-radius:6px;
+      color:#ff6f00;
+      font-weight:bold;
+      opacity:0.8;
+    ">
+      SHIPPING
+    </div>
+
+  </div>
+
+  <div>------------------------</div>
+`;
+
+  // =========================
+  // METODE
+  // =========================
+  html += section("aaq.png", "METODE PEMBAYARAN");
+
+  html += `
+    <div style="font-size:13px;">
+      ${data.metode || "-"}
+    </div>
+    <div>------------------------</div>
+  `;
+
+  // =========================
+  // ORDER INFO
+  // =========================
+  html += section("aaz.png", "INFORMASI ORDER");
+
+  html += `
+    <div style="font-size:13px;line-height:1.6;">
+      ID: ${data.id || "-"}<br>
+      Status: ${data.status || "-"}<br>
+      Tanggal: ${new Date(data.createdAt || Date.now()).toLocaleString("id-ID")}
+    </div>
+    <div>------------------------</div>
+  `;
+
+  // =========================
+  // PRODUK
+  // =========================
+  html += section("shopping-cart.png", "PRODUK");
+
+  items.forEach(p => {
+
+    const subtotal = (p.harga || 0) * (p.qty || 1);
+    total += subtotal;
+
+    html += `
+      <div style="
+        display:flex;
+        gap:10px;
+        padding:10px 0;
+        border-bottom:1px solid #eee;
+      ">
+
+        <img src="${p.gambar || 'assets/images/gambar.png'}"
+          onerror="this.src='assets/images/gambar.png'"
+          style="
+            width:55px;height:55px;
+            border-radius:10px;
+            object-fit:cover;
+          ">
+
+        <div style="flex:1;font-size:13px;line-height:1.4;">
+          <b>${p.nama || "-"}</b><br>
+          Qty: ${p.qty || 1}<br>
+          Harga: Rp ${(p.harga || 0).toLocaleString("id-ID")}<br>
+          Subtotal: <b style="color:#ff6f00;">Rp ${subtotal.toLocaleString("id-ID")}</b>
+        </div>
+
+      </div>
+    `;
+  });
+
+  // =========================
+  // TOTAL
+  // =========================
+  html += `
+    <div style="margin-top:15px;font-size:16px;font-weight:bold;color:#ff6f00;">
+      TOTAL: Rp ${total.toLocaleString("id-ID")}
+    </div>
+  `;
+
+  // =========================
+  // SHOW POPUP
+  // =========================
+  document.getElementById("popupContent").innerHTML = html;
+  document.getElementById("orderPopup").style.display = "flex";
+};
+
+
+// CLOSE POPUP
+window.closePopup = () => {
+  document.getElementById("orderPopup").style.display = "none";
+};
+
+
+
+window.acceptOrder = async () => {
+  if (!currentOrderId) return;
+
+  await update(ref(db, "pesanan/" + currentOrderId), {
+    status: "diproses"
+  });
+
+  alert("Pesanan diterima");
+  loadOrders();
+  closePopup();
+};
+
+window.rejectOrder = async () => {
+  if (!currentOrderId) return;
+
+  await update(ref(db, "pesanan/" + currentOrderId), {
+    status: "dibatalkan"
+  });
+
+  alert("Pesanan ditolak");
+  loadOrders();
+  closePopup();
+};
+
+
+window.sendOrder = async () => {
+  if (!currentOrderId) return;
+
+  await update(ref(db, "pesanan/" + currentOrderId), {
+    status: "dikirim"
+  });
+
+  alert("Pesanan sedang diantar");
+  loadOrders();
+  closePopup();
+};
+
+
+
+
+window.chatBuyer = () => {
+  const snap = window.lastOrderData;
+  if (!snap) return;
+
+  const phone = snap.noWa || snap.whatsapp || "";
+
+  if (!phone) {
+    alert("Nomor pembeli tidak tersedia");
+    return;
+  }
+
+  window.open(`https://wa.me/${phone}`, "_blank");
+};
+
+loadOrders();
+
+</script>
+
+</body>
+</html>

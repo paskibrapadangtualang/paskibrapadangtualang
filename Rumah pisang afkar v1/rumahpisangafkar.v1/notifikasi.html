@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Notifikasi</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f5f6fa;
+padding-bottom:90px;
+}
+
+/* HEADER */
+
+.header{
+padding:20px;
+
+background:#d29a01;
+color:#ffffff;
+font-size:22px;
+
+font-weight:bold;
+
+position:sticky;
+
+top:0;
+
+z-index:20;
+
+box-shadow:
+0 2px 10px rgba(0,0,0,.05);
+}
+
+/* LIST */
+
+.list{
+padding:15px;
+
+display:flex;
+
+flex-direction:column;
+
+gap:12px;
+}
+
+.item{
+background:#f2f2f2;
+
+border-radius:18px;
+
+padding:14px;
+
+display:flex;
+
+gap:12px;
+
+align-items:flex-start;
+
+box-shadow:
+0 3px 10px rgba(0,0,0,.05);
+
+cursor:pointer;
+
+transition:.2s;
+}
+
+.item:hover{
+transform:translateY(-2px);
+}
+
+.icon{
+
+width:50px;
+
+height:50px;
+
+border-radius:14px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:18px;
+
+flex-shrink:0;
+}
+
+.admin{
+background:#e8f1ff;
+color:#1e6fff;
+}
+
+.order{
+background:#fff1e6;
+color:#ff6f00;
+}
+
+.shipping{
+background:#eafaf1;
+color:#16a34a;
+}
+
+.payment{
+background:#fff5d9;
+color:#d97706;
+}
+
+.promo{
+background:#ffe8f3;
+color:#db2777;
+}
+
+.isi{
+flex:1;
+}
+
+.judul{
+font-size:14px;
+
+font-weight:bold;
+
+margin-bottom:6px;
+}
+
+.text{
+font-size:12px;
+
+color:#666;
+
+line-height:1.5;
+}
+
+.waktu{
+
+margin-top:8px;
+
+font-size:11px;
+
+color:#999;
+}
+
+.empty{
+
+padding:60px 20px;
+
+text-align:center;
+
+color:#888;
+
+font-size:14px;
+}
+
+.loading{
+
+padding:50px;
+
+text-align:center;
+
+font-size:13px;
+
+color:#666;
+}
+
+/* NAV */
+
+.nav{
+
+position:fixed;
+
+left:0;
+right:0;
+bottom:0;
+
+height:75px;
+
+background:white;
+
+display:flex;
+
+justify-content:space-around;
+
+align-items:center;
+
+box-shadow:
+0 -3px 15px rgba(0,0,0,.08);
+
+z-index:999;
+
+}
+
+.navItem{
+
+display:flex;
+
+flex-direction:column;
+
+align-items:center;
+
+justify-content:center;
+
+gap:5px;
+
+font-size:12px;
+
+color:#777;
+
+text-decoration:none;
+
+border:none;
+
+outline:none;
+
+background:none;
+
+}
+
+.navItem span{
+
+text-decoration:none;
+
+border:none;
+
+}
+
+.active{
+color:#ff6f00;
+}
+
+.navItem i{
+font-size:20px;
+}
+
+.refund{
+background:#eafaf1;
+color:#16a34a;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+Notifikasi
+</div>
+
+<div class="list" id="notifList">
+
+<div class="loading">
+Memuat notifikasi...
+</div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="nav">
+
+<a class="navItem"
+href="home.html">
+
+<i class="fa fa-house"></i>
+
+<span>Home</span>
+
+</a>
+
+<a class="navItem active"
+href="notifikasi.html">
+
+<i class="fa fa-bell"></i>
+
+<span>Notifikasi</span>
+
+</a>
+
+<a class="navItem"
+href="saya.html">
+
+<i class="fa fa-user"></i>
+
+<span>Saya</span>
+
+</a>
+
+</div>
+
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+onValue,
+get,
+update
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+
+const firebaseConfig={
+
+apiKey:
+"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+
+authDomain:
+"shoponline-93646.firebaseapp.com",
+
+databaseURL:
+"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"shoponline-93646",
+
+storageBucket:
+"shoponline-93646.firebasestorage.app",
+
+messagingSenderId:
+"435032364443",
+
+appId:
+"1:435032364443:web:5f76384f794693a892bd3e"
+
+};
+
+
+const app=
+initializeApp(
+firebaseConfig
+);
+
+const db=
+getDatabase(
+app
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+const uid = localStorage.getItem("userId");
+
+// kalau belum login
+if(!uid){
+
+location.replace("index.html");
+
+}
+
+
+
+
+
+const notifUid=
+"uid_user_001";
+
+
+const list=
+document.getElementById(
+"notifList"
+);
+
+
+
+function waktu(x){
+
+if(!x)
+return "-";
+
+return new Date(x)
+
+.toLocaleString(
+"id-ID"
+);
+
+}
+
+
+async function loadNotif() {
+
+list.innerHTML = "";
+
+const pinned = [];
+const orders = [];
+
+/* ===================
+PIN ADMIN + PROMO
+=================== */
+const notifSnap = await get(
+  ref(db, "notifications/" + notifUid)
+);
+
+if (notifSnap.exists()) {
+
+  notifSnap.forEach((x) => {
+
+    const d = x.val();
+
+    if (d.type !== "admin" && d.type !== "promo")
+    return;
+
+    let icon = "fa-bullhorn";
+    let cls = "admin";
+
+    if (d.type === "promo") {
+
+      icon = "fa-gift";
+      cls = "promo";
+
+    }
+
+    /* AUTO IMAGE */
+
+    if(!d.image){
+
+      d.image =
+
+      d.type === "promo"
+
+      ? "promo.png"
+
+      : "admin.png";
+
+      /* SIMPAN KE FIREBASE */
+
+      update(
+
+        ref(
+          db,
+          "notifications/" + notifUid + "/" + x.key
+        ),
+
+        {
+          image:d.image
+        }
+
+      );
+
+    }
+
+    pinned.push({
+
+      pin:true,
+
+      id:x.key,
+
+      title:d.title,
+
+      msg:d.message,
+
+      image:d.image,
+
+      page:"detail-pengumuman.html",
+
+      time:d.createdAt || 0
+
+    });
+
+  });
+
+}
+
+
+
+/* ===================
+TRANSAKSI NOTIFIKASI (TOPUP / REFUND / PURCHASE)
+=================== */
+/* ===================
+NOTIFIKASI TRANSAKSI (1 PIN SAJA)
+=================== */
+
+const transSnap = await get(ref(db, "saldoHistory/" + uid));
+
+if (transSnap.exists()) {
+
+  const transaksiList = [];
+
+  transSnap.forEach((x) => {
+
+    const d = x.val();
+
+    transaksiList.push({
+      id: d.id,
+      title: d.category === "refund"
+        ? "Pengembalian Saldo"
+        : d.category === "topup"
+        ? "Top Up"
+        : "Pembelian",
+
+      desc: d.desc || "Transaksi berhasil",
+      amount: d.amount || 0,
+      type: d.type,
+      time: d.createdAt || 0
+    });
+
+  });
+
+  // SORT terbaru
+  transaksiList.sort((a,b)=>b.time - a.time);
+
+  // MASUKKAN 1 NOTIF SAJA
+  pinned.push({
+    pin: true,
+    id: "TRANSAKSI_ALL",
+    title: "Notifikasi Transaksi",
+    msg: "Klik untuk melihat semua aktivitas saldo kamu",
+    image: "assets/images/aaq.png",
+    page: "detail-transaksi.html",
+    time: Date.now(),
+
+    // KIRIM DATA LIST
+    data: transaksiList
+  });
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ===================
+ORDER NOTIF
+=================== */
+
+const orderSnap = await get(
+  ref(db, "pesanan")
+);
+
+if (orderSnap.exists()) {
+
+  orderSnap.forEach((x) => {
+
+    const d = x.val();
+
+    if (d.user !== uid) return;
+
+    let title = "Pesanan";
+    let msg = "Update pesanan";
+    let icon = "fa-box";
+    let cls = "order";
+
+    if (d.status === "pending") {
+      title = "Pesanan Dibuat";
+      msg = `${d.id} berhasil dibuat`;
+      icon = "fa-receipt";
+      cls = "payment";
+    }
+
+    else if (d.status === "disetujui") {
+      title = "Pesanan Disetujui";
+      msg = `${d.id} disetujui admin`;
+      icon = "fa-check";
+      cls = "admin";
+    }
+
+    else if (d.status === "diproses") {
+      title = "Pesanan Diproses";
+      msg = `${d.id} sedang diproses`;
+      icon = "fa-box";
+      cls = "order";
+    }
+
+    else if (
+      d.status === "dikirim" ||
+      d.status === "diantar" ||
+      d.status === "cod"
+    ) {
+      title = "Pesanan Diantar";
+      msg = `${d.id} menuju lokasi`;
+      icon = "fa-truck";
+      cls = "shipping";
+    }
+
+    else if (d.status === "selesai") {
+      title = "Pesanan Selesai";
+      msg = `${d.id} selesai`;
+      icon = "fa-circle-check";
+      cls = "shipping";
+    }
+
+    orders.push({
+      pin: false,
+      title,
+      msg,
+      icon,
+      cls,
+      page: "orderan.html",
+      id: d.id,
+      time: d.createdAt || 0
+    });
+
+  });
+
+}
+
+/* ===================
+SORT
+=================== */
+
+pinned.sort((a, b) => b.time - a.time);
+orders.sort((a, b) => b.time - a.time);
+
+const semua = [...pinned, ...orders];
+
+/* ===================
+EMPTY STATE
+=================== */
+if (semua.length === 0) {
+
+list.innerHTML = `
+
+<div class="empty">
+
+<i class="fa-regular fa-bell"
+style="
+font-size:65px;
+color:#d1d5db;
+margin-bottom:15px;
+display:block;
+"></i>
+
+<div style="
+font-size:18px;
+font-weight:bold;
+margin-bottom:6px;
+color:#555;
+">
+
+Belum ada notifikasi
+
+</div>
+
+<div style="
+font-size:13px;
+color:#999;
+line-height:1.5;
+">
+
+Notifikasi pesanan dan pengumuman
+akan muncul di sini
+
+</div>
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+
+
+/* ===================
+RENDER (FIX FINAL)
+=================== */
+
+let html = "";
+
+semua.forEach((x) => {
+
+html += `
+<div class="item"
+onclick="openNotif('${x.page}', '${x.id}', ${x.pin ? 1 : 0})">
+
+<div class="icon ${x.cls}">
+
+${x.pin
+
+? `
+
+<img
+src="${x.image}"
+style="
+width:50px;
+height:50px;
+border-radius:14px;
+object-fit:cover;
+">
+
+`
+
+: `
+
+<i class="fa ${x.icon}"></i>
+
+`
+
+}
+
+</div>
+
+
+
+<div class="isi">
+
+<div class="judul">
+${x.pin ? '📌 ' + x.title : x.title}
+</div>
+
+<div class="text">
+${x.msg}
+</div>
+
+<div class="waktu">
+${waktu(x.time)}
+</div>
+
+</div>
+
+</div>
+`;
+
+});
+
+list.innerHTML = html;
+
+}
+
+/* ===================
+OPEN NOTIF
+=================== */
+
+window.openNotif=
+
+function(
+page,
+id,
+pin
+){
+
+/* notif pin */
+
+if(
+pin
+){
+
+if(
+page &&
+page!=="#"
+){
+
+location.href=
+
+page+
+
+"?id="+id;
+
+}
+
+return;
+
+}
+
+
+/* order */
+
+location.href=
+
+"orderan.html?id="+id;
+
+};
+
+
+
+/* REALTIME */
+
+onValue(
+
+ref(
+db,
+"notifications/"+notifUid
+),
+
+()=>{
+
+loadNotif();
+
+}
+
+);
+
+
+onValue(
+
+ref(
+db,
+"pesanan"
+),
+
+()=>{
+
+loadNotif();
+
+}
+
+);
+</script>
+
+</body>
+</html>
