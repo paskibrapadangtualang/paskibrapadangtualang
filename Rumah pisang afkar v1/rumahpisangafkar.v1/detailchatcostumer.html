@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chat Customer</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#f5f5f5;
+display:flex;
+flex-direction:column;
+height:100vh;
+}
+
+.header{
+display:flex;
+align-items:center;
+background:#ff6f00;
+color:#fff;
+padding:15px;
+font-weight:bold;
+}
+
+.chatBox{
+flex:1;
+padding:10px;
+overflow-y:auto;
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.msg{
+max-width:70%;
+padding:10px;
+border-radius:10px;
+font-size:14px;
+word-wrap:break-word;
+}
+
+.me{
+background:#696969;
+color:white;
+align-self:flex-end;
+border-bottom-right-radius:0;
+}
+
+.other{
+background:white;
+align-self:flex-start;
+border-bottom-left-radius:0;
+}
+
+.inputBox{
+display:flex;
+padding:10px;
+background:white;
+gap:10px;
+}
+
+input{
+flex:1;
+padding:10px;
+border:1px solid #ddd;
+border-radius:10px;
+outline:none;
+}
+
+button{
+padding:10px 15px;
+border:none;
+background:#ff6f00;
+color:white;
+border-radius:10px;
+cursor:pointer;
+}
+
+.msg img{
+max-width:200px;
+border-radius:10px;
+margin-top:5px;
+cursor:pointer;
+}
+
+.warning{
+background:#fff8e3;
+color:#856404;
+padding:10px;
+margin:10px;
+border-radius:10px;
+font-size:12px;
+border:1px solid #ffeeba;
+}
+
+#loadingBox{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.4);
+justify-content:center;
+align-items:center;
+z-index:99999;
+color:white;
+font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+
+    
+
+<div id="imgModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);justify-content:center;align-items:center;z-index:99999;">
+<img id="imgPreview" style="max-width:95%;max-height:95%;border-radius:10px;">
+</div>
+
+<!-- HEADER -->
+<div class="header">
+
+<img id="storeLogo" style="width:32px;height:32px;border-radius:50%;margin-right:10px;object-fit:cover;cursor:pointer;">
+<span id="storeName" style="cursor:pointer;">Chat Customer</span>
+
+<div id="laporBtn" style="margin-left:auto;display:flex;align-items:center;gap:6px;background:#ffe5e5;color:#d60000;padding:6px 10px;border-radius:20px;cursor:pointer;font-size:12px;">
+Lapor
+</div>
+
+</div>
+
+<div id="warningBox" class="warning">
+⚠️ Jangan transaksi di luar AfkarMall.
+</div>
+
+<div id="chatBox" class="chatBox"></div>
+
+
+
+<div id="productBar" style="
+display:none;
+background:white;
+padding:10px;
+border-bottom:1px solid #eee;
+display:flex;
+align-items:center;
+gap:10px;
+">
+
+<img id="pImg" style="width:45px;height:45px;border-radius:8px;object-fit:cover;">
+
+<div style="flex:1;">
+  <div id="pName" style="font-weight:bold;font-size:13px;"></div>
+  <div id="pPrice" style="color:#ff6f00;font-weight:bold;font-size:13px;"></div>
+</div>
+
+</div>
+
+
+
+<div class="inputBox">
+
+<div id="imgBtn" style="cursor:pointer;">
+<img src="assets/images/im_image.png" style="width:28px;height:28px;">
+</div>
+
+<input type="file" id="imgInput" accept="image/*" hidden>
+
+<input id="text" placeholder="Tulis pesan...">
+
+<button onclick="send()">Kirim</button>
+
+</div>
+
+<div id="loadingBox">Mengirim gambar...</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, push, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+authDomain: "shoponline-93646.firebaseapp.com",
+databaseURL: "https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId: "shoponline-93646"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+
+
+
+
+
+
+
+
+
+
+function getChatProduct() {
+  try {
+    const data = localStorage.getItem("chatProduct");
+    if (!data || data === "null" || data === "undefined") return null;
+
+    const parsed = JSON.parse(data);
+
+    if (!parsed || !parsed.nama) return null;
+
+    return parsed;
+  } catch (e) {
+    return null;
+  }
+}
+
+
+
+
+
+
+
+
+
+function loadProductBar() {
+  const product = getChatProduct();
+
+  const bar = document.getElementById("productBar");
+
+  if (!product) {
+    bar.style.display = "none";
+    return;
+  }
+
+  // kalau invalid → langsung hapus
+  if (!product.nama || !product.harga) {
+    clearChatProduct();
+    return;
+  }
+
+  bar.style.display = "flex";
+
+  document.getElementById("pImg").src = product.gambar || "";
+  document.getElementById("pName").innerText = product.nama || "";
+  document.getElementById("pPrice").innerText =
+    "Rp " + Number(product.harga || 0).toLocaleString("id-ID");
+}
+
+function clearChatProduct(){
+  localStorage.removeItem("chatProduct");
+
+  const bar = document.getElementById("productBar");
+  if(bar){
+    bar.style.display = "none";
+  }
+}
+
+loadProductBar();
+
+
+// kalau tidak ada product valid → paksa bersih
+setTimeout(() => {
+  const p = localStorage.getItem("chatProduct");
+
+  if (!p || p === "null" || p === "undefined") {
+    clearChatProduct();
+  }
+}, 300);
+
+
+const storeId = new URLSearchParams(location.search).get("store");
+const uid = localStorage.getItem("userId");
+
+/* =========================
+AUTO RESET PRODUCT JIKA STORE BERUBAH
+========================= */
+const lastStore = localStorage.getItem("lastChatStore");
+
+if (lastStore && lastStore !== storeId) {
+  localStorage.removeItem("chatProduct");
+}
+
+localStorage.setItem("lastChatStore", storeId);
+
+if(!uid){
+alert("Login dulu!");
+location.href="index.html";
+}
+
+/* CLOUDINARY */
+const CLOUD_NAME="djxlbemky";
+const UPLOAD_PRESET="uploadgambar";
+const CLOUD_URL=`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+
+async function uploadImage(file){
+const fd=new FormData();
+fd.append("file",file);
+fd.append("upload_preset",UPLOAD_PRESET);
+
+const res=await fetch(CLOUD_URL,{method:"POST",body:fd});
+const data=await res.json();
+
+return data.secure_url || "";
+}
+
+/* HEADER */
+const storeName=document.getElementById("storeName");
+const storeLogo=document.getElementById("storeLogo");
+
+async function loadHeader(){
+const snap=await get(ref(db,"stores/"+storeId));
+if(snap.exists()){
+const s=snap.val();
+storeName.innerText=s.nama||"Store";
+storeLogo.src=s.logo||"https://picsum.photos/100";
+}
+}
+
+loadHeader();
+
+
+/* =========================
+CLICK HEADER KE STORE
+========================= */
+
+function goToStore(){
+  if(storeId){
+    location.href = `detailstore.html?id=${storeId}`;
+  }
+}
+
+document.getElementById("storeLogo").addEventListener("click", goToStore);
+document.getElementById("storeName").addEventListener("click", goToStore);
+
+
+
+
+
+/* CHAT */
+const chatRef=ref(db,`chatcostumer/${storeId}/${uid}`);
+const chatBox=document.getElementById("chatBox");
+
+onValue(chatRef,(snap)=>{
+
+  chatBox.innerHTML="";
+
+  snap.forEach(c=>{
+
+    const d=c.val();
+
+    const div=document.createElement("div");
+    div.className="msg "+(d.sender===uid?"me":"other");
+
+    let time="";
+    if(d.time){
+      const t=new Date(d.time);
+      time=t.toLocaleString("id-ID")+ " WIB";
+    }
+
+    div.innerHTML = `
+
+    ${d.product ? `
+  <div onclick="openProduct('${d.product.id}')"
+    style="
+      display:flex;
+      gap:8px;
+      background:#fff3e0;
+      padding:6px;
+      border-radius:8px;
+      margin-bottom:5px;
+      align-items:center;
+      cursor:pointer;
+    ">
+    
+    <img src="${d.product.gambar}" 
+      style="width:40px;height:40px;border-radius:6px;object-fit:cover;">
+
+    <div>
+      <div style="font-size:12px; color:#ff6f00; font-weight:bold;">
+        ${d.product.nama}
+      </div>
+      <div style="font-size:12px;color:#ff6f00;">
+        Rp ${Number(d.product.harga).toLocaleString("id-ID")}
+      </div>
+    </div>
+  </div>
+` : ""}
+
+
+
+
+
+      ${d.text ? `<div>${d.text}</div>` : ""}
+
+      ${d.image ? `<img src="${d.image}" onclick="openImg('${d.image}')">` : ""}
+
+      <div style="font-size:10px;opacity:.6">${time}</div>
+    `;
+
+    chatBox.appendChild(div);
+
+  });
+
+  chatBox.scrollTop = chatBox.scrollHeight;
+});
+
+/* IMAGE OPEN */
+window.openImg=(url)=>{
+const m=document.getElementById("imgModal");
+document.getElementById("imgPreview").src=url;
+m.style.display="flex";
+m.onclick=()=>m.style.display="none";
+};
+
+/* INPUT IMAGE FIX */
+const imgBtn=document.getElementById("imgBtn");
+const imgInput=document.getElementById("imgInput");
+
+imgBtn.onclick=()=>{
+imgInput.value="";
+imgInput.click();
+};
+
+/* SEND */
+const loading=document.getElementById("loadingBox");
+
+window.send = async () => {
+
+  const text = document.getElementById("text").value.trim();
+  const imgInput = document.getElementById("imgInput");
+  const file = imgInput.files[0];
+
+  let imageUrl = "";
+
+  if (file) {
+    loading.style.display = "flex";
+    imageUrl = await uploadImage(file);
+    loading.style.display = "none";
+  }
+
+  imgInput.value = "";
+
+  if (!text && !imageUrl) return;
+
+  // 🔥 AMBIL PRODUK DARI LOCALSTORAGE
+  const product = JSON.parse(localStorage.getItem("chatProduct") || "null");
+
+await push(chatRef, {
+  text: text || "",
+  image: imageUrl || "",
+  sender: uid,
+  time: Date.now(),
+
+  product: product ? {
+  id: product.id,
+  nama: product.nama,
+  harga: product.harga,
+  gambar: product.gambar
+} : null
+});
+
+document.getElementById("text").value = "";
+
+/* 🔥 INI KUNCINYA: HAPUS MINI PRODUCT SETELAH KIRIM */
+clearChatProduct();
+
+// pastikan benar-benar bersih
+localStorage.setItem("chatProduct", "null");
+
+
+  // kalau kamu pakai warning system
+  if (typeof updateActivity === "function") updateActivity();
+  if (typeof hideWarning === "function") hideWarning();
+};
+
+
+
+
+
+const laporBtn = document.getElementById("laporBtn");
+
+if (laporBtn) {
+  laporBtn.onclick = () => {
+    location.href = `Laporchat.html?store=${storeId}&user=${uid}`;
+  };
+}
+
+
+
+
+
+
+
+
+/* =========================
+WARNING SYSTEM FIXED
+========================= */
+
+const warningBox = document.getElementById("warningBox");
+
+let firstMessage = false;
+let lastActivity = Date.now();
+
+/* reset tampilan awal */
+warningBox.innerHTML = `
+⚠️ Demi keamanan transaksi, jangan melakukan transaksi di luar AfkarMall.  
+Semua transaksi hanya dilindungi jika dilakukan di dalam platform.
+`;
+
+warningBox.style.display = "block";
+
+/* sembunyikan warning atas setelah pesan pertama */
+function hideWarning(){
+  if(!firstMessage){
+    warningBox.style.display = "none";
+    firstMessage = true;
+  }
+}
+
+/* update aktivitas */
+function updateActivity(){
+  lastActivity = Date.now();
+}
+
+/* buat warning bawah */
+function createBottomWarning(){
+  const bottom = document.getElementById("warningBoxBottom");
+
+  if(bottom) return;
+
+  const div = document.createElement("div");
+  div.id = "warningBoxBottom";
+  div.className = "warning";
+  div.style.marginTop = "10px";
+
+  div.innerHTML = `
+⚠️ Demi keamanan transaksi, jangan melakukan transaksi di luar AfkarMall.  
+Semua transaksi hanya dilindungi jika dilakukan di dalam platform.
+  `;
+
+  chatBox.appendChild(div);
+}
+
+/* cek idle 1 menit */
+setInterval(() => {
+  const diff = Date.now() - lastActivity;
+
+  if(diff > 60000){
+    createBottomWarning();
+  }
+}, 5000);
+
+
+window.openProduct = (id) => {
+  if (!id) return;
+  location.href = `detailproduk.html?id=${id}`;
+};
+
+</script>
+
+</body>
+</html>

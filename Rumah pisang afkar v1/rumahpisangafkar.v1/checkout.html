@@ -174,7 +174,6 @@ margin:12px 0;
 
 
 
-
 .confirmWrap{
 
 position:fixed;
@@ -184,52 +183,38 @@ left:0;
 right:0;
 bottom:0;
 
-background:
-rgba(
-0,0,0,.45
-);
+background:#f5f5f5;
 
 display:none;
 
-justify-content:center;
+flex-direction:column;
 
-align-items:center;
+z-index:9999999;
 
-padding:20px;
-
-z-index:99999;
-
-backdrop-filter:
-blur(4px);
+animation:showPopup .18s ease;
 
 }
-
 
 .confirmCard{
 
 width:100%;
+height:100vh;
 
-max-width:420px;
-
-background:white;
-
-border-radius:24px;
-
-padding:22px;
-
-box-shadow:
-0 20px 50px rgba(
-0,0,0,.18
-);
-
-animation:
-showPopup .22s ease;
-
-max-height:85vh;
+background:#f5f5f5;
 
 overflow:auto;
 
+padding-bottom:120px;
+
 }
+
+
+
+
+
+
+
+
 
 
 @keyframes showPopup{
@@ -373,6 +358,484 @@ translateY(-1px);
 
 
 
+
+
+
+.voucherBox{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+padding:14px;
+
+border-radius:14px;
+
+background:#fafafa;
+
+cursor:pointer;
+
+border:1px solid #eee;
+
+}
+
+.voucherModal{
+
+position:fixed;
+
+left:0;
+right:0;
+top:0;
+bottom:0;
+
+background:rgba(0,0,0,.4);
+
+display:none;
+
+justify-content:flex-end;
+align-items:flex-end;
+
+z-index:999999;
+
+}
+
+.voucherContent{
+
+width:100%;
+
+background:white;
+
+border-radius:25px 25px 0 0;
+
+padding:20px;
+
+max-height:75vh;
+
+overflow:auto;
+
+animation:showVoucher .2s ease;
+
+}
+
+@keyframes showVoucher{
+
+from{
+transform:translateY(100%);
+}
+
+to{
+transform:translateY(0);
+}
+
+}
+
+.voucherItem{
+padding:14px;
+border-radius:14px;
+border:1px solid #eee;
+margin-bottom:12px;
+cursor:pointer;
+
+}
+
+.voucherItem.active{
+border:2px solid #ff9800;
+background:#fff8ef;
+}
+
+.voucherName{
+font-weight:bold;
+margin-bottom:5px;
+}
+
+.voucherDesc{
+font-size:13px;
+color:#666;
+line-height:1.5;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+.voucherCard{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px;
+  margin-bottom:10px;
+  border-radius:14px;
+
+  background: linear-gradient(135deg,#fff,#fff7f0);
+  border:1px solid #ffd7b3;
+
+  box-shadow:0 4px 12px rgba(0,0,0,0.06);
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.voucherCard:active{
+  transform:scale(0.98);
+}
+
+.voucherLeft{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.voucherIcon{
+  width:36px;
+  height:36px;
+  border-radius:10px;
+  background:#ff6f00;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-size:16px;
+}
+
+.voucherBadge{
+  font-size:12px;
+  font-weight:700;
+  color:#ff6f00;
+  background:#fff3e6;
+  padding:4px 8px;
+  border-radius:8px;
+  border:1px dashed #ffb36b;
+}
+
+.voucherCenter{
+  flex:1;
+  margin-left:10px;
+}
+
+.voucherTitle{
+  font-size:13px;
+  font-weight:700;
+  color:#333;
+}
+
+.voucherDesc{
+  font-size:12px;
+  color:#ff6f00;
+  margin-top:2px;
+}
+
+.voucherMin{
+  font-size:11px;
+  color:#888;
+  margin-top:2px;
+}
+
+.voucherRight{
+  display:flex;
+  align-items:center;
+}
+
+.voucherBtn{
+  background:#ff6f00;
+  color:#fff;
+  font-size:12px;
+  padding:6px 10px;
+  border-radius:10px;
+  font-weight:600;
+}
+
+
+
+
+.toastWrap{
+
+position:fixed;
+left:0;
+right:0;
+top:25px;
+
+display:flex;
+justify-content:center;
+
+z-index:999999999;
+
+pointer-events:none;
+
+}
+
+.toast{
+
+min-width:220px;
+max-width:90%;
+
+padding:16px 18px;
+
+border-radius:18px;
+
+background:#222;
+
+color:white;
+
+font-size:14px;
+font-weight:600;
+
+
+
+display:flex;
+align-items:center;
+gap:12px;
+
+animation:toastShow .25s ease;
+
+}
+
+.toast.success{
+background:#16a34a;
+}
+
+.toast.error{
+background:#ef4444;
+}
+
+.toast.warning{
+background:#ff9800;
+}
+
+.toast.info{
+background:#222;
+}
+
+.toastIcon{
+font-size:20px;
+}
+
+@keyframes toastShow{
+
+from{
+opacity:0;
+transform:translateY(-15px) scale(.95);
+}
+
+to{
+opacity:1;
+transform:translateY(0) scale(1);
+}
+
+}
+
+@keyframes toastHide{
+
+from{
+opacity:1;
+transform:translateY(0);
+}
+
+to{
+opacity:0;
+transform:translateY(-10px);
+}
+
+}
+
+
+
+
+
+
+
+
+
+
+/* =========================
+TOTAL SHOPEE STYLE
+========================= */
+
+.shopeeTotalWrap{
+
+background:#fff;
+
+margin:0 -15px;
+
+padding:18px 16px;
+
+border-top:1px solid #f1f1f1;
+
+border-bottom:1px solid #f1f1f1;
+
+box-shadow:none;
+
+border-radius:0;
+
+}
+
+.shopeeHead{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-bottom:14px;
+
+font-size:14px;
+
+font-weight:600;
+
+color:#222;
+
+}
+
+.shopeeHead span:last-child{
+
+font-size:12px;
+
+color:#999;
+
+font-weight:normal;
+
+}
+
+.shopeeTotal{
+
+font-size:28px;
+
+font-weight:700;
+
+color:#ee4d2d;
+
+margin-bottom:14px;
+
+}
+
+.totalLine{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+padding:8px 0;
+
+font-size:14px;
+
+color:#555;
+
+}
+
+.totalLine span:last-child{
+
+font-weight:500;
+
+color:#111;
+
+}
+
+.voucherLine{
+
+color:#26aa99;
+
+font-weight:600;
+
+}
+
+.totalDivider{
+
+height:1px;
+
+background:#f2f2f2;
+
+margin:12px 0;
+
+}
+
+.finalLine{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+padding-top:8px;
+
+font-size:15px;
+
+font-weight:700;
+
+}
+
+.finalPrice{
+
+font-size:22px;
+
+color:#ee4d2d;
+
+}
+
+
+
+
+.checkoutBox{
+background:#fff;
+padding:14px;
+border-radius:12px;
+margin-bottom:12px;
+}
+
+.checkoutTitle{
+font-size:14px;
+font-weight:700;
+margin-bottom:10px;
+}
+
+.voucherRow{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:12px;
+border:1px solid #eee;
+border-radius:10px;
+cursor:pointer;
+}
+
+.voucherRow:active{
+background:#f5f5f5;
+}
+
+.voucherCode{
+font-size:14px;
+font-weight:700;
+color:#ee4d2d;
+}
+
+.voucherSub{
+font-size:12px;
+color:#666;
+margin-top:3px;
+}
+
+.voucherArrow{
+font-size:20px;
+color:#bbb;
+font-weight:bold;
+}
+
+
+
+
+
+
+
+
+
 </style>
 
 </head>
@@ -433,6 +896,38 @@ Metode Pembayaran
 <div class="groupTitle">
 Bank & E-Wallet
 </div>
+
+<div class="payItem"
+onclick="toggleBank()">
+
+<div>
+
+<div style="
+font-weight:bold;
+font-size:14px;
+">
+Pilih Bank / E-Wallet
+</div>
+
+<div id="bankText"
+style="
+font-size:12px;
+color:#777;
+margin-top:4px;
+">
+Belum dipilih
+</div>
+
+</div>
+
+<div id="bankArrow">
+›
+</div>
+
+</div>
+
+<div id="bankList"
+style="display:none;">
 
 <label class="payItem">
 <input type="radio"
@@ -496,6 +991,8 @@ name="pay"
 value="QRIS">
 QRIS
 </label>
+
+</div>
 
 <hr>
 
@@ -576,23 +1073,62 @@ Rp <span id="poinUser">
 
 </div>
 
-<div class="box">
+<div class="checkoutBox">
 
-<div class="title">
+<div class="checkoutTitle">
+Voucher
+</div>
 
+<div class="voucherRow" onclick="openVoucher()">
+
+<div class="voucherInfo">
+
+<div class="voucherCode" id="voucherText">
+Pilih Voucher
+</div>
+
+<div class="voucherSub" id="voucherDesc">
+Belum ada voucher dipilih
+</div>
+
+</div>
+
+<div class="voucherArrow">
+›
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- TOTAL SHOPEE STYLE -->
+
+<div class="shopeeTotalWrap">
+
+<div class="shopeeHead">
+
+<span>
 Total Belanja
+</span>
+
+
 
 </div>
 
 <div
-class="total"
-id="total">
+id="total"
+class="shopeeTotal">
 
 Rp 0
 
 </div>
 
 </div>
+
+
+
 
 <div class="box">
 
@@ -997,6 +1533,19 @@ function requireLogin(){
 const uidUser = requireLogin();
 if(!uidUser) throw new Error("Not logged in");
 
+
+/* RESET VOUCHER CHECKOUT */
+
+await set(
+ref(
+db,
+"checkoutVoucher/" + uidUser
+),
+null
+);
+
+
+
 /* USER DATA */
 
 const userSnap = await get(
@@ -1049,32 +1598,77 @@ Kode Pos : ${a.kodepos || "-"}
 ========================= */
 let checkoutMode = localStorage.getItem("checkoutMode") || "cart";
 let rawCart = {};
+
 let totalBelanja = 0;
 
+let selectedVoucher = null;
+
+let finalTotal = 0;
+
+let biayaAdmin = 0;
+
+let biayaOngkir = 0;
+
+let dataCheckout = {};
+
+/* =========================
+VOUCHER SYSTEM
+========================= */
+
+let allVoucher = [];
+
+let voucherAktif = null;
+
+let potonganVoucher = 0;
 try {
 
   /* =========================
      AMBIL DATA CHECKOUT
   ========================= */
 
-  if (checkoutMode === "buynow") {
+ /* =========================
+AMBIL CART USER FIX
+========================= */
 
-    const buyNowData = JSON.parse(
-      localStorage.getItem("buyNowCart") || "{}"
-    );
+if (checkoutMode === "buynow") {
 
-    rawCart = buyNowData;
+const buyNowData =
+JSON.parse(
+localStorage.getItem(
+"buyNowCart"
+) || "{}"
+);
 
-  } else {
+rawCart = buyNowData || {};
 
-    const cartSnap = await get(
-      ref(db, "cart/" + uidUser)
-    );
+}
 
-    if (Object.keys(rawCart).length > 0) {
-      rawCart = cartSnap.val();
-    }
-  }
+else {
+
+const cartSnap =
+await get(
+ref(
+db,
+"cart/" + uidUser
+)
+);
+
+if(
+cartSnap.exists()
+){
+
+rawCart =
+cartSnap.val() || {};
+
+}
+
+else{
+
+rawCart = {};
+
+}
+
+}
 
   /* =========================
      HITUNG TOTAL
@@ -1090,12 +1684,88 @@ try {
 
   }
 
+
+
+/* =========================
+AMBIL BIAYA CHECKOUT
+========================= */
+
+const biayaSnap = await get(
+ref(db,"pengaturanCheckout")
+);
+
+if(biayaSnap.exists()){
+
+dataCheckout = biayaSnap.val();
+
+biayaAdmin =
+Number(dataCheckout.adminFee || 0);
+
+/* default ongkir regular */
+biayaOngkir =
+Number(
+dataCheckout?.ongkir?.regular || 0
+);
+
+/* gratis ongkir */
+if(
+totalBelanja >=
+Number(
+dataCheckout.minimalGratisOngkir || 0
+)
+){
+
+biayaOngkir = 0;
+
+}
+
+}
+
+
+
+
+
+
+
+
   /* =========================
      TAMPIL TOTAL
   ========================= */
 
-  document.getElementById("total").innerHTML =
-    "Rp " + totalBelanja.toLocaleString("id-ID");
+finalTotal =
+totalBelanja +
+biayaAdmin +
+biayaOngkir;
+
+document.getElementById("total").innerHTML = `
+
+Rp ${finalTotal.toLocaleString("id-ID")}
+
+<div style="
+margin-top:10px;
+font-size:13px;
+line-height:1.7;
+color:#666;
+">
+
+Subtotal :
+Rp ${totalBelanja.toLocaleString("id-ID")}
+
+<br>
+
+Biaya Admin :
+Rp ${biayaAdmin.toLocaleString("id-ID")}
+
+<br>
+
+Ongkir :
+Rp ${biayaOngkir.toLocaleString("id-ID")}
+
+</div>
+
+`;
+
+await loadVoucherCheckout();
 
 } catch (err) {
   console.log("CHECKOUT ERROR:", err);
@@ -1146,17 +1816,16 @@ KURANGI STOCK PRODUK
 /* =========================
 KURANGI STOCK PRODUK
 ========================= */
-
 const itemsOrder = orderTemp.items || {};
 
-for(const key in itemsOrder){
+for (const key in itemsOrder) {
 
   const item = itemsOrder[key];
 
-  // FIX UTAMA: pastikan ambil ID dengan aman
+  // ambil ID produk dengan aman
   const produkId = item.id || item.produkId;
 
-  if(!produkId){
+  if (!produkId) {
     console.log("❌ Produk ID tidak ditemukan di item:", item);
     continue;
   }
@@ -1166,39 +1835,31 @@ for(const key in itemsOrder){
   const produkRef = ref(db, "produk/" + produkId);
   const produkSnap = await get(produkRef);
 
-  if(!produkSnap.exists()){
+  if (!produkSnap.exists()) {
     console.log("❌ Produk tidak ditemukan di Firebase:", produkId);
     continue;
   }
 
   const produk = produkSnap.val();
 
-  const stockLama = Number(produk.stock || 0);
-  const stockBaru = Math.max(stockLama - qtyBeli, 0);
+  // ✅ PAKAI FIELD STOK (bukan stock)
+  const stokLama = Number(produk.stok || 0);
+  const stokBaru = Math.max(stokLama - qtyBeli, 0);
 
-await Promise.all([
-
-  set(
-    ref(db, "produk/" + produkId + "/stock"),
-    stockBaru
-  ),
-
-  set(
+  // 🔥 update hanya 1 field
+  await set(
     ref(db, "produk/" + produkId + "/stok"),
-    stockBaru
-  )
+    stokBaru
+  );
 
-]);
   console.log(
-    "✅ STOCK BERKURANG:",
+    "✅ STOK BERKURANG:",
     produkId,
-    stockLama,
+    stokLama,
     "→",
-    stockBaru
+    stokBaru
   );
 }
-
-
 
 
 
@@ -1223,7 +1884,10 @@ if (orderTemp.metode === "SALDO") {
 
   // ❗ CEK SALDO AMAN
   if (saldoSekarang < total) {
-    alert("Saldo tidak cukup");
+    showToast(
+"Saldo tidak cukup",
+"error"
+);
     return;
   }
 
@@ -1270,7 +1934,10 @@ SELESAI ORDER
 
 document.getElementById("confirmBox").style.display = "none";
 
-alert("Pesanan berhasil dibuat");
+showToast(
+"Pesanan berhasil dibuat",
+"success"
+);
 
 location.href = "orderan.html";
 
@@ -1453,7 +2120,7 @@ document.querySelectorAll("input[name='pay']").forEach((x) => {
       codInfo.style.display = "block";
 
       codInfo.innerHTML = `
-        💵 Siapkan uang tunai sebesar <br><br>
+        Siapkan uang tunai sebesar <br><br>
         <b>Rp ${totalBelanja.toLocaleString("id-ID")}</b>
       `;
     }
@@ -1464,7 +2131,7 @@ document.querySelectorAll("input[name='pay']").forEach((x) => {
       codInfo.style.display = "block";
 
       codInfo.innerHTML = `
-        💰 Pembayaran menggunakan saldo utama<br><br>
+        Pembayaran menggunakan saldo utama<br><br>
 
         Saldo Anda :
         <b>
@@ -1496,7 +2163,7 @@ if(saldoCukup){
   codInfo.style.display = "block";
 
   codInfo.innerHTML = `
-    💰 Pembayaran menggunakan saldo utama<br><br>
+    Pembayaran menggunakan saldo utama<br><br>
 
     Saldo Anda :
     <b>
@@ -1516,7 +2183,7 @@ if(saldoCukup){
     codInfo.style.display = "block";
 
     codInfo.innerHTML = `
-      💵 Siapkan uang tunai sebesar <br><br>
+      Siapkan uang tunai sebesar <br><br>
       <b>Rp ${totalBelanja.toLocaleString("id-ID")}</b>
     `;
   }
@@ -1560,18 +2227,27 @@ window.buatPesanan = async () => {
       });
     }
 
-    if (aktif >= 2) {
-      alert("Anda hanya bisa order 2x dalam pembelian yang belum selesai.");
-      return;
-    }
+if (aktif >= 2) {
+
+showToast(
+"Anda hanya bisa order 2x dalam pembelian yang belum selesai",
+"warning"
+);
+
+return;
+
+}
 
     /* VALIDASI SALDO */
-    if (metode.value === "SALDO") {
-      if ((user.saldo || 0) < totalBelanja) {
-        alert("Saldo utama tidak cukup");
-        return;
-      }
-    }
+if (metode.value === "SALDO") {
+  if ((user.saldo || 0) < totalBelanja) {
+    showToast(
+      "Saldo anda tidak cukup",
+      "error"
+    );
+    return;
+  }
+}
 
     if (metode.value === "POIN") {
       if ((user.poinAfkar || 0) < totalBelanja) {
@@ -1585,38 +2261,283 @@ window.buatPesanan = async () => {
 
     const orderId = "ORD" + Date.now();
 
-    orderTemp = {
-      id: orderId,
-      user: uidUser,
-      nama: user.nama || "",
-      foto: user.foto || "",
-      metode: metode.value,
-      status: metode.value === "COD" ? "cod" : "pending",
-      alamat: user.alamatLengkap || {},
-      total: totalBelanja,
-      createdAt: Date.now(),
-      items: itemsData   // ✅ FIX DISINI
-    };
+orderTemp = {
+  id: orderId,
+  user: uidUser,
 
-    /* popup */
-    let html = `
-      <div style="line-height:1.8;">
-        <b>Metode</b><br>${metode.value}<br><br>
-        <b>Total</b><br>
-        Rp ${totalBelanja.toLocaleString("id-ID")}
-    `;
+  nama: user.nama || "",
+  foto: user.foto || "",
 
-    if (metode.value === "COD") {
-      html += `
-        <br><br>
-        <div style="padding:14px;background:#fff3dc;border-radius:14px;">
-          💵 Siapkan uang tunai<br><br>
-          <b>Rp ${totalBelanja.toLocaleString("id-ID")}</b>
-        </div>
-      `;
-    }
+  metode: metode.value,
 
-    html += `</div>`;
+  // SEMUA ORDER BARU = PENDING
+  status: "pending",
+  ongkir: biayaOngkir,
+  adminFee: biayaAdmin,
+  alamat: user.alamatLengkap || {},
+  subtotal: totalBelanja,
+  diskon: potonganVoucher,
+  voucher: voucherAktif || null,
+  total: finalTotal,
+  createdAt: Date.now(),
+  items: itemsData
+};
+
+ let html = `
+
+<!-- ALAMAT -->
+
+<div style="
+background:white;
+border-radius:18px;
+padding:16px;
+margin-bottom:14px;
+">
+
+<div style="
+font-size:15px;
+font-weight:bold;
+margin-bottom:10px;
+color:#ff6f00;
+">
+
+📍 Alamat Pengiriman
+
+</div>
+
+<div style="
+font-size:14px;
+line-height:1.7;
+color:#444;
+">
+
+<b>${user.nama || "-"}</b>
+
+<br>
+
+${a.alamat || "-"}
+
+<br>
+
+${a.kecamatan || "-"}
+
+${a.kabupaten || "-"}
+
+<br>
+
+${a.provinsi || "-"}
+
+${a.kodepos || "-"}
+
+</div>
+
+</div>
+
+
+
+<!-- METODE -->
+
+<div style="
+background:white;
+border-radius:18px;
+padding:16px;
+margin-bottom:14px;
+">
+
+<div style="
+font-size:15px;
+font-weight:bold;
+margin-bottom:12px;
+">
+
+Metode Pembayaran
+
+</div>
+
+<div style="
+display:flex;
+justify-content:space-between;
+font-size:14px;
+">
+
+<span>${metode.value}</span>
+
+<b style="color:#ff6f00;">
+Aktif
+</b>
+
+</div>
+
+</div>
+
+
+
+<!-- RINCIAN -->
+
+<div style="
+background:white;
+border-radius:18px;
+padding:16px;
+margin-bottom:14px;
+">
+
+<div style="
+font-size:15px;
+font-weight:bold;
+margin-bottom:14px;
+">
+
+Rincian Pembayaran
+
+</div>
+
+<div style="
+display:flex;
+justify-content:space-between;
+margin-bottom:12px;
+font-size:14px;
+">
+
+<span>Subtotal Produk</span>
+
+<span>
+Rp ${totalBelanja.toLocaleString("id-ID")}
+</span>
+
+</div>
+
+<div style="
+display:flex;
+justify-content:space-between;
+margin-bottom:12px;
+font-size:14px;
+">
+
+<span>Biaya Admin</span>
+
+<span>
+Rp ${Number(biayaAdmin || 0).toLocaleString("id-ID")}
+</span>
+
+</div>
+
+<div style="
+display:flex;
+justify-content:space-between;
+margin-bottom:12px;
+font-size:14px;
+">
+
+<span>Biaya Ongkir</span>
+
+<span>
+Rp ${Number(biayaOngkir || 0).toLocaleString("id-ID")}
+</span>
+
+</div>
+
+`;
+
+if(
+potonganVoucher > 0
+){
+
+html += `
+
+<div style="
+display:flex;
+justify-content:space-between;
+margin-bottom:12px;
+font-size:14px;
+color:#4caf50;
+">
+
+<span>Voucher</span>
+
+<span>
+- Rp ${potonganVoucher.toLocaleString("id-ID")}
+</span>
+
+</div>
+
+`;
+
+}
+
+html += `
+
+<hr style="
+border:none;
+border-top:1px solid #eee;
+margin:14px 0;
+">
+
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+">
+
+<div style="
+font-size:15px;
+font-weight:bold;
+">
+
+Total Pembayaran
+
+</div>
+
+<div style="
+font-size:22px;
+font-weight:bold;
+color:#ff6f00;
+">
+
+Rp ${finalTotal.toLocaleString("id-ID")}
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+if (metode.value === "COD") {
+
+html += `
+
+<div style="
+background:#fff7e8;
+border:1px solid #ffe0b2;
+padding:16px;
+border-radius:18px;
+font-size:14px;
+line-height:1.8;
+color:#444;
+">
+
+Siapkan uang tunai sebesar
+
+<br><br>
+
+<div style="
+font-size:24px;
+font-weight:bold;
+color:#ff6f00;
+">
+
+Rp ${finalTotal.toLocaleString("id-ID")}
+
+</div>
+
+saat pesanan sampai.
+
+</div>
+
+`;
+
+}
 
     document.getElementById("confirmText").innerHTML = html;
     document.getElementById("confirmBox").style.display = "flex";
@@ -1628,9 +2549,712 @@ window.buatPesanan = async () => {
 };
 
 
+/* =========================
+VOUCHER SYSTEM
+========================= */
+
+
+
+
+/* CLOSE */
+
+document.getElementById(
+"voucherModal"
+).onclick = (e)=>{
+
+if(
+e.target.id === "voucherModal"
+){
+
+document.getElementById(
+"voucherModal"
+).style.display = "none";
+
+}
+
+};
+
+/* =========================
+OPEN VOUCHER
+========================= */
+
+window.openVoucher = async ()=>{
+
+document.getElementById(
+"voucherModal"
+).style.display = "flex";
+
+await renderVoucherUser();
+
+};
+
+/* =========================
+RENDER VOUCHER
+========================= */
+async function renderVoucherUser() {
+  const box = document.getElementById("voucherList");
+  box.innerHTML = "Memuat voucher...";
+
+  const snap = await get(ref(db, "voucher"));
+
+  if (!snap.exists()) {
+    box.innerHTML = `
+      <div style="
+        padding:20px;
+        text-align:center;
+        color:#999;
+        font-size:13px;
+      ">
+        Belum ada voucher tersedia
+      </div>
+    `;
+    return;
+  }
+
+  let html = "";
+
+  snap.forEach((x) => {
+    const id = x.key;
+    const v = x.val();
+
+    if (v.status !== "aktif") return;
+
+    const diskonText =
+      v.tipe === "persen"
+        ? `${v.diskon || 0}%`
+        : `Rp ${Number(v.diskon || 0).toLocaleString("id-ID")}`;
+
+    html += `
+      <div class="voucherCard" onclick="pakaiVoucherCheckout('${id}')">
+
+        <div class="voucherLeft">
+
+          <div class="voucherIcon">
+            🎟️
+          </div>
+
+          <div class="voucherBadge">
+            ${v.kode}
+          </div>
+
+        </div>
+
+        <div class="voucherCenter">
+
+          <div class="voucherTitle">
+            ${v.nama || "Voucher Diskon"}
+          </div>
+
+          <div class="voucherDesc">
+            Diskon <b>${diskonText}</b>
+          </div>
+
+          <div class="voucherMin">
+            Min. belanja Rp ${Number(v.minBelanja || 0).toLocaleString("id-ID")}
+          </div>
+
+        </div>
+
+        <div class="voucherRight">
+          <div class="voucherBtn">
+            Pakai
+          </div>
+        </div>
+
+      </div>
+    `;
+  });
+
+  box.innerHTML = html || `
+    <div style="padding:20px;text-align:center;color:#999;font-size:13px;">
+      Tidak ada voucher tersedia
+    </div>
+  `;
+}
+
+/* =========================
+PAKAI VOUCHER
+========================= */
+window.pakaiVoucherCheckout =
+async(id)=>{
+
+const snap =
+await get(
+ref(db,"voucher/"+id)
+);
+
+if(!snap.exists()){
+
+alert("Voucher tidak ditemukan");
+
+return;
+
+}
+
+const v = snap.val();
+
+/* =========================
+CEK EXPIRED
+========================= */
+
+if(
+v.expired &&
+Date.now() > Number(v.expired)
+){
+
+showToast(
+"Voucher sudah expired",
+"error"
+);
+
+return;
+
+}
+
+/* =========================
+CEK MIN BELANJA
+========================= */
+
+if(
+totalBelanja <
+Number(v.minBelanja || 0)
+){
+
+showToast(
+
+`Minimal belanja Rp ${Number(
+v.minBelanja || 0
+).toLocaleString("id-ID")}`,
+
+"warning"
+
+);
+
+return;
+
+}
+
+/* =========================
+SIMPAN VOUCHER
+========================= */
+
+await set(
+ref(
+db,
+"checkoutVoucher/" + uidUser
+),
+{
+id:id,
+...v,
+createdAt:Date.now()
+}
+);
+
+/* reload */
+await loadVoucherCheckout();
+
+document.getElementById(
+"voucherModal"
+).style.display = "none";
+
+showToast(
+"Voucher berhasil digunakan",
+"success"
+);
+
+};
+
+
+
+/* =========================
+LOAD VOUCHER CHECKOUT
+========================= */
+/* =========================
+LOAD VOUCHER CHECKOUT FIX FULL
+========================= */
+async function loadVoucherCheckout(){
+
+const totalBox =
+document.getElementById("total");
+
+const voucherLabel =
+document.getElementById("voucherText");
+
+const snap = await get(
+ref(db,"checkoutVoucher/" + uidUser)
+);
+
+/* default aman */
+voucherAktif = null;
+potonganVoucher = 0;
+
+if(!snap.exists()){
+
+if(voucherLabel){
+voucherLabel.innerHTML = "Belum ada voucher dipilih";
+}
+
+finalTotal =
+totalBelanja +
+Number(biayaAdmin || 0) +
+Number(biayaOngkir || 0);
+
+if(totalBox){
+totalBox.innerHTML = `
+Rp ${finalTotal.toLocaleString("id-ID")}
+`;
+}
+
+return;
+}
+
+const v = snap.val();
+
+/* =========================
+EXPIRED
+========================= */
+
+if(
+v.expired &&
+Date.now() > Number(v.expired)
+){
+
+await set(
+ref(
+db,
+"checkoutVoucher/"+uidUser
+),
+null
+);
+
+voucherLabel.innerHTML =
+"Voucher expired";
+
+finalTotal =
+totalBelanja +
+Number(biayaAdmin||0) +
+Number(biayaOngkir||0);
+
+renderTotal();
+
+return;
+}
+
+/* =========================
+MIN BELANJA
+========================= */
+
+if(
+totalBelanja <
+Number(
+v.minBelanja||0
+)
+){
+
+voucherLabel.innerHTML =
+`Minimal belanja Rp ${
+Number(
+v.minBelanja||0
+)
+.toLocaleString("id-ID")
+}`;
+
+finalTotal =
+totalBelanja +
+Number(biayaAdmin||0) +
+Number(biayaOngkir||0);
+
+renderTotal();
+
+return;
+}
+
+/* =========================
+AKTIFKAN VOUCHER
+========================= */
+
+voucherAktif = v;
+
+/* PERSEN */
+
+if(
+v.tipe==="persen"
+){
+
+potonganVoucher =
+Math.floor(
+
+totalBelanja *
+
+(
+Number(
+v.diskon||0
+)/100
+
+)
+
+);
+
+if(v.maxDiskon){
+
+potonganVoucher =
+Math.min(
+potonganVoucher,
+Number(
+v.maxDiskon
+)
+);
+
+}
+
+}
+
+/* ONGKIR */
+
+else if(
+v.tipe==="ongkir"
+){
+
+potonganVoucher =
+Math.min(
+Number(
+v.diskon||0
+),
+Number(
+biayaOngkir||0
+)
+);
+
+}
+
+/* NOMINAL */
+
+else if(
+v.tipe==="nominal"
+){
+
+potonganVoucher =
+Number(
+v.diskon||0
+);
+
+}
+
+/* HITUNG TOTAL */
+
+finalTotal = Math.max(
+
+(
+totalBelanja +
+Number(
+biayaAdmin||0
+) +
+Number(
+biayaOngkir||0
+)
+
+)
+
+-
+
+Number(
+potonganVoucher||0
+),
+
+0
+
+);
+
+/* LABEL */
+
+voucherLabel.innerHTML = `
+
+${v.kode}
+
+<br>
+
+Potongan :
+Rp ${potonganVoucher.toLocaleString("id-ID")}
+
+`;
+
+renderTotal();
+
+}
+
+/* =========================
+RENDER TOTAL
+========================= */
+
+function renderTotal(){
+
+document.getElementById(
+"total"
+).innerHTML = `
+
+Rp ${finalTotal.toLocaleString("id-ID")}
+
+<div style="
+margin-top:10px;
+font-size:13px;
+line-height:1.8;
+color:#666;
+">
+
+Subtotal :
+Rp ${totalBelanja.toLocaleString("id-ID")}
+
+<br>
+
+Biaya Admin :
+Rp ${Number(
+biayaAdmin||0
+).toLocaleString("id-ID")}
+
+<br>
+
+Ongkir :
+Rp ${Number(
+biayaOngkir||0
+).toLocaleString("id-ID")}
+
+${
+potonganVoucher>0 ?
+
+`
+
+<br>
+
+<span style="
+color:#4caf50;
+font-weight:bold;
+">
+
+Voucher :
+- Rp ${potonganVoucher.toLocaleString("id-ID")}
+
+</span>
+
+`
+
+:
+
+""
+
+}
+
+</div>
+
+`;
+
+}
+
+
+
+/* =========================
+DUMMY BIAYA CHECKOUT
+SIMPAN KE FIREBASE
+========================= */
+
+async function createDummyBiayaCheckout(){
+
+try{
+
+const snap = await get(
+ref(db,"pengaturanCheckout")
+);
+
+if(snap.exists()){
+console.log("Biaya checkout sudah ada");
+return;
+}
+
+/* =========================
+DATA DUMMY
+========================= */
+
+const data = {
+
+adminFee: 2500,
+
+ongkir: {
+
+regular: 12000,
+
+express: 25000,
+
+sameDay: 40000
+
+},
+
+codFee: 5000,
+
+minimalGratisOngkir: 150000
+
+};
+
+await set(
+ref(db,"pengaturanCheckout"),
+data
+);
+
+console.log(
+"Dummy biaya checkout berhasil dibuat"
+);
+
+}
+catch(err){
+
+console.log(
+"ERROR BIAYA CHECKOUT:",
+err
+);
+
+}
+
+}
+
+/* jalankan */
+await createDummyBiayaCheckout();
+
+
+
+
+
+
+
+
+
+
+
+
 
 await createDummyPesanan();
 
+
+
+
+
+
+
+
+
+/* =========================
+CUSTOM TOAST SHOPEE
+========================= */
+
+function showToast(
+msg="",
+type="info"
+){
+
+const wrap =
+document.getElementById(
+"toastWrap"
+);
+
+let icon = "";
+
+if(type==="success"){
+icon = "";
+}
+
+if(type==="error"){
+icon = "";
+}
+
+if(type==="warning"){
+icon = "";
+}
+
+const div =
+document.createElement("div");
+
+div.className =
+"toast " + type;
+
+div.innerHTML = `
+
+<div class="toastIcon">
+${icon}
+</div>
+
+<div>
+${msg}
+</div>
+
+`;
+
+wrap.appendChild(div);
+
+setTimeout(()=>{
+
+div.style.animation =
+"toastHide .2s ease forwards";
+
+setTimeout(()=>{
+div.remove();
+},200);
+
+},2500);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+window.toggleBank = ()=>{
+
+const list =
+document.getElementById(
+"bankList"
+);
+
+const arrow =
+document.getElementById(
+"bankArrow"
+);
+
+if(
+list.style.display==="none"
+||
+
+list.style.display===""
+
+){
+
+list.style.display="block";
+
+arrow.innerHTML="⌃";
+
+}else{
+
+list.style.display="none";
+
+arrow.innerHTML="›";
+
+}
+
+};
 </script>
 
 
@@ -1646,30 +3270,72 @@ await createDummyPesanan();
 
 <div class="confirmCard">
 
-<div class="confirmTitle">
-Konfirmasi Pesanan
+<!-- HEADER -->
+
+<div style="
+position:sticky;
+top:0;
+z-index:10;
+background:white;
+padding:18px;
+display:flex;
+align-items:center;
+gap:15px;
+border-bottom:1px solid #eee;
+">
+
+<div
+onclick="closeConfirm()"
+style="
+font-size:24px;
+cursor:pointer;
+font-weight:bold;
+">
+‹
 </div>
 
+<div style="
+font-size:18px;
+font-weight:bold;
+">
+Checkout
+</div>
+
+</div>
+
+<!-- CONTENT -->
+
 <div id="confirmText"
-class="confirmText">
+style="
+padding:16px;
+">
 
 -
 
 </div>
 
-<div class="confirmBtn">
+<!-- BOTTOM -->
 
-<button
-class="btnBatal"
-onclick="closeConfirm()">
-
-Batal
-
-</button>
+<div style="
+position:fixed;
+left:0;
+right:0;
+bottom:0;
+background:white;
+padding:14px;
+border-top:1px solid #eee;
+z-index:99;
+">
 
 <button
 class="btnYa"
-onclick="confirmOrderNow()">
+onclick="confirmOrderNow()"
+style="
+height:55px;
+border-radius:18px;
+font-size:16px;
+font-weight:bold;
+">
 
 Buat Pesanan
 
@@ -1684,7 +3350,33 @@ Buat Pesanan
 
 
 
+<!-- MODAL VOUCHER -->
 
+<div id="voucherModal"
+class="voucherModal">
+
+<div class="voucherContent">
+
+<h3 style="
+margin-bottom:15px;
+">
+Voucher Saya
+</h3>
+
+<div id="voucherList">
+
+Memuat...
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- TOAST -->
+<div id="toastWrap" class="toastWrap"></div>
 
 </body>
 

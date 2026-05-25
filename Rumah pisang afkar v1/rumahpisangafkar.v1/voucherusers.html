@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Voucher Saya</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#f5f5f5;
+padding-bottom:80px;
+}
+
+/* HEADER */
+.header{
+background:#ff6f00;
+color:white;
+padding:18px;
+font-size:18px;
+font-weight:bold;
+}
+
+/* TAB */
+.tab{
+display:flex;
+background:white;
+}
+
+.tab button{
+flex:1;
+padding:14px;
+border:none;
+background:white;
+font-weight:bold;
+cursor:pointer;
+font-size:13px;
+color:#777;
+border-bottom:2px solid transparent;
+}
+
+.tab button.active{
+color:#ff6f00;
+border-bottom:2px solid #ff6f00;
+}
+
+/* LIST */
+.list{
+padding:12px;
+}
+
+/* CARD SHOPEE STYLE */
+.card{
+background:white;
+border-radius:14px;
+margin-bottom:12px;
+display:flex;
+overflow:hidden;
+border:1px solid #eee;
+}
+
+/* LEFT ORANGE */
+.left{
+width:90px;
+background:linear-gradient(135deg,#ff6f00,#ff9a3c);
+color:white;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+padding:10px;
+}
+
+.diskon{
+font-size:20px;
+font-weight:bold;
+}
+
+.label{
+font-size:11px;
+margin-top:4px;
+}
+
+/* RIGHT */
+.right{
+flex:1;
+padding:12px;
+}
+
+.nama{
+font-size:14px;
+font-weight:bold;
+margin-bottom:5px;
+}
+
+.min{
+font-size:12px;
+color:#666;
+margin-bottom:4px;
+}
+
+.exp{
+font-size:11px;
+color:#999;
+margin-bottom:10px;
+}
+
+.bottom{
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.kode{
+font-size:11px;
+background:#fff3e0;
+color:#ff6f00;
+padding:5px 10px;
+border-radius:20px;
+font-weight:bold;
+}
+
+.status{
+font-size:11px;
+padding:5px 10px;
+border-radius:20px;
+}
+
+.used{
+background:#eee;
+color:#777;
+}
+
+.active{
+background:#e7f7ee;
+color:#1a8f4c;
+}
+
+/* EMPTY */
+.empty{
+text-align:center;
+padding:60px 20px;
+color:#999;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+Voucher Saya
+</div>
+
+<div class="tab">
+<button class="active" onclick="showTab('aktif')">Aktif</button>
+<button onclick="showTab('used')">Terpakai</button>
+</div>
+
+<div class="list" id="list">
+<div class="empty">Memuat voucher...</div>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+authDomain: "shoponline-93646.firebaseapp.com",
+databaseURL: "https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId: "shoponline-93646"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+/* =========================
+GET UID
+========================= */
+const uid = localStorage.getItem("userId");
+
+if(!uid){
+  alert("Silakan login dulu");
+  location.href = "index.html";
+}
+
+/* =========================
+FIREBASE LOGIN CHECK (WAJIB)
+========================= */
+async function checkUser(){
+
+const snap = await get(ref(db,"users/"+uid));
+
+if(!snap.exists()){
+  alert("User tidak ditemukan");
+  location.href = "index.html";
+  return;
+}
+
+const user = snap.val();
+
+/* STATUS CHECK */
+if(user.status !== "aktif"){
+  alert("Akun kamu tidak aktif");
+  location.href = "index.html";
+  return;
+}
+
+console.log("USER VALID:", user);
+
+loadVoucher(); // lanjut kalau lolos
+}
+
+checkUser();
+
+/* =========================
+DATA VOUCHER
+========================= */
+
+let ALL = [];
+let USED = {};
+
+async function loadVoucher(){
+
+const vSnap = await get(ref(db,"voucher"));
+const uSnap = await get(ref(db,"userVoucherUsed/"+uid));
+
+USED = uSnap.exists() ? uSnap.val() : {};
+
+if(!vSnap.exists()){
+document.getElementById("list").innerHTML =
+`<div class="empty">Tidak ada voucher</div>`;
+return;
+}
+
+ALL = [];
+
+vSnap.forEach(x=>{
+const v = x.val();
+const id = x.key;
+
+if(v.status !== "aktif") return;
+if(v.expired && v.expired < Date.now()) return;
+
+ALL.push({id, ...v});
+});
+
+render("aktif");
+}
+
+/* =========================
+RENDER
+========================= */
+
+function render(type){
+
+let html = "";
+
+let filtered = ALL.filter(v=>{
+const used = USED[v.id] === true;
+
+if(type === "aktif") return !used;
+if(type === "used") return used;
+});
+
+if(filtered.length === 0){
+document.getElementById("list").innerHTML =
+`<div class="empty">Tidak ada voucher</div>`;
+return;
+}
+
+filtered.forEach(v=>{
+
+const used = USED[v.id] === true;
+
+let diskon = v.tipe === "persen"
+? v.diskon + "%"
+: (v.tipe === "ongkir" ? "FREE" : v.diskon);
+
+html += `
+<div class="card">
+
+<div class="left">
+<div class="diskon">${diskon}</div>
+<div class="label">${v.tipe === "ongkir" ? "ONGKIR" : "OFF"}</div>
+</div>
+
+<div class="right">
+
+<div class="nama">${v.nama}</div>
+
+<div class="min">
+Min. Belanja Rp ${(v.minBelanja||0).toLocaleString("id-ID")}
+</div>
+
+<div class="exp">
+Berlaku sampai ${new Date(v.expired).toLocaleDateString("id-ID")}
+</div>
+
+<div class="bottom">
+<div class="kode">${v.kode}</div>
+
+<div class="status ${used ? "used" : "active"}">
+${used ? "Dipakai" : "Aktif"}
+</div>
+
+</div>
+
+</div>
+
+</div>
+`;
+});
+
+document.getElementById("list").innerHTML = html;
+}
+
+/* =========================
+TAB
+========================= */
+
+window.showTab = function(type){
+
+document.querySelectorAll(".tab button")
+.forEach(b=>b.classList.remove("active"));
+
+event.target.classList.add("active");
+
+render(type);
+}
+
+load();
+
+</script>
+
+</body>
+</html>

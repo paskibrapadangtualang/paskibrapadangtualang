@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lapor Chat</title>
+
+<style>
+body{
+  font-family:Arial;
+  margin:0;
+  background:#f5f5f5;
+}
+
+.header{
+  background:#ff6f00;
+  color:white;
+  padding:15px;
+  font-weight:bold;
+}
+
+.container{
+  padding:15px;
+}
+
+.card{
+  background:white;
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:10px;
+}
+
+select, textarea, input{
+  width:95%;
+  padding:10px;
+  margin-top:8px;
+  border:1px solid #ddd;
+  border-radius:8px;
+  outline:none;
+}
+
+textarea{
+  display:none;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  background:#ff6f00;
+  color:white;
+  border:none;
+  border-radius:10px;
+  margin-top:10px;
+  cursor:pointer;
+}
+
+.msgItem{
+  padding:8px;
+  border:1px solid #eee;
+  border-radius:8px;
+  margin-top:6px;
+  cursor:pointer;
+}
+
+.msgItem.active{
+  background:#ffe5d0;
+  border-color:#ff6f00;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">Lapor Chat</div>
+
+<div class="container">
+
+<!-- ALASAN -->
+<div class="card">
+<h4>Alasan Laporan</h4>
+
+<select id="alasan">
+  <option value="Penipuan">Penipuan</option>
+  <option value="Spam">Spam</option>
+  <option value="Transaksi ilegal">Transaksi ilegal</option>
+  <option value="Pelecehan">Pelecehan</option>
+  <option value="Lainnya">Lainnya</option>
+</select>
+
+<textarea id="laporanLain" placeholder="Tulis laporan lengkap..."></textarea>
+
+</div>
+
+<!-- SCREENSHOT -->
+<div class="card">
+<h4>Screenshot Bukti</h4>
+<input type="file" id="file">
+</div>
+
+<!-- PESAN CHAT -->
+<div class="card">
+<h4>Pilih Pesan yang Dilaporkan</h4>
+<div id="msgList"></div>
+</div>
+
+<button onclick="submitLaporan()">Kirim Laporan</button>
+
+</div>
+
+
+
+<div style="
+  margin-top:12px;
+  padding:12px;
+  border-radius:10px;
+  background:#fff3cd;
+  border:1px solid #ffeeba;
+  font-size:12px;
+  line-height:1.5;
+  color:#856404;
+">
+  <b>⚠️ Peringatan Penting</b><br><br>
+
+  Mohon untuk tidak melaporkan pesan yang tidak mengandung pelanggaran.  
+  Gunakan fitur laporan secara bijak dan sesuai dengan ketentuan platform.<br><br>
+
+  Jika ditemukan laporan yang tidak berdasar atau tidak sesuai aturan,  
+  maka sistem dapat memberikan <b>peringatan</b> kepada akun Anda.<br><br>
+
+  Kami berhak mengambil tindakan terhadap penyalahgunaan fitur laporan  
+  demi menjaga keamanan dan kenyamanan seluruh pengguna AfkarMall.
+</div>
+
+
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, push, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+  authDomain: "shoponline-93646.firebaseapp.com",
+  databaseURL: "https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "shoponline-93646"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+/* PARAM */
+const params = new URLSearchParams(location.search);
+const storeId = params.get("store");
+const userId = params.get("user");
+
+const msgList = document.getElementById("msgList");
+
+let selectedMessages = [];
+
+/* LOAD CHAT */
+/* LOAD CHAT */
+const chatRef = ref(db, `chatcostumer/${storeId}/${userId}`);
+const snap = await get(chatRef);
+
+if(snap.exists()){
+  snap.forEach(m=>{
+    const d = m.val();
+
+    const div = document.createElement("div");
+    div.className = "msgItem";
+
+    div.innerHTML = `
+      ${d.text ? `<div style="font-size:13px;">${d.text}</div>` : ""}
+
+      ${d.image ? `
+        <img src="${d.image}" 
+             style="
+               width:100%;
+               max-height:120px;
+               object-fit:cover;
+               margin-top:6px;
+               border-radius:8px;
+               cursor:pointer;
+             "
+             onclick="window.open('${d.image}','_blank')"
+        >
+      ` : ""}
+    `;
+
+    div.onclick = () => {
+
+      const msgKey = d.text + (d.image || "");
+
+      if(selectedMessages.includes(msgKey)){
+        selectedMessages = selectedMessages.filter(x => x !== msgKey);
+        div.classList.remove("active");
+      } else {
+        selectedMessages.push(msgKey);
+        div.classList.add("active");
+      }
+
+    };
+
+    msgList.appendChild(div);
+  });
+}
+
+/* TOGGLE LAINNYA */
+const alasan = document.getElementById("alasan");
+const laporanLain = document.getElementById("laporanLain");
+
+alasan.addEventListener("change", () => {
+
+  if(alasan.value === "Lainnya"){
+    laporanLain.style.display = "block";
+  }else{
+    laporanLain.style.display = "none";
+    laporanLain.value = "";
+  }
+
+});
+
+/* CLOUDINARY */
+const CLOUD_NAME = "djxlbemky";
+const UPLOAD_PRESET = "uploadgambar";
+const CLOUD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+
+async function uploadImage(file){
+
+  if(!file) return "";
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", UPLOAD_PRESET);
+
+  try{
+    const res = await fetch(CLOUD_URL, {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await res.json();
+
+    if(!data.secure_url){
+      console.log("UPLOAD ERROR:", data);
+      alert("Upload gagal!");
+      return "";
+    }
+
+    return data.secure_url;
+
+  }catch(err){
+    console.log(err);
+    alert("Upload error!");
+    return "";
+  }
+}
+
+/* SUBMIT LAPORAN */
+window.submitLaporan = async () => {
+
+  const alasanValue = alasan.value;
+  const file = document.getElementById("file").files[0];
+
+  let imageUrl = "";
+  if(file){
+    imageUrl = await uploadImage(file);
+  }
+
+  const laporanLengkap =
+    alasanValue === "Lainnya"
+      ? laporanLain.value
+      : "";
+
+  await push(ref(db,"laporanChat"),{
+    storeId,
+    userId,
+    alasan: alasanValue,
+    laporanLengkap,
+    bukti: imageUrl,
+    pesan: selectedMessages,
+    time: Date.now()
+  });
+
+  alert("Laporan berhasil dikirim!");
+
+  location.href = `detailchatcostumer.html?store=${storeId}`;
+
+};
+
+</script>
+
+</body>
+</html>

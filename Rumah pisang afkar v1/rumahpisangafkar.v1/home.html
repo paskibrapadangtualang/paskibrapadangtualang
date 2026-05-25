@@ -4,9 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport"
 content="width=device-width,initial-scale=1">
-
 <title>Rumah Pisang AFKAR</title>
-
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
@@ -30,26 +28,17 @@ padding-bottom:90px;
 .header{
 
 position:fixed;
-
 top:0;
 left:0;
 right:0;
-
 height:80px;
-
 background:#d29a01;
-
 display:flex;
-
 align-items:center;
-
 padding:15px;
-
 gap:12px;
-
 box-shadow:
 0 2px 15px rgba(0,0,0,.08);
-
 z-index:1000;
 
 }
@@ -57,61 +46,48 @@ z-index:1000;
 .search{
 
 flex:1;
-
 height:45px;
-
 background:#f3f3f3;
-
 border-radius:15px;
-
 display:flex;
-
 align-items:center;
-
 padding:0 15px;
-
 gap:10px;
 
 }
 
 .search input{
-
 border:none;
-
 outline:none;
-
 background:none;
-
 width:100%;
 
 }
 
 .iconBtn{
-
+cursor:pointer;
+transition:.2s;
 width:45px;
 height:45px;
-
 border-radius:15px;
-
 background:#fff3dc;
-
 display:flex;
-
 justify-content:center;
 align-items:center;
-
 color:#ff9800;
-
 font-size:18px;
 
 }
 
+.iconBtn:active{
+transform:scale(0.92);
+}
+
+
 /* CONTENT */
 
 .banner{
-
 margin:15px;
-
 background:
 linear-gradient(
 135deg,
@@ -120,11 +96,8 @@ linear-gradient(
 );
 
 padding:25px;
-
 border-radius:25px;
-
 color:white;
-
 }
 
 .banner h2{
@@ -132,45 +105,28 @@ margin-bottom:8px;
 }
 
 .menu{
-
 display:grid;
-
 grid-template-columns:
 repeat(4,1fr);
-
 gap:12px;
-
 padding:15px;
-
 }
 
 .menuItem{
-
 background:white;
-
 padding:18px 10px;
-
 border-radius:20px;
-
 text-align:center;
-
 box-shadow:
 0 3px 12px rgba(0,0,0,.05);
-
 }
 
 .menuItem i{
-
 font-size:22px;
-
 color:#ff9800;
-
 margin-bottom:10px;
-
 }
-
 .menuItem p{
-
 font-size:12px;
 
 }
@@ -180,13 +136,9 @@ font-size:12px;
 .title{
 
 padding:0 15px;
-
 margin-top:10px;
-
 margin-bottom:12px;
-
 font-weight:bold;
-
 font-size:18px;
 
 }
@@ -194,12 +146,9 @@ font-size:18px;
 .list{
 
 padding:5px;
-
 display:grid;
-
 grid-template-columns:
 repeat(2,1fr);
-
 gap:15px;
 
 }
@@ -207,24 +156,16 @@ gap:15px;
 .card{
 
 background:white;
-
-border-radius:18px;
-
+border-radius:5px;
 overflow:hidden;
-
-box-shadow:
-0 3px 12px rgba(0,0,0,.06);
 
 position:relative;
 
 }
 
 .card img{
-
 width:100%;
-
 height:170px;
-
 object-fit:cover;
 
 }
@@ -232,20 +173,13 @@ object-fit:cover;
 .promo{
 
 position:absolute;
-
 top:10px;
 left:10px;
-
 background:#ff3d00;
-
 color:white;
-
 padding:5px 10px;
-
 border-radius:10px;
-
 font-size:11px;
-
 font-weight:bold;
 
 }
@@ -255,73 +189,46 @@ padding:10px;
 }
 
 .nama{
-
 font-size:14px;
-
 font-weight:600;
-
 margin-bottom:8px;
-
 height:36px;
-
 overflow:hidden;
-
 }
 
 .harga{
-
 font-size:18px;
-
 font-weight:bold;
-
 color:#ff5a00;
-
 margin-bottom:4px;
-
 }
 
 .coret{
 
 font-size:12px;
-
 text-decoration:line-through;
-
 color:#888;
-
 }
 
 .row{
-
 display:flex;
-
 gap:6px;
-
 flex-wrap:wrap;
-
 margin-top:8px;
-
 }
 
 .tag{
-
 background:#fff1e6;
-
 padding:4px 8px;
-
-border-radius:8px;
-
+border-radius:4px;
 font-size:10px;
-
 color:#ff6f00;
 
 }
 
 .lokasi{
-
 margin-top:8px;
-
 font-size:11px;
-
 color:#777;
 
 }
@@ -333,19 +240,14 @@ padding:12px;
 .nama{
 
 font-size:14px;
-
 font-weight:bold;
-
 margin-bottom:8px;
 
 }
 
 .harga{
-
 color:#ff6f00;
-
 font-weight:bold;
-
 }
 
 /* NAVIGATION */
@@ -357,36 +259,23 @@ position:fixed;
 left:0;
 right:0;
 bottom:0;
-
 height:75px;
-
 background:white;
-
 display:flex;
-
 justify-content:space-around;
-
 align-items:center;
-
 box-shadow:
 0 -3px 15px rgba(0,0,0,.08);
-
 z-index:999;
 
 }
 
 .navItem{
-
 display:flex;
-
 flex-direction:column;
-
 align-items:center;
-
 font-size:12px;
-
 color:#777;
-
 gap:5px;
 
 }
@@ -408,29 +297,18 @@ font-size:20px;
 
 
 .sliderWrap{
-
 position:relative;
-
 margin:15px;
-
 overflow:hidden;
-
 }
 
 .bannerSlider{
-
 display:flex;
-
 overflow-x:auto;
-
 scroll-behavior:smooth;
-
 scroll-snap-type:x mandatory;
-
 gap:12px;
-
 -ms-overflow-style:none;
-
 scrollbar-width:none;
 
 }
@@ -440,19 +318,12 @@ display:none;
 }
 
 .bannerItem{
-
 min-width:100%;
-
 height:180px;
-
 border-radius:25px;
-
 overflow:hidden;
-
 scroll-snap-align:start;
-
 flex-shrink:0;
-
 box-shadow:
 0 5px 20px rgba(
 0,0,0,.1
@@ -464,7 +335,6 @@ box-shadow:
 
 width:100%;
 height:100%;
-
 object-fit:cover;
 
 }
@@ -472,18 +342,12 @@ object-fit:cover;
 .navSlide{
 
 position:absolute;
-
 top:50%;
-
 transform:
 translateY(-50%);
-
 width:42px;
-
 height:42px;
-
 border:none;
-
 border-radius:50%;
 
 background:
@@ -495,9 +359,7 @@ rgba(
 );
 
 font-size:18px;
-
 z-index:10;
-
 cursor:pointer;
 
 }
@@ -513,11 +375,8 @@ right:10px;
 .dots{
 
 display:flex;
-
 justify-content:center;
-
 gap:8px;
-
 margin-top:10px;
 
 }
@@ -525,11 +384,8 @@ margin-top:10px;
 .dot{
 
 width:8px;
-
 height:8px;
-
 border-radius:50%;
-
 background:#ccc;
 
 }
@@ -566,6 +422,51 @@ cursor:pointer;
 #searchResult div:hover{
 background:#f5f5f5;
 }
+
+
+
+
+
+.category{
+  display:flex;
+  gap:5px;
+  padding:10px;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+
+.category::-webkit-scrollbar{
+  display:none;
+}
+
+.catBox{
+  min-width:110px;
+    display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:5px;
+  background:white;
+  border-radius:14px;
+  text-align:center;
+  font-size:13px;
+  font-weight:bold;
+  box-shadow:0 3px 10px rgba(0,0,0,.05);
+  cursor:pointer;
+  transition:.2s;
+}
+
+.catBox:active{
+  transform:scale(0.95);
+  background:#ff9800;
+  color:white;
+}
+
+.catBox img{
+  width:30px;
+  height:30px;
+  object-fit:contain;
+}
+
 
 
 </style>
@@ -608,14 +509,11 @@ location.href=
 
 
 
-
-
-
-<div class="iconBtn">
-
-<i class="fa fa-message"></i>
-
+<div class="iconBtn" onclick="location.href='Chatcostumer.html'">
+  <i class="fa fa-message"></i>
 </div>
+
+
 
 </div>
 
@@ -659,48 +557,88 @@ id="bannerDots"
 
 <!-- MENU -->
 <div class="menu">
-
 <div class="menuItem" onclick="window.location.href='produk.html'">
-
 <i class="fa fa-box"></i>
-
 <p>
 Produk
 </p>
-
 </div>
 
 <div class="menuItem" onclick="window.location.href='orderan.html'">
-
 <i class="fa fa-receipt"></i>
-
 <p>
 Pesanan
 </p>
-
 </div>
 
 <div class="menuItem" onclick="window.location.href='saldo.html'">
-
 <i class="fa fa-wallet"></i>
-
 <p>
 Saldo
 </p>
 
+
 </div>
-
 <div class="menuItem" onclick="window.location.href='store.html'">
-
 <i class="fa fa-store"></i>
-
 <p>
 Toko
 </p>
 
 </div>
+</div>
+
+
+
+<div class="category">
+
+  <div class="catBox" data-kat="all">
+    <img src="assets/images/id-11134258-7rasg-m4e22zjycay682@resize_w90_nl.webp">
+    <span>All</span>
+  </div>
+
+  <div class="catBox" data-kat="fashion">
+    <img src="assets/images/04dba508f1ad19629518defb94999ef9@resize_w640_nl.webp">
+    <span>Fashion</span>
+  </div>
+
+  <div class="catBox" data-kat="food">
+    <img src="assets/images/7873b8c3824367239efb02d18eeab4f5@resize_w640_nl.webp">
+    <span>Food</span>
+  </div>
+
+  <div class="catBox" data-kat="digital">
+    <img src="assets/images/5230277eefafad8611aaf703d3e99568@resize_w640_nl.webp">
+    <span>Digital</span>
+  </div>
+
+  <div class="catBox" data-kat="elektronik">
+    <img src="assets/images/dcd61dcb7c1448a132f49f938b0cb553@resize_w640_nl.webp">
+    <span>Elektronik</span>
+  </div>
+
+  <div class="catBox" data-kat="tanaman">
+    <img src="assets/images/plant.png">
+    <span>Tanaman</span>
+  </div>
+
+  <div class="catBox" data-kat="dekorasi">
+    <img src="assets/images/house-decoration.png">
+    <span>Dekorasi</span>
+  </div>
+
+  <div class="catBox" data-kat="makeup">
+    <img src="assets/images/2715b985ae706a4c39a486f83da93c4b@resize_w640_nl.webp">
+    <span>Makeup</span>
+  </div>
+
+  <div class="catBox" data-kat="skincare">
+    <img src="assets/images/3045cf3e99fd893883cb253115607457_tn.webp">
+    <span>Skincare</span>
+  </div>
 
 </div>
+
 
 
 
@@ -966,11 +904,8 @@ data-id="${produkId}"
 >
 
 ${data.promo ? `
-
 <div class="promo">
-
-🔥 PROMO
-
+PROMO
 </div>
 
 ` : ""}
@@ -1000,41 +935,35 @@ Rp ${hargaAwal}
 <div class="row">
 
 ${
-data.cod ?
-
-'<div class="tag">🚚 COD</div>'
-
-:
-
-''
+data.cod ? `
+<div class="tag" style="display:flex;align-items:center;gap:5px;">
+  <img src="assets/images/cash-on-delivery.png" style="width:14px;height:14px;object-fit:contain;">
+  COD
+</div>
+` : ''
 }
 
 ${
-data.kupon ?
-
-'<div class="tag">🎫 Kupon</div>'
-
-:
-
-''
+data.kupon ? `
+<div class="tag" style="display:flex;align-items:center;gap:5px;">
+  <img src="assets/images/id-50009109-dd50489812b1eb792c5cfae00a3b512a@resize_w90_nl.webp" style="width:14px;height:14px;object-fit:contain;">
+  Kupon
+</div>
+` : ''
 }
 
-<div class="tag">
+<div class="tag" style="display:flex;align-items:center;gap:5px;">
+  <img src="assets/images/id-11134258-7rbkc-mas4hs48hfp464@resize_w90_nl.webp" style="width:34px;height:34px;object-fit:contain;">
+  ${data.stok || 0}
+</div>
 
-⚡ ${data.stok||0}
-
+<div class="tag" style="display:flex;align-items:center;gap:5px;">
+  <img src="assets/images/destination.png" style="width:14px;height:14px;object-fit:contain;">
+  ${data.lokasi || "-"}
 </div>
 
 </div>
-
-<div class="lokasi">
-
-📍 ${data.lokasi||"-"}
-
 </div>
-
-</div>
-
 </div>
 
 `;
@@ -1405,6 +1334,39 @@ searchResult.innerHTML = html;
 });
 
 
+
+
+
+
+
+
+
+
+
+function initKategori() {
+
+  const boxes = document.querySelectorAll(".catBox");
+
+  boxes.forEach((box) => {
+
+    box.onclick = function () {
+
+      const kategori = this.dataset.kat || "all";
+
+      console.log("Klik kategori:", kategori);
+
+      // 🔥 redirect ke halaman detail
+      window.location.href =
+        "detailkatagori.html?kategori=" + encodeURIComponent(kategori);
+
+    };
+
+  });
+
+}
+
+// panggil setelah semua render
+initKategori();
 
 </script>
 

@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Detail Pesanan</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#f5f5f5;
+padding-bottom:100px;
+}
+
+/* HEADER */
+
+.header{
+position:sticky;
+top:0;
+z-index:100;
+background:#ff6f00;
+padding:15px;
+display:flex;
+align-items:center;
+gap:12px;
+color:white;
+}
+
+.back{
+width:35px;
+height:35px;
+border-radius:50%;
+background:rgba(255,255,255,.2);
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+}
+
+.title{
+font-size:18px;
+font-weight:bold;
+}
+
+/* STATUS */
+
+.statusBox{
+background:linear-gradient(135deg,#ff6f00,#ff8f00);
+padding:22px 18px;
+color:white;
+}
+
+.statusTitle{
+font-size:20px;
+font-weight:bold;
+margin-bottom:5px;
+}
+
+.statusDesc{
+font-size:13px;
+opacity:.95;
+line-height:1.5;
+}
+
+/* CARD */
+
+.card{
+background:white;
+margin-top:10px;
+padding:16px;
+}
+
+/* ADDRESS */
+
+.addressTop{
+display:flex;
+gap:12px;
+align-items:flex-start;
+}
+
+.addressIcon{
+font-size:20px;
+color:#ff6f00;
+margin-top:2px;
+}
+
+.addressName{
+font-size:14px;
+font-weight:bold;
+margin-bottom:5px;
+}
+
+.addressText{
+font-size:13px;
+color:#666;
+line-height:1.5;
+}
+
+/* STORE */
+
+.store{
+display:flex;
+align-items:center;
+gap:10px;
+margin-bottom:15px;
+cursor:pointer;
+}
+
+.store img{
+width:38px;
+height:38px;
+border-radius:50%;
+object-fit:cover;
+}
+
+.storeName{
+font-size:14px;
+font-weight:bold;
+}
+
+/* PRODUCT */
+
+.product{
+display:flex;
+cursor:pointer;
+gap:12px;
+}
+
+.product img{
+width:85px;
+height:85px;
+border-radius:12px;
+object-fit:cover;
+background:#eee;
+}
+
+.info{
+flex:1;
+}
+
+.productName{
+font-size:14px;
+font-weight:bold;
+line-height:1.5;
+margin-bottom:6px;
+}
+
+.varian{
+font-size:12px;
+color:#888;
+margin-bottom:8px;
+}
+
+.price{
+font-size:15px;
+font-weight:bold;
+color:#ff6f00;
+}
+
+/* DETAIL */
+
+.row{
+display:flex;
+justify-content:space-between;
+margin-bottom:12px;
+font-size:13px;
+gap:10px;
+}
+
+.label{
+color:#666;
+}
+
+.value{
+font-weight:bold;
+text-align:right;
+}
+
+/* TOTAL */
+
+.total{
+font-size:18px;
+color:#ff6f00;
+font-weight:bold;
+}
+
+/* BUTTON */
+
+.bottom{
+position:fixed;
+left:0;
+right:0;
+bottom:0;
+background:white;
+padding:14px;
+box-shadow:0 -2px 10px rgba(0,0,0,.08);
+}
+
+.btn{
+width:100%;
+padding:14px;
+border:none;
+background:#ff6f00;
+color:white;
+font-size:15px;
+font-weight:bold;
+border-radius:14px;
+cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+
+<div class="back"
+onclick="history.back()">
+
+<i class="fa fa-arrow-left"></i>
+
+</div>
+
+<div class="title">
+Detail Pesanan
+</div>
+
+</div>
+
+<!-- STATUS -->
+<div class="statusBox">
+
+<div class="statusTitle"
+id="statusTitle">
+
+Memuat...
+
+</div>
+
+<div class="statusDesc"
+id="statusDesc">
+
+Mohon tunggu sebentar
+
+</div>
+
+</div>
+
+<!-- ALAMAT -->
+<div class="card">
+
+<div class="addressTop">
+
+<div class="addressIcon">
+<i class="fa fa-location-dot"></i>
+</div>
+
+<div>
+
+<div class="addressName"
+id="namaPenerima">
+
+Penerima
+
+</div>
+
+<div class="addressText"
+id="alamatPenerima">
+
+Alamat
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- PRODUK -->
+<div class="card">
+
+<div class="store">
+
+<img id="storeLogo">
+
+<div class="storeName"
+id="storeName">
+
+Store
+
+</div>
+
+</div>
+
+<div class="product">
+
+<img id="productImg">
+
+<div class="info">
+
+<div class="productName"
+id="productName">
+
+Produk
+
+</div>
+
+<div class="varian"
+id="productVarian">
+
+Varian
+
+</div>
+
+<div class="price"
+id="productPrice">
+
+Rp0
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- DETAIL -->
+<!-- DETAIL -->
+<div class="card">
+
+<div class="row">
+<div class="label">No. Pesanan</div>
+<div class="value" id="orderIdText">-</div>
+</div>
+
+<div class="row">
+<div class="label">Metode Pembayaran</div>
+<div class="value" id="metodeBayar">COD</div>
+</div>
+
+<div class="row">
+<div class="label">Status</div>
+<div class="value" id="statusText">-</div>
+</div>
+
+<div class="row">
+<div class="label">Tanggal</div>
+<div class="value" id="tanggalText">-</div>
+</div>
+
+<hr style="
+margin:14px 0;
+border:none;
+border-top:1px solid #eee;
+">
+
+<div style="
+font-size:15px;
+font-weight:bold;
+margin-bottom:14px;
+">
+
+Rincian Pembayaran
+
+</div>
+
+<div class="row">
+<div class="label">Subtotal Produk</div>
+<div class="value"
+id="subtotalText">
+
+Rp0
+
+</div>
+</div>
+
+<div class="row">
+<div class="label">Biaya Admin</div>
+<div class="value"
+id="adminText">
+
+Rp0
+
+</div>
+</div>
+
+<div class="row">
+<div class="label">Ongkir</div>
+<div class="value"
+id="ongkirText">
+
+Rp0
+
+</div>
+</div>
+
+<div class="row"
+id="voucherRow"
+style="display:none;">
+
+<div class="label">
+
+Voucher
+
+</div>
+
+<div class="value"
+style="color:#4caf50;"
+id="voucherText">
+
+-Rp0
+
+</div>
+
+</div>
+
+<hr style="
+margin:14px 0;
+border:none;
+border-top:1px solid #eee;
+">
+
+<div class="row">
+
+<div class="label"
+style="
+font-size:16px;
+font-weight:bold;
+">
+
+Total Belanja
+
+</div>
+
+<div class="value total"
+id="totalText">
+
+Rp0
+
+</div>
+
+</div>
+
+</div>
+
+<div class="bottom">
+
+<button class="btn"
+id="actionBtn">
+
+Hubungi Penjual
+
+</button>
+
+</div>
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig={
+
+apiKey:
+"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+
+authDomain:
+"shoponline-93646.firebaseapp.com",
+
+databaseURL:
+"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"shoponline-93646"
+
+};
+
+const app =
+initializeApp(firebaseConfig);
+
+const db =
+getDatabase(app);
+
+const params =
+new URLSearchParams(location.search);
+
+const id =
+params.get("id");
+
+if(!id){
+
+alert("Pesanan tidak ditemukan");
+history.back();
+
+}
+
+/* =========================
+LOAD ORDER
+========================= */
+
+const snap =
+await get(
+ref(db,"pesanan/"+id)
+);
+
+if(!snap.exists()){
+
+alert("Pesanan tidak ditemukan");
+history.back();
+
+}
+
+const d = snap.val();
+
+const items = d.items || {};
+
+const productId =
+Object.keys(items)[0];
+
+const p = items[productId] || {};
+
+/* =========================
+STORE
+========================= */
+
+let storeData = {};
+
+if(p.storeId){
+
+const storeSnap =
+await get(
+ref(db,"stores/"+p.storeId)
+);
+
+if(storeSnap.exists()){
+
+storeData =
+storeSnap.val();
+
+}
+
+}
+
+/* =========================
+STATUS TEXT
+========================= */
+
+let statusTitle = "Pesanan Diproses";
+let statusDesc = "Penjual sedang memproses pesanan kamu";
+
+if(d.status === "pending"){
+
+const metode =
+(
+d.metode
+||
+d.paymentMethod
+||
+d.pembayaran
+||
+""
+)
+.toString()
+.toLowerCase();
+
+// =========================
+// COD
+// =========================
+
+if(
+metode.includes("cod")
+){
+
+statusTitle =
+"Pesanan COD Dibuat";
+
+statusDesc =
+"Pesanan sedang menunggu konfirmasi penjual untuk COD";
+
+}
+
+// =========================
+// SALDO / E-WALLET
+// =========================
+
+else if(
+
+metode.includes("saldo")
+||
+metode.includes("balance")
+||
+metode.includes("wallet")
+||
+metode.includes("dana")
+||
+metode.includes("gopay")
+||
+metode.includes("ovo")
+||
+metode.includes("shopeepay")
+
+){
+
+statusTitle =
+"Menunggu Persetujuan";
+
+statusDesc =
+"Pesanan sedang menunggu persetujuan penjual";
+
+}
+
+// =========================
+// TRANSFER BANK
+// =========================
+
+else if(
+
+metode.includes("bank")
+||
+metode.includes("transfer")
+||
+metode.includes("bca")
+||
+metode.includes("bri")
+||
+metode.includes("mandiri")
+||
+metode.includes("bni")
+
+){
+
+statusTitle =
+"Menunggu Verifikasi";
+
+statusDesc =
+"Pembayaran sedang diverifikasi oleh penjual";
+
+}
+
+// =========================
+// DEFAULT
+// =========================
+
+else{
+
+statusTitle =
+"Menunggu Pembayaran";
+
+statusDesc =
+"Segera selesaikan pembayaran";
+
+}
+
+}
+
+
+
+
+
+
+if (d.status === "dibatalkan") {
+
+  statusTitle = "Pesanan Dibatalkan";
+  statusDesc = "Pesanan ini telah dibatalkan dan tidak diproses";
+
+}
+
+else if (d.status === "diproses") {
+
+  statusTitle = "Pesanan Dikemas";
+  statusDesc = "Pesanan sedang dikemas penjual";
+
+}
+
+else if (d.status === "dikirim") {
+
+  statusTitle = "Pesanan Dikirim";
+  statusDesc = "Pesanan sedang dalam perjalanan";
+
+}
+
+else if (d.status === "selesai") {
+
+  statusTitle = "Pesanan Selesai";
+  statusDesc = "Pesanan telah diterima";
+
+}
+/* =========================
+SET DATA
+========================= */
+
+document.getElementById("statusTitle").innerHTML =
+statusTitle;
+
+document.getElementById("statusDesc").innerHTML =
+statusDesc;
+
+document.getElementById("namaPenerima").innerHTML =
+d.nama ||
+"User";
+
+let alamatText = "Alamat belum tersedia";
+
+// =========================
+// AMBIL DATA USER ASLI
+// =========================
+
+if(d.user){
+
+const userSnap = await get(
+ref(db, "users/" + d.user)
+);
+
+if(userSnap.exists()){
+
+const userData = userSnap.val();
+
+const a = userData.alamatLengkap || {};
+
+alamatText = `
+${a.alamat || ''},
+Dusun ${a.dusun || ''},
+Kec. ${a.kecamatan || ''},
+${a.kabupaten || ''},
+${a.provinsi || ''},
+${a.kodepos || ''}
+`;
+
+}
+
+}
+
+document.getElementById("alamatPenerima").innerHTML =
+alamatText;
+
+document.getElementById("storeLogo").src =
+storeData.logo ||
+"https://picsum.photos/100";
+
+document.getElementById("storeName").innerHTML =
+storeData.nama ||
+"Store";
+
+document.getElementById("productImg").src =
+p.gambar || "";
+
+/* =========================
+CLICK STORE
+========================= */
+
+document.querySelector(".store").onclick = () => {
+
+if(
+p.storeId
+||
+storeData.uid
+){
+
+location.href =
+`detailstore.html?id=${
+p.storeId || storeData.uid
+}`;
+
+}
+
+};
+
+/* =========================
+CLICK PRODUK
+========================= */
+
+document.querySelector(".product").onclick = () => {
+
+if(productId){
+
+location.href =
+`detailproduk.html?id=${productId}`;
+
+}
+
+};
+
+
+
+
+document.getElementById("productName").innerHTML =
+p.nama || "Produk";
+
+document.getElementById("productVarian").innerHTML =
+p.varian || "Produk Pilihan";
+
+document.getElementById("productPrice").innerHTML =
+"Rp " +
+(p.harga || 0)
+.toLocaleString("id-ID");
+
+document.getElementById("orderIdText").innerHTML =
+id;
+
+document.getElementById("metodeBayar").innerHTML =
+d.metode ||
+"COD";
+
+document.getElementById("statusText").innerHTML =
+d.status || "-";
+
+const tanggal = new Date(
+d.createdAt || Date.now()
+);
+
+document.getElementById("tanggalText").innerHTML =
+tanggal.toLocaleString(
+"id-ID",
+{
+timeZone: "Asia/Jakarta",
+day: "numeric",
+month: "numeric",
+year: "numeric",
+hour: "2-digit",
+minute: "2-digit",
+second: "2-digit"
+}
+) + " WIB";
+
+const subtotal =
+Number(
+d.subtotal ||
+p.harga ||
+0
+);
+
+const adminFee =
+Number(
+d.adminFee || 0
+);
+
+const ongkir =
+Number(
+d.ongkir || 0
+);
+
+const diskon =
+Number(
+d.diskon || 0
+);
+
+const total =
+Number(
+d.total ||
+(
+subtotal +
+adminFee +
+ongkir -
+diskon
+)
+);
+
+/* SUBTOTAL */
+
+document.getElementById(
+"subtotalText"
+).innerHTML =
+"Rp " +
+subtotal.toLocaleString(
+"id-ID"
+);
+
+/* ADMIN */
+
+document.getElementById(
+"adminText"
+).innerHTML =
+"Rp " +
+adminFee.toLocaleString(
+"id-ID"
+);
+
+/* ONGKIR */
+
+document.getElementById(
+"ongkirText"
+).innerHTML =
+"Rp " +
+ongkir.toLocaleString(
+"id-ID"
+);
+
+/* VOUCHER */
+
+if(diskon > 0){
+
+document.getElementById(
+"voucherRow"
+).style.display =
+"flex";
+
+document.getElementById(
+"voucherText"
+).innerHTML =
+"- Rp " +
+diskon.toLocaleString(
+"id-ID"
+);
+
+}
+
+/* TOTAL */
+
+document.getElementById(
+"totalText"
+).innerHTML =
+"Rp " +
+total.toLocaleString(
+"id-ID"
+);
+
+/* =========================
+BUTTON
+========================= */
+document.getElementById("actionBtn").onclick = () => {
+
+// =========================
+// SIMPAN PRODUK KE CHAT
+// =========================
+
+localStorage.setItem(
+"chatProduct",
+JSON.stringify({
+
+id: productId,
+nama: p.nama || "",
+harga: p.harga || 0,
+gambar: p.gambar || ""
+
+})
+);
+
+// =========================
+// MASUK KE CHAT STORE
+// =========================
+
+if(
+p.storeId
+||
+storeData.uid
+){
+
+location.href =
+`detailchatcostumer.html?store=${
+p.storeId || storeData.uid
+}`;
+
+return;
+
+}
+
+alert("Store tidak ditemukan");
+
+};
+
+</script>
+
+</body>
+</html>

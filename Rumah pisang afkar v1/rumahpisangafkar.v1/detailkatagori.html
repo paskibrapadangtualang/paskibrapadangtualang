@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Detail Kategori</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#f5f5f5;
+  padding-top:80px; /* untuk header fixed */
+}
+
+/* HEADER BEKU */
+.header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:70px;
+  background:#d29a01;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:0 15px;
+  box-shadow:0 3px 10px rgba(0,0,0,.08);
+  z-index:999;
+}
+
+.back{
+  width:40px;
+  height:40px;
+  background:#f3f3f3;
+  border-radius:12px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  cursor:pointer;
+}
+
+.title{
+  font-size:16px;
+  font-weight:bold;
+  color:#ffffff
+}
+
+/* WRAPPER BIAR TENGAH */
+.wrapper{
+  max-width:900px;
+  margin:0 auto;
+  padding:15px;
+}
+
+/* LIST CENTER */
+.list{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+
+/* CARD */
+.card{
+  background:white;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 3px 10px rgba(0,0,0,.05);
+  cursor:pointer;
+}
+
+.card img{
+  width:100%;
+  height:140px;
+  object-fit:cover;
+}
+
+.info{
+  padding:10px;
+}
+
+.nama{
+  font-size:13px;
+  font-weight:bold;
+  margin-bottom:6px;
+}
+
+.harga{
+  color:#ff6f00;
+  font-weight:bold;
+}
+
+/* EMPTY STATE CENTER */
+.empty{
+  text-align:center;
+  color:#888;
+  padding:40px 10px;
+  grid-column:1 / -1;
+}
+
+
+
+
+
+
+
+.rekomSection{
+  max-width:900px;
+  margin:20px auto;
+  padding:0 15px;
+}
+
+.rekomTitle{
+  font-size:14px;
+  font-weight:bold;
+  margin-bottom:10px;
+  color:#333;
+}
+
+.section-title{
+  font-size:16px;
+  font-weight:bold;
+  margin:10px 0;
+  padding-left:10px;
+}
+
+/* GARIS PEMISAH */
+.divider{
+  display:flex;
+  align-items:center;
+  margin:20px 0;
+  font-size:14px;
+  color:#ffffff;
+  font-weight:600;
+  background: #f1a200;
+}
+
+.divider::before,
+.divider::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:#ffffff;
+}
+
+.divider span{
+  padding:0 10px;
+  white-space:nowrap;
+}
+
+/* REKOMENDASI */
+.rekomSection{
+  padding:10px;
+  background: #dfdfdf;
+}
+
+.rekomList{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+/* card kecil rekomendasi */
+.rekomCard{
+  background:white;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 3px 10px rgba(0,0,0,.05);
+}
+
+.rekomCard img{
+  width:100%;
+  height:120px;
+  object-fit:cover;
+}
+
+.rekomInfo{
+  padding:8px;
+}
+
+.rekomNama{
+  font-size:12px;
+  font-weight:bold;
+  margin-bottom:4px;
+  height:32px;
+  overflow:hidden;
+}
+
+.rekomHarga{
+  font-size:13px;
+  color:#ff6f00;
+  font-weight:bold;
+}
+</style>
+
+</head>
+<body>
+
+<!-- HEADER -->
+<!-- HEADER -->
+<div class="header">
+  <div class="back" onclick="history.back()">←</div>
+  <div class="title" id="judulKategori">Kategori</div>
+</div>
+
+
+<!-- WRAPPER KATEGORI -->
+<div class="wrapper">
+  <div class="list" id="produkList"></div>
+</div>
+
+
+<!-- GARIS PEMISAH -->
+<div class="divider">
+  <span>Produk yang mungkin anda suka</span>
+</div>
+
+
+<!-- REKOMENDASI -->
+<div class="rekomSection">
+  <div class="rekomList" id="rekomList"></div>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+  authDomain: "shoponline-93646.firebaseapp.com",
+  databaseURL: "https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "shoponline-93646"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+/* =========================
+   AMBIL KATEGORI URL
+========================= */
+const urlParams = new URLSearchParams(window.location.search);
+const kategori = (urlParams.get("kategori") || "all").toLowerCase();
+
+document.getElementById("judulKategori").innerText =
+  kategori.toUpperCase();
+
+/* =========================
+   LOAD PRODUK
+========================= */
+async function loadProduk(){
+
+  const snap = await get(ref(db, "produk"));
+  const list = document.getElementById("produkList");
+
+  let semuaProduk = [];
+
+  let html = "";
+
+  if(!snap.exists()){
+    list.innerHTML = `<div class="empty">Produk tidak ditemukan</div>`;
+    return;
+  }
+
+  snap.forEach((item)=>{
+
+    const p = item.val();
+
+    // simpan semua produk untuk rekomendasi
+    semuaProduk.push({ id: item.key, ...p });
+
+    const kat = (p.kategori || "").toLowerCase();
+
+    // filter kategori
+    if(kategori !== "all" && kat !== kategori){
+      return;
+    }
+
+    html += `
+      <div class="card" onclick="location.href='detailproduk.html?id=${item.key}'">
+        <img src="${(p.gambar && p.gambar[0]) || 'https://via.placeholder.com/300'}">
+        <div class="info">
+          <div class="nama">${p.nama || "-"}</div>
+          <div class="harga">Rp ${(p.harga || 0).toLocaleString("id-ID")}</div>
+        </div>
+      </div>
+    `;
+  });
+
+  list.innerHTML = html || `<div class="empty">Produk tidak ditemukan</div>`;
+
+  // 🔥 PANGGIL REKOMENDASI DI SINI (WAJIB DI DALAM FUNCTION)
+  loadRekomendasi(semuaProduk);
+
+}
+
+loadProduk();
+
+
+
+
+
+
+
+
+
+function loadRekomendasi(allProduk){
+
+  const container = document.getElementById("rekomList");
+
+  if(!allProduk || allProduk.length === 0){
+    container.innerHTML = "<div>Tidak ada rekomendasi</div>";
+    return;
+  }
+
+  // ambil random produk
+  const shuffled = allProduk
+    .sort(() => 0.5 - Math.random())
+    .slice(0,6);
+
+  let html = "";
+
+  shuffled.forEach(p => {
+
+    const img = (p.gambar && p.gambar[0]) || "https://via.placeholder.com/300";
+
+    html += `
+      <div class="rekomCard" onclick="location.href='detailproduk.html?id=${p.id}'">
+        <img src="${img}">
+        <div class="rekomInfo">
+          <div class="rekomNama">${p.nama || "-"}</div>
+          <div class="rekomHarga">Rp ${(p.harga || 0).toLocaleString("id-ID")}</div>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+
+
+
+
+
+</script>
+
+</body>
+</html>

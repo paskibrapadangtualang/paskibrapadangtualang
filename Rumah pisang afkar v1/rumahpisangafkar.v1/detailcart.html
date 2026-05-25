@@ -231,16 +231,9 @@ Rp 0
 
 <button
 class="checkout"
-
-onclick="
-location.href=
-'checkout.html'
-"
-
+onclick="goCheckout()"
 >
-
 Checkout
-
 </button>
 
 </div>
@@ -396,6 +389,22 @@ window.minusQty = async (id, uid) => {
   });
 
 };
+
+
+
+window.goCheckout = async ()=>{
+
+localStorage.setItem(
+"checkoutMode",
+"cart"
+);
+
+location.href =
+"checkout.html";
+
+};
+
+
 
 </script>
 

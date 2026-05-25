@@ -1339,6 +1339,90 @@ html += `
       <div class="section-title">Produk</div>
 `;
 
+
+
+
+
+
+/* =========================
+AMBIL NAMA STORE (FIX)
+========================= */
+
+const storeSet = new Set();
+Object.values(data.items || {}).forEach(item => {
+  if (item.storeId) storeSet.add(item.storeId);
+});
+
+const storeCache = {};
+
+// hanya tampil NAMA STORE
+for (const storeId of storeSet) {
+
+  if (!storeCache[storeId]) {
+    const snap = await get(ref(db, "stores/" + storeId));
+
+    storeCache[storeId] = snap.exists()
+      ? snap.val()
+      : { nama: storeId };
+  }
+
+const storeData = storeCache[storeId];
+
+const fotoStore =
+storeData.foto ||
+storeData.logo ||
+storeData.gambar ||
+"assets/images/default-store.png";
+
+html += `
+
+<div class="row" style="
+align-items:center;
+margin-top:10px;
+">
+
+  <span>Store</span>
+
+  <div style="
+  display:flex;
+  align-items:center;
+  gap:10px;
+  ">
+
+    <img
+    src="${fotoStore}"
+    onerror="this.src='assets/images/default-store.png'"
+    style="
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    object-fit:cover;
+    border:1px solid #eee;
+    ">
+
+    <div style="
+    font-weight:bold;
+    color:#222;
+    ">
+      ${storeData.nama}
+    </div>
+
+  </div>
+
+</div>
+
+`;
+}
+
+
+
+
+
+
+
+
+
+
 /* =========================
 LIST PRODUK
 ========================= */
@@ -1476,227 +1560,6 @@ document.getElementById("popup").style.display = "flex";
 
 
 
-
-
-
-
-
-
-const langkah = [
-  "Pesanan",
-  "Disetujui",
-  "Diproses",
-  "Diantar",
-  "Selesai"
-];
-
-let html = `
-<div class="detail-wrapper">
-
-  <div class="tracking">
-`;
-
-langkah.forEach((x, i) => {
-
-  const aktif = (i + 1) <= level;
-
-  html += `
-    <div class="step ${aktif ? "active" : ""}">
-      <div class="circle">${i + 1}</div>
-      <div class="line"></div>
-      <div class="txt">${x}</div>
-    </div>
-  `;
-});
-
-html += `
-  </div>
-
-  <div class="receipt">
-
-<div style="
-background:${bgStatus}15;
-border:1px solid ${bgStatus}35;
-padding:18px;
-border-radius:18px;
-margin-bottom:18px;
-">
-
-<div style="
-font-size:21px;
-font-weight:bold;
-color:${bgStatus};
-margin-bottom:8px;
-">
-${titleStatus}
-</div>
-
-<div style="
-font-size:13px;
-line-height:1.7;
-color:#555;
-">
-${descStatus}
-</div>
-
-</div>
-
-<div class="receipt-header">
-
-<h3>
-${realStatus.toUpperCase()}
-</h3>
-
-<p>
-Tracking Pesanan
-</p>
-
-</div>
-
-    <div class="receipt-body">
-
-      <div class="row">
-        <span>ID</span>
-        <span>${data.id}</span>
-      </div>
-
-      <div class="row">
-        <span>Status</span>
-        <span class="status ${realStatus}">${realStatus}</span>
-      </div>
-
-      <div class="row">
-        <span>Metode</span>
-        <span>${data.metode}</span>
-      </div>
-
-      <div class="divider"></div>
-
-      <div class="row total">
-        <span>Total</span>
-        <span>Rp ${(data.total || 0).toLocaleString("id-ID")}</span>
-      </div>
-
-      <div class="divider"></div>
-      <div class="section-title">Store</div>
-`;
-
-/* =========================
-AMBIL NAMA STORE (FIX)
-========================= */
-
-const storeSet = new Set();
-Object.values(data.items || {}).forEach(item => {
-  if (item.storeId) storeSet.add(item.storeId);
-});
-
-const storeCache = {};
-
-// hanya tampil NAMA STORE
-for (const storeId of storeSet) {
-
-  if (!storeCache[storeId]) {
-    const snap = await get(ref(db, "stores/" + storeId));
-
-    storeCache[storeId] = snap.exists()
-      ? snap.val()
-      : { nama: storeId };
-  }
-
-const storeData = storeCache[storeId];
-
-const fotoStore =
-storeData.foto ||
-storeData.logo ||
-storeData.gambar ||
-"assets/images/default-store.png";
-
-html += `
-
-<div class="row" style="
-align-items:center;
-margin-top:10px;
-">
-
-  <span>Store</span>
-
-  <div style="
-  display:flex;
-  align-items:center;
-  gap:10px;
-  ">
-
-    <img
-    src="${fotoStore}"
-    onerror="this.src='assets/images/default-store.png'"
-    style="
-    width:38px;
-    height:38px;
-    border-radius:50%;
-    object-fit:cover;
-    border:1px solid #eee;
-    ">
-
-    <div style="
-    font-weight:bold;
-    color:#222;
-    ">
-      ${storeData.nama}
-    </div>
-
-  </div>
-
-</div>
-
-`;
-}
-
-/* =========================
-PRODUK LIST (TETAP)
-========================= */
-
-Object.values(data.items || {}).forEach(x => {
-
-let img = x.gambar || "assets/images/default.png";
-
-html += `
-<div class="produk" style="
-display:flex;
-gap:10px;
-align-items:center;
-border-bottom:1px dashed #ddd;
-padding:10px 0;
-">
-
-  <img src="${img}"
-  onerror="this.src='assets/images/default.png'"
-  style="
-  width:55px;
-  height:55px;
-  object-fit:cover;
-  border-radius:10px;
-  border:1px solid #eee;
-  ">
-
-  <div style="flex:1;">
-
-    <b style="font-size:13px;">
-      ${x.nama}
-    </b>
-
-    <div style="font-size:12px;color:#666;margin-top:4px;">
-      Qty: ${x.qty}
-    </div>
-
-    <div style="font-size:12px;font-weight:bold;margin-top:2px;color:#ff6f00;">
-      Rp ${(x.harga || 0).toLocaleString("id-ID")}
-    </div>
-
-  </div>
-
-</div>
-`;
-});
 
 /* TOMBOL TERIMA PESANAN */
 /* =========================

@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Detail Profil Store</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#f5f5f5;
+padding-bottom:80px;
+}
+
+/* BACK */
+.back{
+position:fixed;
+top:15px;
+left:15px;
+width:40px;
+height:40px;
+border-radius:50%;
+background:white;
+display:flex;
+align-items:center;
+justify-content:center;
+box-shadow:0 3px 10px rgba(0,0,0,.1);
+cursor:pointer;
+z-index:99;
+}
+
+/* BANNER */
+.banner{
+width:100%;
+height:200px;
+overflow:hidden;
+position:relative;
+}
+
+.banner img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+/* PROFILE CARD */
+.profileCard{
+background:white;
+margin-top:-40px;
+border-radius:20px 20px 0 0;
+padding:15px;
+position:relative;
+z-index:2;
+box-shadow:0 -5px 20px rgba(0,0,0,.1);
+}
+
+.profileTop{
+display:flex;
+gap:12px;
+align-items:center;
+}
+
+.avatar{
+width:70px;
+height:70px;
+border-radius:50%;
+cursor:pointer;
+transition:.2s;
+object-fit:cover;
+border:3px solid white;
+box-shadow:0 3px 10px rgba(0,0,0,.2);
+}
+
+
+.avatar:hover{
+transform:scale(1.05);
+}
+
+
+.name{
+font-size:18px;
+font-weight:bold;
+}
+
+.kategori{
+font-size:12px;
+color:#777;
+margin-top:2px;
+}
+
+
+
+/* INFO */
+.infoWrapper{
+background:#f9c677;
+margin:15px;
+padding:10px;
+border-radius:18px;
+box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+.infoBox{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.box{
+display:flex;
+align-items:center;
+gap:8px;
+background:#f8f8f8;
+padding:10px;
+border-radius:12px;
+font-size:12px;
+color:#444;
+}
+
+.box img.icon{
+width:18px;
+height:18px;
+object-fit:contain;
+}
+
+/* DESKRIPSI */
+.desc{
+margin-top:12px;
+font-size:13px;
+line-height:1.5;
+color:#555;
+}
+
+
+/* FULL IMAGE VIEW */
+.fullImg{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.9);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:999;
+}
+
+.fullImg img{
+max-width:95%;
+max-height:90%;
+border-radius:10px;
+}
+
+.closeImg{
+position:absolute;
+top:20px;
+right:20px;
+color:white;
+font-size:25px;
+cursor:pointer;
+}
+
+
+
+
+
+.warningBox{
+background:#fff7ed;
+border:1px solid #ffedd5;
+margin:15px;
+padding:15px;
+border-radius:15px;
+box-shadow:0 3px 10px rgba(0,0,0,.05);
+}
+
+.warningTitle{
+font-size:14px;
+font-weight:bold;
+color:#c2410c;
+display:flex;
+align-items:center;
+gap:8px;
+margin-bottom:8px;
+}
+
+.warningText{
+font-size:12.5px;
+line-height:1.6;
+color:#7c2d12;
+}
+
+
+
+</style>
+</head>
+<body>
+
+<div class="back" onclick="history.back()">
+<i class="fa fa-arrow-left"></i>
+</div>
+
+<!-- BANNER -->
+<div class="banner">
+<img id="banner">
+</div>
+
+<!-- PROFILE -->
+<div class="profileCard">
+
+<div class="profileTop">
+<img id="logo" class="avatar" onclick="openImg(this.src)" src="https://res.cloudinary.com/djxlbemky/image/upload/v1779629235/bas1zvqkmeov5vksroca.webp">
+
+<div>
+<div class="name" id="nama"></div>
+<div class="kategori" id="kategori"></div>
+</div>
+
+
+</div>
+
+<div class="infoWrapper">
+
+  <div class="infoBox">
+
+    <div class="box">
+      <img src="assets/images/ba61750a46794d8847c3f463c5e71cc4.png" class="icon">
+      <span>Followers:</span>
+      <span id="followers">0</span>
+    </div>
+
+    <div class="box">
+      <img src="assets/images/f0049e9df4e536bc3e7f140d071e9078.png" class="icon">
+      <span>Produk:</span>
+      <span id="produk">0</span>
+    </div>
+
+    <div class="box">
+      <img src="assets/images/destination.png" class="icon">
+      <span>Lokasi:</span>
+      <span id="lokasi">-</span>
+    </div>
+
+    <div class="box">
+      <img src="assets/images/prist.png" class="icon">
+      <span>Status:</span>
+      <span id="status">-</span>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- DESKRIPSI -->
+<div class="desc" id="desc"></div>
+
+</div>
+
+
+
+
+
+<div class="warningBox">
+
+<div class="warningTitle">
+<i class="fa fa-triangle-exclamation"></i>
+Peringatan & Keamanan Transaksi
+</div>
+
+<div class="warningText">
+
+Sistem kami menyediakan platform marketplace untuk menghubungkan pembeli dan penjual secara aman dan transparan.  
+
+Namun, apabila Anda menemukan aktivitas yang mencurigakan seperti penipuan, manipulasi produk, atau pelanggaran transaksi, silakan segera melaporkannya melalui menu <b>Laporan</b> yang tersedia di platform kami.
+
+<br><br>
+
+Kami juga menginformasikan bahwa sistem keamanan kami masih dalam tahap pengembangan dan peningkatan berkelanjutan. Oleh karena itu, kami sangat menghimbau pengguna untuk selalu berhati-hati dalam melakukan transaksi.
+
+<br><br>
+
+⚠️ <b>Penting:</b>  
+Jangan melakukan transaksi di luar platform kami karena dapat meningkatkan risiko penipuan dan kehilangan dana. Semua transaksi yang aman hanya dilakukan melalui sistem resmi kami.
+
+<br><br>
+
+Kami terus berkomitmen untuk meningkatkan keamanan, kenyamanan, dan kepercayaan pengguna demi pengalaman berbelanja yang lebih baik.
+
+</div>
+
+</div>
+
+
+
+
+
+
+
+<!-- FULL IMAGE VIEW -->
+<div class="fullImg" id="fullImg">
+<div class="closeImg" onclick="closeImg()">✖</div>
+<img id="imgView">
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getDatabase,
+  ref,
+  get,
+  set
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+  authDomain: "shoponline-93646.firebaseapp.com",
+  databaseURL: "https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "shoponline-93646",
+  storageBucket: "shoponline-93646.firebasestorage.app",
+  messagingSenderId: "435032364443",
+  appId: "1:435032364443:web:5f76384f794693a892bd3e"
+};
+
+// 🔥 INI WAJIB ADA
+const app = initializeApp(firebaseConfig);
+
+// database
+const db = getDatabase(app);
+
+const id = new URLSearchParams(location.search).get("id");
+
+/* LOAD STORE */
+const storeSnap = await get(ref(db,"stores/"+id));
+
+if(storeSnap.exists()){
+const d = storeSnap.val();
+
+document.getElementById("banner").src = d.banner;
+document.getElementById("logo").src = d.logo;
+document.getElementById("nama").innerText = d.nama;
+document.getElementById("kategori").innerText = d.kategori;
+document.getElementById("desc").innerText = d.deskripsi;
+const lokasiList = [
+  "Jakarta",
+  "Medan",
+  "Bandung",
+  "Surabaya",
+  "Padang",
+  "Aceh",
+  "Bekasi",
+  "Bogor"
+];
+
+let lokasiStore = d.lokasi;
+
+// kalau kosong
+if(!lokasiStore || lokasiStore.trim() === ""){
+  lokasiStore = lokasiList[Math.floor(Math.random() * lokasiList.length)];
+
+  // simpan ke firebase biar permanen
+  await set(ref(db,"stores/"+id+"/lokasi"), lokasiStore);
+}
+
+document.getElementById("lokasi").innerText = lokasiStore;
+document.getElementById("status").innerText = d.status || "-";
+
+
+const followersSnap = await get(ref(db,"followers/"+id));
+
+let followerCount = 0;
+
+if(followersSnap.exists()){
+  const data = followersSnap.val();
+
+  // hitung semua user yang follow
+  followerCount = Object.values(data).filter(v => v === true).length;
+}
+
+document.getElementById("followers").innerText = followerCount;
+
+
+
+const produkSnap = await get(ref(db,"produk"));
+
+let count = 0;
+
+if(produkSnap.exists()){
+  produkSnap.forEach(p=>{
+    const data = p.val();
+
+    if(data.storeId === id){
+      count++;
+    }
+  });
+}
+
+document.getElementById("produk").innerText = count;
+
+}
+
+
+/* FULL IMAGE */
+window.openImg = (src)=>{
+document.getElementById("fullImg").style.display="flex";
+document.getElementById("imgView").src=src;
+}
+
+window.closeImg = ()=>{
+document.getElementById("fullImg").style.display="none";
+}
+
+</script>
+
+</body>
+</html>

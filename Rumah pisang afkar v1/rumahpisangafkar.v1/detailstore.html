@@ -130,19 +130,16 @@ margin-bottom:6px;
 }
 
 .desc{
+  font-size:13px;
+  line-height:1.5;
+  max-width:90%;
 
-font-size:13px;
+  /* biar makin clean */
+  display:-webkit-box;
 
-line-height:1.5;
-
-max-width:90%;
-
+  -webkit-box-orient:vertical;
+  overflow:hidden;
 }
-
-
-
-
-
 
 
 /* =========================
@@ -177,13 +174,11 @@ gap:15px;
 .card{
 
 background:white;
-
-border-radius:18px;
+border-radius:5px;
 
 overflow:hidden;
 
-box-shadow:
-0 3px 12px rgba(0,0,0,.06);
+
 
 position:relative;
 
@@ -369,11 +364,18 @@ font-size:16px;
 
 
 .storeHeader{
-display:flex;
-align-items:center;
-gap:10px;
-margin-bottom:6px;
-margin-top:10px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:6px;
+  margin-top:10px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.storeHeader:hover{
+  opacity:.8;
+  transform:scale(1.01);
 }
 
 .storeLogoMini{
@@ -387,7 +389,130 @@ box-shadow:0 2px 8px rgba(0,0,0,.2);
 
 
 
+/* =========================
+VOUCHER
+========================= */
 
+/* =========================
+VOUCHER SHOPEE STYLE
+========================= */
+
+.voucherSection{
+padding:15px;
+}
+
+.voucherTitle{
+font-size:16px;
+font-weight:bold;
+margin-bottom:10px;
+}
+
+.voucherScroll{
+display:flex;
+gap:12px;
+overflow-x:auto;
+padding-bottom:5px;
+scroll-snap-type:x mandatory;
+}
+
+.voucherScroll::-webkit-scrollbar{
+display:none;
+}
+
+/* CARD UTAMA */
+.voucherCard{
+display:flex;
+min-width:280px;
+background:white;
+border-radius:16px;
+overflow:hidden;
+box-shadow:0 3px 10px rgba(0,0,0,.08);
+scroll-snap-align:start;
+}
+
+/* KIRI */
+.voucherLeft{
+width:90px;
+background:linear-gradient(135deg,#ff6f00,#ff9800);
+color:white;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+position:relative;
+}
+
+.voucherLeft::after{
+content:"";
+position:absolute;
+right:-10px;
+top:50%;
+transform:translateY(-50%);
+width:20px;
+height:20px;
+background:#f5f5f5;
+border-radius:50%;
+}
+
+.voucherDiskon{
+font-size:22px;
+font-weight:bold;
+}
+
+.voucherLabel{
+font-size:11px;
+margin-top:4px;
+}
+
+/* KANAN */
+.voucherRight{
+flex:1;
+padding:12px;
+}
+
+.voucherName{
+font-size:14px;
+font-weight:bold;
+margin-bottom:5px;
+}
+
+.voucherMin{
+font-size:11px;
+color:#666;
+margin-bottom:4px;
+}
+
+.voucherExp{
+font-size:10px;
+color:#999;
+margin-bottom:10px;
+}
+
+.voucherBottom{
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.voucherKode{
+font-size:11px;
+font-weight:bold;
+color:#ff6f00;
+background:#fff3e0;
+padding:5px 8px;
+border-radius:999px;
+}
+
+.voucherBtn{
+border:none;
+background:#ff6f00;
+color:white;
+padding:7px 12px;
+border-radius:10px;
+font-size:11px;
+font-weight:bold;
+cursor:pointer;
+}
 
 </style>
 </head>
@@ -456,12 +581,7 @@ Mungkin Nanti
 <!-- BANNER -->
 <div class="banner">
 
-<div class="back"
-onclick="history.back()">
 
-<i class="fa fa-arrow-left"></i>
-
-</div>
 
 <img id="bannerImg">
 
@@ -477,9 +597,6 @@ Buka
 <div class="info">
 
 
-
-
-
     
 <div class="storeHeader">
 
@@ -491,11 +608,6 @@ Buka
 </div>
 
 </div>
-
-
-
-
-
 
 
 
@@ -526,10 +638,36 @@ font-weight:bold;
 Ikuti
 </button>
 
+
+
+
+<button id="chatBtn"
+style="
+padding:6px 12px;
+border:none;
+border-radius:10px;
+font-size:12px;
+cursor:pointer;
+font-weight:bold;
+background:#ff7c36;
+color:#ffffff;
+">
+Chat
+</button>
 </div>
 
 
+<div style="margin-top:6px;font-size:12px;color:white;display:flex;align-items:center;gap:6px;">
+  
+  <span style="color:#ffd700;font-size:14px;">★</span>
 
+  <span id="storeRating">0.0</span>
+
+  <span style="opacity:.8;">•</span>
+
+  <span id="storeReviewCount">0 Ulasan</span>
+
+</div>
 
 <div class="desc"
 id="descStore">
@@ -541,6 +679,24 @@ Deskripsi store
 </div>
 
 </div>
+
+
+
+<!-- VOUCHER -->
+<!-- VOUCHER -->
+<div class="voucherSection">
+
+<div class="voucherTitle">
+Voucher Toko
+</div>
+
+<div class="voucherScroll" id="voucherList">
+
+</div>
+
+</div>
+
+
 
 <!-- PRODUK -->
 <div class="title">
@@ -564,31 +720,26 @@ import {
 getDatabase,
 ref,
 get,
-set
+set,
+update,
+onValue 
 }
 from
 "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig={
-
 apiKey:
 "AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
-
 authDomain:
 "shoponline-93646.firebaseapp.com",
-
 databaseURL:
 "https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
-
 projectId:
 "shoponline-93646",
-
 storageBucket:
 "shoponline-93646.firebasestorage.app",
-
 messagingSenderId:
 "435032364443",
-
 appId:
 "1:435032364443:web:5f76384f794693a892bd3e"
 
@@ -603,10 +754,28 @@ const db=
 getDatabase(app);
 
 
-if(!localStorage.getItem("userLogin")){
+
+
+const params = new URLSearchParams(location.search);
+const id = params.get("id");
+const storeId = id; // ✅ PENTING: sekarang GLOBAL aman
+
+
+
+
+
+
+
+
+
+
+
+
+const uid = localStorage.getItem("userId");
+
+if(!uid){
   console.log("USER BELUM LOGIN");
 }
-
 
 
 
@@ -635,13 +804,6 @@ document.getElementById("loginModal").style.display = "none";
 AMBIL ID STORE
 ========================= */
 
-const params=
-new URLSearchParams(
-location.search
-);
-
-const id=
-params.get("id");
 
 /* =========================
 DUMMY PRODUK OTOMATIS
@@ -853,6 +1015,180 @@ console.log(
 
 }
 
+
+
+
+
+async function loadStoreVoucher(){
+
+const list = document.getElementById("voucherList");
+
+const snap = await get(ref(db,"voucher"));
+
+if(!snap.exists()){
+  list.innerHTML = `<div style="font-size:12px;color:#999;">Belum ada voucher</div>`;
+  return;
+}
+
+const now = Date.now();
+
+/* =========================
+AMBIL DATA VOUCHER USER
+========================= */
+const usedSnap = await get(ref(db,"userVoucherUsed/"+uid));
+const usedData = usedSnap.exists() ? usedSnap.val() : {};
+console.log("USED VOUCHER DATA:", usedData);
+
+let html = "";
+
+snap.forEach((x)=>{
+
+const v = x.val();
+
+/* FILTER */
+if(v.status !== "aktif") return;
+if(v.expired && v.expired < now) return;
+if(v.storeId !== id && v.storeId !== "all") return;
+
+/* CEK SUDAH DIPAKAI USER */
+const sudahDipakai = !!usedData?.[x.key];
+
+let diskonText = "";
+
+if(v.tipe === "persen"){
+  diskonText = v.diskon + "%";
+}else if(v.tipe === "ongkir"){
+  diskonText = "FREE";
+}else{
+  diskonText = v.diskon;
+}
+
+let label = v.tipe === "ongkir" ? "ONGKIR" : "OFF";
+
+const exp = new Date(v.expired).toLocaleDateString("id-ID");
+
+html += `
+<div class="voucherCard">
+
+<div class="voucherLeft">
+<div class="voucherDiskon">${diskonText}</div>
+<div class="voucherLabel">${label}</div>
+</div>
+
+<div class="voucherRight">
+
+<div class="voucherName">${v.nama}</div>
+
+<div class="voucherMin">
+Min. Belanja Rp ${(v.minBelanja||0).toLocaleString("id-ID")}
+</div>
+
+<div class="voucherExp">
+Berlaku sampai ${exp}
+</div>
+
+<div class="voucherBottom">
+
+<div class="voucherKode">${v.kode}</div>
+
+<button class="voucherBtn"
+style="
+background:${sudahDipakai ? '#ccc' : '#ff6f00'};
+cursor:${sudahDipakai ? 'not-allowed' : 'pointer'};
+"
+${sudahDipakai ? 'disabled' : ''}
+onclick="pakaiVoucher('${x.key}')">
+
+${sudahDipakai ? 'Dipakai' : 'Pakai'}
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+`;
+
+});
+
+list.innerHTML = html || `<div style="font-size:12px;color:#999;">Tidak ada voucher</div>`;
+
+}
+
+loadStoreVoucher();
+
+/* =========================
+PAKAI VOUCHER (FIXED FINAL)
+========================= */
+window.pakaiVoucher = async function(id){
+
+const voucherRef = ref(db,"voucher/"+id);
+
+const snap = await get(voucherRef);
+
+if(!snap.exists()){
+  alert("Voucher tidak ditemukan");
+  return;
+}
+
+const v = snap.val();
+
+// status
+if(v.status !== "aktif"){
+  alert("Voucher tidak aktif");
+  return;
+}
+
+// expired
+if(v.expired && v.expired < Date.now()){
+  alert("Voucher sudah expired");
+  return;
+}
+
+const kuota = Number(v.kuota || 0);
+const dipakai = Number(v.digunakan || 0);
+
+// kuota check
+if(kuota > 0 && dipakai >= kuota){
+  alert("Kuota voucher habis");
+  return;
+}
+
+/* =========================
+❗ INI FIX UTAMA (MARK USER SUDAH PAKAI)
+========================= */
+await set(
+  ref(db,"userVoucherUsed/"+uid+"/"+id),
+  true
+);
+
+/* SIMPAN CHECKOUT */
+await set(ref(db,"checkoutVoucher/"+uid), {
+
+id:id,
+kode:v.kode || "",
+nama:v.nama || "",
+tipe:v.tipe || "",
+diskon:Number(v.diskon || 0),
+maxDiskon:Number(v.maxDiskon || 0),
+minBelanja:Number(v.minBelanja || 0),
+storeId:v.storeId || "all",
+createdAt:Date.now()
+
+});
+
+/* UPDATE KUOTA */
+if(kuota > 0){
+  await update(voucherRef, {
+    digunakan: dipakai + 1
+  });
+}
+
+alert("Voucher berhasil dipakai");
+history.back();
+
+};
 // await createDummyProducts(); // DI-MATIKAN AGAR TIDAK DUPLIKAT
 /* =========================
 LOAD STORE
@@ -874,9 +1210,17 @@ const d=
 storeSnap.val();
 
 
+// pakai storeId global, jangan redeclare
+
 document.getElementById("storeLogoMini").src =
 d.logo || "https://picsum.photos/200";
 
+// klik profile store
+document.querySelector(".storeHeader").style.cursor = "pointer";
+
+document.querySelector(".storeHeader").onclick = () => {
+  location.href = `detailprofistore.html?id=${id}`;
+};
 
 
 document
@@ -892,8 +1236,12 @@ d.nama ?? "Store";
 document.getElementById("kategoriStore").innerHTML =
 d.kategori ?? "-";
 
+const fullDesc = d.deskripsi ?? "Belum ada deskripsi";
+
 document.getElementById("descStore").innerHTML =
-d.deskripsi ?? "Belum ada deskripsi";
+fullDesc.length > 90
+  ? fullDesc.substring(0, 90) + "..."
+  : fullDesc;
 
 const status=
 document
@@ -913,6 +1261,29 @@ d.status==="buka"
 );
 
 }
+
+
+
+const chatBtn = document.getElementById("chatBtn");
+
+chatBtn.onclick = () => {
+
+const uid = localStorage.getItem("userId");
+
+if(!uid){
+  openModal();
+  return;
+}
+
+location.href = `detailchatcostumer.html?store=${id}`;
+};
+
+
+
+
+
+
+
 
 
 
@@ -973,7 +1344,7 @@ f.exists() ? Object.keys(f.val()).length : 0;
 
 }
 
-await updateCount();
+
 
 // =========================
 // CHECK STATUS FOLLOW
@@ -1000,7 +1371,7 @@ if(snap.exists()){
 }
 
 }
-await checkFollow();
+
 
 // =========================
 // CLICK FOLLOW
@@ -1063,14 +1434,101 @@ if(userSnap.exists()){
 
 }
 
-await updateCount();
-await checkFollow();
+
 
 };
 console.log("LOGIN:", localStorage.getItem("userId"));
 
 
 
+function loadStoreRatingRealtime(storeId){
+
+  onValue(ref(db, "review"), async (snap) => {
+
+    let totalRating = 0;
+    let totalReview = 0;
+
+    let bagus = 0;
+    let lumayan = 0;
+    let jelek = 0;
+
+    if(!snap.exists()){
+
+      updateUI(0,0,0,0,0);
+      return;
+
+    }
+
+    // ambil semua produk
+    const produkSnap = await get(ref(db, "produk"));
+
+    if(!produkSnap.exists()) return;
+
+    const produkData = produkSnap.val();
+    const reviewData = snap.val();
+
+    for(const productId in reviewData){
+
+      const produk = produkData[productId];
+
+      // cek produk milik store ini
+      if(!produk) continue;
+      if(produk.storeId !== storeId) continue;
+
+      const users = reviewData[productId];
+
+      for(const uid in users){
+
+        const r = users[uid];
+
+        if(!r.rating) continue;
+
+        totalRating += Number(r.rating);
+        totalReview++;
+
+        // label otomatis
+        if(r.rating <= 2){
+          jelek++;
+        }
+        else if(r.rating <= 4){
+          lumayan++;
+        }
+        else{
+          bagus++;
+        }
+
+      }
+
+    }
+
+    const avg = totalReview
+      ? (totalRating / totalReview).toFixed(1)
+      : "0.0";
+
+    updateUI(avg, totalReview, bagus, lumayan, jelek);
+
+  });
+
+}
+
+
+// =========================
+// UPDATE UI
+// =========================
+function updateUI(avg, total, bagus, lumayan, jelek){
+
+  document.getElementById("storeRating").innerText =
+    avg;
+
+  document.getElementById("storeReviewCount").innerText =
+    total + " Ulasan";
+
+  console.log("⭐ Rating:", avg);
+  console.log("🟢 Bagus:", bagus);
+  console.log("🟡 Lumayan:", lumayan);
+  console.log("🔴 Jelek:", jelek);
+
+}
 /* =========================
 LOAD PRODUK
 ========================= */
@@ -1240,6 +1698,9 @@ d.kupon ?
 
 
 
+await updateCount();
+await checkFollow();
+loadStoreRatingRealtime(id);
 
 </script>
 </body>

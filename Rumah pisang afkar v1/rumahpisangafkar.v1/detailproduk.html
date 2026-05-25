@@ -166,8 +166,8 @@ border-radius:18px;
 /* STORE */
 
 .storeBox{
-
-background:white;
+border-radius: 10px;
+background:#f6f7e2;
 
 margin-top:12px;
 
@@ -187,8 +187,8 @@ gap:12px;
 
 .storeLogo{
 
-width:70px;
-height:70px;
+width:55px;
+height:55px;
 
 border-radius:20px;
 
@@ -202,7 +202,7 @@ flex:1;
 
 .storeNama{
 
-font-size:18px;
+font-size:15px;
 
 font-weight:bold;
 
@@ -439,17 +439,6 @@ Kategori
 
 
 
-
-
-<div
-id="storeRating"
-class="storeRating"
->
-
-⭐ 4.9 • 120 Ulasan
-
-</div>
-
 </div>
 
 <button
@@ -458,23 +447,48 @@ id="visitStore"
 >
 
 Kunjungi
-
 </button>
+</div>
+</div>
 
+
+<div onclick="chatSeller()" style="
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#ff6f00;
+  color:white;
+  font-size:15px;
+  font-weight:bold;
+  border-radius:18px;
+  cursor:pointer;
+  user-select:none;
+  box-shadow:0 4px 10px rgba(255,111,0,.25);
+  transition:0.2s;
+">
+  Chat
 </div>
 
 </div>
-
-
-
-
 
 
 <div class="reviewBox">
 
   <div class="reviewTitle">
     Ulasan Pembeli
+</div>
+    <div
+id="storeRating"
+class="storeRating"
+>
+
+⭐ 0.0 • 0 Ulasan
+
+</div>
   </div>
+
+  
 
   <div id="reviewList"></div>
 
@@ -876,10 +890,55 @@ const avg = totalReview
   ? (totalRating / totalReview).toFixed(1)
   : "0.0";
 
-document.getElementById("storeRating").innerHTML =
-  `⭐ ${avg} • ${totalReview} Ulasan`;
+document.getElementById("storeRating").innerHTML = `
+<div style="
+display:flex;
+align-items:center;
+gap:6px;
+font-size:13px;
+font-weight:500;
+color:white;
+  background: #e9e9e9;
+      border-radius: 10px;
+">
 
+  <div style="
+  display:flex;
+  align-items:center;
+  gap:3px;
+  background:rgb(161 161 161 / 80%);
+  padding:5px 10px;
+  border-radius:999px;
+  backdrop-filter:blur(10px);
 
+  ">
+
+    <span style="
+    color:#ffd43b;
+    font-size:15px;
+    ">
+    ★
+    </span>
+
+    <span style="
+    font-weight:bold;
+    font-size:14px;
+    ">
+    ${avg}
+    </span>
+
+  </div>
+
+  <span style="
+  opacity:.9;
+  font-size:13px;
+      color: #ff7b05;
+  ">
+  (${totalReview}) Ulasan
+  </span>
+
+</div>
+`;
 
 
 
@@ -1046,6 +1105,30 @@ window.checkoutNow = () => {
 
   location.href = "checkout.html";
 };
+
+
+
+
+
+
+
+
+window.chatSeller = () => {
+  const product = {
+    id: id,
+    nama: data.nama,
+    harga: data.harga,
+    gambar: Array.isArray(data.gambar) ? data.gambar[0] : data.gambar,
+    storeId: data.storeId
+  };
+
+  localStorage.setItem("chatProduct", JSON.stringify(product));
+
+  location.href = `detailchatcostumer.html?store=${data.storeId}`;
+};
+
+
+
 </script>
 
 </body>

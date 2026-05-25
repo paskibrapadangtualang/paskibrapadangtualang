@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Pesanan Saya</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#f5f5f5;
+padding-bottom:100px;
+}
+
+/* HEADER */
+
+.header{
+
+position:sticky;
+top:0;
+z-index:100;
+
+background:#ff6f00;
+
+padding:15px;
+
+display:flex;
+align-items:center;
+gap:12px;
+
+color:white;
+
+}
+
+.back{
+
+width:35px;
+height:35px;
+
+border-radius:50%;
+
+background:rgba(255,255,255,.2);
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+cursor:pointer;
+
+}
+
+.title{
+
+font-size:18px;
+font-weight:bold;
+
+}
+
+/* FILTER */
+
+.filterBar{
+
+display:flex;
+overflow:auto;
+
+background:white;
+
+padding:12px 10px;
+
+gap:10px;
+
+position:sticky;
+top:65px;
+z-index:99;
+
+}
+
+.filterBtn{
+
+padding:9px 16px;
+
+border-radius:999px;
+
+background:#f1f1f1;
+
+font-size:13px;
+
+white-space:nowrap;
+
+cursor:pointer;
+
+transition:.2s;
+
+}
+
+.active{
+
+background:#ff6f00;
+color:white;
+font-weight:bold;
+
+}
+
+/* LIST */
+
+.list{
+
+padding:12px;
+
+}
+
+/* CARD */
+
+.card{
+
+background:white;
+
+border-radius:18px;
+
+margin-bottom:14px;
+
+overflow:hidden;
+
+box-shadow:
+0 3px 10px rgba(0,0,0,.04);
+
+}
+
+/* STORE */
+
+.store{
+
+padding:14px;
+
+display:flex;
+align-items:center;
+justify-content:space-between;
+
+border-bottom:1px solid #f1f1f1;
+
+}
+
+.storeLeft{
+
+display:flex;
+align-items:center;
+gap:10px;
+
+}
+
+.storeLogo{
+
+width:34px;
+height:34px;
+
+border-radius:50%;
+object-fit:cover;
+
+}
+
+.storeName{
+
+font-size:14px;
+font-weight:bold;
+
+}
+
+.status{
+
+font-size:12px;
+font-weight:bold;
+color:#ff6f00;
+
+}
+
+/* PRODUCT */
+
+.product{
+
+padding:14px;
+
+display:flex;
+gap:12px;
+
+}
+
+.product img{
+
+width:82px;
+height:82px;
+
+border-radius:12px;
+
+object-fit:cover;
+
+background:#eee;
+
+}
+
+.info{
+
+flex:1;
+
+}
+
+.name{
+
+font-size:14px;
+font-weight:bold;
+
+line-height:1.4;
+
+margin-bottom:5px;
+
+}
+
+.varian{
+
+font-size:12px;
+color:#888;
+
+margin-bottom:8px;
+
+}
+
+.price{
+
+font-size:15px;
+font-weight:bold;
+color:#ff6f00;
+
+}
+
+/* FOOTER */
+
+.footer{
+
+padding:14px;
+
+border-top:1px solid #f1f1f1;
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+}
+
+.total{
+
+font-size:13px;
+
+}
+
+.total b{
+
+color:#ff6f00;
+font-size:15px;
+
+}
+
+.action{
+
+padding:10px 18px;
+
+border:none;
+
+background:#ff6f00;
+
+color:white;
+
+border-radius:10px;
+
+font-size:13px;
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+/* EMPTY */
+
+.empty{
+
+text-align:center;
+
+padding:80px 20px;
+
+color:#999;
+
+}
+
+.empty i{
+
+font-size:60px;
+
+margin-bottom:15px;
+
+color:#ddd;
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+
+<div class="back"
+onclick="history.back()">
+
+<i class="fa fa-arrow-left"></i>
+
+</div>
+
+<div class="title" id="pageTitle">
+
+Pesanan Saya
+
+</div>
+
+</div>
+<div class="filterBar">
+
+<div class="filterBtn"
+onclick="changeFilter('belumbayar')"
+id="f-belumbayar">
+Belum Bayar
+</div>
+
+<div class="filterBtn"
+onclick="changeFilter('dikemas')"
+id="f-dikemas">
+Dikemas
+</div>
+
+<div class="filterBtn"
+onclick="changeFilter('dikirim')"
+id="f-dikirim">
+Dikirim
+</div>
+
+<div class="filterBtn"
+onclick="changeFilter('ulasan')"
+id="f-ulasan">
+Ulasan
+</div>
+
+<div class="filterBtn"
+onclick="changeFilter('dibatalkan')"
+id="f-dibatalkan">
+Dibatalkan
+</div>
+
+</div>
+
+<div class="list" id="list">
+
+<div class="empty">
+<i class="fa fa-box-open"></i>
+<p>Memuat pesanan...</p>
+</div>
+
+</div>
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig={
+
+apiKey:
+"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+
+authDomain:
+"shoponline-93646.firebaseapp.com",
+
+databaseURL:
+"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"shoponline-93646"
+
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const uid =
+localStorage.getItem("userId");
+
+if(!uid){
+
+location.href = "index.html";
+
+}
+
+/* =========================
+GET STATUS
+========================= */
+
+const params =
+new URLSearchParams(location.search);
+
+let status =
+params.get("status")
+||
+"belumbayar";
+
+/* =========================
+ACTIVE FILTER
+========================= */
+
+function activeFilter(){
+
+document
+.querySelectorAll(".filterBtn")
+.forEach((x)=>{
+
+x.classList.remove("active");
+
+});
+
+const el =
+document.getElementById(
+"f-"+status
+);
+
+if(el){
+
+el.classList.add("active");
+
+}
+
+}
+
+activeFilter();
+
+/* =========================
+CHANGE FILTER
+========================= */
+window.changeFilter = function(s){
+
+location.href =
+`detailulasansaya.html?status=${s}`;
+
+};
+
+/* =========================
+TITLE
+========================= */
+
+const titleMap = {
+
+belumbayar: "Belum Bayar",
+dikemas: "Dikemas",
+dikirim: "Dikirim",
+ulasan: "Ulasan Saya",
+dibatalkan: "Dibatalkan"
+
+};
+
+document.getElementById("pageTitle").innerHTML =
+titleMap[status] || "Pesanan";
+
+/* =========================
+LOAD ORDER
+========================= */
+
+const list =
+document.getElementById("list");
+
+const snap =
+await get(ref(db,"pesanan"));
+
+if(!snap.exists()){
+
+list.innerHTML = `
+<div class="empty">
+<i class="fa fa-box-open"></i>
+<p>Belum ada pesanan</p>
+</div>
+`;
+
+throw new Error("kosong");
+
+}
+
+let html = "";
+let total = 0;
+
+/* =========================
+LOOP ORDER
+========================= */
+
+const orders = Object.entries(snap.val()).reverse();
+
+for(const x of orders){
+
+const orderId = x[0];
+const d = x[1];
+
+if(d.user !== uid)
+continue;
+
+let cocok = false;
+
+/* FILTER */
+
+if(
+status === "belumbayar"
+&&
+(
+d.status === "pending"
+||
+d.status === "cod"
+)
+){
+cocok = true;
+}
+
+if(
+status === "dikemas"
+&&
+(
+d.status === "diproses"
+||
+d.status === "disetujui"
+)
+){
+cocok = true;
+}
+
+if(
+status === "dikirim"
+&&
+d.status === "dikirim"
+){
+cocok = true;
+}
+
+if(
+status === "ulasan"
+&&
+d.status === "selesai"
+){
+cocok = true;
+}
+
+
+if(
+status === "dibatalkan"
+&&
+d.status === "dibatalkan"
+){
+cocok = true;
+}
+
+
+
+
+
+
+
+
+if(!cocok)
+continue;
+
+const items = d.items || {};
+
+const productId =
+Object.keys(items)[0];
+
+const p = items[productId];
+
+if(!p)
+continue;
+
+/* =========================
+AMBIL DATA STORE ASLI
+========================= */
+
+let storeData = {};
+
+if(p.storeId){
+
+const storeSnap = await get(
+ref(db, "stores/" + p.storeId)
+);
+
+if(storeSnap.exists()){
+storeData = storeSnap.val();
+}
+
+}
+
+total++;
+
+html += `
+
+<div class="card">
+
+<div class="store">
+
+<div class="storeLeft">
+
+<img class="storeLogo"
+src="${
+storeData.logo ||
+p.storeLogo ||
+'https://picsum.photos/100'
+}">
+
+<div class="storeName">
+
+${storeData.nama || p.storeName || 'Store'}
+
+</div>
+
+</div>
+
+<div class="status">
+
+${d.status || '-'}
+
+</div>
+
+</div>
+
+<div class="product">
+
+<img src="${p.gambar || ''}">
+
+<div class="info">
+
+<div class="name">
+
+${p.nama || 'Produk'}
+
+</div>
+
+<div class="varian">
+
+${p.varian || 'Produk Pilihan'}
+
+</div>
+
+<div class="price">
+
+Rp ${(p.harga || 0)
+.toLocaleString("id-ID")}
+
+</div>
+
+</div>
+
+</div>
+
+<div class="footer">
+
+<div class="total">
+
+Total Pesanan:
+<b>
+Rp ${(d.total || p.harga || 0)
+.toLocaleString("id-ID")}
+</b>
+
+</div>
+
+<div style="
+display:flex;
+gap:10px;
+">
+
+${
+status === "ulasan"
+?
+
+`
+
+<button class="action"
+
+style="
+background:white;
+color:#ff6f00;
+border:1.5px solid #ff6f00;
+"
+
+onclick="location.href='detailpesanan.html?id=${orderId}'">
+
+Lihat Detail
+
+</button>
+
+<button class="action"
+
+onclick="
+handleAction(
+'${status}',
+'${orderId}'
+)
+">
+
+Beri Ulasan
+
+</button>
+
+`
+
+:
+
+`
+
+<button class="action"
+
+onclick="location.href='detailpesanan.html?id=${orderId}'">
+
+Lihat Detail
+
+</button>
+
+`
+
+}
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+}
+
+/* =========================
+EMPTY
+========================= */
+
+if(total <= 0){
+
+html = `
+<div class="empty">
+
+<i class="fa fa-box-open"></i>
+
+<p>
+Belum ada data
+</p>
+
+</div>
+`;
+
+}
+
+list.innerHTML = html;
+
+/* =========================
+ACTION
+========================= */
+
+window.handleAction = function(type,id){
+
+if(type === "ulasan"){
+
+localStorage.setItem(
+"reviewOrderId",
+id
+);
+
+location.href =
+"ulasansaya.html";
+
+}
+
+};
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chat Customer</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#f5f5f5;
+}
+
+.header{
+background:#ff6f00;
+color: #ffffff;
+padding:15px;
+font-weight:bold;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+
+.list{
+padding:10px;
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.chatItem{
+background:white;
+padding:12px;
+border-radius:12px;
+display:flex;
+align-items:center;
+gap:10px;
+cursor:pointer;
+transition:.2s;
+}
+
+.chatItem:active{
+transform:scale(0.98);
+}
+
+.logo{
+width:45px;
+height:45px;
+border-radius:50%;
+object-fit:cover;
+background:#ddd;
+}
+
+.left{
+flex:1;
+display:flex;
+flex-direction:column;
+gap:3px;
+}
+
+.storeName{
+font-weight:bold;
+font-size:14px;
+}
+
+.lastMsg{
+font-size:12px;
+color:#777;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+max-width:200px;
+}
+
+.time{
+font-size:11px;
+color:#aaa;
+}
+
+</style>
+</head>
+<body>
+
+<div class="header">Chat</div>
+
+<div class="list" id="list"></div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, onValue, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+authDomain: "shoponline-93646.firebaseapp.com",
+databaseURL: "https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId: "shoponline-93646",
+storageBucket: "shoponline-93646.appspot.com",
+messagingSenderId: "435032364443",
+appId: "1:435032364443:web:5f76384f794693a892bd3e"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const userId = localStorage.getItem("userId");
+
+const list = document.getElementById("list");
+
+/* =========================
+LOAD CHAT LIST
+========================= */
+const chatRef = ref(db, "chatcostumer");
+
+onValue(chatRef, async (snap)=>{
+
+list.innerHTML = "";
+
+if(!snap.exists()) return;
+
+let chatArray = [];
+
+const promises = [];
+
+/* =========================
+COLLECT DATA
+========================= */
+snap.forEach((storeSnap)=>{
+
+const storeId = storeSnap.key;
+const userSnap = storeSnap.child(userId);
+
+if(!userSnap.exists()) return;
+
+promises.push((async ()=>{
+
+/* STORE INFO */
+const storeDataSnap = await get(ref(db, "stores/"+storeId));
+
+let storeName = "Store";
+let storeLogo = "https://picsum.photos/100";
+
+if(storeDataSnap.exists()){
+const s = storeDataSnap.val();
+storeName = s.nama || "Store";
+storeLogo = s.logo || storeLogo;
+}
+
+/* LAST MESSAGE */
+let lastMsg = "-";
+let lastTime = 0;
+
+userSnap.forEach(msgSnap=>{
+const m = msgSnap.val();
+if(m.time > lastTime){
+lastTime = m.time;
+lastMsg = m.text;
+}
+});
+
+/* PUSH DATA */
+chatArray.push({
+storeId,
+storeName,
+storeLogo,
+lastMsg,
+lastTime
+});
+
+})());
+
+});
+
+/* =========================
+WAIT ALL DATA
+========================= */
+await Promise.all(promises);
+
+/* =========================
+SORT CHAT TERBARU DI ATAS
+========================= */
+chatArray.sort((a,b)=>b.lastTime - a.lastTime);
+
+/* =========================
+RENDER UI
+========================= */
+list.innerHTML = "";
+
+chatArray.forEach(c=>{
+
+const timeText = c.lastTime 
+? new Date(c.lastTime).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"})
+: "";
+
+const div = document.createElement("div");
+div.className = "chatItem";
+
+div.onclick = () => {
+location.href = `detailchatcostumer.html?store=${c.storeId}`;
+};
+
+div.innerHTML = `
+<img class="logo" src="${c.storeLogo}">
+<div class="left">
+<div class="storeName">${c.storeName}</div>
+<div class="lastMsg">${c.lastMsg}</div>
+</div>
+<div class="time">${timeText}</div>
+`;
+
+list.appendChild(div);
+
+});
+
+});
+</script>
+
+</body>
+</html>

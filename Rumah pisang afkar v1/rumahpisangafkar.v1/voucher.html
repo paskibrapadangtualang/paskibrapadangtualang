@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Voucher Saya</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#f5f5f5;
+padding-bottom:100px;
+}
+
+/* HEADER */
+
+.header{
+position:sticky;
+top:0;
+z-index:100;
+background:#ff6f00;
+padding:15px;
+display:flex;
+align-items:center;
+gap:12px;
+color:white;
+}
+
+.back{
+width:35px;
+height:35px;
+border-radius:50%;
+background:rgba(255,255,255,.2);
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+}
+
+.title{
+font-size:18px;
+font-weight:bold;
+}
+
+/* INPUT */
+
+.searchBox{
+padding:15px;
+background:white;
+display:flex;
+gap:10px;
+}
+
+.searchBox input{
+flex:1;
+height:45px;
+border:none;
+background:#f3f3f3;
+border-radius:12px;
+padding:0 15px;
+outline:none;
+font-size:14px;
+}
+
+.searchBox button{
+width:90px;
+border:none;
+background:#ff6f00;
+color:white;
+border-radius:12px;
+font-weight:bold;
+cursor:pointer;
+}
+
+/* LIST */
+
+.list{
+padding:12px;
+}
+
+/* CARD */
+
+.card{
+background:white;
+border-radius:18px;
+overflow:hidden;
+margin-bottom:14px;
+display:flex;
+box-shadow:0 3px 10px rgba(0,0,0,.05);
+}
+
+/* LEFT */
+
+.left{
+width:95px;
+background:linear-gradient(135deg,#ff6f00,#ff9800);
+color:white;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+padding:12px;
+position:relative;
+}
+
+.left::after{
+content:"";
+position:absolute;
+right:-10px;
+top:50%;
+transform:translateY(-50%);
+width:20px;
+height:20px;
+background:#f5f5f5;
+border-radius:50%;
+}
+
+.diskon{
+font-size:23px;
+font-weight:bold;
+line-height:1;
+}
+
+.label{
+font-size:12px;
+margin-top:5px;
+text-align:center;
+}
+
+/* RIGHT */
+
+.right{
+flex:1;
+padding:14px;
+}
+
+.name{
+font-size:15px;
+font-weight:bold;
+margin-bottom:6px;
+}
+
+.min{
+font-size:12px;
+color:#666;
+margin-bottom:5px;
+}
+
+.exp{
+font-size:11px;
+color:#999;
+margin-bottom:12px;
+}
+
+.bottom{
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.kode{
+font-size:12px;
+font-weight:bold;
+color:#ff6f00;
+background:#fff3e0;
+padding:6px 10px;
+border-radius:999px;
+}
+
+.pakai{
+border:none;
+background:#ff6f00;
+color:white;
+padding:9px 14px;
+border-radius:10px;
+font-size:12px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.empty{
+padding:60px 20px;
+text-align:center;
+color:#999;
+}
+
+
+
+
+
+
+#notif {
+position:fixed;
+top:-80px;
+left:50%;
+transform:translateX(-50%);
+background:white;
+color:#111;
+padding:12px 16px;
+border-radius:12px;
+font-size:13px;
+z-index:99999;
+transition:0.35s ease;
+border:1px solid #eee;
+opacity:0;
+}
+
+#notif.show{
+top:20px;
+opacity:1;
+}
+
+/* sukses */
+#notif.success{
+border-left:4px solid #16a34a;
+}
+
+/* error */
+#notif.error{
+border-left:4px solid #ef4444;
+}
+
+/* warning */
+#notif.warn{
+border-left:4px solid #f59e0b;
+}
+
+</style>
+</head>
+
+<body>
+<div id="notif"></div>
+
+
+<div class="header">
+
+<div class="back"
+onclick="history.back()">
+
+<i class="fa fa-arrow-left"></i>
+
+</div>
+
+<div class="title">
+Voucher Saya
+</div>
+
+</div>
+
+<!-- SEARCH -->
+
+<div class="searchBox">
+
+<input
+id="kodeInput"
+placeholder="Masukkan kode voucher">
+
+<button onclick="cekVoucher()">
+Pakai
+</button>
+
+</div>
+
+<!-- LIST -->
+
+<div class="list"
+id="list">
+
+<div class="empty">
+Memuat voucher...
+</div>
+
+</div>
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get,
+set,
+update
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+
+apiKey:
+"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+
+authDomain:
+"shoponline-93646.firebaseapp.com",
+
+databaseURL:
+"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"shoponline-93646"
+
+};
+
+const app =
+initializeApp(firebaseConfig);
+
+const db =
+getDatabase(app);
+
+const uid =
+localStorage.getItem("userId");
+
+console.log("UID LOGIN:",uid);
+
+if(!uid){
+
+showNotif("Login dulu", "warn");
+
+location.href="index.html";
+
+throw new Error("No UID");
+
+}
+
+if(!uid){
+
+showNotif("Login dulu", "warn");
+location.href = "index.html";
+
+}
+
+/* =========================
+DUMMY VOUCHER AUTO
+========================= */
+
+async function createDummyVoucher(){
+
+const snap =
+await get(ref(db,"voucher"));
+
+if(snap.exists()) return;
+
+/* =========================
+VOUCHER TOKO
+========================= */
+
+await set(
+ref(db,"voucher/VCR001"),
+{
+
+id:"VCR001",
+
+kode:
+"HEMAT10",
+
+nama:
+"Diskon Toko 10%",
+
+tipe:
+"persen",
+
+diskon:
+10,
+
+maxDiskon:
+20000,
+
+minBelanja:
+50000,
+
+status:
+"aktif",
+
+storeId:
+"store_1779629236652",
+
+digunakan:
+0,
+
+kuota:
+100,
+
+expired:
+Date.now() + 86400000 * 7,
+
+createdAt:
+Date.now()
+
+}
+);
+
+/* =========================
+VOUCHER ONGKIR
+========================= */
+
+await set(
+ref(db,"voucher/VCR002"),
+{
+
+id:"VCR002",
+
+kode:
+"ONGKIR",
+
+nama:
+"Gratis Ongkir",
+
+tipe:
+"ongkir",
+
+diskon:
+15000,
+
+minBelanja:
+0,
+
+status:
+"aktif",
+
+storeId:
+"all",
+
+digunakan:
+0,
+
+kuota:
+999,
+
+expired:
+Date.now() + 86400000 * 30,
+
+createdAt:
+Date.now()
+
+}
+);
+
+/* =========================
+VOUCHER CASHBACK
+========================= */
+
+await set(
+ref(db,"voucher/VCR003"),
+{
+
+id:"VCR003",
+
+kode:
+"CASHBACK5",
+
+nama:
+"Cashback 5%",
+
+tipe:
+"persen",
+
+diskon:
+5,
+
+maxDiskon:
+10000,
+
+minBelanja:
+30000,
+
+status:
+"aktif",
+
+storeId:
+"all",
+
+digunakan:
+0,
+
+kuota:
+200,
+
+expired:
+Date.now() + 86400000 * 5,
+
+createdAt:
+Date.now()
+
+}
+);
+
+}
+
+await createDummyVoucher();
+
+/* =========================
+LOAD VOUCHER
+========================= */
+const list = document.getElementById("list");
+
+/* =========================
+LOAD VOUCHER
+========================= */
+async function loadVoucher(){
+
+const snap = await get(ref(db,"voucher"));
+
+if(!snap.exists()){
+list.innerHTML = `<div class="empty">Belum ada voucher</div>`;
+return;
+}
+
+/* USER USED DATA */
+const usedSnap = await get(ref(db,"userVoucherUsed/"+uid));
+const usedData = usedSnap.exists() ? usedSnap.val() : {};
+
+let html = "";
+
+const arr = Object.entries(snap.val())
+.sort((a,b)=>(b[1].createdAt||0)-(a[1].createdAt||0));
+
+for(const x of arr){
+
+const id = x[0];
+const v = x[1];
+
+if(v.status !== "aktif") continue;
+
+/* =========================
+CEK SUDAH DIPAKAI USER
+========================= */
+const sudahDipakai = usedData[id] === true;
+
+let leftText = "";
+
+if(v.tipe === "persen"){
+leftText = `${v.diskon}%`;
+}
+
+if(v.tipe === "ongkir"){
+leftText = "FREE";
+}
+
+const exp = new Date(v.expired).toLocaleDateString("id-ID");
+
+html += `
+<div class="card">
+
+<div class="left">
+<div class="diskon">${leftText}</div>
+<div class="label">${v.tipe === "ongkir" ? "ONGKIR" : "OFF"}</div>
+</div>
+
+<div class="right">
+
+<div class="name">${v.nama || 'Voucher'}</div>
+
+<div class="min">
+Min. Belanja Rp ${(v.minBelanja||0).toLocaleString("id-ID")}
+</div>
+
+<div class="exp">
+Berlaku sampai ${exp}
+</div>
+
+<div class="bottom">
+
+<div class="kode">${v.kode}</div>
+
+<button class="pakai"
+style="
+background:${sudahDipakai ? '#ccc' : '#ff6f00'};
+cursor:${sudahDipakai ? 'not-allowed' : 'pointer'};
+"
+${sudahDipakai ? 'disabled' : ''}
+
+onclick="pakaiVoucher('${id}')">
+
+${sudahDipakai ? 'Dipakai' : 'Pakai'}
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+`;
+}
+
+list.innerHTML = html || `<div class="empty">Tidak ada voucher</div>`;
+}
+
+loadVoucher();
+
+/* =========================
+PAKAI VOUCHER (FIX FINAL)
+========================= */
+window.pakaiVoucher = async (id)=>{
+
+const snap = await get(ref(db,"voucher/"+id));
+
+if(!snap.exists()){
+showNotif("Voucher tidak ditemukan", "error");
+return;
+}
+
+const v = snap.val();
+
+/* VALIDASI */
+if(v.status !== "aktif"){
+showNotif("Voucher tidak aktif", "error");
+return;
+}
+
+/* =========================
+CEK SUDAH DIPAKAI USER
+========================= */
+const usedSnap = await get(ref(db,"userVoucherUsed/"+uid+"/"+id));
+
+if(usedSnap.exists()){
+showNotif("Kamu sudah memakai voucher ini", "error");
+return;
+}
+
+/* SIMPAN KE CHECKOUT */
+await set(ref(db,"checkoutVoucher/"+uid),{
+
+id:id,
+kode:v.kode || "",
+nama:v.nama || "",
+tipe:v.tipe || "",
+diskon:Number(v.diskon || 0),
+maxDiskon:Number(v.maxDiskon || 0),
+minBelanja:Number(v.minBelanja || 0),
+storeId:v.storeId || "all",
+createdAt:Date.now()
+
+});
+
+/* MARK USER SUDAH PAKAI */
+await set(ref(db,"userVoucherUsed/"+uid+"/"+id), true);
+
+/* UPDATE PAKAI COUNT */
+await update(ref(db,"voucher/"+id),{
+digunakan: Number(v.digunakan || 0) + 1
+});
+
+showNotif("Voucher berhasil dipakai", "success");
+history.back();
+
+};
+/* =========================
+INPUT KODE
+========================= */
+window.cekVoucher = async ()=>{
+
+const kode = document.getElementById("kodeInput").value.trim().toUpperCase();
+
+if(!kode){
+showNotif("Masukkan kode voucher", "warn");
+return;
+}
+
+/* =========================
+CARI VOUCHER
+========================= */
+const snap = await get(ref(db,"voucher"));
+
+if(!snap.exists()){
+showNotif("Voucher tidak tersedia", "error");
+return;
+}
+
+let ketemuId = null;
+let ketemu = null;
+
+snap.forEach((x)=>{
+
+const v = x.val();
+
+if(
+v.kode === kode &&
+v.status === "aktif"
+){
+ketemuId = x.key;
+ketemu = v;
+}
+
+});
+
+if(!ketemu){
+showNotif("Voucher tidak ditemukan", "error");
+return;
+}
+
+/* =========================
+❗ FIX PENTING: CEK USER SUDAH PAKAI
+========================= */
+const usedSnap = await get(ref(db,"userVoucherUsed/"+uid+"/"+ketemuId));
+
+if(usedSnap.exists()){
+showNotif("Kamu sudah memakai voucher ini", "error");
+return;
+}
+
+/* =========================
+SIMPAN CHECKOUT
+========================= */
+await set(ref(db,"checkoutVoucher/"+uid),{
+
+id:ketemuId,
+kode:ketemu.kode || "",
+nama:ketemu.nama || "",
+tipe:ketemu.tipe || "",
+diskon:Number(ketemu.diskon || 0),
+maxDiskon:Number(ketemu.maxDiskon || 0),
+minBelanja:Number(ketemu.minBelanja || 0),
+storeId:ketemu.storeId || "all",
+createdAt:Date.now()
+
+});
+
+/* =========================
+MARK USER SUDAH PAKAI
+========================= */
+await set(ref(db,"userVoucherUsed/"+uid+"/"+ketemuId), true);
+
+/* =========================
+UPDATE COUNTER
+========================= */
+await update(ref(db,"voucher/"+ketemuId),{
+digunakan: Number(ketemu.digunakan || 0) + 1
+});
+
+showNotif("Voucher berhasil digunakan", "success");
+
+setTimeout(() => {
+  history.back();
+}, 1200);
+
+};
+
+
+
+
+function showNotif(msg, type = "success"){
+
+const n = document.getElementById("notif");
+
+n.innerText = msg;
+n.className = "";
+
+n.classList.add("show");
+n.classList.add(type);
+
+clearTimeout(window.notifTimer);
+
+window.notifTimer = setTimeout(()=>{
+
+n.classList.remove("show");
+
+}, 2000);
+
+}
+</script>
+
+</body>
+</html>

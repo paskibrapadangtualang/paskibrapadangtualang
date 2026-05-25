@@ -471,9 +471,9 @@ Pengikut
 <p>Coin Afkar</p>
 </div>
 
-<div class="iconBox">
-<img src="assets/images/84feaa363ce325071c0a66d3c9a88748.png">
-<p>Voucher</p>
+<div class="iconBox" onclick="window.location.href='voucher.html'">
+    <img src="assets/images/84feaa363ce325071c0a66d3c9a88748.png">
+    <p>Voucher</p>
 </div>
 
 <div class="iconBox" onclick="window.location.href='store.html'">
@@ -509,24 +509,24 @@ Lihat Semua
 
 <div class="menu4">
 
-<div>
+<div onclick="location.href='detailulasansaya.html?status=belumbayar'">
 <i class="fa fa-wallet"></i>
-<p>Belum Bayar</p>
+<p id="menuBelumBayar">Belum Bayar</p>
 </div>
 
-<div>
+<div onclick="location.href='detailulasansaya.html?status=dikemas'">
 <i class="fa fa-box"></i>
-<p>Dikemas</p>
+<p id="menuDikemas">Dikemas</p>
 </div>
 
-<div>
+<div onclick="location.href='detailulasansaya.html?status=dikirim'">
 <i class="fa fa-truck"></i>
-<p>Dikirim</p>
+<p id="menuDikirim">Dikirim</p>
 </div>
 
-<div>
+<div onclick="location.href='detailulasansaya.html?status=ulasan'">
 <i class="fa fa-star"></i>
-<p>Ulasan</p>
+<p id="menuUlasan">Ulasan</p>
 </div>
 
 </div>
@@ -560,20 +560,13 @@ Rp0
 
 </div>
 
-<div class="walletItem">
-
+<div class="walletItem" onclick="location.href='voucherusers.html'" style="cursor:pointer;">
 <h4>
-
-Voucher
-
+Voucher saya
 </h4>
-
-<p>
-
+<p id="voucherCount">
 0 Voucher
-
 </p>
-
 </div>
 
 </div>
@@ -692,6 +685,7 @@ app
 );
 
 
+
 /* USER LOGIN */
 
 const uidUser=
@@ -703,6 +697,57 @@ localStorage.getItem(
 ||
 
 "OPMxN10uM3XCKIfRD02Mvd7PdK72";
+
+
+
+
+
+async function loadUserVoucherCount(){
+
+const el = document.getElementById("voucherCount");
+if(!el) return;
+
+const voucherSnap = await get(ref(db,"voucher"));
+const usedSnap = await get(ref(db,"userVoucherUsed/"+uidUser));
+
+const used = usedSnap.exists() ? usedSnap.val() : {};
+
+let totalVoucher = 0;
+
+if(!voucherSnap.exists()){
+  el.innerHTML = `0 Voucher`;
+  return;
+}
+
+/* 🔥 LOOP SAFE */
+voucherSnap.forEach((x)=>{
+
+const v = x.val();
+const id = x.key;
+
+/* wajib aktif */
+if(v.status !== "aktif") return;
+
+/* expired */
+if(v.expired && v.expired < Date.now()) return;
+
+/* ❗ JANGAN FILTER STORE DULU (INI YANG BIKIN 0) */
+// if(v.storeId !== "all" && v.storeId !== uidUser) return;
+
+/* hitung semua voucher valid */
+totalVoucher++;
+
+});
+
+el.innerHTML = `${totalVoucher} Voucher`;
+
+}
+
+document.addEventListener("DOMContentLoaded", loadUserVoucherCount);
+
+
+
+
 
 
 
@@ -734,6 +779,8 @@ async function ensureBanner(){
 
 }
 await ensureBanner();
+
+
 
 
 /* BUAT DATA TAMBAHAN OTOMATIS */
@@ -990,118 +1037,18 @@ selesai++;
 
 
 /* UPDATE MENU ORDER */
+document.getElementById("menuBelumBayar").innerHTML =
+`Belum Bayar<br><b>${belumBayar}</b>`;
 
-const menu=
+document.getElementById("menuDikemas").innerHTML =
+`Dikemas<br><b>${dikemas}</b>`;
 
-document.querySelectorAll(
-".menu4 p"
-);
+document.getElementById("menuDikirim").innerHTML =
+`Dikirim<br><b>${dikirim}</b>`;
 
+document.getElementById("menuUlasan").innerHTML =
+`Ulasan<br><b>${selesai}</b>`;
 
-menu[0].innerHTML=
-
-"Belum Bayar<br><b>"+belumBayar+"</b>";
-
-
-menu[1].innerHTML=
-
-"Dikemas<br><b>"+dikemas+"</b>";
-
-
-menu[2].innerHTML=
-
-"Dikirim<br><b>"+dikirim+"</b>";
-
-
-menu[3].innerHTML=
-
-"Ulasan<br><b>"+selesai+"</b>";
-
-
-
-/* AKTIVITAS OTOMATIS */
-
-document
-.querySelector(
-".activity"
-)
-
-.innerHTML=
-
-`
-
-<div>
-
-🍌
-Mulai Jual
-
-<br><br>
-
-<b>
-
-${belumBayar}
-
-</b>
-
-Pesanan Aktif
-
-</div>
-
-
-<div>
-
-🤝
-Affiliate
-
-<br><br>
-
-<b>
-
-${user.pengikut || 0}
-
-</b>
-
-Pengikut
-
-</div>
-
-
-<div>
-
-🎁
-Promo
-
-<br><br>
-
-<b>
-
-${user.poinAfkar || 0}
-
-</b>
-
-Poin
-
-</div>
-
-
-<div>
-
-⭐
-Favorit
-
-<br><br>
-
-<b>
-
-${selesai}
-
-</b>
-
-Selesai
-
-</div>
-
-`;
 
 
 
@@ -1113,6 +1060,15 @@ const uid = localStorage.getItem("userId");
 if (!uid) {
   location.href = "index.html";
 }
+
+
+
+
+
+
+
+
+
 
 
 
