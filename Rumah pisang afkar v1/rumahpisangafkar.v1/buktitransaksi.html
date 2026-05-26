@@ -389,12 +389,68 @@ object-fit:contain;
     transform:scale(1);
   }
 }
+
+
+
+
+
+
+
+
+
+/* =========================
+LOADING SPINNER
+========================= */
+
+.loaderWrap{
+position:fixed;
+inset:0;
+background:white;
+z-index:999999;
+display:flex;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+gap:18px;
+transition:.3s;
+}
+
+.loader{
+width:65px;
+height:65px;
+border-radius:50%;
+border:5px solid #ffe0b2;
+border-top:5px solid #ff6f00;
+animation:spin .8s linear infinite;
+}
+
+.loaderText{
+font-size:14px;
+font-weight:bold;
+color:#ff6f00;
+}
+
+@keyframes spin{
+100%{
+transform:rotate(360deg);
+}
+}
 </style>
 </head>
 
 <body>
 
+<!-- LOADING -->
 
+<div class="loaderWrap" id="loaderWrap">
+
+<div class="loader"></div>
+
+<div class="loaderText">
+Memuat transaksi...
+</div>
+
+</div>
 
 
 
@@ -485,7 +541,7 @@ VERIFIED • SECURE • NO.PAY
   <i class="fa fa-check"></i>
 </div>
 
-<div class="status">
+<div class="status" id="statusTitle">
 Transfer Berhasil
 </div>
 
@@ -610,9 +666,9 @@ id="noTujuan"
 Status
 </span>
 
-<div class="statusSuccess">
+<div class="statusSuccess" id="statusBadge">
 <i class="fa fa-circle-check"></i>
-<span>
+<span id="statusBadgeText">
 Transfer Berhasil
 </span>
 </div>
@@ -886,9 +942,52 @@ params.get(
 );
 
 
+
+/* =========================
+TUNGGU SEMUA GAMBAR
+========================= */
+
+async function tungguSemuaGambar(){
+
+const images =
+document.images;
+
+const promises = [];
+
+for(const img of images){
+
+if(!img.complete){
+
+promises.push(
+
+new Promise(resolve=>{
+
+img.onload = resolve;
+img.onerror = resolve;
+
+})
+
+);
+
+}
+
+}
+
+await Promise.all(promises);
+
+}
+
+
+
+
 /* LOAD */
 
 async function load(){
+
+
+const loader =
+document.getElementById("loaderWrap");
+
 
 if(!id){
 
@@ -927,11 +1026,141 @@ const data=
 snap.val();
 
 
-document.getElementById("feeAdmin").innerHTML =
+
+/* =========================
+JENIS TRANSAKSI
+========================= */
+
+const uid =
+localStorage.getItem("userId");
+
+/* USER LOGIN = PENERIMA */
+const isMasuk =
+(data.to === uid || data.toId === uid);
+
+/* USER LOGIN = PENGIRIM */
+const isKeluar =
+(data.from === uid || data.fromId === uid);
+
+
+/* ELEMENT */
+const statusTitle =
+document.getElementById("statusTitle");
+
+const statusBadgeText =
+document.getElementById("statusBadgeText");
+
+const titlePengirim =
+document.querySelectorAll(".titleBox")[0];
+
+const titlePenerima =
+document.querySelectorAll(".titleBox")[1];
+
+const iconBox =
+document.querySelector(".icon.success");
+
+/* =========================
+UANG MASUK
+========================= */
+
+if(isMasuk){
+
+statusTitle.innerHTML =
+"Uang Masuk";
+
+statusBadgeText.innerHTML =
+"Dana Masuk";
+
+titlePengirim.innerHTML =
+"Pengirim Dana";
+
+titlePenerima.innerHTML =
+"Penerima Dana";
+
+/* icon hijau tetap */
+iconBox.innerHTML =
+`<i class="fa fa-arrow-down"></i>`;
+
+}
+
+/* =========================
+UANG KELUAR
+========================= */
+
+else if(isKeluar){
+
+statusTitle.innerHTML =
+"Transfer Berhasil";
+
+statusBadgeText.innerHTML =
+"Transfer Keluar";
+
+titlePengirim.innerHTML =
+"Pengirim";
+
+titlePenerima.innerHTML =
+"Penerima";
+
+iconBox.innerHTML =
+`<i class="fa fa-paper-plane"></i>`;
+
+}
+
+
+
+/* =========================
+BIAYA & TOTAL
+========================= */
+
+const feeEl =
+document.getElementById("feeAdmin");
+
+const totalEl =
+document.getElementById("totalPotong");
+
+/* label */
+const rows =
+document.querySelectorAll(".row");
+
+const totalLabel =
+rows[3].querySelector("span");
+
+/* =========================
+UANG MASUK
+========================= */
+
+if(isMasuk){
+
+feeEl.innerHTML =
+"Ditanggung pengirim";
+
+totalLabel.innerHTML =
+"Total Masuk";
+
+totalEl.innerHTML =
+rupiah(data.nominal || 0);
+
+}
+
+/* =========================
+UANG KELUAR
+========================= */
+
+else{
+
+feeEl.innerHTML =
 rupiah(data.fee || 0);
 
-document.getElementById("totalPotong").innerHTML =
-rupiah(data.totalPotong || (data.nominal + (data.fee || 0)));
+totalLabel.innerHTML =
+"Total Potong";
+
+totalEl.innerHTML =
+rupiah(
+data.totalPotong ||
+(data.nominal + (data.fee || 0))
+);
+
+}
 
 /* =========================
 TAMPILKAN DATA TRANSFER
@@ -1093,7 +1322,26 @@ data.status ||
 }
 
 
-load();
+load()
+.then(async()=>{
+
+await tungguSemuaGambar();
+
+/* hilangkan loader */
+loaderWrap.style.opacity = "0";
+
+setTimeout(()=>{
+
+loaderWrap.style.display = "none";
+
+},300);
+
+})
+.catch(()=>{
+
+loaderWrap.style.display = "none";
+
+});
 
 </script>
 

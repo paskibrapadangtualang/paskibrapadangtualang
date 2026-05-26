@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Detail Refund</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#f8f8f8;
+padding-bottom:120px;
+}
+
+.header{
+background:#ff6f00;
+padding:20px;
+color:white;
+font-size:20px;
+font-weight:bold;
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.backBtn{
+cursor:pointer;
+font-size:20px;
+}
+
+.card{
+margin:15px;
+background:white;
+border-radius:6px;
+overflow:hidden;
+padding:25px;
+position:relative;
+}
+
+/* SEMUA ISI CARD */
+.card *{
+position:relative;
+z-index:9;
+}
+
+/* WATERMARK */
+.watermark{
+position:absolute;
+z-index:99;
+top:45%;
+left:50%;
+transform:
+translate(-50%, -50%) rotate(326deg);
+
+font-size:58px;
+font-weight:900;
+
+color:
+rgba(
+255,
+111,
+0,
+0.05
+);
+
+pointer-events:none;
+user-select:none;
+white-space:nowrap;
+}
+
+.security{
+position:absolute;
+top:12px;
+right:12px;
+font-size:10px;
+padding:6px 10px;
+border-radius:20px;
+
+background:
+rgba(
+34,
+197,
+94,
+0.1
+);
+
+color:#22c55e;
+font-weight:bold;
+}
+
+.top{
+text-align:center;
+margin-bottom:25px;
+}
+
+.icon{
+width:75px;
+height:75px;
+margin:auto;
+border-radius:50%;
+
+background:
+linear-gradient(
+135deg,
+#22c55e,
+#16a34a
+);
+
+color:white;
+font-size:34px;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+margin-bottom:12px;
+}
+
+.status{
+font-size:18px;
+font-weight:bold;
+}
+
+.nominal{
+font-size:34px;
+font-weight:bold;
+color:#ff6f00;
+margin-top:8px;
+}
+
+.userCard{
+background:#fafafa;
+padding:15px;
+border-radius:20px;
+margin-bottom:15px;
+border:1px solid #eee;
+}
+
+.titleBox{
+font-size:12px;
+color:#888;
+margin-bottom:10px;
+}
+
+.profile{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.profile img{
+width:58px;
+height:58px;
+border-radius:50%;
+object-fit:cover;
+}
+
+.nama{
+font-weight:bold;
+font-size:15px;
+}
+
+.nopay{
+font-size:12px;
+color:#777;
+margin-top:4px;
+}
+
+.info{
+margin-top:20px;
+}
+
+.row{
+display:flex;
+justify-content:space-between;
+padding:12px 0;
+border-bottom:1px solid #eee;
+gap:15px;
+}
+
+.row span{
+color:#666;
+}
+
+.row b{
+text-align:right;
+word-break:break-word;
+}
+
+.seal{
+margin-top:20px;
+display:flex;
+align-items:center;
+gap:10px;
+padding:12px;
+background:#fff7ed;
+border-radius:16px;
+}
+
+.seal img{
+width:40px;
+height:40px;
+object-fit:contain;
+}
+
+.btn{
+width:calc(100% - 30px);
+margin:15px;
+padding:16px;
+border:none;
+border-radius:20px;
+background:#ff6f00;
+color:white;
+font-weight:bold;
+font-size:15px;
+}
+
+.statusSuccess{
+display:inline-flex;
+align-items:center;
+gap:8px;
+
+padding:8px 14px;
+
+border-radius:999px;
+
+background:
+linear-gradient(
+135deg,
+#dcfce7,
+#bbf7d0
+);
+
+color:#16a34a;
+
+font-size:13px;
+font-weight:700;
+
+border:
+1px solid rgba(
+34,
+197,
+94,
+0.18
+);
+
+}
+
+.statusSuccess i{
+font-size:15px;
+}
+
+/* WATERMARK LOGO */
+.wm{
+position:absolute;
+inset:0;
+display:grid;
+grid-template-columns:repeat(6,1fr);
+gap:0;
+transform:rotate(-28deg);
+opacity:.10;
+pointer-events:none;
+z-index:9;
+}
+
+.wm img{
+width:55px;
+height:55px;
+object-fit:contain;
+}
+
+.icon.success{
+width:70px;
+height:70px;
+border-radius:50%;
+background:#22c55e;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+margin:0 auto 10px auto;
+
+color:white;
+font-size:28px;
+
+animation:popSuccess .6s ease-out;
+}
+
+@keyframes popSuccess{
+
+0%{
+transform:scale(0.2);
+opacity:0;
+}
+
+60%{
+transform:scale(1.2);
+opacity:1;
+}
+
+100%{
+transform:scale(1);
+}
+
+}
+
+/* LOADING */
+
+.loaderWrap{
+position:fixed;
+inset:0;
+background:white;
+z-index:999999;
+
+display:flex;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+gap:18px;
+
+transition:.3s;
+}
+
+.loader{
+width:65px;
+height:65px;
+border-radius:50%;
+
+border:5px solid #ffe0b2;
+border-top:5px solid #ff6f00;
+
+animation:spin .8s linear infinite;
+}
+
+.loaderText{
+font-size:14px;
+font-weight:bold;
+color:#ff6f00;
+}
+
+@keyframes spin{
+100%{
+transform:rotate(360deg);
+}
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- LOADING -->
+<div class="loaderWrap" id="loaderWrap">
+
+<div class="loader"></div>
+
+<div class="loaderText">
+Memuat detail refund...
+</div>
+
+</div>
+
+<div class="header">
+
+<div
+class="backBtn"
+onclick="history.back()"
+>
+
+<i class="fa fa-arrow-left"></i>
+
+</div>
+
+Detail Refund
+
+</div>
+
+<div class="card">
+
+<!-- WATERMARK LOGO -->
+
+<div class="wm">
+
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+
+</div>
+
+<div class="watermark">
+AFKAR PAY
+</div>
+
+<div class="security">
+VERIFIED • REFUND • NO.PAY
+</div>
+
+<!-- STATUS -->
+
+<div class="top">
+
+<div class="icon success">
+<i class="fa fa-rotate-left"></i>
+</div>
+
+<div class="status">
+Refund Berhasil
+</div>
+
+<div
+class="nominal"
+id="nominal"
+>
+Rp 0
+</div>
+
+</div>
+
+
+<!-- SUMBER DANA -->
+
+<div class="userCard">
+
+<div class="titleBox">
+Sumber Dana
+</div>
+
+<div class="profile">
+
+<img
+id="fotoBot"
+src="https://i.imgur.com/8Km9tLL.png"
+>
+
+<div>
+
+<div
+class="nama"
+id="namaBot"
+>
+Afkarmall.platform
+</div>
+
+<div
+class="nopay"
+id="noPayBot"
+>
+NO.PAY • BOTAFKAR
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- USER -->
+
+<div class="userCard">
+
+<div class="titleBox">
+Penerima Refund
+</div>
+
+<div class="profile">
+
+<img
+id="fotoUser"
+src="assets/images/default-user.png"
+>
+
+<div>
+
+<div
+class="nama"
+id="namaUser"
+>
+-
+</div>
+
+<div
+class="nopay"
+id="noPay"
+>
+-
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- INFO -->
+
+<div class="info">
+
+<div class="row">
+<span>ID Refund</span>
+
+<b id="idtrx">
+-
+</b>
+
+</div>
+
+<div class="row">
+<span>Tanggal</span>
+
+<b id="tanggal">
+-
+</b>
+
+</div>
+
+<div class="row">
+<span>Tipe</span>
+
+<b>
+Refund Saldo
+</b>
+
+</div>
+
+
+
+<div class="row">
+<span>Pengirim Dana</span>
+
+<b id="pengirimDana">
+Afkarmall.platformw
+</b>
+
+</div>
+
+
+<div class="row">
+<span>Keterangan</span>
+
+
+
+<b id="note">
+Refund pembatalan pesanan
+</b>
+
+</div>
+
+<div class="row">
+<span>Status</span>
+
+<div class="statusSuccess">
+<i class="fa fa-circle-check"></i>
+
+<span>
+Refund Berhasil
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="seal">
+
+<img src="assets/images/bdn.png">
+
+<div>
+Dana refund telah dikembalikan ke saldo Afkar Pay
+</div>
+
+</div>
+
+</div>
+
+<button
+class="btn"
+onclick="
+location.href=
+'historytopup.html'
+"
+>
+
+Selesai
+
+</button>
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get,
+set
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+
+apiKey:
+"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+
+authDomain:
+"shoponline-93646.firebaseapp.com",
+
+databaseURL:
+"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"shoponline-93646"
+
+};
+
+const app =
+initializeApp(firebaseConfig);
+
+const db =
+getDatabase(app);
+
+/* FORMAT */
+
+function rupiah(x){
+
+return "Rp " +
+
+Number(x || 0)
+
+.toLocaleString("id-ID");
+
+}
+
+function formatTanggal(t){
+
+const d = new Date(t);
+
+return d.toLocaleString(
+
+"id-ID",
+
+{
+
+day:"2-digit",
+month:"long",
+year:"numeric",
+hour:"2-digit",
+minute:"2-digit",
+second:"2-digit"
+
+}
+
+);
+
+}
+
+/* TUNGGU GAMBAR */
+
+async function tungguSemuaGambar(){
+
+const images =
+document.images;
+
+const promises = [];
+
+for(const img of images){
+
+if(!img.complete){
+
+promises.push(
+
+new Promise(resolve=>{
+
+img.onload = resolve;
+img.onerror = resolve;
+
+})
+
+);
+
+}
+
+}
+
+await Promise.all(promises);
+
+}
+
+/* PARAM */
+
+const params =
+new URLSearchParams(location.search);
+
+const id =
+params.get("id");
+
+/* LOAD */
+
+async function load(){
+
+if(!id){
+
+alert("ID refund tidak ditemukan");
+return;
+
+}
+
+/* AMBIL DATA */
+
+const uid =
+localStorage.getItem("userId");
+
+const snap =
+await get(
+ref(
+db,
+"saldoHistory/" + uid
+)
+);
+
+if(!snap.exists()){
+
+alert("Data refund tidak ditemukan");
+return;
+
+}
+
+let dataRefund = null;
+
+snap.forEach(item=>{
+
+const d = item.val();
+
+if(d.id === id){
+
+dataRefund = d;
+
+}
+
+});
+
+if(!dataRefund){
+
+alert("Refund tidak ditemukan");
+return;
+
+}
+
+/* USER */
+
+const userSnap =
+await get(
+ref(
+db,
+"users/" + uid
+)
+);
+
+
+/* =========================
+AMBIL STORE
+========================= */
+
+let storeData = null;
+
+if(dataRefund.storeId){
+
+const storeSnap =
+await get(
+ref(
+db,
+"stores/" + dataRefund.storeId)
+);
+
+if(storeSnap.exists()){
+
+storeData = storeSnap.val();
+
+}
+
+}
+
+
+
+let user = {};
+
+if(userSnap.exists()){
+
+user = userSnap.val();
+
+}
+
+
+
+/* =========================
+BOT REFUND
+========================= */
+
+const botId = "Botafkarmall";
+
+const botRef =
+ref(db,"users/" + botId);
+
+const botSnap =
+await get(botRef);
+
+/* JIKA BELUM ADA -> BUAT OTOMATIS */
+
+if(!botSnap.exists()){
+
+await set(botRef,{
+
+uid: botId,
+
+nama:
+"Afkarmall.platform",
+
+noPay:
+"BOTAFKAR",
+
+foto:
+"https://i.imgur.com/8Km9tLL.png",
+
+verified:true,
+
+role:"system",
+
+createdAt:Date.now()
+
+});
+
+}
+
+/* AMBIL DATA BOT */
+
+const botData =
+(await get(botRef)).val();
+
+
+/* TAMPILKAN */
+
+document.getElementById("nominal")
+.innerHTML =
+rupiah(dataRefund.amount || 0);
+
+document.getElementById("idtrx")
+.innerHTML =
+dataRefund.id || "-";
+
+document.getElementById("tanggal")
+.innerHTML =
+formatTanggal(
+dataRefund.createdAt
+);
+
+document.getElementById("note")
+.innerHTML =
+dataRefund.desc ||
+"Refund pembatalan pesanan";
+
+document.getElementById("namaUser")
+.innerHTML =
+user.nama || "User";
+
+document.getElementById("noPay")
+.innerHTML =
+user.noPay || "-";
+
+document.getElementById("fotoUser")
+.src =
+user.foto ||
+"assets/images/default-user.png";
+
+
+
+/* =========================
+TAMPILKAN BOT
+========================= */
+
+document
+.getElementById("namaBot")
+.innerHTML =
+botData.nama ||
+"Afkarmall.platform";
+
+document
+.getElementById("noPayBot")
+.innerHTML =
+"NO.PAY • " +
+(botData.noPay || "BOTAFKAR");
+
+document
+.getElementById("fotoBot")
+.src =
+botData.foto ||
+"https://i.imgur.com/8Km9tLL.png";
+
+/* =========================
+PENGIRIM DANA
+========================= */
+
+document
+.getElementById("pengirimDana")
+.innerHTML =
+botData.nama ||
+"Afkarmall.platform";
+
+/* =========================
+SUMBER PEMBELIAN
+========================= */
+/* =========================
+SUMBER PEMBELIAN
+========================= */
+
+document
+.getElementById("storeNama")
+.innerHTML =
+
+data?.sumberPembelian?.namaStore ||
+"Afkar Mall Store";
+
+document
+.getElementById("storeFoto")
+.src =
+
+data?.sumberPembelian?.fotoStore ||
+
+"https://i.ibb.co/7QpKsCX/store.png";
+
+}
+
+/* RUN */
+
+load()
+.then(async()=>{
+
+await tungguSemuaGambar();
+
+loaderWrap.style.opacity = "0";
+
+setTimeout(()=>{
+
+loaderWrap.style.display = "none";
+
+},300);
+
+})
+.catch(()=>{
+
+loaderWrap.style.display = "none";
+
+});
+
+</script>
+
+</body>
+</html>

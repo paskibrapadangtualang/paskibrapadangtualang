@@ -1898,24 +1898,50 @@ await set(
   ref(db, "saldoHistory/" + uidUser + "/" + transaksiId),
   {
     id: transaksiId,
-
     orderId: orderTemp.id,
-
     type: "out",
-
     category: "purchase",
-
     amount: total,
-
     desc: "Pembayaran produk",
-
     metode: "SALDO",
-
     status: "approved",
-
     createdAt: Date.now()
   }
 );
+
+/* =========================
+DUMMY SUMBER DANA REFUND
+========================= */
+
+const refundSourceId =
+"BOTAFKAR_" + Date.now();
+
+await set(
+ref(
+db,
+"refundSource/" + refundSourceId
+),
+{
+
+id: refundSourceId,
+
+nama: "Afkarmall.platform",
+
+noPay: "BOTAFKARMALL",
+
+foto:
+"https://i.ibb.co/7QpKsCX/store.png",
+
+createdAt: Date.now(),
+
+type: "system_refund",
+
+keterangan:
+"Bot sumber dana refund otomatis"
+
+}
+);
+
 
   // =========================
   // KURANGI SALDO USER

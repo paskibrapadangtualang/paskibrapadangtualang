@@ -2121,13 +2121,54 @@ await set(
 ref(db, "saldoHistory/" + data.user + "/" + transaksiId),
 {
 id: transaksiId,
+
 type: "in",
+
 category: "refund",
+
 amount: totalOrder,
+
 metode: "REFUND",
+
 status: "approved",
+
 desc: "Refund pembatalan pesanan",
-createdAt: Date.now()
+
+createdAt: Date.now(),
+
+/* =========================
+PENGIRIM DANA BOT
+========================= */
+
+pengirimDana: {
+
+nama: "Afkarmall.platform",
+
+noPay: "BOTAFKARMALL",
+
+foto:
+"https://i.ibb.co/7QpKsCX/store.png"
+
+},
+
+/* =========================
+SUMBER PEMBELIAN
+========================= */
+
+sumberPembelian: {
+
+storeId:
+Object.values(data.items || {})[0]?.storeId || "",
+
+namaStore:
+Object.values(data.items || {})[0]?.namaStore || "Afkar Mall Store",
+
+fotoStore:
+Object.values(data.items || {})[0]?.fotoStore ||
+"https://i.ibb.co/7QpKsCX/store.png"
+
+}
+
 }
 );
 

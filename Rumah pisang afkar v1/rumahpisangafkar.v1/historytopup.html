@@ -27,7 +27,7 @@ padding-bottom:100px;
 position:sticky;
 top:0;
 z-index:99;
-background:white;
+background:linear-gradient(135deg,#ff9800,#ff6f00);
 padding:18px;
 display:flex;
 align-items:center;
@@ -49,6 +49,7 @@ font-size:15px;
 .headerTitle{
 font-size:20px;
 font-weight:bold;
+color: #fff;
 }
 
 .topCard{
@@ -303,6 +304,19 @@ font-weight:bold;
 </style>
 </head>
 <body>
+<!-- FILTER TANGGAL -->
+
+<input
+type="month"
+id="filterTanggal"
+style="
+position:fixed;
+opacity:0;
+pointer-events:none;
+top:250px;
+left:170px;
+"
+>
 
 <div class="header">
 
@@ -350,6 +364,14 @@ Berhasil
 <div class="filterBtn"
 data-filter="rejected">
 Ditolak
+</div>
+
+
+<div class="filterBtn"
+id="filterTanggalBtn">
+
+<i class="fa fa-calendar-days"></i>
+
 </div>
 
 </div>
@@ -581,7 +603,7 @@ semuaData.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 
 /* ================= RENDER ================= */
 
-function renderData(filter = "all") {
+function renderData(filter = "all", bulanFilter = "") {
 
 list.innerHTML = "";
 
@@ -589,8 +611,37 @@ let dataFilter = semuaData;
 
 /* FILTER STATUS */
 if (filter !== "all") {
-dataFilter = semuaData.filter(x => (x.status || "pending") === filter);
+
+dataFilter = dataFilter.filter(x =>
+
+(x.status || "pending") === filter
+
+);
+
 }
+
+/* FILTER BULAN */
+
+if(bulanFilter){
+
+dataFilter = dataFilter.filter(x=>{
+
+const d = new Date(x.createdAt);
+
+const bulanData =
+d.getFullYear() + "-" +
+String(d.getMonth()+1).padStart(2,"0");
+
+return bulanData === bulanFilter;
+
+});
+
+}
+
+
+
+
+
 
 if (!dataFilter.length) {
 list.innerHTML = `
@@ -703,7 +754,10 @@ list.innerHTML += `
 
 }
 
-renderData();
+let currentFilter = "all";
+let currentBulan = "";
+
+renderData(currentFilter,currentBulan);
 
 /* ================= FILTER ================= */
 
@@ -711,17 +765,51 @@ document.querySelectorAll(".filterBtn").forEach(btn => {
 
 btn.onclick = () => {
 
+/* FILTER TANGGAL */
+if(btn.id === "filterTanggalBtn"){
+
+document
+.getElementById("filterTanggal")
+.showPicker();
+
+return;
+
+}
+
 document.querySelectorAll(".filterBtn")
 .forEach(x => x.classList.remove("active"));
 
 btn.classList.add("active");
 
-renderData(btn.dataset.filter);
+currentFilter =
+btn.dataset.filter || "all";
+
+renderData(
+currentFilter,
+currentBulan
+);
 
 };
 
 });
 
+
+/* =========================
+FILTER BULAN
+========================= */
+
+document
+.getElementById("filterTanggal")
+.addEventListener("change",(e)=>{
+
+currentBulan = e.target.value || "";
+
+renderData(
+currentFilter,
+currentBulan
+);
+
+});
 
 
 /* =========================
@@ -761,6 +849,34 @@ if(data.category === "purchase"){
 location.href =
 "detailpesanan.html?id=" +
 (data.orderId || data.id);
+
+return;
+
+}
+
+
+/* =================
+REFUND
+================= */
+if(data.category === "refund"){
+
+location.href =
+"detailrefund.html?id=" + data.id;
+
+return;
+
+}
+
+
+/* fallback */
+/* =================
+REFUND
+================= */
+
+if(data.category === "refund"){
+
+location.href =
+"detailrefund.html?id=" + data.id;
 
 return;
 
