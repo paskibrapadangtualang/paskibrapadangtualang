@@ -181,10 +181,27 @@ const logo = await uploadToCloudinary(logoFile);
 const banner = await uploadToCloudinary(bannerFile);
 
 /* STORE ID */
+/* STORE ID */
 const storeId = "store_" + Date.now();
 
+/* NO PAY OTOMATIS */
+const noPay =
+"7" +
+Math.floor(
+1000000000 +
+Math.random() * 9000000000
+);
+
+/* PIN DEFAULT */
+const pinTransfer = "123456";
+
 /* SAVE DB */
-await set(ref(db,"stores/"+storeId),{
+await set(
+ref(
+db,
+"stores/"+storeId
+),
+{
 
 uid,
 nama,
@@ -194,15 +211,36 @@ alamat,
 hp,
 wa,
 email,
-
 logo,
 banner,
 ktp,
 selfie,
-
 role:"store",
 status:"pending",
-createdAt: Date.now()
+createdAt:
+Date.now(),
+/* ===================
+SALDO STORE
+=================== */
+saldo:0,
+saldoTertahan:0,
+totalMasuk:0,
+totalKeluar:0,
+/* ===================
+TRANSFER
+=================== */
+noPay:noPay,
+pinTransfer:
+pinTransfer,
+/* ===================
+STATISTIK
+=================== */
+pengunjung:0,
+rating:0,
+chat:0,
+orderHari:0,
+orderBulan:0
+
 });
 
 alert("Store berhasil dibuat!");

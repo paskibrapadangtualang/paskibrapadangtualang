@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+
+    <link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Bukti Transfer</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#f8f8f8;
+padding-bottom:120px;
+}
+
+.header{
+background:#ff6f00;
+padding:20px;
+color:white;
+font-size:20px;
+font-weight:bold;
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.back{
+cursor:pointer;
+font-size:20px;
+}
+
+.card{
+margin:15px;
+background:white;
+border-radius:6px;
+overflow:hidden;
+padding:25px;
+position:relative;
+
+}
+
+
+
+/* SEMUA ISI CARD DI ATAS WATERMARK */
+.card *{
+position:relative;
+z-index:9;
+}
+
+
+/* WATERMARK */
+
+.watermark{
+position:absolute;
+z-index: 99;
+top:45%;
+left:50%;
+transform:
+translate(-50%, -50%) rotate(
+326deg);
+font-size:58px;
+font-weight:900;
+color:
+rgba(
+255,
+111,
+0,
+0.05
+);
+
+pointer-events:none;
+
+user-select:none;
+
+white-space:nowrap;
+
+}
+
+.security{
+
+position:absolute;
+
+top:12px;
+right:12px;
+
+font-size:10px;
+
+padding:6px 10px;
+
+border-radius:20px;
+
+background:
+rgba(
+34,
+197,
+94,
+0.1
+);
+
+color:#22c55e;
+font-weight:bold;
+}
+
+.top{
+text-align:center;
+margin-bottom:25px;
+}
+
+.icon{
+
+width:75px;
+height:75px;
+margin:auto;
+border-radius:50%;
+background:
+linear-gradient(
+135deg,
+#22c55e,
+#16a34a
+);
+
+color:white;
+font-size:34px;
+display:flex;
+justify-content:center;
+align-items:center;
+margin-bottom:12px;
+
+}
+
+.status{
+font-size:18px;
+font-weight:bold;
+}
+
+.nominal{
+font-size:34px;
+font-weight:bold;
+color:#ff6f00;
+margin-top:8px;
+}
+
+.userCard{
+
+background:#fafafa;
+padding:15px;
+border-radius:20px;
+margin-bottom:15px;
+border:
+1px solid #eee;
+
+}
+
+.titleBox{
+font-size:12px;
+color:#888;
+margin-bottom:10px;
+}
+
+.profile{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.profile img{
+width:58px;
+height:58px;
+border-radius:50%;
+object-fit:cover;
+}
+
+.nama{
+font-weight:bold;
+font-size:15px;
+}
+
+.nopay{
+font-size:12px;
+color:#777;
+margin-top:4px;
+}
+
+.info{
+margin-top:20px;
+}
+
+.row{
+
+display:flex;
+
+justify-content:space-between;
+
+padding:12px 0;
+
+border-bottom:
+1px solid #eee;
+
+}
+
+.seal{
+
+margin-top:20px;
+
+display:flex;
+
+align-items:center;
+
+gap:10px;
+
+padding:12px;
+
+background:
+#fff7ed;
+
+border-radius:16px;
+
+}
+
+.seal img{
+width:40px;
+height:40px;
+object-fit:contain;
+}
+
+.btn{
+
+width:calc(
+100% - 30px
+);
+
+margin:15px;
+
+padding:16px;
+
+border:none;
+
+border-radius:20px;
+
+background:#ff6f00;
+
+color:white;
+
+font-weight:bold;
+
+}
+
+
+
+
+.statusSuccess{
+
+display:inline-flex;
+
+align-items:center;
+
+gap:8px;
+
+padding:8px 14px;
+
+border-radius:999px;
+
+background:
+
+linear-gradient(
+135deg,
+#dcfce7,
+#bbf7d0
+);
+
+color:#16a34a;
+
+font-size:13px;
+
+font-weight:700;
+
+
+
+
+border:
+
+1px solid rgba(
+34,
+197,
+94,
+0.18
+);
+
+}
+
+.statusSuccess i{
+
+font-size:15px;
+
+}
+
+/* efek premium */
+
+.statusSuccess::after{
+
+content:"";
+
+width:6px;
+
+height:6px;
+
+border-radius:50%;
+
+background:#22c55e;
+
+
+}
+
+
+
+
+
+
+
+
+/* WATERMARK */
+.wm{
+position:absolute;
+inset:0;
+display:grid;
+grid-template-columns:repeat(6,1fr);
+gap:0;
+transform:rotate(-28deg);
+opacity:.10;
+pointer-events:none;
+z-index:9;
+}
+/* LOGO */
+
+.wm img{
+
+width:55px;
+height:55px;
+
+object-fit:contain;
+
+}
+
+
+
+
+.icon.success{
+  width:70px;
+  height:70px;
+  border-radius:50%;
+  background:#22c55e;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 auto 10px auto;
+  color:white;
+  font-size:28px;
+  animation: popSuccess .6s ease-out;
+
+}
+
+
+
+
+
+
+
+@keyframes popSuccess{
+  0%{
+    transform:scale(0.2);
+    opacity:0;
+  }
+  60%{
+    transform:scale(1.2);
+    opacity:1;
+  }
+  100%{
+    transform:scale(1);
+  }
+}
+</style>
+</head>
+
+<body>
+
+
+
+
+
+
+<div class="header">
+
+<div
+class="backBtn"
+onclick="history.back()"
+>
+
+<i class="fa fa-arrow-left"></i>
+
+</div>
+
+Detail Transfer
+
+</div>
+
+
+<div class="card">
+
+<div class="wm">
+
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+
+
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+
+
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+
+
+
+</div>
+
+<!-- WATERMARK -->
+
+<div class="watermark">
+AFKAR PAY
+</div>
+
+<div class="security">
+VERIFIED • SECURE • NO.PAY
+</div>
+
+<!-- STATUS -->
+
+<div class="top">
+
+<div class="icon success">
+  <i class="fa fa-check"></i>
+</div>
+
+<div class="status">
+Transfer Berhasil
+</div>
+
+<div
+class="nominal"
+id="nominal"
+>
+Rp 0
+</div>
+
+</div>
+
+
+<!-- PENGIRIM -->
+
+<div class="userCard">
+
+<div class="titleBox">
+Pengirim
+</div>
+
+<div class="profile">
+
+<img
+id="logoPengirim"
+src="assets/images/default.png"
+>
+
+<div>
+
+<div
+class="nama"
+id="pengirim"
+>
+</div>
+
+<div
+class="nopay"
+id="noPengirim"
+>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- PENERIMA -->
+
+<div class="userCard">
+
+<div class="titleBox">
+Penerima
+</div>
+
+<div class="profile">
+
+<img
+id="logoPenerima"
+src="assets/images/default.png"
+>
+
+<div>
+
+<div
+class="nama"
+id="penerima"
+>
+</div>
+
+<div
+class="nopay"
+id="noTujuan"
+>
+-
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<div class="info">
+
+<div class="row">
+<span>ID Transaksi</span>
+
+<b id="idtrx">
+</b>
+
+</div>
+
+<div class="row">
+
+<span>Tanggal</span>
+
+<b id="tanggal">
+
+</b>
+</div>
+
+<div class="row">
+<span>
+Status
+</span>
+
+<div class="statusSuccess">
+<i class="fa fa-circle-check"></i>
+<span>
+Transfer Berhasil
+</span>
+</div>
+</div>
+
+</div>
+
+
+<div class="seal">
+
+<img src="assets/images/bdn.png">
+
+<div>
+
+Digital resmi Afkarmall.Pay
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<button
+class="btn"
+onclick="
+location.href=
+'historysaldostore.html'
+"
+>
+
+Selesai
+
+</button>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+
+const firebaseConfig={
+
+apiKey:
+"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+
+authDomain:
+"shoponline-93646.firebaseapp.com",
+
+databaseURL:
+"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"shoponline-93646"
+
+};
+
+const app=
+initializeApp(
+firebaseConfig
+);
+
+const db=
+getDatabase(
+app
+);
+
+
+/* FORMAT */
+
+function rupiah(x){
+
+return "Rp "+
+
+Number(
+x||0
+)
+
+.toLocaleString(
+"id-ID"
+
+);
+
+}
+
+function formatTanggal(t){
+
+const d=
+new Date(t);
+
+return d.toLocaleString(
+
+"id-ID",
+
+{
+
+day:"2-digit",
+
+month:"long",
+
+year:"numeric",
+
+hour:"2-digit",
+
+minute:"2-digit",
+
+second:"2-digit"
+
+}
+
+);
+
+}
+
+
+/* AMBIL DATA USER / STORE */
+
+async function getProfile(id){
+
+if(!id){
+
+return{
+
+nama:"-",
+
+foto:
+"assets/images/default-user.png",
+
+pay:"-"
+
+};
+
+}
+
+/* USERS */
+
+let snap=
+
+await get(
+
+ref(
+db,
+"users/"+id
+)
+
+);
+
+if(
+snap.exists()
+){
+
+const d=
+snap.val();
+
+return{
+
+nama:
+d.nama ||
+"User",
+
+foto:
+
+d.foto ||
+
+"assets/images/default-user.png",
+
+pay:
+
+d.noPay ||
+
+"-"
+
+};
+
+}
+
+
+/* STORE */
+
+snap=
+
+await get(
+
+ref(
+db,
+"stores/"+id
+)
+
+);
+
+if(
+snap.exists()
+){
+
+const d=
+snap.val();
+
+return{
+
+nama:
+
+d.nama ||
+
+d.name ||
+
+"Store",
+
+foto:
+
+d.logo ||
+
+d.foto ||
+
+"assets/images/default-store.png",
+
+pay:
+
+d.noPay ||
+
+"-"
+
+};
+
+}
+
+
+/* DEFAULT */
+
+return{
+
+nama:
+"Tidak ditemukan",
+
+foto:
+"assets/images/default-user.png",
+
+pay:"-"
+
+};
+
+}
+
+
+/* PARAM */
+
+const params=
+
+new URLSearchParams(
+location.search
+);
+
+const id=
+
+params.get(
+"id"
+);
+
+
+/* LOAD */
+
+async function load(){
+
+if(!id){
+
+alert(
+"Transaksi tidak ditemukan"
+);
+
+return;
+
+}
+
+const snap=
+
+await get(
+
+ref(
+db,
+"transfer/"+id
+)
+
+);
+
+if(
+!snap.exists()
+){
+
+alert(
+"Data transfer tidak ada"
+);
+
+return;
+
+}
+
+const data=
+snap.val();
+
+
+/* PROFIL */
+
+const pengirim=
+
+await getProfile(
+
+data.from ||
+
+data.fromId
+
+);
+
+const penerima=
+
+await getProfile(
+
+data.to ||
+
+data.toId
+
+);
+
+
+/* NOMINAL */
+
+document
+.getElementById(
+"nominal"
+)
+
+.innerHTML=
+
+rupiah(
+data.nominal
+);
+
+
+/* ID */
+
+document
+.getElementById(
+"idtrx"
+)
+
+.innerHTML=
+
+data.id ||
+id;
+
+
+/* TANGGAL */
+
+document
+.getElementById(
+"tanggal"
+)
+
+.innerHTML=
+
+formatTanggal(
+
+data.createdAt
+
+);
+
+
+/* PENGIRIM */
+
+document
+.getElementById(
+"pengirim"
+)
+
+.innerHTML=
+
+pengirim.nama;
+
+
+document
+.getElementById(
+"noPengirim"
+)
+
+.innerHTML=
+
+pengirim.pay;
+
+
+document
+.getElementById(
+"logoPengirim"
+)
+
+.src=
+
+pengirim.foto;
+
+
+/* PENERIMA */
+
+document
+.getElementById(
+"penerima"
+)
+
+.innerHTML=
+
+penerima.nama;
+
+
+document
+.getElementById(
+"noTujuan"
+)
+
+.innerHTML=
+
+penerima.pay;
+
+
+document
+.getElementById(
+"logoPenerima"
+)
+
+.src=
+
+penerima.foto;
+
+
+/* STATUS */
+
+if(
+document.getElementById(
+"statusTransfer"
+)
+){
+
+document
+.getElementById(
+"statusTransfer"
+)
+
+.innerHTML=
+
+data.status ||
+
+"Berhasil";
+
+}
+
+}
+
+
+load();
+
+</script>
+
+
+
+</body>
+</html>

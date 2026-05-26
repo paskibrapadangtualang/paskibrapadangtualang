@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Top Up Store</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f5f5f5;
+padding-bottom:120px;
+}
+
+.header{
+position:sticky;
+top:0;
+z-index:999;
+background:#ff6f00;
+padding:18px;
+color:white;
+display:flex;
+align-items:center;
+gap:15px;
+box-shadow:0 4px 15px rgba(0,0,0,.12);
+}
+
+.back{
+width:38px;
+height:38px;
+border-radius:50%;
+background:rgba(255,255,255,.15);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:16px;
+cursor:pointer;
+}
+
+.headerTitle{
+font-size:20px;
+font-weight:bold;
+}
+
+.saldoCard{
+margin:15px;
+padding:22px;
+border-radius:24px;
+background:linear-gradient(135deg,#ff9800,#ff6f00);
+color:white;
+box-shadow:0 10px 30px rgba(255,111,0,.25);
+}
+
+.saldoLabel{
+font-size:14px;
+opacity:.9;
+margin-bottom:10px;
+}
+
+.saldoNominal{
+font-size:34px;
+font-weight:bold;
+}
+
+.box{
+background:white;
+margin:15px;
+padding:18px;
+border-radius:20px;
+box-shadow:0 4px 15px rgba(0,0,0,.05);
+}
+
+.title{
+font-size:17px;
+font-weight:bold;
+margin-bottom:16px;
+color:#222;
+}
+
+.nominalGrid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:12px;
+}
+
+.nominalItem{
+border:2px solid #eee;
+border-radius:16px;
+padding:14px 10px;
+text-align:center;
+cursor:pointer;
+transition:.2s;
+background:#fff;
+}
+
+.nominalItem.active{
+border-color:#ff9800;
+background:#fff7ef;
+}
+
+.nominalItem b{
+display:block;
+font-size:15px;
+color:#222;
+margin-bottom:5px;
+}
+
+.nominalItem span{
+font-size:12px;
+color:#777;
+}
+
+.inputBox{
+margin-top:16px;
+}
+
+.inputBox label{
+display:block;
+font-size:13px;
+font-weight:bold;
+margin-bottom:8px;
+color:#444;
+}
+
+.inputBox input,
+.inputBox textarea{
+width:100%;
+border:none;
+background:#f5f5f5;
+padding:16px;
+border-radius:16px;
+font-size:14px;
+outline:none;
+}
+
+.payItem{
+display:flex;
+align-items:center;
+gap:12px;
+padding:15px;
+border:2px solid #eee;
+border-radius:16px;
+margin-bottom:12px;
+cursor:pointer;
+transition:.2s;
+}
+
+.payItem.active{
+border-color:#ff9800;
+background:#fff8ef;
+}
+
+.payItem img{
+width:45px;
+height:45px;
+object-fit:contain;
+}
+
+.payItem div{
+flex:1;
+}
+
+.payItem b{
+display:block;
+font-size:14px;
+margin-bottom:4px;
+}
+
+.payItem span{
+font-size:12px;
+color:#777;
+}
+
+.uploadBox{
+margin-top:15px;
+border:2px dashed #ddd;
+padding:25px;
+text-align:center;
+border-radius:18px;
+background:#fafafa;
+}
+
+.uploadBox input{
+display:none;
+}
+
+.uploadBtn{
+display:inline-block;
+padding:12px 18px;
+border-radius:14px;
+background:#ff9800;
+color:white;
+font-size:13px;
+font-weight:bold;
+margin-top:10px;
+cursor:pointer;
+}
+
+.preview{
+margin-top:15px;
+width:100%;
+border-radius:18px;
+display:none;
+}
+
+.info{
+background:#fff8ef;
+border:1px solid #ffd9a5;
+padding:16px;
+border-radius:16px;
+font-size:13px;
+line-height:1.8;
+color:#555;
+}
+
+.bottom{
+position:fixed;
+left:0;
+right:0;
+bottom:0;
+background:white;
+padding:14px;
+box-shadow:0 -4px 20px rgba(0,0,0,.08);
+}
+
+.btn{
+width:100%;
+height:58px;
+border:none;
+border-radius:18px;
+background:linear-gradient(135deg,#ff9800,#ff6f00);
+color:white;
+font-size:16px;
+font-weight:bold;
+box-shadow:0 10px 25px rgba(255,111,0,.25);
+cursor:pointer;
+}
+
+.loading{
+position:fixed;
+inset:0;
+background:rgba(255,255,255,.85);
+display:none;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+gap:15px;
+z-index:999999;
+backdrop-filter:blur(4px);
+}
+
+.spinner{
+width:50px;
+height:50px;
+border:5px solid #eee;
+border-top:5px solid #ff9800;
+border-radius:50%;
+animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+100%{
+transform:rotate(360deg);
+}
+}
+
+#toastBox{
+position:fixed;
+top:20px;
+left:50%;
+transform:translateX(-50%);
+z-index:9999999;
+width:90%;
+max-width:320px;
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.toast{
+padding:14px 16px;
+border-radius:16px;
+color:white;
+font-size:14px;
+font-weight:bold;
+display:flex;
+align-items:center;
+gap:10px;
+animation:toastIn .25s ease;
+box-shadow:0 10px 25px rgba(0,0,0,.18);
+}
+
+.toast.success{
+background:#16a34a;
+}
+
+.toast.error{
+background:#dc2626;
+}
+
+.toast.warning{
+background:#f59e0b;
+}
+
+@keyframes toastIn{
+from{
+opacity:0;
+transform:translateY(-20px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+@media(max-width:600px){
+.nominalGrid{
+grid-template-columns:repeat(2,1fr);
+}
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="toastBox"></div>
+
+<div class="header">
+
+<div class="back" onclick="history.back()">
+<i class="fa fa-arrow-left"></i>
+</div>
+
+<div class="headerTitle">
+Top Up Store
+</div>
+
+</div>
+
+<div class="saldoCard">
+
+<div class="saldoLabel">
+Saldo Store Saat Ini
+</div>
+
+<div class="saldoNominal" id="saldoNow">
+Rp 0
+</div>
+
+</div>
+
+<div class="box">
+
+<div class="title">
+Pilih Nominal Top Up
+</div>
+
+<div class="nominalGrid">
+
+<div class="nominalItem" data-nominal="10000">
+<b>Rp10.000</b>
+<span>Top Up</span>
+</div>
+
+<div class="nominalItem" data-nominal="25000">
+<b>Rp25.000</b>
+<span>Top Up</span>
+</div>
+
+<div class="nominalItem" data-nominal="50000">
+<b>Rp50.000</b>
+<span>Top Up</span>
+</div>
+
+<div class="nominalItem" data-nominal="100000">
+<b>Rp100.000</b>
+<span>Top Up</span>
+</div>
+
+<div class="nominalItem" data-nominal="200000">
+<b>Rp200.000</b>
+<span>Top Up</span>
+</div>
+
+<div class="nominalItem" data-nominal="500000">
+<b>Rp500.000</b>
+<span>Top Up</span>
+</div>
+
+</div>
+
+<div class="inputBox">
+
+<label>
+Atau Isi Nominal Manual
+</label>
+
+<input
+type="number"
+id="nominalInput"
+placeholder="Masukkan nominal top up"
+>
+
+</div>
+
+</div>
+
+<div class="box">
+
+<div class="title">
+Metode Pembayaran
+</div>
+
+<div class="payItem active" data-pay="DANA">
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/7/72/Logo_dana_blue.svg">
+
+<div>
+<b>DANA</b>
+<span>Transfer ke admin</span>
+</div>
+
+<input type="radio" checked>
+
+</div>
+
+<div class="payItem" data-pay="QRIS">
+
+<img src="assets/images/qrssss.jpg">
+
+<div>
+<b>QRIS</b>
+<span>Pembayaran QRIS</span>
+</div>
+
+<input type="radio">
+
+</div>
+
+<div class="payItem" data-pay="BANK">
+
+<img src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png">
+
+<div>
+<b>Transfer Bank</b>
+<span>BCA / BRI / Mandiri</span>
+</div>
+
+<input type="radio">
+
+</div>
+
+</div>
+
+<div class="box">
+
+<div class="title">
+Upload Bukti Pembayaran
+</div>
+
+<div class="uploadBox">
+
+<i class="fa fa-image"
+style="font-size:45px;color:#ff9800"></i>
+
+<div
+style="
+margin-top:10px;
+font-size:13px;
+color:#666;
+line-height:1.7;
+">
+
+Upload screenshot bukti transfer
+atau pembayaran top up
+
+</div>
+
+<label class="uploadBtn">
+
+Pilih Gambar
+
+<input
+type="file"
+id="buktiInput"
+accept="image/*"
+>
+
+</label>
+
+<img id="preview" class="preview">
+
+</div>
+
+</div>
+
+<div class="box">
+
+<div class="title">
+Catatan
+</div>
+
+<div class="inputBox">
+
+<textarea
+id="catatan"
+rows="4"
+placeholder="Contoh: Mohon diproses cepat admin"
+></textarea>
+
+</div>
+
+</div>
+
+<div class="box">
+
+<div class="info">
+
+• Top up store akan dicek admin terlebih dahulu<br>
+• Saldo store otomatis bertambah jika disetujui<br>
+• Pastikan nominal transfer sesuai<br>
+• Upload bukti transfer yang jelas
+
+</div>
+
+</div>
+
+<div class="bottom">
+
+<button
+class="btn"
+onclick="kirimTopup()"
+>
+
+Kirim Permintaan Top Up
+
+</button>
+
+</div>
+
+<div class="loading" id="loading">
+
+<div class="spinner"></div>
+
+<div
+style="
+font-weight:bold;
+color:#444;
+">
+Mengirim top up...
+</div>
+
+</div>
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get,
+set
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+
+apiKey:"AIzaSyD3DTcca7yZKVtllcK3TQOUe6Yv2hSyG_g",
+
+authDomain:"shoponline-93646.firebaseapp.com",
+
+databaseURL:"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:"shoponline-93646"
+
+};
+
+const app =
+initializeApp(firebaseConfig);
+
+const db =
+getDatabase(app);
+
+const storeId =
+localStorage.getItem("storeId");
+
+if(!storeId){
+
+location.href = "login.html";
+
+}
+
+/* =========================
+TOAST
+========================= */
+
+window.showToast = function(
+msg,
+type="error"
+){
+
+const box =
+document.getElementById("toastBox");
+
+const toast =
+document.createElement("div");
+
+toast.className =
+"toast " + type;
+
+let icon =
+"fa-circle-xmark";
+
+if(type==="success"){
+icon = "fa-circle-check";
+}
+
+if(type==="warning"){
+icon = "fa-triangle-exclamation";
+}
+
+toast.innerHTML = `
+<i class="fa-solid ${icon}"></i>
+<div>${msg}</div>
+`;
+
+box.appendChild(toast);
+
+setTimeout(()=>{
+
+toast.style.opacity = "0";
+
+setTimeout(()=>{
+toast.remove();
+},300);
+
+},2500);
+
+};
+
+/* =========================
+LOAD STORE
+========================= */
+
+const storeSnap =
+await get(ref(db,"stores/"+storeId));
+
+if(!storeSnap.exists()){
+
+showToast("Store tidak ditemukan");
+
+setTimeout(()=>{
+location.href="login.html";
+},1500);
+
+}
+
+const store =
+storeSnap.val();
+
+saldoNow.innerHTML =
+"Rp " +
+Number(store.saldo || 0)
+.toLocaleString("id-ID");
+
+/* =========================
+PILIH NOMINAL
+========================= */
+
+let selectedPayment = "DANA";
+let selectedFile = null;
+
+document
+.querySelectorAll(".nominalItem")
+.forEach(item=>{
+
+item.onclick = ()=>{
+
+document
+.querySelectorAll(".nominalItem")
+.forEach(x=>
+x.classList.remove("active")
+);
+
+item.classList.add("active");
+
+nominalInput.value =
+item.dataset.nominal;
+
+};
+
+});
+
+/* =========================
+PAYMENT
+========================= */
+
+document
+.querySelectorAll(".payItem")
+.forEach(item=>{
+
+item.onclick = ()=>{
+
+document
+.querySelectorAll(".payItem")
+.forEach(x=>
+x.classList.remove("active")
+);
+
+item.classList.add("active");
+
+selectedPayment =
+item.dataset.pay;
+
+};
+
+});
+
+/* =========================
+UPLOAD PREVIEW
+========================= */
+
+preview.style.display = "none";
+
+buktiInput.onchange = (e)=>{
+
+const file =
+e.target.files[0];
+
+if(!file) return;
+
+selectedFile = file;
+
+preview.src =
+URL.createObjectURL(file);
+
+preview.style.display =
+"block";
+
+};
+
+/* =========================
+CLOUDINARY
+========================= */
+
+const CLOUD_NAME =
+"djxlbemky";
+
+const UPLOAD_PRESET =
+"uploadgambar";
+
+const CLOUD_URL =
+`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+
+/* =========================
+KIRIM TOPUP
+========================= */
+
+window.kirimTopup = async ()=>{
+
+try{
+
+const nominal =
+Number(
+nominalInput.value || 0
+);
+
+const note =
+catatan.value.trim();
+
+if(nominal < 10000){
+
+showToast(
+"Minimal top up Rp10.000",
+"warning"
+);
+
+return;
+
+}
+
+if(!selectedFile){
+
+showToast(
+"Upload bukti pembayaran dulu",
+"warning"
+);
+
+return;
+
+}
+
+loading.style.display = "flex";
+
+/* =========================
+UPLOAD IMAGE
+========================= */
+
+const formData =
+new FormData();
+
+formData.append(
+"file",
+selectedFile
+);
+
+formData.append(
+"upload_preset",
+UPLOAD_PRESET
+);
+
+const upload =
+await fetch(
+CLOUD_URL,
+{
+method:"POST",
+body:formData
+}
+);
+
+const result =
+await upload.json();
+
+if(!result.secure_url){
+
+loading.style.display = "none";
+
+showToast(
+"Gagal upload gambar"
+);
+
+return;
+
+}
+
+/* =========================
+SAVE TOPUP
+========================= */
+
+const id =
+"TOPUPSTORE" + Date.now();
+
+await set(
+ref(db,"topupStore/" + id),
+{
+
+id:id,
+
+storeId:storeId,
+
+namaStore:
+store.nama || "",
+
+email:
+store.email || "",
+
+wa:
+store.wa || "",
+
+foto:
+store.logo || "",
+
+nominal:nominal,
+
+metode:selectedPayment,
+
+bukti:
+result.secure_url,
+
+catatan:note,
+
+status:"pending",
+
+saldoSebelum:
+Number(store.saldo || 0),
+
+createdAt:
+Date.now()
+
+}
+);
+
+loading.style.display = "none";
+
+showToast(
+"Permintaan top up berhasil dikirim",
+"success"
+);
+
+setTimeout(()=>{
+
+location.href =
+"saldo.html";
+
+},1500);
+
+}
+catch(err){
+
+console.log(err);
+
+loading.style.display = "none";
+
+showToast(
+"Gagal mengirim top up"
+);
+
+}
+
+};
+
+</script>
+
+</body>
+</html>

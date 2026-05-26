@@ -613,6 +613,7 @@ import {
 getDatabase,
 ref,
 get,
+update,
 set
 }
 from
@@ -922,6 +923,7 @@ const ordersBaru = [];
 const ordersSelesai = [];
 const ordersBatal = [];
 const ordersDibatalkan = [];
+
 
 /* AMBIL DATA */
 snap.forEach(item => {
@@ -1417,7 +1419,19 @@ margin-top:10px;
 
 
 
-
+function getTimeNow(){
+  return {
+    timestamp: Date.now(),
+    waktu: new Date().toLocaleString("id-ID", {
+      year: "numeric",
+      month: "long",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
+    })
+  };
+}
 
 
 
@@ -1828,52 +1842,66 @@ opacity:1;
 
 document.body.appendChild(popup);
 
-/* BATAL */
+/* =========================
+BATAL
+========================= */
 popup.querySelector("#batalTerima").onclick = () => {
-popup.remove();
+  popup.remove();
 };
 
-/* SETUJU */
+/* =========================
+KONFIRMASI
+========================= */
 popup.querySelector("#yaTerima").onclick = async () => {
 
-popup.remove();
+  try {
 
-try{
+    const snap = await get(ref(db, "pesanan/" + id));
 
-const snap = await get(ref(db, "pesanan/" + id));
+    if (!snap.exists()) {
+      alert("Pesanan tidak ditemukan");
+      return;
+    }
 
-if(!snap.exists()){
-alert("Pesanan tidak ditemukan");
-return;
-}
+    const data = snap.val();
 
-const data = snap.val();
+    const now = Date.now();
 
-await set(
-ref(db, "pesanan/" + id),
-{
-...data,
-status:"selesai"
-}
-);
+    /* =========================
+    UPDATE LOG SAJA (TIDAK SENTUH STATUS)
+    ========================= */
+await update(ref(db, "pesanan/" + id), {
 
-alert("Pesanan berhasil diselesaikan");
+  status: "selesai", // 🔥 INI WAJIB TAMBAH
 
-document.getElementById("popup").style.display = "none";
+  "logStatus/sampai": {
+    timestamp: now,
+    waktu: new Date(now).toLocaleString("id-ID", {
+      year: "numeric",
+      month: "long",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
+    })
+  }
 
-startApp(uidUser);
+});
+    popup.remove();
 
-}catch(err){
+    alert("Pesanan sudah sampai");
 
-console.log(err);
-alert("Gagal update pesanan");
+    if (typeof loadOrders === "function") loadOrders();
+    if (typeof startApp === "function") startApp(uidUser);
 
-}
+  } catch (err) {
+    console.log(err);
+    alert("Gagal update log sampai");
+  }
 
 };
 
 };
-
 
 
 /* =========================
@@ -2000,107 +2028,132 @@ backdrop-filter:blur(3px);
 
 document.body.appendChild(popup);
 
-/* TUTUP */
+/* =========================
+TUTUP POPUP
+========================= */
 popup.querySelector("#closeBatal").onclick = () => {
 popup.remove();
 };
 
-/* KONFIRMASI */
+/* =========================
+KONFIRMASI BATAL
+========================= */
 popup.querySelector("#yaBatal").onclick = async () => {
 
-try{
+try {
 
 const snap = await get(ref(db, "pesanan/" + id));
 
-if(!snap.exists()){
+if (!snap.exists()) {
 alert("Pesanan tidak ditemukan");
+popup.remove();
 return;
 }
 
 const data = snap.val();
 
-/* JIKA SUDAH DITERIMA STORE */
-const statusAsli =
-data.status === "cod"
-? "pending"
-: data.status;
+/* =========================
+CEK STATUS AMAN
+========================= */
+const statusSekarang = data.status;
 
-if(statusAsli !== "pending"){
+if (statusSekarang === "dibatalkan") {
+  popup.remove();
 
-alert("Pesanan sudah diproses penjual");
+  setTimeout(() => {
+    alert("Pesanan sudah dibatalkan");
+    location.href = `detailpesanan.html?id=${id}`;
+  }, 100);
 
-popup.remove();
-
-return;
-
+  return;
 }
 
+if (statusSekarang === "diproses" || statusSekarang === "dikirim" || statusSekarang === "selesai") {
+  alert("Pesanan sudah diproses penjual");
+  popup.remove();
+  return;
+}
 
 /* =========================
-KEMBALIKAN SALDO
+UPDATE BATAL + LOG WAKTU
+========================= */
+await update(ref(db, "pesanan/" + id), {
+status: "dibatalkan",
+
+"logStatus/ditolakPembeli": {
+timestamp: Date.now(),
+waktu: new Date().toLocaleString("id-ID", {
+year: "numeric",
+month: "long",
+day: "2-digit",
+hour: "2-digit",
+minute: "2-digit",
+second: "2-digit"
+})
+},
+
+"logStatus/ditolakOleh": "pembeli"
+});
+/* =========================
+REFUND SALDO (FIX AMAN)
 ========================= */
 if (data.metode === "SALDO") {
 
-  const userRef = ref(db, "users/" + data.user);
-  const userSnap = await get(userRef);
+const userRef = ref(db, "users/" + data.user);
+const userSnap = await get(userRef);
 
-  if (userSnap.exists()) {
+if (userSnap.exists()) {
 
-    const userData = userSnap.val();
+const userData = userSnap.val();
 
-    const saldoSekarang = Number(userData.saldo || 0);
-    const totalOrder = Number(data.total || 0);
+const saldoSekarang = Number(userData.saldo || 0);
+const totalOrder = Number(data.total || 0);
 
-    const transaksiId = "REFUND" + Date.now();
+const transaksiId = "REFUND" + Date.now();
 
-    // 1. update saldo user
-    await set(
-      ref(db, "users/" + data.user + "/saldo"),
-      saldoSekarang + totalOrder
-    );
+/* tambah saldo */
+await update(userRef, {
+saldo: saldoSekarang + totalOrder
+});
 
-    // 2. SIMPAN HISTORY REFUND (INI YANG KURANG SEBELUMNYA)
-    await set(
-      ref(db, "saldoHistory/" + data.user + "/" + transaksiId),
-      {
-        id: transaksiId,
-        type: "in", // uang masuk
-        category: "refund",
-        amount: totalOrder,
-        metode: "REFUND",
-        status: "approved",
-        desc: "Pengembalian saldo dari pembatalan pesanan",
-        createdAt: Date.now()
-      }
-    );
-
-  }
-}
-
-/* =========================
-UPDATE STATUS PESANAN
-========================= */
-
+/* history */
 await set(
-ref(db, "pesanan/" + id),
+ref(db, "saldoHistory/" + data.user + "/" + transaksiId),
 {
-...data,
-status:"dibatalkan"
+id: transaksiId,
+type: "in",
+category: "refund",
+amount: totalOrder,
+metode: "REFUND",
+status: "approved",
+desc: "Refund pembatalan pesanan",
+createdAt: Date.now()
 }
 );
 
+}
+
+}
+
+/* =========================
+SUCCESS
+========================= */
 popup.remove();
-
-document.getElementById("popup").style.display = "none";
-
 alert("Pesanan berhasil dibatalkan");
 
-startApp(uidUser);
+location.href = `detailpesanan.html?id=${id}`;
 
-}catch(err){
+if (typeof loadOrders === "function") {
+  loadOrders();
+}
 
-console.log(err);
-alert("Gagal membatalkan pesanan");
+} catch (err) {
+
+console.log("❌ BATAL ERROR FULL:", err);
+console.log("❌ MESSAGE:", err?.message);
+console.log("❌ STACK:", err?.stack);
+
+alert("Gagal membatalkan pesanan: " + (err?.message || "unknown error"));
 
 }
 

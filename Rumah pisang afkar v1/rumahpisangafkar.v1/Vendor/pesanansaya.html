@@ -120,55 +120,60 @@ padding:15px;
 
 <div style="display:flex;gap:8px;margin-bottom:10px;">
 
-  <button onclick="acceptOrder()" style="
-    flex:1;
-    padding:8px;
-    background:#22c55e;
-    color:white;
-    border:none;
-    border-radius:8px;
-    font-size:12px;
-  ">
-    Terima
-  </button>
-
-  <button onclick="rejectOrder()" style="
-    flex:1;
-    padding:8px;
-    background:#ef4444;
-    color:white;
-    border:none;
-    border-radius:8px;
-    font-size:12px;
-  ">
-    Tolak
-  </button>
-  
-
-  <button onclick="sendOrder()" style="
-  flex:1;
-  padding:8px;
-  background:#f59e0b;
-  color:white;
-  border:none;
-  border-radius:8px;
-  font-size:12px;
+<button id="btnTerima"
+onclick="acceptOrder()"
+style="
+flex:1;
+padding:8px;
+background:#22c55e;
+color:white;
+border:none;
+border-radius:8px;
+font-size:12px;
 ">
-  Diantar
+Terima
 </button>
 
+<button id="btnTolak"
+onclick="rejectOrder()"
+style="
+flex:1;
+padding:8px;
+background:#ef4444;
+color:white;
+border:none;
+border-radius:8px;
+font-size:12px;
+">
+Tolak
+</button>
 
-  <button onclick="chatBuyer()" style="
-    flex:1;
-    padding:8px;
-    background:#3b82f6;
-    color:white;
-    border:none;
-    border-radius:8px;
-    font-size:12px;
-  ">
-    Chat
-  </button>
+<button id="btnDiantar"
+onclick="sendOrder()"
+style="
+flex:1;
+padding:8px;
+background:#f59e0b;
+color:white;
+border:none;
+border-radius:8px;
+font-size:12px;
+">
+Diantar
+</button>
+
+<button onclick="chatBuyer()"
+style="
+flex:1;
+padding:8px;
+background:#3b82f6;
+color:white;
+border:none;
+border-radius:8px;
+font-size:12px;
+">
+Chat
+</button>
 
 </div>
 
@@ -249,6 +254,15 @@ appId:"1:435032364443:web:5f76384f794693a892bd3e"
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+
+
+
+
+
+
+
+
+
 
 
 
@@ -357,60 +371,214 @@ function shortId(id){
   return id.slice(0, 6) + "..." + id.slice(-3);
 }
 
+
+function resetButton(id,color){
+
+const btn =
+document.getElementById(id);
+
+if(!btn) return;
+
+btn.disabled=false;
+
+btn.style.background=color;
+btn.style.color="white";
+btn.style.cursor="pointer";
+btn.style.opacity="1";
+
+}
+
+
+
+
 window.openOrder = async (orderId) => {
+
+resetButton(
+"btnTerima",
+"#22c55e"
+);
+
+resetButton(
+"btnTolak",
+"#ef4444"
+);
+
+resetButton(
+"btnDiantar",
+"#f59e0b"
+);
 
   currentOrderId = orderId;
 
   const snap = await get(ref(db, "pesanan/" + orderId));
   if (!snap.exists()) return;
 
-  const data = snap.val();
 
-  const items = Object.values(data.items || {})
-    .filter(p => p.storeId === storeId);
 
-  const statusMap = {
-    pending: 1,
-    disetujui: 2,
-    diproses: 3,
-    dikirim: 4,
-    selesai: 5
-  };
 
-  const steps = ["Pesanan", "Disetujui", "Diproses", "Dikirim", "Selesai"];
-  const level = statusMap[data.status] || 1;
 
-  let total = 0;
-  let html = "";
 
-  // =========================
-  // TRACKING (tetap 1-5)
-  // =========================
-  html += `<div style="display:flex;justify-content:space-between;margin-bottom:15px;">`;
+const data = snap.val();
 
-  steps.forEach((s, i) => {
-    html += `
-      <div style="text-align:center;flex:1;">
-        <div style="
-          width:26px;height:26px;
-          border-radius:50%;
-          margin:auto;
-          background:${i < level ? '#ff6f00' : '#ddd'};
-          color:white;
-          font-size:12px;
-          line-height:26px;
-        ">
-          ${i + 1}
-        </div>
-        <div style="font-size:10px;margin-top:5px;color:${i < level ? '#ff6f00' : '#999'}">
-          ${s}
-        </div>
-      </div>
-    `;
-  });
+/* PRODUK ORDER INI */
+const items = Object.values(
+data.items || {}
+).filter(
+p => p.storeId === storeId
+);
 
-  html += `</div>`;
+/* LOCK BUTTON */
+if(data.lockTerima===true)
+setLock("btnTerima");
 
+if(data.lockTolak===true)
+setLock("btnTolak");
+
+if(data.lockDiantar===true)
+setLock("btnDiantar");
+
+
+ const statusMap = {
+pending:1,
+disetujui:2,
+diproses:3,
+dikirim:4,
+selesai:5
+};
+
+const steps = [
+"Pesanan",
+"Disetujui",
+"Diproses",
+"Dikirim",
+"Selesai"
+];
+
+const level =
+statusMap[data.status] || 1;
+
+let total = 0;
+let html = "";
+
+html += `
+<div style="
+display:flex;
+justify-content:space-between;
+margin-bottom:15px;
+">
+`;
+
+steps.forEach((s,i)=>{
+
+let bg="#ddd";
+let text="#999";
+
+/* =========================
+DIBATALKAN
+========================= */
+if(
+data.status==="dibatalkan"
+){
+
+bg="#ef4444";
+text="#ef4444";
+
+}
+
+/* =========================
+SELESAI
+========================= */
+if(
+data.status==="dibatalkan"
+){
+
+bg="#ef4444";
+text="#ef4444";
+
+}
+
+/* SELESAI = FULL ORANGE */
+else if(
+data.status==="selesai"
+){
+
+bg="#ff6f00";
+text="#ff6f00";
+
+}
+
+/* NORMAL */
+else if(
+i < level
+){
+
+bg="#ff6f00";
+text="#ff6f00";
+
+}
+
+/* =========================
+NORMAL
+========================= */
+else if(
+i < level
+){
+
+bg="#ff6f00";
+text="#ff6f00";
+
+}
+
+html += `
+<div style="
+text-align:center;
+flex:1;
+position:relative;
+">
+
+<div style="
+width:28px;
+height:28px;
+border-radius:50%;
+margin:auto;
+background:${bg};
+color:white;
+font-size:12px;
+line-height:28px;
+font-weight:bold;
+box-shadow:
+0 3px 8px rgba(
+0,0,0,.12
+);
+">
+
+${
+data.status==="dibatalkan"
+? "✕"
+: i+1
+}
+
+</div>
+
+<div style="
+font-size:10px;
+margin-top:6px;
+color:${text};
+font-weight:bold;
+">
+
+${s}
+
+</div>
+
+</div>
+`;
+
+});
+
+html += `
+</div>
+`;
   // =========================
   // SECTION HELPER
   // =========================
@@ -594,45 +762,224 @@ window.closePopup = () => {
 
 
 
-window.acceptOrder = async () => {
-  if (!currentOrderId) return;
 
-  await update(ref(db, "pesanan/" + currentOrderId), {
-    status: "diproses"
-  });
 
-  alert("Pesanan diterima");
-  loadOrders();
+
+function getTimeNow(){
+  return {
+    timestamp: Date.now(),
+    waktu: new Date().toLocaleString("id-ID", {
+      year: "numeric",
+      month: "long",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
+    })
+  };
+}
+
+
+
+function setLock(id){
+
+const btn =
+document.getElementById(id);
+
+if(!btn) return;
+
+btn.disabled = true;
+
+btn.style.background="#bdbdbd";
+btn.style.color="#666";
+btn.style.cursor="not-allowed";
+btn.style.opacity=".8";
+
+}
+
+
+
+
+
+
+
+
+
+
+
+window.acceptOrder = async()=>{
+
+if(!currentOrderId) return;
+
+if(
+!confirm(
+"Terima pesanan?"
+)
+) return;
+
+await update(
+ref(
+db,
+"pesanan/"+currentOrderId
+),
+{
+status:"diproses",
+
+"logStatus/diterima":
+getTimeNow(),
+
+lockTerima:true,
+lockTolak:true
+}
+);
+
+setLock(
+"btnTerima"
+);
+
+setLock(
+"btnTolak"
+);
+
+loadOrders();
+
+};
   closePopup();
+
+
+
+
+
+window.rejectOrder = async()=>{
+
+if(!currentOrderId) return;
+
+if(
+!confirm(
+"Tolak pesanan ini?"
+)
+) return;
+
+await update(
+ref(
+db,
+"pesanan/"+currentOrderId
+),
+{
+status:"dibatalkan",
+
+"logStatus/ditolak":
+getTimeNow(),
+
+"logStatus/ditolakOleh":
+"penjual",
+
+lockTerima:true,
+lockTolak:true,
+lockDiantar:true
+}
+);
+
+setLock(
+"btnTerima"
+);
+
+setLock(
+"btnTolak"
+);
+
+setLock(
+"btnDiantar"
+);
+
+alert(
+"Pesanan ditolak"
+);
+
+loadOrders();
+
 };
 
-window.rejectOrder = async () => {
-  if (!currentOrderId) return;
 
-  await update(ref(db, "pesanan/" + currentOrderId), {
-    status: "dibatalkan"
-  });
 
-  alert("Pesanan ditolak");
-  loadOrders();
-  closePopup();
+
+
+window.sendOrder = async()=>{
+
+if(!currentOrderId) return;
+
+/* CEK ORDER */
+const snap = await get(
+ref(
+db,
+"pesanan/"+currentOrderId
+)
+);
+
+if(!snap.exists()) return;
+
+const data = snap.val();
+
+/* WAJIB TERIMA DULU */
+if(
+data.lockTerima !== true
+){
+
+alert(
+"Terima pesanan dulu sebelum diantar"
+);
+
+return;
+
+}
+
+/* JIKA SUDAH DITOLAK */
+if(
+data.lockTolak === true &&
+data.status==="dibatalkan"
+){
+
+alert(
+"Pesanan sudah ditolak"
+);
+
+return;
+
+}
+
+if(
+!confirm(
+"Pesanan akan diantar?"
+)
+) return;
+
+/* UPDATE */
+await update(
+ref(
+db,
+"pesanan/"+currentOrderId
+),
+{
+status:"dikirim",
+
+"logStatus/dikirim":
+getTimeNow(),
+
+lockDiantar:true
+}
+);
+
+setLock(
+"btnDiantar"
+);
+
+alert(
+"Pesanan diantar"
+);
+
+loadOrders();
+
 };
-
-
-window.sendOrder = async () => {
-  if (!currentOrderId) return;
-
-  await update(ref(db, "pesanan/" + currentOrderId), {
-    status: "dikirim"
-  });
-
-  alert("Pesanan sedang diantar");
-  loadOrders();
-  closePopup();
-};
-
-
-
 
 window.chatBuyer = () => {
   const snap = window.lastOrderData;

@@ -343,25 +343,61 @@ Rp0
 <!-- DETAIL -->
 <div class="card">
 
-<div class="row">
-<div class="label">No. Pesanan</div>
-<div class="value" id="orderIdText">-</div>
+  <div class="row">
+    <div class="label">No. Pesanan</div>
+    <div class="value" id="orderIdText">-</div>
+  </div>
+
+  <div class="row">
+    <div class="label">Metode Pembayaran</div>
+    <div class="value" id="metodeBayar">COD</div>
+  </div>
+
+  <div class="row">
+    <div class="label">Status</div>
+    <div class="value" id="statusText">-</div>
+  </div>
+
+  <div class="row">
+    <div class="label">Tanggal Pesanan</div>
+    <div class="value" id="tanggalText">-</div>
+  </div>
+
+  <!-- =========================
+  STATUS TIMELINE
+  ========================= -->
+
+<div class="row" id="rowDiterima">
+  <div class="label">Pesanan Diterima</div>
+  <div class="value" id="waktuDiterima">-</div>
 </div>
 
-<div class="row">
-<div class="label">Metode Pembayaran</div>
-<div class="value" id="metodeBayar">COD</div>
+<div class="row" id="rowDiantar">
+  <div class="label">Pesanan Diantar</div>
+  <div class="value" id="waktuDikirim">-</div>
 </div>
 
-<div class="row">
-<div class="label">Status</div>
-<div class="value" id="statusText">-</div>
+
+<div class="row" id="rowSampai">
+  <div class="label">Pesanan Selesai</div>
+  <div class="value" id="waktuSampai">-</div>
 </div>
 
-<div class="row">
-<div class="label">Tanggal</div>
-<div class="value" id="tanggalText">-</div>
+
+<!-- 🔥 TAMBAHAN BARU -->
+<div class="row" id="rowDitolak">
+  <div class="label">Dibatalkan Oleh</div>
+  <div class="value" id="dibatalkanOleh">-</div>
 </div>
+
+<div class="row" id="rowWaktuDitolak">
+  <div class="label">Waktu Dibatalkan</div>
+  <div class="value" id="waktuDitolak">-</div>
+</div>
+
+
+</div>
+
 
 <hr style="
 margin:14px 0;
@@ -523,26 +559,21 @@ history.back();
 /* =========================
 LOAD ORDER
 ========================= */
+const snap = await get(ref(db, "pesanan/" + id));
 
-const snap =
-await get(
-ref(db,"pesanan/"+id)
-);
-
-if(!snap.exists()){
-
-alert("Pesanan tidak ditemukan");
-history.back();
-
+if (!snap.exists()) {
+  alert("Pesanan tidak ditemukan");
+  history.back();
 }
 
 const d = snap.val();
 
+/* =========================
+ITEMS
+========================= */
+
 const items = d.items || {};
-
-const productId =
-Object.keys(items)[0];
-
+const productId = Object.keys(items)[0];
 const p = items[productId] || {};
 
 /* =========================
@@ -551,21 +582,166 @@ STORE
 
 let storeData = {};
 
-if(p.storeId){
+if (p.storeId) {
+  const storeSnap = await get(ref(db, "stores/" + p.storeId));
 
-const storeSnap =
-await get(
-ref(db,"stores/"+p.storeId)
+  if (storeSnap.exists()) {
+    storeData = storeSnap.val();
+  }
+}
+
+/* =========================
+LOG STATUS
+========================= */
+/* =========================
+LOG STATUS
+========================= */
+
+const log = d.logStatus || {};
+
+const diterima = log.diterima?.waktu || null;
+const dikirim = log.dikirim?.waktu || null;
+const selesai = log.sampai?.waktu || null;
+
+const batalData =
+log.ditolak ||
+log.ditolakPembeli ||
+null;
+
+const waktuBatal =
+batalData?.waktu || null;
+
+const dibatalkanOleh =
+log.ditolakOleh ||
+batalData?.oleh ||
+"Pembeli";
+
+/* ELEMENT */
+
+const elDiterima =
+document.getElementById(
+"rowDiterima"
 );
 
-if(storeSnap.exists()){
+const elDiantar =
+document.getElementById(
+"rowDiantar"
+);
 
-storeData =
-storeSnap.val();
+const elSampai =
+document.getElementById(
+"rowSampai"
+);
+
+const elDitolak =
+document.getElementById(
+"rowDitolak"
+);
+
+const elWaktuDitolak =
+document.getElementById(
+"rowWaktuDitolak"
+);
+
+const show = el=>{
+if(el) el.style.display="flex";
+};
+
+const hide = el=>{
+if(el) el.style.display="none";
+};
+
+/* RESET */
+
+hide(elDiterima);
+hide(elDiantar);
+hide(elSampai);
+hide(elDitolak);
+hide(elWaktuDitolak);
+
+/* =========================
+JIKA DIBATALKAN
+========================= */
+
+if(
+d.status==="dibatalkan"
+){
+
+show(elDitolak);
+show(elWaktuDitolak);
+
+document.getElementById(
+"dibatalkanOleh"
+).innerHTML =
+dibatalkanOleh;
+
+document.getElementById(
+"waktuDitolak"
+).innerHTML =
+waktuBatal || "-";
+
+}
+
+/* =========================
+STATUS NORMAL
+========================= */
+
+else{
+
+/* Pesanan diterima */
+
+if(diterima){
+
+show(elDiterima);
+
+document.getElementById(
+"waktuDiterima"
+).innerHTML =
+diterima;
+
+}
+
+/* Pesanan diantar */
+
+if(
+dikirim ||
+d.status==="dikirim" ||
+d.status==="selesai"
+){
+
+show(elDiantar);
+
+document.getElementById(
+"waktuDikirim"
+).innerHTML =
+
+dikirim ||
+selesai ||
+diterima ||
+"-";
+
+}
+
+/* Pesanan selesai */
+
+if(
+selesai &&
+d.status==="selesai"
+){
+
+show(elSampai);
+
+document.getElementById(
+"waktuSampai"
+).innerHTML =
+selesai;
 
 }
 
 }
+
+
+
 
 /* =========================
 STATUS TEXT
@@ -682,12 +858,21 @@ statusDesc =
 
 
 
-
-
 if (d.status === "dibatalkan") {
 
-  statusTitle = "Pesanan Dibatalkan";
-  statusDesc = "Pesanan ini telah dibatalkan dan tidak diproses";
+  const role = d.logStatus?.ditolakOleh || "pembeli";
+
+  if (role === "penjual") {
+
+    statusTitle = "Pesanan Dibatalkan Penjual";
+    statusDesc = "Pesanan ini telah dibatalkan oleh penjual dan tidak diproses";
+
+  } else {
+
+    statusTitle = "Pesanan Dibatalkan Pembeli";
+    statusDesc = "Pesanan ini telah dibatalkan oleh pembeli dan tidak diproses";
+
+  }
 
 }
 
@@ -698,10 +883,15 @@ else if (d.status === "diproses") {
 
 }
 
-else if (d.status === "dikirim") {
+if (d.status === "dikirim") {
 
-  statusTitle = "Pesanan Dikirim";
-  statusDesc = "Pesanan sedang dalam perjalanan";
+  if (log.sampai?.waktu) {
+    statusTitle = "Pesanan Selesai";
+    statusDesc = "Pesanan sudah diterima pembeli";
+  } else {
+    statusTitle = "Pesanan Dikirim";
+    statusDesc = "Pesanan sedang dalam perjalanan";
+  }
 
 }
 
@@ -833,6 +1023,28 @@ d.status || "-";
 const tanggal = new Date(
 d.createdAt || Date.now()
 );
+
+
+
+/* =========================
+DITERIMA
+========================= */
+if (log.diterima?.waktu) {
+  document.getElementById("waktuDiterima").innerHTML = log.diterima.waktu;
+} else if (document.getElementById("rowDiterima")) {
+  document.getElementById("rowDiterima").style.display = "none";
+}
+
+/* =========================
+DIKIRIM
+========================= */
+if (log.dikirim?.waktu) {
+  document.getElementById("waktuDikirim").innerHTML = log.dikirim.waktu;
+} else if (document.getElementById("rowDiantar")) {
+  document.getElementById("rowDiantar").style.display = "none";
+}
+
+
 
 document.getElementById("tanggalText").innerHTML =
 tanggal.toLocaleString(

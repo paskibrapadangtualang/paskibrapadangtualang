@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+
 <title>Dashboard Store</title>
 
 <style>
@@ -14,21 +18,112 @@ padding-bottom:70px;
 
 }
 
-/* TOP BAR */
 .topbar{
-background:#ff6f00;
-color:white;
-padding:15px;
-font-weight:bold;
-display:flex;
-justify-content:space-between;
-align-items:center;
+  position:sticky;
+  top:0;
+  z-index:999;
+
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  padding:15px 18px;
+  background:#ef4444;
+  box-shadow:0 2px 12px rgba(0,0,0,.08);
+
+  font-weight:bold;
 }
 
+/* JUDUL */
+.topbar .title{
+  font-size:16px;
+  color:#ffffff;
+}
+
+/* BUTTON LOGOUT */
+.logoutBtn{
+  display:flex;
+  align-items:center;
+  gap:8px;
+
+  padding:8px 12px;
+  border-radius:12px;
+
+  background:#fff1f2;
+  color:#ef4444;
+
+  font-size:13px;
+  font-weight:600;
+
+  cursor:pointer;
+
+  transition:.2s;
+}
+
+/* HOVER */
+.logoutBtn:hover{
+  background:#fee2e2;
+  transform:scale(1.05);
+}
+
+/* ICON */
+.logoutBtn i{
+  font-size:14px;
+}
 /* CONTAINER */
 .container{
 padding:15px;
 }
+
+
+
+.quick-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:10px;
+}
+
+.quick-box{
+background:white;
+border-radius:14px;
+padding:12px;
+text-align:center;
+box-shadow:
+0 5px 15px rgba(0,0,0,.08);
+border:1px solid #eee;
+
+cursor:pointer;
+
+transition:.2s;
+}
+
+.quick-box:active{
+transform:scale(.95);
+}
+
+.quick-box:hover{
+background:#fff8f3;
+}
+
+.quick-box i{
+font-size:20px;
+color:#ff6f00;
+margin-bottom:8px;
+}
+
+.quick-value{
+font-size:18px;
+font-weight:bold;
+color:#ff6f00;
+}
+
+.quick-text{
+font-size:11px;
+color:#666;
+margin-top:4px;
+}
+
+
 
 /* CARD */
 .card{
@@ -146,8 +241,30 @@ font-size: 14px;
 
 
 
+.row{
+display:flex;
+justify-content:space-between;
+padding:10px 0;
+border-bottom:1px solid #eee;
+font-size:14px;
+}
 
 
+.row b{
+color:#ff6f00;
+}
+
+
+.star{
+font-size:14px;
+color:#ddd;
+margin-right:1px;
+}
+
+.star.active{
+color:#ff6f00;
+transform:scale(1.15);
+}
 </style>
 </head>
 
@@ -170,15 +287,240 @@ font-size: 14px;
 
 
 <div class="topbar">
-<div>Dashboard Store</div>
-<div onclick="logout()" style="cursor:pointer;">Logout</div>
+  <div class="title">Dashboard Store</div>
+
+  <div class="logoutBtn" onclick="logout()">
+    <i class="fa fa-right-from-bracket"></i>
+    Logout
+  </div>
 </div>
+
+
 
 <div class="container">
 
 <div class="card">
-<h3 id="storeName">Loading...</h3>
-<p id="storeStatus">Status: ...</p>
+
+<div style="
+display:flex;
+gap:12px;
+align-items:center;
+">
+
+<img
+id="storeLogo"
+src="assets/images/default-store.png"
+style="
+width:70px;
+height:70px;
+border-radius:50%;
+object-fit:cover;
+border:3px solid #ff6f00;
+">
+
+<div>
+
+<h3 id="storeName">
+Loading...
+</h3>
+
+<p id="storeStatus">
+Status: ...
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+
+<div class="card">
+
+<h3 style="
+margin-bottom:15px;
+color:#ff6f00;
+">
+Menu Cepat Store
+</h3>
+
+<div class="quick-grid">
+
+<!-- ORDER -->
+<!-- ORDER -->
+<div class="quick-box"
+onclick="
+location.href=
+'pesanansaya.html'
+">
+
+<i class="fa fa-box"></i>
+
+<div class="quick-value"
+id="orderHari">
+0
+</div>
+
+<div class="quick-text">
+Order Hari Ini
+</div>
+
+</div>
+
+
+
+<!-- PRODUK -->
+<div class="quick-box"
+onclick="
+location.href=
+'produksaya.html'
+">
+
+<i class="fa fa-store"></i>
+
+<div class="quick-value"
+id="jumlahProduk">
+0
+</div>
+
+<div class="quick-text">
+Produk
+</div>
+
+</div>
+
+
+
+<!-- SALDO -->
+<div class="quick-box"
+onclick="location.href='saldostore.html'">
+
+<i class="fa fa-wallet"></i>
+
+<div class="quick-value">
+Kelola
+</div>
+
+<div class="quick-text">
+Saldo
+</div>
+
+</div>
+
+
+<!-- CHAT -->
+<div class="quick-box"
+onclick="
+location.href=
+'chat.html'
+">
+
+<i class="fa fa-comments"></i>
+
+<div class="quick-value"
+id="chatStore">
+0
+</div>
+
+<div class="quick-text">
+Chat
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+
+
+
+<div class="card">
+
+<h3 style="
+margin-bottom:15px;
+color:#ff6f00;
+">
+Laporan Store
+</h3>
+
+<div class="row">
+<span>Orderan bulan ini</span>
+<b id="orderBulan" style="color:#ff6f00;">0</b>
+</div>
+
+<div class="row">
+<span>Total pembatalan</span>
+<b id="totalBatal" style="color:#ff6f00;">0</b>
+</div>
+
+<div class="row">
+<span>Total pengunjung</span>
+<b id="totalView" style="color:#ff6f00;">0</b>
+</div>
+
+
+
+
+<div class="row">
+
+<span>Total rating toko</span>
+
+<div style="
+display:flex;
+align-items:center;
+gap:8px;
+">
+
+<b
+id="ratingStore"
+style="
+color:#ff6f00;
+font-size:16px;
+"
+>
+0.0
+</b>
+
+<div id="starStore"></div>
+
+</div>
+
+</div>
+
+
+
+<div class="row">
+
+<span>Rating produk</span>
+
+<div style="
+display:flex;
+align-items:center;
+gap:8px;
+">
+
+<b
+id="ratingProduk"
+style="
+color:#ff6f00;
+font-size:16px;
+"
+>
+0.0
+</b>
+
+<div id="starProduk"></div>
+
+</div>
+
+</div>
+
+
 </div>
 
 <div class="card">
@@ -188,7 +530,7 @@ font-size: 14px;
 
 <a href="produksaya.html" class="btn">Produk Saya</a>
 <a href="tambahproduk.html" class="btn">Tambah Produk</a>
-<a href="#" class="btn">Pesanan</a>
+<a href="pesanansaya.html" class="btn">Pesanan</a>
 
 </div>
 
@@ -276,30 +618,307 @@ LOAD STORE FROM FIREBASE
 ========================= */
 let status = "loading";
 let name = "";
-
 async function loadStore(){
 
-  try{
+try{
 
-    const snap = await get(ref(db, "stores/" + storeId));
+const snap =
+await get(
+ref(
+db,
+"stores/"+storeId
+)
+);
 
-    if(!snap.exists()){
-      alert("Store tidak ditemukan");
-      logout();
-      return;
-    }
+if(!snap.exists()){
 
-    const data = snap.val();
+alert(
+"Store tidak ditemukan"
+);
 
-    status = data.status || "unknown";
-    name = data.name || "Store";
+logout();
+return;
 
-    renderUI();
+}
 
-  }catch(err){
-    console.log(err);
-    alert("Gagal load store");
-  }
+const data =
+snap.val();
+
+status =
+data.status ||
+"unknown";
+
+name =
+data.nama ||
+data.name ||
+"Store";
+
+/* LOGO */
+document.getElementById(
+"storeLogo"
+).src =
+
+data.logo ||
+data.foto ||
+data.gambar ||
+"assets/images/default-store.png";
+
+/* ======================
+ORDER
+====================== */
+
+const orderSnap =
+await get(
+ref(db,"pesanan")
+);
+
+let bulan=0;
+let hari=0;
+let batal=0;
+
+const now =
+new Date();
+
+if(orderSnap.exists()){
+
+orderSnap.forEach(x=>{
+
+const d=x.val();
+
+const cocok =
+Object.values(
+d.items||{}
+).some(
+p=>p.storeId===storeId
+);
+
+if(!cocok) return;
+
+const tgl =
+new Date(
+d.createdAt||0
+);
+
+if(
+tgl.getMonth()===
+now.getMonth()
+&&
+tgl.getFullYear()===
+now.getFullYear()
+){
+bulan++;
+}
+
+if(
+tgl.toDateString()===
+now.toDateString()
+){
+hari++;
+}
+
+if(
+d.status===
+"dibatalkan"
+){
+batal++;
+}
+
+});
+
+}
+
+/* ======================
+PRODUK
+====================== */
+/* ======================
+AMBIL PRODUK
+====================== */
+
+const produkSnap =
+await get(
+ref(
+db,
+"produk"
+)
+);
+let totalProduk=0;
+
+/* ======================
+JUMLAH PRODUK
+====================== */
+
+if(produkSnap.exists()){
+
+produkSnap.forEach(x=>{
+
+const p=x.val();
+
+if(
+p.storeId===
+storeId
+){
+totalProduk++;
+}
+
+});
+
+}
+
+/* ======================
+RATING DARI REVIEW
+====================== */
+
+let totalRating=0;
+let jumlahRating=0;
+
+const reviewSnap =
+await get(
+ref(
+db,
+"review"
+)
+);
+
+if(reviewSnap.exists()){
+
+reviewSnap.forEach(produkNode=>{
+
+produkNode.forEach(userNode=>{
+
+const rv =
+userNode.val();
+
+if(
+!rv.productId
+) return;
+
+const p =
+produkSnap.val()?.[
+rv.productId
+];
+
+if(!p) return;
+
+if(
+p.storeId===
+storeId
+){
+
+totalRating +=
+Number(
+rv.rating || 0
+);
+
+jumlahRating++;
+
+}
+
+});
+
+});
+
+}
+
+/* ======================
+SET DATA
+====================== */
+
+document.getElementById(
+"orderBulan"
+).innerHTML=
+bulan;
+
+document.getElementById(
+"orderHari"
+).innerHTML=
+hari;
+
+document.getElementById(
+"totalBatal"
+).innerHTML=
+batal;
+
+document.getElementById(
+"totalView"
+).innerHTML=
+data.pengunjung||0;
+
+const ratingAkhir =
+
+jumlahRating
+
+?
+
+(
+totalRating /
+jumlahRating
+)
+
+: 0;
+
+
+/* TOTAL RATING TOKO */
+document.getElementById(
+"ratingStore"
+).innerHTML =
+ratingAkhir.toFixed(1);
+
+document.getElementById(
+"ratingProduk"
+).innerHTML =
+ratingAkhir.toFixed(1);
+
+renderStars(
+"starStore",
+ratingAkhir
+);
+
+renderStars(
+"starProduk",
+ratingAkhir
+);
+
+
+document.getElementById(
+"ratingProduk"
+).innerHTML=
+
+jumlahRating
+?
+
+(
+totalRating/
+jumlahRating
+).toFixed(1)
+
+: "0";
+
+document.getElementById(
+"jumlahProduk"
+).innerHTML=
+totalProduk;
+
+// document.getElementById("saldoStore").innerHTML =
+// (data.saldo || 0).toLocaleString("id-ID");
+
+document.getElementById(
+"chatStore"
+).innerHTML =
+data.totalChat || 0;
+
+
+
+renderUI();
+
+}catch(err){
+
+console.log(err);
+
+alert(
+"Gagal load store"
+);
+
+}
 
 }
 
@@ -377,7 +996,38 @@ window.confirmLogout = function(){
   location.href = "loginvendor.html";
 };
 
+function renderStars(
+id,
+rating
+){
 
+let html="";
+
+for(
+let i=1;
+i<=5;
+i++
+){
+
+html += `
+<span class="
+star
+${i<=Math.round(rating)
+? "active"
+: ""}
+">
+★
+</span>
+`;
+
+}
+
+document.getElementById(
+id
+).innerHTML =
+html;
+
+}
 
 </script>
 

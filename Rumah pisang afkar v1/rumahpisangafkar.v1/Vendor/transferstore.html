@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Transfer Store</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#f5f5f5;
+padding-bottom:120px;
+}
+
+.header{
+background:white;
+padding:18px;
+font-size:20px;
+font-weight:bold;
+
+position:sticky;
+top:0;
+
+z-index:99;
+
+box-shadow:
+0 2px 10px rgba(
+0,0,0,.06
+);
+
+display:flex;
+gap:12px;
+align-items:center;
+}
+
+.back{
+font-size:20px;
+cursor:pointer;
+}
+
+.cardSaldo{
+
+margin:15px;
+
+background:
+linear-gradient(
+135deg,
+#ff9800,
+#ff6f00
+);
+
+padding:20px;
+
+border-radius:24px;
+
+color:white;
+
+box-shadow:
+0 8px 25px rgba(
+255,152,0,.28
+);
+
+}
+
+.label{
+font-size:12px;
+opacity:.9;
+margin-bottom:8px;
+}
+
+.nominal{
+font-size:32px;
+font-weight:bold;
+}
+
+.section{
+
+margin:15px;
+
+background:white;
+
+padding:18px;
+
+border-radius:22px;
+
+box-shadow:
+0 4px 15px rgba(
+0,0,0,.05
+);
+
+}
+
+.title{
+font-weight:bold;
+margin-bottom:15px;
+}
+
+.grid{
+
+display:grid;
+
+grid-template-columns:
+repeat(
+3,
+1fr
+);
+
+gap:12px;
+
+}
+
+.item{
+
+border:1px solid #eee;
+
+border-radius:18px;
+
+padding:16px;
+
+text-align:center;
+
+cursor:pointer;
+
+transition:.2s;
+
+position:relative;
+
+}
+
+.item.active{
+border:2px solid #ff6f00;
+background:#fff7f0;
+}
+
+.item.lock{
+
+opacity:.45;
+
+pointer-events:none;
+
+background:#f7f7f7;
+
+}
+
+.item i{
+font-size:24px;
+color:#ff6f00;
+margin-bottom:8px;
+}
+
+.lockTag{
+
+position:absolute;
+
+top:8px;
+right:8px;
+
+font-size:10px;
+
+background:#ef4444;
+
+color:white;
+
+padding:3px 6px;
+
+border-radius:20px;
+
+}
+
+input{
+
+width:100%;
+
+padding:14px;
+
+border-radius:14px;
+
+border:1px solid #ddd;
+
+outline:none;
+
+margin-top:10px;
+
+}
+
+.btn{
+
+width:100%;
+
+margin-top:20px;
+
+padding:16px;
+
+border:none;
+
+border-radius:18px;
+
+background:#ff6f00;
+
+color:white;
+
+font-size:15px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+.info{
+display:flex;
+align-items:center;
+gap:10px;
+
+margin-top:12px;
+padding:12px 14px;
+
+background:#fff9f3;
+border:1px solid #ffcc80;
+border-radius:14px;
+
+font-size:13px;
+color:#8a5a00;
+}
+
+.info i{
+color:#ff9800;
+font-size:16px;
+}
+
+.info b{
+color:#ff6f00;
+}
+
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  display:none;
+  justify-content:center;
+  align-items:flex-end;
+  z-index:99999;
+
+  opacity:0;
+  visibility:hidden;
+  transition:.2s;
+}
+
+.modal.show{
+  display:flex;
+  opacity:1;
+  visibility:visible;
+}
+.modalBox{
+  width:100%;
+  background:white;
+  border-radius:20px 20px 0 0;
+  padding:20px;
+  animation:up .3s ease;
+}
+
+@keyframes up{
+  from{transform:translateY(100%);}
+  to{transform:translateY(0);}
+}
+
+h3{
+  text-align:center;
+  margin-bottom:15px;
+}
+
+.infoBox{
+  font-size:14px;
+  line-height:1.6;
+  padding:10px;
+  background:#f7f7f7;
+  border-radius:12px;
+}
+
+.warning{
+  font-size:12px;
+  color:#d97706;
+  margin-top:10px;
+}
+
+.modalBtn{
+  display:flex;
+  gap:10px;
+  margin-top:15px;
+}
+
+.btnGrey{
+  flex:1;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  background:#eee;
+}
+
+.btnOrange{
+  flex:1;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  background:#ff6f00;
+  color:white;
+  font-weight:bold;
+}
+
+.full{
+  width:100%;
+  margin-top:10px;
+}
+
+.keypad{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:15px;
+}
+
+.keypad button{
+  padding:15px;
+  border:none;
+  border-radius:12px;
+  background:#f2f2f2;
+  font-size:18px;
+}
+
+
+
+
+
+
+#toastBox{
+position:fixed;
+top:25px;
+left:50%;
+transform:translateX(-50%);
+z-index:999999;
+
+display:flex;
+flex-direction:column;
+gap:10px;
+
+width:90%;
+max-width:320px;
+pointer-events:none;
+}
+
+.toast{
+
+background:#1f1f1f;
+color:white;
+
+padding:14px 16px;
+
+border-radius:18px;
+
+font-size:14px;
+font-weight:500;
+
+display:flex;
+align-items:center;
+gap:12px;
+
+box-shadow:
+0 10px 30px rgba(0,0,0,.25);
+
+animation:toastIn .25s ease;
+
+opacity:1;
+transition:.3s;
+
+}
+
+.toast.success{
+background:#16a34a;
+}
+
+.toast.error{
+background:#dc2626;
+}
+
+.toast.warning{
+background:#f59e0b;
+}
+
+.toast i{
+font-size:18px;
+}
+
+@keyframes toastIn{
+
+from{
+opacity:0;
+transform:translateY(-20px) scale(.95);
+}
+
+to{
+opacity:1;
+transform:translateY(0) scale(1);
+}
+
+}
+
+
+
+
+
+</style>
+</head>
+
+<body>
+
+
+
+
+<!-- ================= CONFIRM MODAL ================= -->
+<div id="confirmModal" class="modal">
+  <div class="modalBox">
+
+    <h3>Konfirmasi Transfer</h3>
+
+    <div class="infoBox" id="confirmInfo"></div>
+
+    <div class="warning">
+      ⚠ Periksa kembali data tujuan. Kesalahan transfer tidak menjadi tanggung jawab platform.
+    </div>
+
+    <div class="modalBtn">
+      <button class="btnGrey" onclick="closeConfirm()">Batal</button>
+      <button class="btnOrange" onclick="openPin()">Lanjut</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ================= PIN MODAL ================= -->
+<div id="pinModal" class="modal">
+  <div class="modalBox">
+
+    <h3>Masukkan PIN</h3>
+
+    <input id="pinInput" type="password" maxlength="6" placeholder="••••••" />
+
+    <div class="keypad">
+      <button onclick="pinPress(1)">1</button>
+      <button onclick="pinPress(2)">2</button>
+      <button onclick="pinPress(3)">3</button>
+      <button onclick="pinPress(4)">4</button>
+      <button onclick="pinPress(5)">5</button>
+      <button onclick="pinPress(6)">6</button>
+      <button onclick="pinPress(7)">7</button>
+      <button onclick="pinPress(8)">8</button>
+      <button onclick="pinPress(9)">9</button>
+      <button onclick="clearPin()">C</button>
+      <button onclick="pinPress(0)">0</button>
+      <button onclick="deletePin()">⌫</button>
+    </div>
+
+<button
+id="btnSubmitPin"
+class="btnOrange full"
+onclick="submitTransfer()"
+>
+  Konfirmasi
+</button>
+  </div>
+</div>
+
+
+
+
+
+
+
+<div class="header">
+
+<div
+class="back"
+onclick="
+history.back()
+">
+
+<i class="fa fa-arrow-left"></i>
+
+</div>
+
+Transfer
+
+</div>
+
+
+<div class="cardSaldo">
+
+<div class="label">
+Saldo Tersedia
+</div>
+
+<div
+class="nominal"
+id="saldo">
+
+Rp 0
+
+</div>
+
+</div>
+
+
+
+<div class="section">
+
+<div class="title">
+Pilih Transfer
+</div>
+
+<div class="grid">
+
+<!-- SALDO -->
+
+<div
+class="item active"
+id="saldoBtn"
+onclick="
+pilih(
+'saldo'
+)
+">
+
+<i class="fa fa-wallet"></i>
+
+<div>
+Saldo Store
+</div>
+
+</div>
+
+<!-- EWALLET -->
+
+<div
+class="item lock"
+>
+
+<div class="lockTag">
+LOCK
+</div>
+
+<i class="fa fa-mobile"></i>
+
+<div>
+E-Wallet
+</div>
+
+</div>
+
+<!-- BANK -->
+
+<div
+class="item lock"
+>
+
+<div class="lockTag">
+LOCK
+</div>
+
+<i class="fa fa-building-columns"></i>
+
+<div>
+Bank
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<div class="section">
+
+<div class="title">
+
+Transfer Saldo
+
+</div>
+
+<input
+id="tujuan"
+placeholder="
+Masukkan No.Pay tujuan
+">
+
+<input
+id="nominalInput"
+type="number"
+placeholder="
+Masukkan nominal transfer
+">
+
+<div class="info">
+  <i class="fa fa-circle-info"></i>
+  <span>Minimal transfer <b>Rp 10.000</b></span>
+</div>
+
+<button
+class="btn"
+onclick="
+kirimTransfer()
+">
+
+Transfer Sekarang
+
+</button>
+
+</div>
+
+
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get,
+update,
+set
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig={
+
+apiKey:
+"AIzaSyD3DTcca7yZKVtllcK3TQOUe6Yv2hSyG_g",
+
+authDomain:
+"shoponline-93646.firebaseapp.com",
+
+databaseURL:
+"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"shoponline-93646"
+
+};
+
+const app =
+initializeApp(firebaseConfig);
+
+const db =
+getDatabase(app);
+
+const storeId =
+localStorage.getItem("storeId");
+
+let saldo = 0;
+
+/* =========================
+LOAD STORE
+========================= */
+async function loadStore(){
+
+try{
+
+const snap =
+await get(
+ref(db,"stores/"+storeId)
+);
+
+if(!snap.exists()) return;
+
+const data = snap.val();
+
+saldo = Number(data.saldo || 0);
+
+document.getElementById("saldo").innerHTML =
+"Rp " +
+saldo.toLocaleString("id-ID");
+
+}catch(err){
+
+console.log(err);
+alert("Gagal memuat data toko");
+
+}
+
+}
+
+/* =========================
+PILIH MENU
+========================= */
+window.pilih = function(x){
+
+document
+.querySelectorAll(".item")
+.forEach(e=>e.classList.remove("active"));
+
+document
+.getElementById("saldoBtn")
+.classList.add("active");
+
+};
+
+/* =========================
+STATE GLOBAL
+========================= */
+window.TRANSFER_STATE = null;
+
+/* =========================
+KIRIM TRANSFER
+========================= */
+window.kirimTransfer = async function(){
+
+try{
+
+const noPay =
+document.getElementById("tujuan").value.trim();
+
+const nominal =
+Number(
+document.getElementById("nominalInput").value
+);
+
+if(!noPay){
+showToast("Masukkan No.Pay","warning");
+return;
+}
+
+if(nominal <= 0){
+showToast("Nominal tidak valid","error");
+return;
+}
+
+/* =========================
+SETTINGS
+========================= */
+const feeRef =
+ref(db,"settings/biayaTransfer");
+
+const minRef =
+ref(db,"settings/minimalTransfer");
+
+const feeSnap =
+await get(feeRef);
+
+const minSnap =
+await get(minRef);
+
+if(!feeSnap.exists()){
+await set(feeRef,2500);
+}
+
+if(!minSnap.exists()){
+await set(minRef,10000);
+}
+
+const feeValue =
+Number((await get(feeRef)).val() || 2500);
+
+const minTransfer =
+Number((await get(minRef)).val() || 10000);
+
+if(nominal < minTransfer){
+alert(
+"Minimal transfer Rp " +
+minTransfer.toLocaleString("id-ID")
+);
+return;
+}
+
+const totalPotong =
+nominal + feeValue;
+
+/* =========================
+AMBIL DATA SAYA
+========================= */
+const sayaSnap =
+await get(ref(db,"stores/"+storeId));
+
+if(!sayaSnap.exists()){
+alert("Akun tidak ditemukan");
+return;
+}
+
+const saya = sayaSnap.val();
+
+/* =========================
+BLOCK SELF TRANSFER
+========================= */
+if(noPay === String(saya.noPay)){
+showToast("Tidak bisa transfer ke akun sendiri","warning");
+return;
+}
+
+/* =========================
+CEK SALDO
+========================= */
+if(totalPotong > Number(saya.saldo || 0)){
+showToast("Saldo tidak cukup","error");
+return;
+}
+
+/* =========================
+CARI PENERIMA
+========================= */
+let penerima = null;
+let penerimaType = "";
+let penerimaId = "";
+
+const userSnap =
+await get(ref(db,"users"));
+
+if(userSnap.exists()){
+
+userSnap.forEach(x=>{
+
+const d = x.val();
+
+if(String(d.noPay) === noPay){
+
+penerima = d;
+penerimaType = "user";
+penerimaId = x.key;
+
+}
+
+});
+
+}
+
+if(!penerima){
+
+const storeSnap =
+await get(ref(db,"stores"));
+
+if(storeSnap.exists()){
+
+storeSnap.forEach(x=>{
+
+const d = x.val();
+
+if(String(d.noPay) === noPay){
+
+penerima = d;
+penerimaType = "store";
+penerimaId = x.key;
+
+}
+
+});
+
+}
+
+}
+
+if(!penerima){
+showToast("Nomor tujuan tidak ditemukan","error");
+return;
+}
+
+/* =========================
+SIMPAN STATE
+========================= */
+window.TRANSFER_STATE = {
+
+noPay,
+nominal,
+fee: feeValue,
+total: totalPotong,
+
+penerima,
+penerimaType,
+penerimaId,
+saya
+
+};
+
+/* =========================
+OPEN MODAL CONFIRM
+========================= */
+window.openConfirm({
+nama: penerima.nama || penerima.name || "Tanpa Nama",
+noPay,
+nominal,
+fee: feeValue,
+total: totalPotong
+});
+
+}catch(err){
+
+console.log(err);
+alert("Terjadi kesalahan saat transfer");
+
+}
+
+};
+
+/* =========================
+OPEN CONFIRM
+========================= */
+window.openConfirm = function(data){
+
+const modal =
+document.getElementById("confirmModal");
+
+document.getElementById("confirmInfo").innerHTML = `
+<b>Nama:</b> ${data.nama}<br>
+<b>No.Pay:</b> ${data.noPay}<br><br>
+
+<b>Nominal:</b>
+Rp ${Number(data.nominal).toLocaleString("id-ID")}<br>
+
+<b>Biaya:</b>
+Rp ${Number(data.fee).toLocaleString("id-ID")}<br>
+
+<b>Total:</b>
+Rp ${Number(data.total).toLocaleString("id-ID")}
+`;
+
+modal.classList.add("show");
+
+};
+
+/* =========================
+CLOSE CONFIRM
+========================= */
+window.closeConfirm = function(){
+
+document
+.getElementById("confirmModal")
+.classList.remove("show");
+
+};
+/* =========================
+OPEN PIN
+========================= */
+window.openPin = function(){
+
+document
+.getElementById("confirmModal")
+.classList.remove("show");
+
+document
+.getElementById("pinModal")
+.classList.add("show");
+
+document
+.getElementById("pinInput").value = "";
+
+};
+
+/* =========================
+CLOSE PIN
+========================= */
+window.closePin = function(){
+
+document.getElementById("pinModal").style.display = "none";
+
+};
+
+/* =========================
+PIN CONTROL
+========================= */
+window.pinPress = function(n){
+
+const input =
+document.getElementById("pinInput");
+
+if(input.value.length < 6){
+
+input.value += n;
+
+}
+
+};
+
+window.clearPin = function(){
+
+document.getElementById("pinInput").value = "";
+
+};
+
+window.deletePin = function(){
+
+const input =
+document.getElementById("pinInput");
+
+input.value =
+input.value.slice(0,-1);
+
+};
+
+/* =========================
+SUBMIT TRANSFER
+========================= */
+window.submitTransfer = async function(){
+
+try{
+
+const data =
+window.TRANSFER_STATE;
+
+if(!data){
+alert("Data transfer hilang");
+return;
+}
+
+const pin =
+document.getElementById("pinInput").value.trim();
+
+if(pin.length < 6){
+showToast("Masukkan 6 digit PIN","warning");
+return;
+}
+
+/* =========================
+LOADING
+========================= */
+const btn =
+document.getElementById("btnSubmitPin");
+
+if(btn){
+
+btn.disabled = true;
+btn.innerHTML = "Memproses...";
+
+}
+
+/* =========================
+AMBIL DATA TERBARU
+========================= */
+const meSnap =
+await get(ref(db,"stores/"+storeId));
+
+if(!meSnap.exists()){
+
+if(btn){
+btn.disabled = false;
+btn.innerHTML = "Konfirmasi";
+}
+
+alert("Akun tidak ditemukan");
+return;
+
+}
+
+const me = meSnap.val();
+
+/* =========================
+VALIDASI PIN
+========================= */
+const realPin =
+String(me.pinTransfer || "123456");
+
+if(pin !== realPin){
+
+if(btn){
+btn.disabled = false;
+btn.innerHTML = "Konfirmasi";
+}
+
+showToast("PIN yang kamu masukkan salah","error");
+return;
+
+}
+
+/* =========================
+GENERATE ID
+========================= */
+const id =
+"TRF" + Date.now();
+
+/* =========================
+TUTUP MODAL
+========================= */
+document.getElementById("pinModal").style.display = "none";
+document.getElementById("confirmModal").style.display = "none";
+
+/* =========================
+UPDATE SALDO PENGIRIM
+========================= */
+await update(
+ref(db,"stores/"+storeId),
+{
+saldo:
+Number(me.saldo || 0) - Number(data.total),
+
+totalKeluar:
+Number(me.totalKeluar || 0) + Number(data.nominal),
+
+totalTransfer:
+Number(me.totalTransfer || 0) + 1
+}
+);
+
+/* =========================
+UPDATE SALDO PENERIMA
+========================= */
+const penerimaPath =
+data.penerimaType === "user"
+? "users/"
+: "stores/";
+
+await update(
+ref(db,penerimaPath + data.penerimaId),
+{
+saldo:
+Number(data.penerima.saldo || 0) + Number(data.nominal),
+
+totalMasuk:
+Number(data.penerima.totalMasuk || 0) + Number(data.nominal)
+}
+);
+
+/* =========================
+SIMPAN RIWAYAT
+========================= */
+await set(
+ref(db,"transfer/" + id),
+{
+
+id,
+
+fromId: storeId,
+toId: data.penerimaId,
+
+fromType: "store",
+toType: data.penerimaType,
+
+fromNoPay: me.noPay,
+toNoPay: data.noPay,
+
+namaPengirim:
+me.nama || me.name || "",
+
+namaPenerima:
+data.penerima.nama ||
+data.penerima.name ||
+"",
+
+nominal: Number(data.nominal),
+fee: Number(data.fee),
+totalPotong: Number(data.total),
+
+status: "berhasil",
+
+createdAt: Date.now()
+
+}
+);
+
+/* =========================
+RESET STATE
+========================= */
+window.TRANSFER_STATE = null;
+
+/* =========================
+REDIRECT
+========================= */
+window.location.href =
+"buktitransaksi.html?id=" + id;
+
+}catch(err){
+
+console.log("TRANSFER ERROR:", err);
+
+alert(
+"Gagal transfer:\n" +
+(err.message || err)
+);
+
+document
+.getElementById("pinModal")
+.classList.remove("show");
+
+document
+.getElementById("confirmModal")
+.classList.remove("show");
+
+const btn =
+document.getElementById("btnSubmitPin");
+
+if(btn){
+
+btn.disabled = false;
+btn.innerHTML = "Konfirmasi";
+
+}
+
+}
+
+};
+
+loadStore();
+
+
+
+
+
+
+
+
+
+
+
+
+window.showToast = function(
+msg,
+type="error"
+){
+
+const box =
+document.getElementById("toastBox");
+
+const toast =
+document.createElement("div");
+
+toast.className =
+"toast " + type;
+
+let icon =
+"fa-circle-xmark";
+
+if(type==="success"){
+icon = "fa-circle-check";
+}
+
+if(type==="warning"){
+icon = "fa-triangle-exclamation";
+}
+
+toast.innerHTML = `
+<i class="fa-solid ${icon}"></i>
+<div>${msg}</div>
+`;
+
+box.appendChild(toast);
+
+setTimeout(()=>{
+
+toast.style.opacity = "0";
+toast.style.transform = "translateY(-10px)";
+
+setTimeout(()=>{
+
+toast.remove();
+
+},300);
+
+},2500);
+
+};
+</script>
+<!-- ================= TOAST ================= -->
+<div id="toastBox"></div>
+</body>
+</html>

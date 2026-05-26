@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Saldo Store</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#f5f5f5;
+padding-bottom:100px;
+}
+
+.header{
+background:white;
+padding:18px;
+font-size:22px;
+font-weight:bold;
+position:sticky;
+top:0;
+z-index:99;
+box-shadow:0 2px 10px rgba(0,0,0,.06);
+}
+
+.cardSaldo{
+margin:15px;
+border-radius:28px;
+overflow:hidden;
+
+background:
+linear-gradient(
+135deg,
+#ff9800,
+#ff6f00
+);
+
+padding:22px;
+color:white;
+
+position:relative;
+
+box-shadow:
+0 8px 25px
+rgba(
+255,152,0,.28
+);
+
+}
+
+.cardSaldo::before{
+content:"";
+position:absolute;
+width:180px;
+height:180px;
+border-radius:50%;
+background:rgba(255,255,255,.08);
+top:-80px;
+right:-50px;
+}
+
+.cardSaldo::after{
+content:"";
+position:absolute;
+width:120px;
+height:120px;
+border-radius:50%;
+background:rgba(255,255,255,.06);
+bottom:-50px;
+left:-30px;
+}
+
+.label{
+font-size:13px;
+margin-bottom:10px;
+opacity:.9;
+}
+
+.nominal{
+font-size:36px;
+font-weight:bold;
+margin-bottom:20px;
+}
+
+.userBox{
+display:flex;
+align-items:center;
+gap:14px;
+}
+
+.userBox img{
+width:58px;
+height:58px;
+border-radius:50%;
+object-fit:cover;
+border:3px solid rgba(255,255,255,.25);
+}
+
+.nama{
+font-size:18px;
+font-weight:bold;
+}
+
+.level{
+font-size:12px;
+margin-top:4px;
+}
+
+.menuWrap{
+padding:0 15px;
+
+display:grid;
+
+grid-template-columns:
+repeat(
+4,
+1fr
+);
+
+gap:12px;
+
+}
+
+.menu{
+background:white;
+border-radius:22px;
+padding:18px;
+box-shadow:
+0 4px 15px
+rgba(0,0,0,.05);
+
+text-align:center;
+
+cursor:pointer;
+}
+
+.menu i{
+font-size:24px;
+color:#ff9800;
+margin-bottom:10px;
+}
+
+.menuTitle{
+font-size:13px;
+font-weight:bold;
+}
+
+.info{
+margin:15px;
+background:white;
+padding:18px;
+border-radius:22px;
+box-shadow:
+0 4px 15px
+rgba(0,0,0,.05);
+}
+
+.row{
+display:flex;
+justify-content:space-between;
+padding:12px 0;
+border-bottom:1px solid #eee;
+}
+
+.row:last-child{
+border:none;
+}
+
+.nav{
+position:fixed;
+left:0;
+right:0;
+bottom:0;
+
+height:75px;
+
+background:white;
+
+display:flex;
+justify-content:space-around;
+align-items:center;
+
+box-shadow:
+0 -3px 15px
+rgba(0,0,0,.08);
+}
+
+.navItem{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:5px;
+
+font-size:12px;
+
+color:#777;
+}
+
+.navItem i{
+font-size:20px;
+}
+
+.active{
+color:#ff9800;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+Saldo Store
+</div>
+
+<div class="cardSaldo">
+
+<div class="label">
+Saldo Store
+</div>
+
+<div
+class="nominal"
+id="saldo">
+
+Rp 0
+
+</div>
+
+<div class="userBox">
+
+<img
+id="foto"
+src="assets/images/default-store.png">
+
+<div>
+
+<div
+class="nama"
+id="nama">
+
+Loading...
+
+</div>
+
+<div
+class="level"
+id="level">
+
+Store
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="menuWrap">
+
+<div class="menu">
+
+<i class="fa fa-wallet"></i>
+
+<div class="menuTitle">
+Saldo Utama
+</div>
+
+</div>
+
+
+<div
+class="menu"
+onclick="location.href='transferstore.html'"
+style="cursor:pointer;"
+>
+<i class="fa fa-money-bill-transfer"></i>
+<div class="menuTitle">
+Transfer
+</div>
+
+</div>
+
+
+<div class="menu"
+onclick="
+location.href=
+'topupstore.html'
+">
+
+<i class="fa fa-plus-circle"></i>
+
+<div class="menuTitle">
+Top Up
+</div>
+
+</div>
+
+
+<div class="menu"
+onclick="
+location.href=
+'historysaldostore.html'
+">
+
+<i class="fa fa-history"></i>
+
+<div class="menuTitle">
+Riwayat
+</div>
+
+</div>
+
+</div>
+
+
+<div class="info">
+
+<div class="row">
+<span>Nama Store</span>
+<span id="namaStore">
+-
+</span>
+</div>
+
+<div class="row">
+<span>WhatsApp</span>
+<span id="wa">
+-
+</span>
+</div>
+
+<div class="row">
+<span>Status</span>
+<span id="status">
+-
+</span>
+</div>
+
+<div class="row">
+<span>Saldo Afkar</span>
+<span id="saldoAfkar">
+Rp 0
+</span>
+</div>
+
+</div>
+
+
+<div class="nav">
+
+<div
+class="navItem"
+onclick="
+location.href=
+'gudangproduk.html'
+">
+
+<i class="fa fa-box"></i>
+
+<span>
+Gudang
+</span>
+
+</div>
+
+
+<div
+class="navItem active">
+
+<i class="fa fa-wallet"></i>
+
+<span>
+Saldo
+</span>
+
+</div>
+
+
+<div
+class="navItem"
+onclick="
+location.href=
+'dashboardstore.html'
+">
+
+<i class="fa fa-store"></i>
+
+<span>
+Store
+</span>
+
+</div>
+
+</div>
+
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get,
+update
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig={
+
+apiKey:
+"AIzaSyD3DTcca7yZKVtllcK3TQOUe6Yv2hSyG_g",
+
+authDomain:
+"shoponline-93646.firebaseapp.com",
+
+databaseURL:
+"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"shoponline-93646"
+
+};
+
+const app=
+initializeApp(
+firebaseConfig
+);
+
+const db=
+getDatabase(
+app
+);
+
+const storeId=
+localStorage.getItem(
+"storeId"
+);
+
+if(!storeId){
+
+location.href=
+"loginvendor.html";
+
+}
+
+function rupiah(x){
+
+return "Rp "+
+
+Number(
+x||0
+)
+
+.toLocaleString(
+"id-ID"
+);
+
+}
+
+async function loadStore(){
+
+const storeRef=
+ref(
+db,
+"stores/"+storeId
+);
+
+const snap=
+await get(
+storeRef
+);
+
+if(
+!snap.exists()
+)return;
+
+const data=
+snap.val();
+
+/* =====================
+AUTO BUAT SALDO DUMMY
+===================== */
+
+let saldo=
+data.saldo;
+
+let saldoAfkar=
+data.saldoAfkar;
+
+const updateData={};
+
+if(
+saldo===undefined
+){
+
+saldo=0;
+
+updateData.saldo=0;
+
+}
+
+if(
+saldoAfkar===undefined
+){
+
+saldoAfkar=0;
+
+updateData.saldoAfkar=0;
+
+}
+
+/* SIMPAN KE FIREBASE */
+
+if(
+Object.keys(
+updateData
+).length
+){
+
+await update(
+storeRef,
+updateData
+);
+
+}
+
+/* =====================
+SET UI
+===================== */
+
+document.getElementById(
+"saldo"
+).innerHTML=
+rupiah(
+saldo
+);
+
+document.getElementById(
+"saldoAfkar"
+).innerHTML=
+rupiah(
+saldoAfkar
+);
+
+document.getElementById(
+"nama"
+).innerHTML=
+
+data.nama||
+data.name||
+"Store";
+
+document.getElementById(
+"namaStore"
+).innerHTML=
+
+data.nama||
+data.name||
+"-";
+
+document.getElementById(
+"wa"
+).innerHTML=
+data.wa||"-";
+
+document.getElementById(
+"status"
+).innerHTML=
+data.status||"-";
+
+document.getElementById(
+"foto"
+).src=
+
+data.logo||
+data.foto||
+"assets/images/default-store.png";
+
+}
+
+loadStore();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Riwayat Saldo</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#f7f7f7;
+padding-bottom:100px;
+}
+
+.header{
+
+background:
+linear-gradient(
+135deg,
+#ff9800,
+#ff6f00
+);
+
+padding:22px;
+
+color:white;
+
+font-size:20px;
+font-weight:bold;
+
+position:sticky;
+top:0;
+z-index:99;
+
+display:flex;
+gap:12px;
+align-items:center;
+
+}
+
+.back{
+cursor:pointer;
+font-size:20px;
+}
+
+.list{
+padding:15px;
+}
+
+.card{
+
+background:white;
+border-radius:5px;
+padding:15px;
+margin-bottom:12px;
+display:flex;
+gap:14px;
+align-items:center;
+cursor:pointer;
+}
+
+.icon{
+
+width:55px;
+height:55px;
+
+border-radius:50%;
+
+display:flex;
+
+justify-content:center;
+align-items:center;
+
+font-size:22px;
+
+flex:none;
+
+}
+
+.masuk{
+background:#dcfce7;
+color:#16a34a;
+}
+
+.keluar{
+background:#ffe4e6;
+color:#dc2626;
+}
+
+.info{
+flex:1;
+}
+
+.nama{
+font-weight:bold;
+margin-bottom:5px;
+}
+
+.time{
+font-size:12px;
+color:#888;
+}
+
+.nominal{
+
+font-weight:bold;
+
+font-size:16px;
+
+text-align:right;
+
+}
+
+.plus{
+color:#16a34a;
+}
+
+.minus{
+color:#dc2626;
+}
+
+.empty{
+
+text-align:center;
+
+margin-top:80px;
+
+color:#999;
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+
+<div
+class="back"
+onclick="
+history.back()
+">
+<i class="fa fa-arrow-left"></i>
+</div>
+
+Riwayat Saldo
+
+</div>
+
+<div
+class="list"
+id="list">
+
+<div class="empty">
+Loading...
+</div>
+
+</div>
+
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig={
+
+apiKey:
+"AIzaSyD3DTcca7yZKVtllcK3TQOUe6Yv2hSyG_g",
+
+authDomain:
+"shoponline-93646.firebaseapp.com",
+
+databaseURL:
+"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"shoponline-93646"
+
+};
+
+const app=
+initializeApp(
+firebaseConfig);
+
+const db=
+getDatabase(app);
+
+const storeId=
+localStorage.getItem(
+"storeId"
+);
+
+const list=
+document.getElementById(
+"list"
+);
+
+function rupiah(x){
+
+return "Rp "+
+
+Number(
+x||0
+)
+
+.toLocaleString(
+"id-ID"
+);
+
+}
+
+function waktu(t){
+
+return new Date(t)
+
+.toLocaleString(
+"id-ID",
+{
+
+day:"2-digit",
+
+month:"short",
+
+year:"numeric",
+
+hour:"2-digit",
+
+minute:"2-digit"
+
+}
+
+);
+
+}
+
+async function load(){
+
+const snap=
+
+await get(
+ref(
+db,
+"transfer"
+)
+);
+
+if(
+!snap.exists()
+){
+
+list.innerHTML=
+`
+<div class="empty">
+Belum ada riwayat
+</div>
+`;
+
+return;
+
+}
+
+let html="";
+
+let data=[];
+
+snap.forEach(x=>{
+
+const d=
+x.val();
+
+if(
+
+d.fromId===storeId
+
+||
+
+d.toId===storeId
+
+){
+
+data.push(d);
+
+}
+
+});
+
+data.sort(
+(a,b)=>
+
+b.createdAt-
+a.createdAt
+
+);
+
+data.forEach(d=>{
+
+const keluar=
+
+d.fromId===
+storeId;
+
+html += `
+
+<div
+class="card"
+
+onclick="
+location.href=
+'buktitransaksi.html?id=${d.id}'
+">
+
+<div class="icon ${
+keluar
+?
+'keluar'
+:
+'masuk'
+}">
+
+<i class="fa ${
+keluar
+?
+'fa-arrow-up'
+:
+'fa-arrow-down'
+}"></i>
+
+</div>
+
+<div class="info">
+
+<div class="nama">
+
+${
+keluar
+
+?
+
+'Transfer ke '
+
++
+
+d.namaPenerima
+
+:
+
+'Diterima dari '
+
++
+
+d.namaPengirim
+
+}
+
+</div>
+
+<div class="time">
+
+${waktu(
+d.createdAt
+)}
+
+</div>
+
+</div>
+
+<div class="nominal ${
+keluar
+?
+'minus'
+:
+'plus'
+}">
+
+${
+keluar
+?
+'- '
+:
+'+ '
+}
+
+${rupiah(
+d.nominal
+)}
+
+</div>
+
+</div>
+
+`;
+
+});
+
+if(
+!html
+){
+
+html=
+`
+<div class="empty">
+Belum ada transaksi
+</div>
+`;
+
+}
+
+list.innerHTML=
+html;
+
+}
+
+load();
+
+</script>
+
+</body>
+</html>

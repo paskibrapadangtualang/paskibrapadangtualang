@@ -599,6 +599,32 @@ userCredential.user.uid;
 // =======================
 // SIMPAN DATABASE
 // =======================
+/* ======================
+NO PAY OTOMATIS
+====================== */
+
+const noPay =
+
+"7" +
+
+Math.floor(
+
+1000000000 +
+
+Math.random()
+
+* 9000000000
+
+);
+
+/* PIN DEFAULT */
+
+const pinTransfer =
+"123456";
+
+/* ======================
+SIMPAN DATABASE
+====================== */
 
 await set(
 
@@ -608,55 +634,55 @@ db,
 ),
 
 {
-
 uid:uid,
-
 nama:nama,
-
 email:email,
-
 wa:wa,
-
 jk:jk,
-
 foto:fotoURL,
-
 alamatLengkap:{
-
 kecamatan:
 kecamatan,
-
 kabupaten:
 kabupaten,
-
 provinsi:
 provinsi,
-
 dusun:
 dusun,
-
 kodepos:
 kodepos,
-
 alamat:
 alamat
-
 },
-
 role:
 "customer",
-
-saldo:0,
-
 status:
 "aktif",
-
 createdAt:
-Date.now()
-
+Date.now(),
+/* SALDO */
+saldo:0,
+saldoAfkar:0,
+saldoTertahan:0,
+poinAfkar:0,
+/* TRANSFER */
+noPay:noPay,
+pinTransfer:
+pinTransfer,
+totalMasuk:0,
+totalKeluar:0,
+/* STATISTIK */
+totalTransfer:0,
+totalBelanja:0,
+chat:0,
+rating:0
 }
 
 );
+
+
+
+
 
 status.innerText =
 "Pendaftaran berhasil";
