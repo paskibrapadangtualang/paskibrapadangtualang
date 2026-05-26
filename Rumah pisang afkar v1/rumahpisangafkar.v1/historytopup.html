@@ -460,18 +460,122 @@ historySnap.forEach(item => {
 const d = item.val();
 
 semuaData.push({
+
 id: d.id,
-type: d.type || "out",
-category: d.category || "purchase",
-amount: Number(d.amount || 0),
-metode: d.metode || "-",
-status: d.status || "pending",
-desc: d.desc || "-",   // 🔥 INI YANG KURANG
-createdAt: d.createdAt || Date.now()
+
+orderId:
+d.orderId ||
+d.pesananId ||
+d.order_id ||
+d.id,
+
+type:
+d.type || "out",
+
+category:
+d.category || "purchase",
+
+amount:
+Number(d.amount || 0),
+
+metode:
+d.metode || "-",
+
+status:
+d.status || "pending",
+
+desc:
+d.desc || "-",
+
+createdAt:
+d.createdAt || Date.now()
+
 });
 
 });
 }
+
+
+/* ================= TRANSFER HISTORY ================= */
+const transferSnap = await get(ref(db, "transfer"));
+
+if (transferSnap.exists()) {
+
+transferSnap.forEach(item => {
+
+const d = item.val();
+
+/* =================
+PENGIRIM
+================= */
+if (d.fromId === uid) {
+
+semuaData.push({
+
+id: d.id,
+type: "out",
+category: "transfer",
+
+amount: Number(d.nominal || 0),
+
+metode: "Transfer Saldo",
+
+status:
+d.status === "berhasil"
+? "approved"
+: "pending",
+
+desc:
+"Transfer ke " +
+(d.namaPenerima || "-") +
+" (" + (d.toNoPay || "-") + ")",
+
+createdAt:
+d.createdAt || Date.now()
+
+});
+
+}
+
+/* =================
+PENERIMA
+================= */
+if (d.toId === uid) {
+
+semuaData.push({
+
+id: d.id,
+type: "in",
+category: "transfer",
+
+amount: Number(d.nominal || 0),
+
+metode: "Transfer Masuk",
+
+status:
+d.status === "berhasil"
+? "approved"
+: "pending",
+
+desc:
+"Transfer dari " +
+(d.namaPengirim || "-") +
+" (" + (d.fromNoPay || "-") + ")",
+
+createdAt:
+d.createdAt || Date.now()
+
+});
+
+}
+
+});
+
+}
+
+
+
+
 /* ================= SORT ================= */
 semuaData.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 
@@ -503,12 +607,30 @@ for (const d of dataFilter) {
 
 const isMinus = d.type === "out";
 
-const icon = isMinus ? "fa-cart-shopping" : "fa-wallet";
+let icon = "fa-wallet";
+let title = "Transaksi";
 
-const title =
-d.category === "topup"
-? "Top Up Saldo"
-: "Pembelian Produk";
+if (d.category === "topup") {
+icon = "fa-wallet";
+title = "Top Up Saldo";
+}
+
+else if (d.category === "purchase") {
+icon = "fa-cart-shopping";
+title = "Pembelian Produk";
+}
+
+else if (d.category === "transfer") {
+
+icon = isMinus
+? "fa-paper-plane"
+: "fa-download";
+
+title = isMinus
+? "Transfer Keluar"
+: "Transfer Masuk";
+
+}
 
 const nominal = Number(d.amount || 0);
 
@@ -530,7 +652,7 @@ text = "Ditolak";
 }
 
 list.innerHTML += `
-<div class="card" onclick='lihatDetail(${JSON.stringify(d)})'>
+<div class="card" onclick='openHistory(${JSON.stringify(d)})'>
 
   <div class="topRow">
 
@@ -599,6 +721,57 @@ renderData(btn.dataset.filter);
 };
 
 });
+
+
+
+/* =========================
+OPEN HISTORY
+========================= */
+window.openHistory = function(data){
+
+/* =================
+TRANSFER
+================= */
+if(data.category === "transfer"){
+
+location.href =
+"buktitransaksi.html?id=" + data.id;
+
+return;
+
+}
+
+/* =================
+TOPUP
+================= */
+if(data.category === "topup"){
+
+location.href =
+"detailtopup.html?id=" + data.id;
+
+return;
+
+}
+
+/* =================
+PURCHASE
+================= */
+if(data.category === "purchase"){
+
+location.href =
+"detailpesanan.html?id=" +
+(data.orderId || data.id);
+
+return;
+
+}
+
+/* fallback */
+lihatDetail(data);
+
+};
+
+
 
 /* ================= DETAIL POPUP ================= */
 

@@ -1898,12 +1898,21 @@ await set(
   ref(db, "saldoHistory/" + uidUser + "/" + transaksiId),
   {
     id: transaksiId,
-    type: "out", // keluar uang
+
+    orderId: orderTemp.id,
+
+    type: "out",
+
     category: "purchase",
+
     amount: total,
+
     desc: "Pembayaran produk",
+
     metode: "SALDO",
-    status: "approved", // 🔥 FIX DI SINI
+
+    status: "approved",
+
     createdAt: Date.now()
   }
 );
