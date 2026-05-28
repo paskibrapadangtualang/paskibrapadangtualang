@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Admin Pesanan Marketplace</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{
+font-family:Arial;
+background:#f5f5f5;
+padding:15px;
+}
+
+.card{
+background:#fff;
+padding:12px;
+border-radius:12px;
+margin-bottom:12px;
+box-shadow:0 3px 10px rgba(0,0,0,.05);
+}
+
+.storeTitle{
+font-size:16px;
+font-weight:bold;
+color:#ff6f00;
+margin:15px 0 10px;
+}
+
+.orderBox{
+border:1px solid #eee;
+padding:10px;
+border-radius:10px;
+margin-bottom:10px;
+background:#fafafa;
+font-size:14px;
+}
+
+.status{
+font-size:12px;
+padding:4px 8px;
+border-radius:8px;
+background:#eee;
+display:inline-block;
+margin-top:5px;
+}
+
+button{
+margin-top:8px;
+width:100%;
+padding:8px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
+.del{
+background:#ff3b30;
+color:#fff;
+}
+</style>
+
+</head>
+<body>
+
+<h2>📦 Admin Semua Pesanan</h2>
+
+<div id="list">Loading...</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+getDatabase,
+ref,
+get,
+remove
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig={
+
+apiKey:
+"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+
+authDomain:
+"shoponline-93646.firebaseapp.com",
+
+databaseURL:
+"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"shoponline-93646"
+
+};
+
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+/* =========================
+LOAD PESANAN
+========================= */
+async function load(){
+
+const box = document.getElementById("list");
+box.innerHTML = "Loading...";
+
+const snap = await get(ref(db,"pesanan"));
+
+if(!snap.exists()){
+box.innerHTML = "Belum ada pesanan";
+return;
+}
+
+const data = snap.val();
+
+/* GROUP BY STORE */
+let storeMap = {};
+
+Object.values(data).forEach(order=>{
+
+const items = order.items || {};
+
+Object.values(items).forEach(item=>{
+
+const storeId = item.storeId || "unknown";
+
+if(!storeMap[storeId]){
+storeMap[storeId] = [];
+}
+
+storeMap[storeId].push({
+orderId: order.id,
+nama: order.nama,
+total: order.total,
+status: order.status,
+produk: item.nama,
+qty: item.qty
+});
+
+});
+
+});
+
+/* RENDER */
+let html = "";
+
+Object.keys(storeMap).forEach(storeId=>{
+
+html += `
+<div class="card">
+<div class="storeTitle">🛒 Store: ${storeId}</div>
+`;
+
+storeMap[storeId].forEach(o=>{
+
+html += `
+<div class="orderBox">
+<b>Order:</b> ${o.orderId}<br>
+<b>Pembeli:</b> ${o.nama}<br>
+<b>Produk:</b> ${o.produk}<br>
+<b>Qty:</b> ${o.qty}<br>
+<b>Total:</b> Rp ${Number(o.total).toLocaleString("id-ID")}<br>
+
+<span class="status">${o.status}</span>
+
+<button class="del" onclick="hapusOrder('${o.orderId}')">
+Hapus Order
+</button>
+
+</div>
+`;
+
+});
+
+html += `</div>`;
+
+});
+
+box.innerHTML = html;
+
+}
+
+/* =========================
+HAPUS ORDER
+========================= */
+window.hapusOrder = async(orderId)=>{
+
+const ok = confirm("Hapus order ini?");
+
+if(!ok) return;
+
+await remove(ref(db,"pesanan/"+orderId));
+
+alert("Order dihapus");
+
+load();
+
+};
+
+load();
+
+</script>
+
+</body>
+</html>

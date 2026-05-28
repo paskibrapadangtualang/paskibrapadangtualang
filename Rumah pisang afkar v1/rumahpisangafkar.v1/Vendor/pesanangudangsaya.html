@@ -741,15 +741,12 @@ async(orderId)=>{
 
 try{
 
-const yes = await new Promise(resolve=>{
-
-showConfirm(
-"Tolak Pesanan",
-"Yakin ingin membatalkan pesanan ini?",
-()=>resolve(true)
+const yes = await showConfirm(
+  "Tolak Pesanan",
+  "Yakin ingin membatalkan pesanan ini?"
 );
 
-});
+if (!yes) return;
 
 if(!yes)
 return;

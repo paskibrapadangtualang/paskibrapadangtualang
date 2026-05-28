@@ -1180,7 +1180,8 @@ get,
 
 push,
 
-set
+set,
+update
 
 }
 
@@ -1220,295 +1221,6 @@ ref(
 db,
 "pesanan"
 );
-
-async function createDummyPesanan(){
-
-try{
-
-const snap=
-await get(
-pesananRef
-);
-
-if(
-snap.exists() &&
-Object.keys(
-snap.val()
-).length >= 3
-){
-
-console.log(
-"Pesanan dummy sudah ada"
-);
-
-return;
-
-}
-
-console.log(
-"MEMBUAT DUMMY PESANAN"
-);
-
-const dummyPesanan={
-
-ord1:{
-
-id:"ord1",
-
-user:
-"usr1",
-
-nama:
-"Ilham Test",
-
-status:
-"pending",
-
-tanggal:
-"2026-05-23",
-
-metode:
-"QRIS",
-
-ongkir:
-10000,
-
-subtotal:
-20000,
-
-total:
-30000,
-
-createdAt:
-Date.now(),
-
-alamat:{
-
-alamat:
-"Jl. Jwalisaongo padang tualang",
-
-dusun:
-"walidongoo",
-
-kecamatan:
-"padang tualang",
-
-kabupaten:
-"langkat",
-
-provinsi:
-"Sumatera Utara",
-
-kodepos:
-"20218"
-
-},
-
-items:{
-
-prd1:{
-
-id:"prd1",
-
-nama:
-"Keripik Pisang Original Premium",
-
-harga:
-15000,
-
-qty:
-1,
-
-gambar:
-"https://images.unsplash.com/photo-1576618148400-f54bed99fcfd"
-
-},
-
-prd2:{
-
-id:"prd2",
-
-nama:
-"Keripik Pisang Balado",
-
-harga:
-5000,
-
-qty:
-1,
-
-gambar:
-"https://images.unsplash.com/photo-1509440159596-0249088772ff"
-
-}
-
-}
-
-},
-
-ord2:{
-
-id:"ord2",
-
-user:
-"usr1",
-
-nama:
-"Ilham Test",
-
-status:
-"dikirim",
-
-tanggal:
-"2026-05-22",
-
-metode:
-"OVO",
-
-ongkir:
-8000,
-
-subtotal:
-42000,
-
-total:
-50000,
-
-createdAt:
-Date.now()-86400000,
-
-alamat:{
-
-alamat:
-"Padang Tualang",
-
-kabupaten:
-"Langkat",
-
-provinsi:
-"Sumatera Utara"
-
-},
-
-items:{
-
-prd3:{
-
-id:"prd3",
-
-nama:
-"Pisang Coklat Mini",
-
-harga:
-12000,
-
-qty:
-2
-
-},
-
-prd4:{
-
-id:"prd4",
-
-nama:
-"Banana Crispy Keju",
-
-harga:
-18000,
-
-qty:
-1
-
-}
-
-}
-
-},
-
-ord3:{
-
-id:"ord3",
-
-user:
-"usr1",
-
-nama:
-"Ilham Test",
-
-status:
-"selesai",
-
-tanggal:
-"2026-05-21",
-
-metode:
-"BRI",
-
-ongkir:
-10000,
-
-subtotal:
-35000,
-
-total:
-45000,
-
-createdAt:
-Date.now()-172800000,
-
-alamat:{
-
-alamat:
-"Padang Tualang"
-
-},
-
-items:{
-
-prd5:{
-
-id:"prd5",
-
-nama:
-"Paket Hemat Rumah Pisang",
-
-harga:
-45000,
-
-qty:
-1
-
-}
-
-}
-
-}
-
-};
-
-await set(
-pesananRef,
-dummyPesanan
-);
-
-console.log(
-"Dummy pesanan selesai dibuat"
-);
-
-}
-catch(err){
-
-console.log(
-"ERROR PESANAN:",
-err
-);
-
-}
-
-}
-
-
 
 
 /* GANTI NANTI DENGAN AUTH */
@@ -1786,309 +1498,187 @@ orderTemp=null;
 };
 
 
-window.confirmOrderNow=
-async()=>{
+window.confirmOrderNow = async () => {
 
-try{
+  try {
 
-if(!orderTemp) return;
+    if (!orderTemp) return;
 
+    /* =========================
+    SIMPAN PESANAN UTAMA
+    ========================= */
 
-/* simpan pesanan */
+    await set(
+      ref(db, "pesanan/" + orderTemp.id),
+      orderTemp
+    );
 
-await set(
-
-ref(
-db,
-"pesanan/"+orderTemp.id
-),
-
-orderTemp
-
-);
-
-
-
+    /* =========================
+    ESCROW MASUK adminDana
+    ========================= */
 /* =========================
-SIMPAN PESANAN UTAMA
+ESCROW MASUK adminDana
 ========================= */
+const adminRef = ref(db, "adminDana");
+const adminSnap = await get(adminRef);
 
-await set(
-
-ref(
-db,
-"pesanan/" + orderTemp.id
-),
-
-orderTemp
-
-);
-
-/* =========================
-BUAT PESANAN STORE
-========================= */
-
-const itemsOrder =
-orderTemp.items || {};
-
-/* GROUP BY STORE */
-
-let groupedStore = {};
-
-Object.values(itemsOrder).forEach(item=>{
-
-const sid =
-item.storeId || "unknown";
-
-if(!groupedStore[sid]){
-
-groupedStore[sid] = [];
-
+if (!adminSnap.exists()) {
+  throw new Error("adminDana tidak ditemukan");
 }
 
-groupedStore[sid].push(item);
+const adminData = adminSnap.val();
+const amount = Number(orderTemp.total || 0);
 
+// 1. UPDATE BALANCE
+await update(adminRef, {
+  locked: Number(adminData.locked || 0) + amount,
+  updatedAt: Date.now()
 });
 
-/* LOOP STORE */
-
-for(const sid in groupedStore){
-
-const itemsStore =
-groupedStore[sid];
-
-/* =========================
-CEK ADA PRODUK GUDANG?
-========================= */
-
-const adaGudang =
-itemsStore.some(x=>
-x.gudangProduk === true
-);
-
-const storeOrderId =
-"STORE_" + Date.now() + "_" + sid;
-
-/* =========================
-HITUNG TOTAL
-========================= */
-
-let subtotalStore = 0;
-
-itemsStore.forEach(x=>{
-
-subtotalStore +=
-(Number(x.harga || 0) *
-Number(x.qty || 1));
-
-});
-
-/* =========================
-DATA ORDER STORE
-========================= */
-
-const storeOrder = {
-
-id:
-storeOrderId,
-
-orderUtama:
-orderTemp.id,
-
-storeId:
-sid,
-
-user:
-uidUser,
-
-namaPembeli:
-user.nama || "",
-
-fotoPembeli:
-user.foto || "",
-
-status:
-"pending",
-
-metode:
-orderTemp.metode || "COD",
-
-subtotal:
-subtotalStore,
-
-total:
-subtotalStore,
-
-createdAt:
-Date.now(),
-
-gudangOrder:
-adaGudang,
-
-items:
-itemsStore
-
-};
-
-/* =========================
-ORDER STORE NORMAL
-========================= */
+// 2. HISTORY
+const historyId = "ADM_" + Date.now();
 
 await set(
-
-ref(
-db,
-"pesananStore/" + storeOrderId
-),
-
-storeOrder
-
+  ref(db, "adminDanaHistory/" + historyId),
+  {
+    id: historyId,
+    orderId: orderTemp.id,
+    from: orderTemp.user,
+    amount: amount,
+    type: "escrow_in",
+    createdAt: Date.now()
+  }
 );
+    /* =========================
+    BUAT PESANAN STORE
+    ========================= */
 
-/* =========================
-JIKA PRODUK GUDANG
-========================= */
+    const itemsOrder = orderTemp.items || {};
 
-if(adaGudang){
+    let groupedStore = {};
 
-await set(
+    Object.values(itemsOrder).forEach(item => {
 
-ref(
-db,
-"pesananGudang/" + storeOrderId
-),
+      const sid = item.storeId || "unknown";
 
-{
+      if (!groupedStore[sid]) {
+        groupedStore[sid] = [];
+      }
 
-...storeOrder,
+      groupedStore[sid].push(item);
 
-status:
-"menunggu_diterima_store",
+    });
 
-saldoRequired:
-itemsStore.reduce((t,i)=>{
+    for (const sid in groupedStore) {
 
-return t + (
+      const itemsStore = groupedStore[sid];
 
-Number(i.hargaModal || 0)
+      const adaGudang = itemsStore.some(x =>
+        x.gudangProduk === true
+      );
 
-*
+      const storeOrderId = "STORE_" + Date.now() + "_" + sid;
 
-Number(i.qty || 1)
+      let subtotalStore = 0;
 
-);
+      itemsStore.forEach(x => {
+        subtotalStore +=
+          (Number(x.harga || 0) *
+          Number(x.qty || 1));
+      });
 
-},0)
+      const storeOrder = {
 
-}
+        id: storeOrderId,
 
-);
+        orderUtama: orderTemp.id,
 
-}
+        storeId: sid,
 
-}
+        user: uidUser,
 
+        namaPembeli: user.nama || "",
 
+        fotoPembeli: user.foto || "",
 
+        status: "pending",
+
+        metode: orderTemp.metode || "COD",
+
+        subtotal: subtotalStore,
+
+        total: subtotalStore,
+
+        createdAt: Date.now(),
+
+        gudangOrder: adaGudang,
+
+        items: itemsStore
+
+      };
+
+      await set(
+        ref(db, "pesananStore/" + storeOrderId),
+        storeOrder
+      );
+
+      if (adaGudang) {
+
+        await set(
+          ref(db, "pesananGudang/" + storeOrderId),
+          {
+            ...storeOrder,
+            status: "menunggu_diterima_store",
+
+            saldoRequired: itemsStore.reduce((t, i) => {
+              return t + (
+                Number(i.hargaModal || 0) *
+                Number(i.qty || 1)
+              );
+            }, 0)
+          }
+        );
+
+      }
+
+    }
 
 /* =========================
 KURANGI STOCK PRODUK
 ========================= */
+    /* =========================
+    KURANGI STOK PRODUK
+    ========================= */
 
-const itemsStock =
-orderTemp.items || {};
+    const itemsStock = orderTemp.items || {};
 
-for (const key in itemsStock) {
+    for (const key in itemsStock) {
 
-  const item =
-  itemsStock[key];
+      const item = itemsStock[key];
+      const produkId = item.id || item.produkId;
 
-  /* AMBIL ID PRODUK */
+      if (!produkId) continue;
 
-  const produkId =
-  item.id || item.produkId;
+      const qtyBeli = Number(item.qty || 1);
 
-  if (!produkId) {
+      const produkRef = ref(db, "produk/" + produkId);
+      const produkSnap = await get(produkRef);
 
-    console.log(
-    "❌ Produk ID tidak ditemukan:",
-    item
-    );
+      if (!produkSnap.exists()) continue;
 
-    continue;
+      const produk = produkSnap.val();
 
-  }
+      const stokBaru = Math.max(
+        Number(produk.stok || 0) - qtyBeli,
+        0
+      );
 
-  const qtyBeli =
-  Number(item.qty || 1);
+      await set(
+        ref(db, "produk/" + produkId + "/stok"),
+        stokBaru
+      );
 
-  const produkRef =
-  ref(
-  db,
-  "produk/" + produkId
-  );
-
-  const produkSnap =
-  await get(produkRef);
-
-  if (!produkSnap.exists()) {
-
-    console.log(
-    "❌ Produk tidak ditemukan:",
-    produkId
-    );
-
-    continue;
-
-  }
-
-  const produk =
-  produkSnap.val();
-
-  /* STOK LAMA */
-
-  const stokLama =
-  Number(produk.stok || 0);
-
-  /* STOK BARU */
-
-  const stokBaru =
-  Math.max(
-  stokLama - qtyBeli,
-  0
-  );
-
-  /* UPDATE STOK */
-
-  await set(
-
-    ref(
-    db,
-    "produk/" +
-    produkId +
-    "/stok"
-    ),
-
-    stokBaru
-
-  );
-
-  console.log(
-
-    "✅ STOK BERKURANG:",
-
-    produkId,
-
-    stokLama,
-
-    "→",
-
-    stokBaru
-
-  );
-
-}
-
+    }
 
 
 
@@ -2193,29 +1783,26 @@ await set(
 SELESAI ORDER
 ========================= */
 
-document.getElementById("confirmBox").style.display = "none";
+   /* =========================
+    DONE
+    ========================= */
 
-showToast(
-"Pesanan berhasil dibuat",
-"success"
-);
+    document.getElementById("confirmBox").style.display = "none";
 
-location.href = "orderan.html";
+    showToast("Pesanan berhasil dibuat", "success");
 
-}
-catch(err){
+    location.href = "orderan.html";
 
-console.log(err);
+  } catch (err) {
 
-alert(
-"Gagal membuat pesanan"
-);
+    console.log("🔥 ERROR DETAIL:", err);
+    console.log("ORDER TEMP:", orderTemp);
 
-}
+    alert("Gagal: " + err.message);
+
+  }
 
 };
-
-
 
 /* ===========================
 PRODUK CHECKOUT
@@ -2988,11 +2575,8 @@ v.minBelanja || 0
 ).toLocaleString("id-ID")}`,
 
 "warning"
-
 );
-
 return;
-
 }
 
 /* =========================
@@ -3022,11 +2606,7 @@ showToast(
 "Voucher berhasil digunakan",
 "success"
 );
-
 };
-
-
-
 /* =========================
 LOAD VOUCHER CHECKOUT
 ========================= */
@@ -3316,44 +2896,28 @@ Voucher :
 DUMMY BIAYA CHECKOUT
 SIMPAN KE FIREBASE
 ========================= */
-
 async function createDummyBiayaCheckout(){
-
 try{
-
 const snap = await get(
 ref(db,"pengaturanCheckout")
 );
-
 if(snap.exists()){
 console.log("Biaya checkout sudah ada");
 return;
 }
-
 /* =========================
 DATA DUMMY
 ========================= */
-
 const data = {
-
 adminFee: 2500,
-
 ongkir: {
-
 regular: 12000,
-
 express: 25000,
-
 sameDay: 40000
-
 },
-
 codFee: 5000,
-
 minimalGratisOngkir: 150000
-
 };
-
 await set(
 ref(db,"pengaturanCheckout"),
 data
@@ -3377,26 +2941,6 @@ err
 
 /* jalankan */
 await createDummyBiayaCheckout();
-
-
-
-
-
-
-
-
-
-
-
-
-
-await createDummyPesanan();
-
-
-
-
-
-
 
 
 
@@ -3462,27 +3006,6 @@ div.remove();
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 window.toggleBank = ()=>{
 
 const list =
@@ -3498,32 +3021,17 @@ document.getElementById(
 if(
 list.style.display==="none"
 ||
-
 list.style.display===""
-
 ){
-
 list.style.display="block";
-
 arrow.innerHTML="⌃";
-
 }else{
-
 list.style.display="none";
-
 arrow.innerHTML="›";
-
 }
 
 };
 </script>
-
-
-
-
-
-
-
 
 <!-- POPUP KONFIRMASI -->
 

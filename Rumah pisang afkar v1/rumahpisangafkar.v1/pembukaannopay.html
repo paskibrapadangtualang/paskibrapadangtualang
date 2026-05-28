@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Buka AfkarmallPay</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f5f5f5;
+padding-bottom:100px;
+}
+
+.header{
+
+background:linear-gradient(
+180deg,
+#ff6f00,
+#ff8300
+);
+
+padding:25px 20px 40px;
+
+color:white;
+
+}
+
+.header h1{
+font-size:24px;
+margin-top:15px;
+}
+
+.header p{
+font-size:14px;
+margin-top:8px;
+opacity:.95;
+line-height:1.5;
+}
+
+.walletIcon{
+
+width:80px;
+height:80px;
+
+background:white;
+
+border-radius:24px;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+color:#ff7a00;
+
+font-size:38px;
+
+box-shadow:
+0 10px 25px rgba(0,0,0,.15);
+
+}
+
+.card{
+
+background:white;
+
+margin:-20px 15px 0;
+
+border-radius:22px;
+
+padding:20px;
+
+box-shadow:
+0 5px 20px rgba(0,0,0,.08);
+
+}
+
+.sectionTitle{
+
+font-size:18px;
+font-weight:bold;
+margin-bottom:15px;
+color:#222;
+
+}
+
+.article{
+
+font-size:14px;
+line-height:1.8;
+color:#444;
+
+}
+
+.article p{
+margin-bottom:15px;
+}
+
+.warning{
+
+background:#fff8e7;
+
+border-left:4px solid #ff9800;
+
+padding:15px;
+
+border-radius:10px;
+
+margin:15px 0;
+
+}
+
+.warning strong{
+color:#e65100;
+}
+
+.list{
+
+margin-top:10px;
+padding-left:20px;
+
+}
+
+.list li{
+margin-bottom:10px;
+}
+
+.commitment{
+
+background:#f8f8f8;
+padding:15px;
+border-radius:12px;
+margin-top:20px;
+}
+
+.footerBtn{
+
+position:fixed;
+left:0;
+right:0;
+bottom:0;
+
+background:white;
+
+padding:15px;
+
+box-shadow:
+0 -5px 20px rgba(0,0,0,.08);
+
+}
+
+.btn{
+
+width:100%;
+
+height:52px;
+
+border:none;
+
+border-radius:14px;
+
+background:#ff7a00;
+
+color:white;
+
+font-size:16px;
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+.btn:active{
+transform:scale(.98);
+}
+
+
+
+
+.agreeBox{
+
+margin-top:25px;
+
+padding:15px;
+
+background:#fafafa;
+
+border:1px solid #eee;
+
+border-radius:12px;
+
+}
+
+.agreeBox label{
+
+display:flex;
+align-items:flex-start;
+gap:12px;
+
+font-size:13px;
+
+line-height:1.6;
+
+cursor:pointer;
+
+}
+
+.agreeBox input{
+
+margin-top:4px;
+transform:scale(1.2);
+
+}
+
+.popupOverlay{
+
+display:none;
+
+position:fixed;
+top:0;
+left:0;
+right:0;
+bottom:0;
+
+background:rgba(0,0,0,.45);
+
+z-index:99999;
+
+justify-content:center;
+align-items:center;
+
+}
+
+.popupBox{
+
+width:90%;
+max-width:350px;
+
+background:white;
+
+border-radius:20px;
+
+padding:25px;
+
+text-align:center;
+
+animation:pop .2s ease;
+
+}
+
+.popupTitle{
+
+font-size:18px;
+font-weight:bold;
+
+margin-top:10px;
+
+}
+
+.popupText{
+
+margin-top:10px;
+
+font-size:14px;
+
+color:#666;
+
+line-height:1.6;
+
+}
+
+.popupBox button{
+
+margin-top:20px;
+
+width:100%;
+
+height:46px;
+
+border:none;
+
+background:#ff7a00;
+
+color:white;
+
+font-weight:bold;
+
+border-radius:5px;
+
+}
+
+@keyframes pop{
+
+from{
+transform:scale(.9);
+opacity:0;
+}
+
+to{
+transform:scale(1);
+opacity:1;
+}
+
+}
+.popupIcon{
+display:flex;
+justify-content:center;
+align-items:center;
+margin-bottom:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+
+<div class="walletIcon">
+<i class="fa-solid fa-wallet"></i>
+</div>
+
+<h1>AfkarmallPay</h1>
+
+<p>
+Layanan saldo digital untuk transaksi yang lebih cepat,
+mudah dan praktis di dalam ekosistem Afkarmall.
+</p>
+
+</div>
+
+<div class="card">
+
+<div class="sectionTitle">
+Selamat Datang di AfkarmallPay
+</div>
+
+<div class="article">
+
+<p>
+AfkarmallPay merupakan layanan saldo digital yang
+terintegrasi dengan platform Afkarmall. Melalui
+AfkarmallPay, pengguna dapat melakukan berbagai
+aktivitas transaksi seperti menerima saldo,
+melakukan transfer saldo kepada pengguna lain,
+serta menggunakan saldo untuk kebutuhan transaksi
+di dalam platform.
+</p>
+
+<p>
+Kami menghadirkan AfkarmallPay sebagai solusi
+pembayaran yang praktis dan mudah digunakan
+oleh seluruh pengguna. Pengembangan layanan
+ini dilakukan secara bertahap dengan tujuan
+memberikan pengalaman transaksi yang lebih
+cepat, nyaman dan efisien.
+</p>
+
+<div class="warning">
+
+<strong>Penting Untuk Diketahui</strong>
+
+<p style="margin-top:8px;">
+Keamanan sistem terus kami tingkatkan dari waktu ke waktu.
+Namun demikian, keamanan layanan digital tidak dapat
+dijamin secara mutlak 100%.
+</p>
+
+<p>
+Untuk itu kami menyarankan agar pengguna tidak
+menyimpan saldo dalam jumlah yang terlalu besar
+di dalam AfkarmallPay apabila belum diperlukan
+untuk transaksi.
+</p>
+
+</div>
+
+<p>
+Pengguna bertanggung jawab penuh untuk menjaga
+keamanan akun dan perangkat yang digunakan.
+Segala bentuk kelalaian yang menyebabkan akun
+diakses pihak lain dapat menimbulkan risiko
+terhadap keamanan saldo dan data pengguna.
+</p>
+
+<div class="sectionTitle" style="margin-top:25px;">
+Jaga Kerahasiaan Akun Anda
+</div>
+
+<ul class="list">
+
+<li>Jangan membagikan PIN Transfer kepada siapa pun.</li>
+
+<li>Jangan memberikan kode OTP atau kode verifikasi kepada siapa pun.</li>
+
+<li>Jangan meminjamkan akun Afkarmall kepada orang lain.</li>
+
+<li>Gunakan kata sandi yang kuat dan aman.</li>
+
+<li>Pastikan perangkat Anda terlindungi dari akses pihak lain.</li>
+
+<li>Selalu keluar dari akun pada perangkat umum.</li>
+
+</ul>
+
+<p style="margin-top:20px;">
+Perlu diketahui bahwa pihak Afkarmall tidak akan
+pernah meminta PIN Transfer, kata sandi, maupun
+kode verifikasi milik pengguna dengan alasan apa pun.
+</p>
+
+<div class="commitment">
+
+<b>Komitmen Afkarmall</b>
+
+<p style="margin-top:10px;">
+Kami akan terus berusaha mengembangkan sistem
+AfkarmallPay agar menjadi lebih aman, stabil,
+dan nyaman digunakan oleh seluruh pengguna.
+Berbagai peningkatan fitur keamanan dan perlindungan
+transaksi akan terus dilakukan secara bertahap
+sesuai perkembangan platform.
+</p>
+
+</div>
+
+<p style="margin-top:20px;">
+Dengan melanjutkan proses aktivasi AfkarmallPay,
+Anda menyatakan telah membaca, memahami,
+dan menyetujui penggunaan layanan sesuai
+ketentuan yang berlaku di platform Afkarmall.
+</p>
+
+</div>
+<div class="agreeBox">
+
+<label>
+
+<input
+type="checkbox"
+id="agreeTerms">
+
+<span>
+Saya telah membaca, memahami dan menyetujui
+Syarat & Ketentuan AfkarmallPay serta kebijakan
+penggunaan layanan yang berlaku di platform
+Afkarmall.
+</span>
+
+</label>
+
+</div>
+</div>
+
+
+
+
+<div class="footerBtn">
+
+<button
+class="btn"
+onclick="lanjutBukaPay()">
+
+Lanjut Buka AfkarmallPay
+
+</button>
+
+</div>
+
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get,
+set,
+update,
+onValue
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+import {
+getAuth,
+onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+// =========================
+// FIREBASE CONFIG
+// =========================
+
+const firebaseConfig = {
+apiKey:"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+authDomain:"shoponline-93646.firebaseapp.com",
+databaseURL:"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"shoponline-93646",
+storageBucket:"shoponline-93646.firebasestorage.app",
+messagingSenderId:"435032364443",
+appId:"1:435032364443:web:5f76384f794693a892bd3e"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+
+const uid =
+localStorage.getItem(
+"userId"
+);
+
+
+
+
+
+
+
+
+window.lanjutBukaPay = async function(){
+
+  const agree =
+  document.getElementById(
+  "agreeTerms"
+  );
+
+  if(!agree.checked){
+
+    tampilPopup(
+      "Silakan setujui Syarat & Ketentuan AfkarmallPay terlebih dahulu."
+    );
+
+    return;
+  }
+
+  try{
+
+    await update(
+      ref(db,"users/"+uid),
+      {
+        setujuSyaratAfkarmallPay:true,
+        waktuPersetujuan:Date.now()
+      }
+    );
+
+    location.href =
+    "formbukapay.html";
+
+  }catch(err){
+
+    console.log(err);
+
+    tampilPopup(
+      "Gagal menyimpan persetujuan."
+    );
+
+  }
+
+}
+
+
+
+
+
+function tampilPopup(text){
+
+document.getElementById(
+"popupText"
+).innerText = text;
+
+document.getElementById(
+"popupOverlay"
+).style.display = "flex";
+
+}
+
+window.tutupPopup = function(){
+
+document.getElementById(
+"popupOverlay"
+).style.display = "none";
+
+}
+
+
+
+</script>
+
+
+
+<div id="popupOverlay" class="popupOverlay">
+
+<div class="popupBox">
+
+<div class="popupIcon">
+  <img
+    src="assets/images/watermak.jpeg"
+    alt="Warning"
+    style="
+      width:100px;
+      height:100px;
+      object-fit:contain;
+    ">
+</div>
+
+<div class="popupTitle">
+Perhatian
+</div>
+
+<div
+class="popupText"
+id="popupText">
+</div>
+
+<button
+onclick="tutupPopup()">
+Mengerti
+</button>
+
+</div>
+
+</div>
+
+</body>
+</html>

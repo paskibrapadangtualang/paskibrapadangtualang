@@ -101,17 +101,18 @@ padding:0 15px;
 
 .card{
 background:white;
-border-radius:22px;
+border-radius:8px;
 padding:16px;
 margin-bottom:14px;
-box-shadow:0 4px 12px rgba(0,0,0,.05);
+
 }
 
 .topRow{
-display:flex;
-justify-content:space-between;
-align-items:flex-start;
-gap:10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+  width:100%;
 }
 
 .leftRow{
@@ -149,6 +150,19 @@ line-height:1.5;
 font-size:17px;
 font-weight:bold;
 text-align:right;
+flex-shrink:0;
+max-width:140px;
+overflow:hidden;
+text-overflow:ellipsis;
+white-space:nowrap;
+}
+
+
+.leftRow{
+display:flex;
+gap:12px;
+flex:1;
+min-width:0;
 }
 
 .amount.plus{

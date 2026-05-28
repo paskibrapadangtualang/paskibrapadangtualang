@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <title>Detail Produk</title>
 
 <style>
@@ -392,6 +392,124 @@ height:360px;
 
 <body>
 
+
+<div id="alamatModal" style="
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.5);
+z-index:99999;
+align-items:center;
+justify-content:center;
+">
+
+  <div style="
+  width:90%;
+  max-width:320px;
+  background:white;
+  border-radius:16px;
+  padding:20px;
+  text-align:center;
+  box-shadow:0 10px 30px rgba(0,0,0,.2);
+  ">
+
+    <img src="assets/images/watermak.jpeg"
+    style="width:200px;margin-bottom:10px;">
+
+    <h3 style="margin-bottom:8px;">Alamat belum lengkap</h3>
+
+    <p style="font-size:13px;color:#666;margin-bottom:15px;">
+      Lengkapi alamat kamu dulu sebelum checkout
+    </p>
+
+    <button onclick="window.location.href='editdata.html'"
+    style="
+    width:100%;
+    padding:12px;
+    background:#ff9800;
+    border:none;
+    color:white;
+    border-radius:10px;
+    font-weight:bold;
+    margin-bottom:8px;
+    ">
+      Lengkapi Sekarang
+    </button>
+
+    <button onclick="closeAlamatModal()"
+    style="
+    width:100%;
+    padding:10px;
+    background:#eee;
+    border:none;
+    border-radius:10px;
+    ">
+      Nanti saja
+    </button>
+
+  </div>
+
+</div>
+
+
+
+
+
+<div id="stokModal" style="
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.5);
+z-index:99999;
+align-items:center;
+justify-content:center;
+">
+
+  <div style="
+  width:90%;
+  max-width:320px;
+  background:white;
+  border-radius:16px;
+  padding:20px;
+  text-align:center;
+  box-shadow:0 10px 30px rgba(0,0,0,.2);
+  ">
+
+    <div style="font-size:40px;color:#ff9800;margin-bottom:10px;">
+     <i class="fa-solid fa-cart-shopping"></i>
+    </div>
+
+    <h3 style="margin-bottom:8px;">Stok Habis</h3>
+
+    <p style="font-size:13px;color:#666;margin-bottom:15px;">
+      Produk ini sedang tidak tersedia untuk dibeli
+    </p>
+
+    <button onclick="closeStokModal()"
+    style="
+    width:100%;
+    padding:12px;
+    background:#ff9800;
+    border:none;
+    color:white;
+    border-radius:10px;
+    font-weight:bold;
+    ">
+      Oke
+    </button>
+
+  </div>
+
+</div>
+
+
+
+
+
+
+
+
+
 <div id="slider" class="slider"></div>
 
 <div class="info">
@@ -620,6 +738,30 @@ function getUID(){
   return localStorage.getItem("userId");
 }
 
+
+async function cekAlamatLengkap(uid) {
+  const snap = await get(ref(db, "users/" + uid));
+
+  if (!snap.exists()) return false;
+
+  const u = snap.val();
+  const a = u.alamatLengkap || {};
+
+  return (
+    a.alamat &&
+    a.dusun &&
+    a.kabupaten &&
+    a.kecamatan &&
+    a.kodepos &&
+    a.provinsi
+  );
+}
+
+
+
+
+
+
 function isLogin(){
   return !!localStorage.getItem("userId");
 }
@@ -813,10 +955,10 @@ LOAD REVIEW (FIX FINAL)
 const reviewList = document.getElementById("reviewList");
 const reviewSnap = await get(ref(db, "review/" + id));
 
-reviewList.innerHTML = "";
-
 let totalRating = 0;
 let totalReview = 0;
+
+reviewList.innerHTML = "";
 
 if (reviewSnap.exists()) {
 
@@ -829,7 +971,6 @@ if (reviewSnap.exists()) {
     totalReview++;
     totalRating += Number(r.rating || 0);
 
-    // ambil data user dari review (atau fallback)
     const namaUser = r.nama || "User";
     const fotoUser = r.foto || "assets/images/feedback.png";
 
@@ -845,9 +986,9 @@ if (reviewSnap.exists()) {
           <div style="display:flex;justify-content:space-between;">
             <b>${namaUser}</b>
             <span style="display:flex;align-items:center;gap:3px;">
-  ${renderStars(r.rating)}
-  <small style="color:#666;margin-left:4px;">(${r.rating})</small>
-</span>
+              ${renderStars(r.rating)}
+              <small style="color:#666;margin-left:4px;">(${r.rating})</small>
+            </span>
           </div>
 
           <div style="font-size:13px;color:#555;margin-top:4px;">
@@ -859,9 +1000,7 @@ if (reviewSnap.exists()) {
       </div>
     `;
   });
-
 }
-
 
 function renderStars(rating) {
   let stars = "";
@@ -962,6 +1101,17 @@ stok.innerHTML=
 data.stok;
 
 
+
+
+// 🔥 TAMBAHKAN INI DI BAWAHNYA
+const stokValue = Number(data.stok || 0);
+
+if (stokValue <= 0) {
+
+}
+
+
+
 document.getElementById("kategori").innerHTML = `
 <span style="
 background:#ff6f00;
@@ -1028,7 +1178,15 @@ zoom.style.display=
 
 window.addCart = async () => {
 
-  if(!requireLogin()) return;
+  if (!requireLogin()) return;
+
+  // 🔥 CEK STOK DULU
+  const stok = Number(data.stok || 0);
+
+  if (stok <= 0) {
+    showStokModal(); // popup Shopee
+    return; // STOP
+  }
 
   const uid = getUID();
 
@@ -1132,9 +1290,27 @@ window.addCart = async () => {
 
 
 
-window.checkoutNow = () => {
+window.checkoutNow = async () => {
 
   if (!requireLogin()) return;
+
+  // CEK STOK DULU
+  const stok = Number(data.stok || 0);
+
+  if (stok <= 0) {
+    showStokModal(); // popup Shopee
+    return; // STOP DI SINI
+  }
+
+  const uid = getUID();
+
+  const alamatLengkap = await cekAlamatLengkap(uid);
+
+  if (!alamatLengkap) {
+    showAlamatModal();
+    return;
+  }
+
 
   const productId =
     data.id ||
@@ -1142,78 +1318,33 @@ window.checkoutNow = () => {
     "prod_" + Date.now();
 
   const product = {
-
     id: productId,
-
     nama: data.nama || "",
-
     harga: Number(data.harga) || 0,
-
     qty: 1,
-
     gambar: Array.isArray(data.gambar)
       ? data.gambar[0]
       : (data.gambar || ""),
-
-    storeId:
-    data.storeId || "unknown_store",
-
-    /* =========================
-    PRODUK GUDANG
-    ========================= */
-
-    gudangProduk:
-    data.gudangProduk || false,
-
-    gudangId:
-    data.gudangId || "",
-
-    supplier:
-    data.supplier || "",
-
-    supplierResmi:
-    data.supplierResmi || false,
-
-    /* =========================
-    HARGA
-    ========================= */
-
-    hargaModal:
-    Number(data.hargaModal || 0),
-
-    hargaJual:
-    Number(data.hargaJual || data.harga || 0),
-
-    keuntunganStore:
-    Number(data.keuntunganStore || 0),
-
-    komisi:
-    Number(data.komisi || 0),
-
-    komisiPersen:
-    Number(data.komisiPersen || 0),
-
-    penjelasanKomisi:
-    data.penjelasanKomisi || ""
-
+    storeId: data.storeId || "unknown_store",
+    gudangProduk: data.gudangProduk || false,
+    gudangId: data.gudangId || "",
+    supplier: data.supplier || "",
+    supplierResmi: data.supplierResmi || false,
+    hargaModal: Number(data.hargaModal || 0),
+    hargaJual: Number(data.hargaJual || data.harga || 0),
+    keuntunganStore: Number(data.keuntunganStore || 0),
+    komisi: Number(data.komisi || 0),
+    komisiPersen: Number(data.komisiPersen || 0),
+    penjelasanKomisi: data.penjelasanKomisi || ""
   };
 
-  localStorage.setItem(
-    "checkoutMode",
-    "buynow"
-  );
-
-  localStorage.setItem(
-    "buyNowCart",
-    JSON.stringify({
-      [product.id]: product
-    })
-  );
+  localStorage.setItem("checkoutMode", "buynow");
+  localStorage.setItem("buyNowCart", JSON.stringify({
+    [product.id]: product
+  }));
 
   location.href = "checkout.html";
-
 };
-
 
 
 
@@ -1233,6 +1364,27 @@ window.chatSeller = () => {
 };
 
 
+
+
+
+
+window.closeAlamatModal = function () {
+  document.getElementById("alamatModal").style.display = "none";
+};
+
+window.showAlamatModal = function () {
+  document.getElementById("alamatModal").style.display = "flex";
+};
+
+
+
+window.showStokModal = () => {
+  document.getElementById("stokModal").style.display = "flex";
+};
+
+window.closeStokModal = () => {
+  document.getElementById("stokModal").style.display = "none";
+};
 
 </script>
 

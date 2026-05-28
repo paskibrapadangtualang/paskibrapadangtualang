@@ -751,158 +751,41 @@ document.getElementById(
 
 
 
-/* ===========================
-DUMMY ORDER
-=========================== */
+async function selesaiOrder(d) {
+  const orderRef = ref(db, "pesanan/" + d.id);
+  const adminRef = ref(db, "adminDana");
 
-async function createDummyOrder() {
+  const adminSnap = await get(adminRef);
+  const admin = adminSnap.val() || { saldo: 0, locked: 0 };
 
-  const cek = await get(ref(db, "pesanan"));
+  const amount = Number(d.total || 0);
 
-  if (cek.exists()) return;
+  // update order
+  await update(orderRef, {
+    status: "selesai"
+  });
 
-  /* TEST SUDAH LEWAT 2 MENIT */
-  const now = Date.now() - 120000;
+  // release escrow
+  await update(adminRef, {
+locked: Math.max(0, Number(admin.locked || 0) - amount),
+saldo: Number(admin.saldo || 0) + amount,
+    updatedAt: Date.now()
+  });
 
-  const dummy = {
-
-    ORD001: {
-      id: "ORD001",
-      user: uidUser,
-      storeId: "STORE001",
-      nama: "Ilham Test",
-      status: "pending",
-      metode: "COD",
-      total: 35000,
-      createdAt: now,
-      alamat: {
-        alamat: "Jl Padang Tualang",
-        dusun: "Walidongo",
-        kecamatan: "Padang Tualang",
-        kabupaten: "Langkat",
-        provinsi: "Sumatera Utara",
-        kodepos: "20218"
-      },
-      items: {
-        prd1: {
-          nama: "Keripik Pisang Original",
-          qty: 1,
-          harga: 15000,
-          storeId: "STORE001"
-        },
-        prd2: {
-          nama: "Banana Crispy",
-          qty: 1,
-          harga: 20000,
-          storeId: "STORE001"
-        }
-      }
-    },
-
-    ORD002: {
-      id: "ORD002",
-      user: uidUser,
-      storeId: "STORE002",
-      nama: "Ilham Test",
-      status: "disetujui",
-      metode: "QRIS",
-      total: 42000,
-      createdAt: now,
-      alamat: {
-        alamat: "Padang Tualang"
-      },
-      items: {
-        prd3: {
-          nama: "Pisang Coklat",
-          qty: 2,
-          harga: 21000,
-          storeId: "STORE002"
-        }
-      }
-    },
-
-    ORD003: {
-      id: "ORD003",
-      user: uidUser,
-      storeId: "STORE001",
-      nama: "Ilham Test",
-      status: "diproses",
-      metode: "OVO",
-      total: 50000,
-      createdAt: now,
-      alamat: {
-        alamat: "Langkat"
-      },
-      items: {
-        prd4: {
-          nama: "Banana Roll",
-          qty: 2,
-          harga: 25000,
-          storeId: "STORE001"
-        }
-      }
-    },
-
-    ORD004: {
-      id: "ORD004",
-      user: uidUser,
-      storeId: "STORE003",
-      nama: "Ilham Test",
-      status: "dikirim",
-      metode: "DANA",
-      total: 65000,
-      createdAt: now,
-      alamat: {
-        alamat: "Medan"
-      },
-      items: {
-        prd5: {
-          nama: "Paket Rumah Pisang",
-          qty: 1,
-          harga: 65000,
-          storeId: "STORE003"
-        }
-      }
-    },
-
-    ORD005: {
-      id: "ORD005",
-      user: uidUser,
-      storeId: "STORE001",
-      nama: "Ilham Test",
-      status: "selesai",
-      metode: "BCA",
-      total: 90000,
-      createdAt: now,
-      alamat: {
-        alamat: "Binjai"
-      },
-      items: {
-        prd6: {
-          nama: "Keripik Pisang Premium",
-          qty: 3,
-          harga: 30000,
-          storeId: "STORE001"
-        }
-      }
-    }
-
-  };
-
-  await set(ref(db, "pesanan"), dummy);
+  // history
+  await set(ref(db, "adminDanaHistory/REL_" + Date.now()), {
+    orderId: d.id,
+    amount,
+    type: "escrow_release",
+    createdAt: Date.now()
+  });
 }
-
-
-
-
 
 
 async function startApp(uid){
 
 uidUser = uid;
 
-/* BUAT DUMMY SETELAH LOGIN */
-await createDummyOrder();
 
 /* LOAD ORDER */
 const snap =
@@ -1089,9 +972,6 @@ orderList.innerHTML += renderOrder(d);
 }
 
 
-
-
-
 /* =========================
 PESANAN DIBATALKAN
 ========================= */
@@ -1182,8 +1062,6 @@ Belanja Sekarang
 `;
 
 }
-
-
 
 
 /* ===========================
@@ -1889,6 +1767,48 @@ await update(ref(db, "pesanan/" + id), {
   }
 
 });
+
+
+/* =========================
+RELEASE ESCROW ADMIN
+========================= */
+const adminRef = ref(db, "adminDana");
+const adminSnap = await get(adminRef);
+const admin = adminSnap.val() || { saldo: 0, locked: 0 };
+
+const orderSnap = await get(ref(db, "pesanan/" + id));
+const orderData = orderSnap.val();
+
+if (!orderData) return;
+
+// anti double release
+if (orderData._escrowReleased === true) return;
+
+const amount = Number(orderData?.total ?? 0);
+
+/* =========================
+RELEASE ESCROW
+========================= */
+await update(adminRef, {
+  locked: Math.max(0, Number(admin.locked || 0) - amount),
+  saldo: Number(admin.saldo || 0) + amount,
+  updatedAt: Date.now()
+});
+
+/* mark order sudah di-release */
+await update(ref(db, "pesanan/" + id), {
+  _escrowReleased: true,
+  status: "selesai"
+});
+
+/* history */
+await set(ref(db, "adminDanaHistory/REL_" + Date.now()), {
+  orderId: id,
+  amount,
+  type: "escrow_release",
+  createdAt: Date.now()
+});
+
 
 /* =========================
 BAGIKAN SALDO KE STORE

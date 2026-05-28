@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AfkarmallPay</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#f5f6f8;
+}
+
+/* HEADER */
+.header{
+background:linear-gradient(135deg,#ff6f00,#ff8a00);
+padding:18px;
+color:white;
+text-align:center;
+font-weight:bold;
+font-size:18px;
+border-bottom-left-radius:20px;
+border-bottom-right-radius:20px;
+}
+
+/* CARD */
+.card{
+background:white;
+margin:15px;
+border-radius:16px;
+padding:15px;
+box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
+
+.row{
+display:flex;
+justify-content:space-between;
+padding:10px 0;
+border-bottom:1px solid #eee;
+font-size:14px;
+}
+
+.row:last-child{border:none;}
+
+.label{color:#777;}
+
+.value{font-weight:bold;color:#333;}
+
+/* BUTTON */
+.btn{
+width:100%;
+padding:14px;
+border:none;
+border-radius:14px;
+background:#ff6f00;
+color:white;
+font-weight:bold;
+font-size:15px;
+margin-top:10px;
+cursor:pointer;
+}
+
+/* INPUT */
+.input{
+width:100%;
+padding:12px;
+margin-top:10px;
+border-radius:12px;
+border:1px solid #ddd;
+outline:none;
+}
+
+/* MODAL */
+.modal{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.5);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:999;
+}
+
+.modalBox{
+width:90%;
+background:white;
+border-radius:18px;
+padding:20px;
+text-align:center;
+animation:pop .2s ease;
+}
+
+@keyframes pop{
+from{transform:scale(.8);opacity:0}
+to{transform:scale(1);opacity:1}
+}
+
+.modalBox img{
+width:70px;
+height:70px;
+border-radius:50%;
+object-fit:cover;
+margin-bottom:10px;
+}
+
+.modalTitle{
+font-weight:bold;
+margin-bottom:10px;
+}
+
+.modalText{
+font-size:13px;
+color:#666;
+margin-bottom:15px;
+}
+
+.modalBtn{
+width:100%;
+padding:12px;
+border:none;
+border-radius:12px;
+background:#ff6f00;
+color:white;
+font-weight:bold;
+cursor:pointer;
+margin-top:8px;
+}
+
+.small{
+font-size:12px;
+color:#888;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+AfkarmallPay
+</div>
+
+<div class="card" id="profileCard">
+
+<div class="row">
+<div class="label">Nama Lengkap</div>
+<div class="value" id="nama">-</div>
+</div>
+
+<div class="row">
+<div class="label">Email</div>
+<div class="value" id="email">-</div>
+</div>
+
+<div class="row">
+<div class="label">Jenis Kelamin</div>
+<div class="value" id="jk">-</div>
+</div>
+
+<div class="row">
+<div class="label">No WhatsApp</div>
+<div class="value" id="wa">-</div>
+</div>
+
+<div class="row">
+<div class="label">NoPay</div>
+<div class="value" id="noPay">-</div>
+</div>
+
+<div class="row">
+<div class="label">Waktu (WIB)</div>
+<div class="value" id="waktu">-</div>
+</div>
+
+<div class="row">
+<div class="label">Setuju</div>
+<div class="value" id="setuju">-</div>
+</div>
+
+</div>
+
+<div class="card">
+
+<div style="font-weight:bold;margin-bottom:10px;">
+Buat PIN Transaksi
+</div>
+
+<input class="input" id="pin1" type="password" maxlength="6" placeholder="6 digit PIN">
+<input class="input" id="pin2" type="password" maxlength="6" placeholder="Konfirmasi PIN">
+
+<button class="btn" onclick="aktifkan()">
+Aktifkan AfkarmallPay
+</button>
+
+</div>
+
+<!-- MODAL INPUT DATA -->
+<div class="modal" id="modalInfo">
+<div class="modalBox">
+
+<img id="mFoto">
+
+<div class="modalTitle">AfkarmallPay Aktif</div>
+
+<div class="small">Detail akun Anda</div>
+
+<div class="row"><div>NoPay</div><div id="mNoPay"></div></div>
+<div class="row"><div>Status</div><div id="mStatus"></div></div>
+<div class="row"><div>Saldo</div><div id="mSaldo"></div></div>
+
+<button class="modalBtn" onclick="tutupModal()">
+LANJUTKAN
+</button>
+
+</div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="modal" id="modalSuccess">
+<div class="modalBox">
+
+<img src="assets/images/watermak.jpeg"
+style="width:200px;height:80px;object-fit:contain;margin-bottom:10px;">
+
+<div class="modalTitle">AfkarmallPay Siap Digunakan</div>
+
+<div class="modalText" style="line-height:1.6;text-align:left">
+
+Selamat! Akun AfkarmallPay Anda telah berhasil diaktifkan.<br><br>
+
+Sekarang Anda sudah bisa menikmati kemudahan transaksi di Afkarmall Marketplace tanpa ribet.<br><br>
+
+Dengan AfkarmallPay Anda dapat:<br>
+• Belanja produk favorit dengan cepat & aman<br>
+• Bayar tanpa perlu transfer manual<br>
+• Simpan saldo & lakukan transaksi instan<br>
+• Dapatkan pengalaman checkout lebih praktis seperti e-wallet modern<br><br>
+
+Tips: Gunakan AfkarmallPay untuk checkout agar pesanan Anda diproses lebih cepat dan lebih prioritas oleh sistem.<br><br>
+
+Selamat berbelanja dan nikmati pengalaman belanja terbaik Anda 
+</div>
+
+<button class="modalBtn" onclick="lanjut()">
+MULAI BELANJA SEKARANG
+</button>
+
+</div>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+authDomain:"shoponline-93646.firebaseapp.com",
+databaseURL:"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"shoponline-93646",
+storageBucket:"shoponline-93646.firebasestorage.app",
+messagingSenderId:"435032364443",
+appId:"1:435032364443:web:5f76384f794693a892bd3e"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const uid = localStorage.getItem("userId");
+
+let userData = {};
+
+async function loadUser(){
+const snap = await get(ref(db,"users/"+uid));
+if(!snap.exists()) return;
+
+userData = snap.val();
+
+document.getElementById("nama").innerText = userData.nama || "-";
+document.getElementById("email").innerText = userData.email || "-";
+document.getElementById("jk").innerText = userData.jk || "-";
+document.getElementById("wa").innerText = userData.wa || "-";
+document.getElementById("noPay").innerText = userData.noPay || "-";
+
+document.getElementById("setuju").innerText =
+userData.setujuSyaratAfkarmallPay ? "Setuju" : "Belum";
+
+document.getElementById("waktu").innerText =
+userData.waktuPersetujuan
+? formatWIB(userData.waktuPersetujuan)
+: "-";
+
+if(userData.pinSudahDibuat){
+location.href = "saldo.html";
+}
+}
+
+window.aktifkan = async function(){
+
+const p1 = document.getElementById("pin1").value;
+const p2 = document.getElementById("pin2").value;
+
+if(!/^[0-9]{6}$/.test(p1)){
+alert("PIN harus 6 digit angka");
+return;
+}
+
+if(p1 !== p2){
+alert("PIN tidak sama");
+return;
+}
+
+// modal preview data
+document.getElementById("mFoto").src = userData.foto;
+document.getElementById("mNoPay").innerText = userData.noPay;
+document.getElementById("mStatus").innerText = "aktif";
+document.getElementById("mSaldo").innerText = "Rp " + (userData.saldo || 0).toLocaleString();
+
+document.getElementById("modalInfo").style.display = "flex";
+
+// simpan sementara PIN
+window.tempPin = p1;
+}
+
+window.tutupModal = async function(){
+
+document.getElementById("modalInfo").style.display = "none";
+
+await update(ref(db,"users/"+uid),{
+pinTransfer: window.tempPin,
+pinSudahDibuat: true,
+setujuSyaratAfkarmallPay: true,
+waktuPersetujuan: Date.now(),
+statusAfkarmallPay: "aktif"
+});
+
+document.getElementById("modalSuccess").style.display = "flex";
+}
+
+window.lanjut = function(){
+location.href = "home.html";
+}
+
+loadUser();
+
+
+function formatWIB(timestamp){
+const date = new Date(timestamp);
+
+return date.toLocaleString("id-ID", {
+timeZone: "Asia/Jakarta",
+year: "numeric",
+month: "2-digit",
+day: "2-digit",
+hour: "2-digit",
+minute: "2-digit",
+second: "2-digit"
+}) + " WIB";
+}
+
+
+
+</script>
+
+</body>
+</html>

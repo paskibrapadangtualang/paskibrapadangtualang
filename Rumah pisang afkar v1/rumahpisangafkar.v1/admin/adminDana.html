@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Dana (Escrow System)</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#f5f5f5;
+padding:15px;
+}
+
+.card{
+background:white;
+padding:15px;
+border-radius:16px;
+margin-bottom:12px;
+box-shadow:0 3px 10px rgba(0,0,0,0.05);
+}
+
+.title{
+font-size:18px;
+font-weight:bold;
+margin-bottom:10px;
+color:#ff6f00;
+}
+
+.row{
+display:flex;
+justify-content:space-between;
+margin:8px 0;
+font-size:14px;
+}
+
+.big{
+font-size:22px;
+font-weight:bold;
+color:#222;
+}
+
+.btn{
+width:100%;
+padding:12px;
+border:none;
+border-radius:12px;
+background:#ff6f00;
+color:white;
+font-weight:bold;
+cursor:pointer;
+margin-top:10px;
+}
+
+.history{
+font-size:13px;
+padding:10px;
+border-bottom:1px solid #eee;
+}
+
+small{
+color:#777;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+<div class="title">💰 Admin Dana (ESCROW)</div>
+
+<div class="row">
+<span>Total Saldo</span>
+<span id="saldo">0</span>
+</div>
+
+<div class="row">
+<span>Locked (Dana Tahan)</span>
+<span id="locked">0</span>
+</div>
+
+<div class="row">
+<span>Available</span>
+<span id="available">0</span>
+</div>
+</div>
+
+
+<div class="card">
+<div class="title">📊 Dummy Action</div>
+<button class="btn" onclick="createDummy()">Buat Data Dummy (1x saja)</button>
+</div>
+
+
+<div class="card">
+<div class="title">📜 History Escrow</div>
+<div id="history">Loading...</div>
+</div>
+
+<!-- FIREBASE -->
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig={
+
+apiKey:
+"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+
+authDomain:
+"shoponline-93646.firebaseapp.com",
+
+databaseURL:
+"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"shoponline-93646"
+
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const adminId = "admindana";
+
+/* =========================
+LOAD DASHBOARD
+========================= */
+async function load(){
+
+const snap = await get(ref(db,"adminDana/" + adminId));
+
+if(!snap.exists()){
+document.getElementById("saldo").innerText = "0";
+document.getElementById("locked").innerText = "0";
+document.getElementById("available").innerText = "0";
+return;
+}
+
+const d = snap.val();
+
+const saldo = d.saldo || 0;
+const locked = d.locked || 0;
+const available = saldo - locked;
+
+document.getElementById("saldo").innerText = saldo.toLocaleString("id-ID");
+document.getElementById("locked").innerText = locked.toLocaleString("id-ID");
+document.getElementById("available").innerText = available.toLocaleString("id-ID");
+
+loadHistory();
+}
+
+/* =========================
+HISTORY
+========================= */
+async function loadHistory(){
+
+const snap = await get(ref(db,"adminDanaHistory/" + adminId));
+
+let html = "";
+
+if(!snap.exists()){
+document.getElementById("history").innerHTML = "Belum ada transaksi";
+return;
+}
+
+snap.forEach(x=>{
+
+const d = x.val();
+
+html += `
+<div class="history">
+<b>${d.type}</b> - Rp ${Number(d.amount||0).toLocaleString("id-ID")} <br>
+<small>Order: ${d.orderId || "-"}</small><br>
+<small>User: ${d.from || "-"}</small>
+</div>
+`;
+
+});
+
+document.getElementById("history").innerHTML = html;
+}
+
+/* =========================
+DUMMY DATA (1X ONLY)
+========================= */
+window.createDummy = async () => {
+
+const snap = await get(ref(db,"adminDana/" + adminId));
+
+if(snap.exists()){
+alert("Dummy sudah pernah dibuat");
+return;
+}
+
+await set(ref(db,"adminDana/" + adminId),{
+id: adminId,
+nama: "Admin Dana",
+saldo: 150000,
+locked: 50000,
+createdAt: Date.now()
+});
+
+await set(ref(db,"adminDanaHistory/" + adminId + "/TRX1"),{
+type: "escrow_in",
+amount: 50000,
+orderId: "ORD123",
+from: "user_001",
+createdAt: Date.now()
+});
+
+await set(ref(db,"adminDanaHistory/" + adminId + "/TRX2"),{
+type: "escrow_in",
+amount: 100000,
+orderId: "ORD124",
+from: "user_002",
+createdAt: Date.now()
+});
+
+alert("Dummy berhasil dibuat");
+load();
+};
+
+/* init */
+load();
+
+</script>
+
+</body>
+</html>

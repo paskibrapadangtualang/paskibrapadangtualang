@@ -261,17 +261,20 @@ object-fit:cover;
 }
 
 .promo{
-
 position:absolute;
-top:10px;
-left:10px;
+top:0;
+right:0;
+z-index:30;
+
 background:#ff3d00;
 color:white;
-padding:5px 10px;
-border-radius:10px;
-font-size:11px;
+
+padding:4px 10px;
+
+font-size:10px;
 font-weight:bold;
 
+border-radius:0 0 0 6px;
 }
 
 .info{
@@ -490,13 +493,14 @@ background:#ff9800;
 
 
 #searchResult{
+display:none; /* ⬅️ PENTING */
 position:absolute;
-top:80px;
+top:110px;
 left:0;
 right:0;
 background:white;
 z-index:9999;
-max-height:300px;
+max-height:600px;
 overflow:auto;
 border-radius:10px;
 box-shadow:0 5px 20px rgba(0,0,0,.1);
@@ -504,7 +508,6 @@ box-shadow:0 5px 20px rgba(0,0,0,.1);
 
 #searchResult div{
 padding:12px;
-border-bottom:1px solid #eee;
 font-size:14px;
 cursor:pointer;
 }
@@ -513,7 +516,34 @@ cursor:pointer;
 background:#f5f5f5;
 }
 
+#searchHistory{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+padding:10px;
+border-bottom:1px solid #eee;
+}
 
+.historyItem{
+padding:6px 12px;
+background:#f3f3f3;
+border-radius:20px;
+font-size:12px;
+cursor:pointer;
+white-space:nowrap;
+transition:.2s;
+}
+
+.historyItem:hover{
+background:#ff6f00;
+color:white;
+}
+
+.searchSectionTitle{
+font-size:11px;
+color:#888;
+padding:8px 10px 0 10px;
+}
 
 
 
@@ -557,7 +587,9 @@ background:#f5f5f5;
   object-fit:contain;
 }
 
-
+.card.soldout img {
+  filter: grayscale(1) brightness(0.7);
+}
 
 </style>
 
@@ -685,11 +717,9 @@ Pesanan
 </p>
 </div>
 
-<div class="menuItem" onclick="window.location.href='saldo.html'">
+<div class="menuItem" onclick="cekMenuSaldo()">
 <i class="fa fa-wallet"></i>
-<p>
-Saldo
-</p>
+<p>Saldo</p>
 
 
 </div>
@@ -850,7 +880,58 @@ document.getElementById(
 );
 
 
+window.cekMenuSaldo = async function(){
 
+  const uid = localStorage.getItem("userId");
+
+  if(!uid){
+
+    location.href = "index.html";
+    return;
+
+  }
+
+  try{
+
+    const snap = await get(
+      ref(db, "users/" + uid)
+    );
+
+    if(!snap.exists()){
+
+      alert("Data user tidak ditemukan");
+      return;
+
+    }
+
+    const user = snap.val();
+
+    // cek pin transfer
+    if(
+      !user.pinTransfer ||
+      user.pinTransfer === "" ||
+      user.pinTransfer === null
+    ){
+
+      location.href =
+      "pembukaannopay.html";
+
+      return;
+
+    }
+
+    // sudah punya pin
+    location.href =
+    "saldo.html";
+
+  }catch(err){
+
+    console.error(err);
+    alert("Gagal memuat data user");
+
+  }
+
+}
 
 
 
@@ -1120,6 +1201,10 @@ const harga=
 "id-ID"
 );
 
+
+const soldOut = Number(data.stok || 0) <= 0;
+
+
 const hargaAwal=
 (data.hargaAwal||0)
 .toLocaleString(
@@ -1149,14 +1234,7 @@ data.gambar ||
 
 
 return `
-
-<div
-
-class="card"
-
-data-id="${produkId}"
-
->
+<div class="card ${soldOut ? 'soldout' : ''}" data-id="${produkId}">
 
 ${data.promo ? `
 <div class="promo">
@@ -1165,7 +1243,50 @@ PROMO
 
 ` : ""}
 
-<img src="${gambarUtama}">
+<div style="position:relative;">
+
+
+${data.bestSeller ? `
+<div style="
+position:absolute;
+top:0;
+left:0;
+z-index:30;
+background:#ee4d2d;
+color:#fff;
+font-size:10px;
+font-weight:700;
+padding:4px 10px;
+border-radius:0 0 6px 0;
+text-transform:uppercase;
+box-shadow:0 2px 6px rgba(0,0,0,.15);
+">
+BEST SELLER
+</div>
+` : ""}
+
+  <img src="${gambarUtama}" style="width:100%;height:170px;object-fit:cover;">
+
+  ${data.stok <= 0 ? `
+    <div style="
+      position:absolute;
+      top:0;
+      left:0;
+      right:0;
+      bottom:0;
+      background:rgba(0,0,0,.45);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      font-weight:bold;
+      font-size:16px;
+      letter-spacing:1px;
+    ">
+      STOK HABIS
+    </div>
+  ` : ""}
+</div>
 
 <div class="info">
 
@@ -1228,55 +1349,150 @@ data.kupon ? `
 // =========================
 // LOAD PRODUK
 // =========================
+// =========================
+// LOAD PRODUK (SHOPEE RANKING FIX)
+// =========================
 
 let produkListener = null;
 
-function loadProducts(){
+function loadProducts() {
 
-// cegah listener dobel
-if(produkListener) return;
+  if (produkListener) return;
 
-produkListener = onValue(produkRef, (snapshot)=>{
+  produkListener = onValue(produkRef, async (snapshot) => {
 
-let html = "";
+    if (!snapshot.exists()) {
+      produkList.innerHTML = "<div style='text-align:center;color:#888'>Tidak ada produk</div>";
+      return;
+    }
 
-// kalau kosong
-if(!snapshot.exists()){
-produkList.innerHTML = "<div style='text-align:center;color:#888'>Tidak ada produk</div>";
-return;
+    let tempProduk = [];
+
+    // =====================
+    // 1. AMBIL PRODUK
+    // =====================
+    snapshot.forEach((item) => {
+      tempProduk.push({
+        id: item.key,
+        ...item.val()
+      });
+    });
+
+    // =====================
+    // 2. AMBIL REVIEW
+    // =====================
+// =====================
+// 2. AMBIL REVIEW (FIXED STRUCTURE FIREBASE)
+// =====================
+const reviewSnap = await get(ref(db,"review"));
+const reviewData = {};
+
+if(reviewSnap.exists()){
+
+  reviewSnap.forEach((produkSnap)=>{
+
+    const productId = produkSnap.key;
+
+    reviewData[productId] = [];
+
+    produkSnap.forEach((reviewItem)=>{
+
+      reviewData[productId].push(
+        reviewItem.val()
+      );
+
+    });
+
+  });
+
+
+
 }
 
-snapshot.forEach((item)=>{
+  // =====================
+// 3. HITUNG METRICS (FIXED TOTAL)
+// =====================
+tempProduk.forEach(p=>{
 
-const data = item.val();
-const key = item.key;
+  const reviews = reviewData[p.id] || [];
 
-// safety data
-const harga = data.harga ?? 0;
-const hargaAwal = data.hargaAwal ?? 0;
+  const reviewCount = reviews.length;
 
-html += createCard(data, key);
+  let totalRating = 0;
+
+  reviews.forEach(r=>{
+
+    totalRating += Number(r.rating || 0);
+
+  });
+
+  const avgRating =
+    reviewCount > 0
+    ? totalRating / reviewCount
+    : 0;
+
+  p.reviewCount = reviewCount;
+  p.avgRating = avgRating;
+
+});
+    // =====================
+    // 4. SORTING (TERPOPULER)
+    // =====================
+ 
+// =====================
+// 4. SORTING
+// =====================
+tempProduk.sort((a,b)=>{
+
+  // rating tertinggi
+  if(b.avgRating !== a.avgRating){
+    return b.avgRating - a.avgRating;
+  }
+
+  // ulasan terbanyak
+  if(b.reviewCount !== a.reviewCount){
+    return b.reviewCount - a.reviewCount;
+  }
+
+  // view terbanyak
+  return (b.viewCount||0) - (a.viewCount||0);
 
 });
 
-// render sekali saja
-produkList.innerHTML = html;
 
-// event klik pakai delegation (WAJIB FIX)
-produkList.onclick = function(e){
+tempProduk.forEach((p,index)=>{
 
-const card = e.target.closest(".card");
-if(!card) return;
-
-const id = card.dataset.id;
-if(id){
-location.href = `detailproduk.html?id=${id}`;
-}
-
-};
+  p.bestSeller = index < 4;
 
 });
 
+
+
+    // =====================
+    // 5. RENDER
+    // =====================
+    let html = "";
+
+    tempProduk.forEach((data) => {
+      html += createCard(data, data.id);
+    });
+
+    produkList.innerHTML = html;
+
+    // =====================
+    // CLICK EVENT
+    // =====================
+    produkList.onclick = function (e) {
+      const card = e.target.closest(".card");
+      if (!card) return;
+
+      const id = card.dataset.id;
+      if (id) {
+        location.href = `detailproduk.html?id=${id}`;
+      }
+    };
+
+  });
 }
 
 // =========================
@@ -1490,14 +1706,27 @@ updateDot();
 
 
 
+const reviewSnap = await get(ref(db, "review"));
 
+if (reviewSnap.exists()) {
+  reviewSnap.forEach((child) => {
+
+    const r = child.val();
+
+    if (!r.productId) return;
+
+    ratingCount[r.productId] =
+      (ratingCount[r.productId] || 0) + 1;
+
+  });
+}
 
 
 
 
 
 await createDummyProducts();
-
+loadProducts()
 loadProducts();
 
 
@@ -1526,73 +1755,243 @@ console.log("READY SEARCH DATA:", allProduk.length, allStore.length);
 
 
 // =========================
-// SEARCH PRODUK + STORE
+// SEARCH PRODUK + STORE (SHOPEE STYLE FIXED)
 // =========================
 const searchInput = document.querySelector(".search input");
 const searchResult = document.getElementById("searchResult");
 
-searchInput.addEventListener("input", (e) => {
+// pastikan hidden awal
+searchResult.style.display = "none";
 
-const q = e.target.value.toLowerCase().trim();
+// =========================
+// DATA
+// =========================
+// =========================
+// SEARCH HISTORY
+// =========================
+let searchHistory = JSON.parse(localStorage.getItem("searchHistory") || "[]");
 
-if (!q) {
-searchResult.innerHTML = "";
-return;
+// =========================
+// TRENDING FROM FIREBASE
+// =========================
+let trendingSearch = [];
+
+// ambil dari firebase
+async function loadTrendingSearch(){
+  const snap = await get(ref(db, "searchTrending"));
+
+  if (snap.exists()) {
+    trendingSearch = Object.values(snap.val()).slice(0, 6);
+  } else {
+    // fallback + auto seed ke firebase
+    trendingSearch = [
+      "toko termurah",
+      "makanan ringan",
+      "hp murah",
+      "keripik pisang",
+      "fashion wanita",
+      "skincare viral"
+    ];
+
+    // auto simpan ke firebase (biar jadi default database)
+    const seed = {};
+    trendingSearch.forEach((v, i) => {
+      seed[i] = v;
+    });
+
+    await set(ref(db, "searchTrending"), seed);
+  }
+
+  renderIdleSearch();
 }
 
-let hasilProduk = allProduk.filter(p =>
-(p.nama || "").toLowerCase().includes(q)
-);
+// panggil sekali saat load
+loadTrendingSearch();
+// =========================
+// SHOW / HIDE
+// =========================
+function openSearch(){
+  searchResult.style.display = "block";
+}
 
-let hasilStore = allStore.filter(s =>
-(s.nama || "").toLowerCase().includes(q)
-);
+function closeSearch(){
+  setTimeout(() => {
+    searchResult.style.display = "none";
+  }, 200);
+}
 
-let html = "";
-
-// PRODUK
-hasilProduk.slice(0,10).forEach(p => {
-html += `
-<div onclick="location.href='detailproduk.html?id=${p.id}'">
-🛒 ${p.nama}
-</div>
-`;
+// fokus input → tampilkan
+searchInput.addEventListener("focus", () => {
+  openSearch();
 });
 
-// STORE
-hasilStore.slice(0,10).forEach(s => {
-
-html += `
-<div onclick="location.href='detailstore.html?id=${s.id}'"
-style="display:flex;align-items:center;gap:10px;">
-
-<img src="${s.logo || 'https://picsum.photos/50'}"
-style="width:40px;height:40px;border-radius:10px;object-fit:cover;">
-
-<div>
-<div style="font-weight:bold;font-size:14px;">
-${s.nama}
-</div>
-
-<div style="font-size:12px;color:#777;">
-Store
-</div>
-</div>
-
-</div>
-`;
-
+// blur → sembunyikan
+searchInput.addEventListener("blur", () => {
+  closeSearch();
 });
 
-searchResult.innerHTML = html;
+// =========================
+// SAVE HISTORY
+// =========================
+function saveSearchHistory(q){
+  if(!q) return;
+
+  searchHistory = searchHistory.filter(x => x !== q);
+  searchHistory.unshift(q);
+
+  if(searchHistory.length > 8){
+    searchHistory.pop();
+  }
+
+  localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
+}
+
+// =========================
+// CLEAR HISTORY
+// =========================
+window.clearHistory = function(){
+  searchHistory = [];
+  localStorage.removeItem("searchHistory");
+  renderIdleSearch();
+};
+
+// =========================
+// SET SEARCH
+// =========================
+window.setSearch = function(val){
+  searchInput.value = val;
+  searchInput.dispatchEvent(new Event("input"));
+};
+
+// =========================
+// HIGHLIGHT
+// =========================
+function highlight(text, q){
+  if(!q) return text;
+  return (text || "").replace(
+    new RegExp(q, "gi"),
+    match => `<span style="background:#ffe0b2;color:#ff6f00;padding:2px 4px;border-radius:4px;">${match}</span>`
+  );
+}
+
+// =========================
+// IDLE VIEW
+// =========================
+function renderIdleSearch(){
+
+  let html = "";
+
+  // HISTORY
+  if(searchHistory.length > 0){
+    html += `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;">
+      <div style="font-size:12px;color:#888;">Riwayat Pencarian</div>
+      <div onclick="clearHistory()" style="font-size:11px;color:#ff6f00;cursor:pointer;">Hapus</div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;padding:0 10px 10px 10px;">
+    `;
+
+    searchHistory.forEach(item => {
+      html += `
+      <div onclick="setSearch('${item}')"
+      style="padding:6px 10px;background:#f2f2f2;border-radius:20px;font-size:12px;cursor:pointer;">
+      ⏱ ${item}
+      </div>
+      `;
+    });
+
+    html += `</div>`;
+  }
+
+  // TRENDING
+  html += `
+  <div style="padding:10px;border-top:1px solid #eee;background: #cbcbcb;">
+    <div style="font-size:12px;color:#000000;margin-bottom:8px;">Trending Pencarian</div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+  `;
+
+  trendingSearch.forEach(item => {
+    html += `
+    <div onclick="setSearch('${item}')"
+    style="padding:6px 10px;background:#fff3e0;border-radius:20px;font-size:12px;cursor:pointer;color:#ff6f00;">
+    🔥 ${item}
+    </div>
+    `;
+  });
+
+  html += `</div></div>`;
+
+  searchResult.innerHTML = html;
+}
+
+// default
+renderIdleSearch();
+
+// =========================
+// MAIN SEARCH
+// =========================
+searchInput.addEventListener("input", (e) => {
+
+  const q = e.target.value.toLowerCase().trim();
+
+  if (!q) {
+    renderIdleSearch();
+    openSearch();
+    return;
+  }
+
+  saveSearchHistory(q);
+
+  let hasilProduk = (allProduk || []).filter(p =>
+    (p.nama || "").toLowerCase().includes(q)
+  );
+
+  let hasilStore = (allStore || []).filter(s =>
+    (s.nama || "").toLowerCase().includes(q)
+  );
+
+  let html = `
+  <div style="padding:8px 10px;font-size:12px;color:#888;">
+    Hasil Pencarian
+  </div>
+  `;
+
+  // PRODUK
+  hasilProduk.slice(0,8).forEach(p => {
+    html += `
+    <div onclick="location.href='detailproduk.html?id=${p.id}'"
+    style="padding:10px;border-bottom:1px solid #eee;cursor:pointer;">
+      🛒 ${highlight(p.nama, q)}
+    </div>
+    `;
+  });
+
+  // STORE
+  hasilStore.slice(0,6).forEach(s => {
+    html += `
+    <div onclick="location.href='detailstore.html?id=${s.id}'"
+    style="display:flex;align-items:center;gap:10px;padding:10px;border-bottom:1px solid #eee;cursor:pointer;">
+
+      <img src="${s.logo || 'https://picsum.photos/50'}"
+      style="width:40px;height:40px;border-radius:10px;object-fit:cover;">
+
+      <div>
+        <div style="font-weight:bold;font-size:14px;">
+          ${highlight(s.nama, q)}
+        </div>
+        <div style="font-size:12px;color:#777;">Store</div>
+      </div>
+
+    </div>
+    `;
+  });
+
+  searchResult.innerHTML = html;
+  openSearch();
 
 });
-
-
-
-
-
-
 
 
 
@@ -1622,6 +2021,12 @@ function initKategori() {
 
 // panggil setelah semua render
 initKategori();
+
+
+
+
+
+
 
 </script>
 
