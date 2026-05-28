@@ -614,7 +614,9 @@ getDatabase,
 ref,
 get,
 update,
-set
+set,
+  remove,
+  onValue
 }
 from
 "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -1887,6 +1889,227 @@ await update(ref(db, "pesanan/" + id), {
   }
 
 });
+
+/* =========================
+BAGIKAN SALDO KE STORE
+========================= */
+
+const items = data.items || {};
+
+/* GROUP STORE */
+let storeGroup = {};
+
+Object.values(items).forEach(item => {
+
+  const sid = item.storeId || "unknown";
+
+  if (!storeGroup[sid]) {
+    storeGroup[sid] = [];
+  }
+
+  storeGroup[sid].push(item);
+
+});
+
+/* LOOP STORE */
+for (const sid in storeGroup) {
+
+  const produkStore = storeGroup[sid];
+
+  const storeRef = ref(db, "stores/" + sid);
+  const storeSnap = await get(storeRef);
+
+  if (!storeSnap.exists()) continue;
+
+  const store = storeSnap.val();
+
+  let totalMasukStore = 0;
+
+  /* =========================
+  HITUNG KEUNTUNGAN
+  ========================= */
+
+  produkStore.forEach(p => {
+
+    /* PRODUK GUDANG */
+    if (p.gudangProduk === true) {
+
+      totalMasukStore += Number(
+        p.keuntunganStore || 0
+      ) * Number(p.qty || 1);
+
+    }
+
+    /* PRODUK BIASA */
+    else {
+
+      totalMasukStore += Number(
+        p.harga || 0
+      ) * Number(p.qty || 1);
+
+    }
+
+  });
+
+  /* =========================
+  UPDATE SALDO STORE
+  ========================= */
+const saldoLama = Number(store.saldo || 0);
+const totalMasukLama = Number(store.totalMasuk || 0);
+
+let modalKembali = 0;
+let komisiStore = 0;
+
+produkStore.forEach(p => {
+
+  const qty = Number(p.qty || 1);
+
+  const harga = Number(p.harga || 0);
+  const komisi = Number(p.keuntunganStore || 0);
+
+  // 🔥 MODAL DIHITUNG DARI: harga - komisi
+  const modal = harga - komisi;
+
+  modalKembali += modal * qty;
+  komisiStore += komisi * qty;
+
+});
+
+/* =========================
+TOTAL MASUK SALDO STORE
+= modal + komisi
+========================= */
+const totalMasukFix = modalKembali + komisiStore;
+
+await update(storeRef, {
+
+  saldo: saldoLama + totalMasukFix,
+  totalMasuk: totalMasukLama + totalMasukFix,
+
+  // optional biar rapi (kalau mau tracking)
+  totalModal: (store.totalModal || 0) + modalKembali,
+  totalKomisi: (store.totalKomisi || 0) + komisiStore
+
+});
+
+const transaksiId = "STORE_" + id + "_" + sid + "_" + Date.now();
+
+/* =========================
+SALDO HISTORY STORE
+========================= */
+await set(
+  ref(db, "saldoHistory/" + sid + "/" + transaksiId),
+  {
+    id: transaksiId,
+
+    type: "in",
+
+    category: "order_selesai",
+
+    amount: totalMasukFix,
+
+    breakdown: {
+      modal: modalKembali,
+      komisi: komisiStore,
+      total: totalMasukFix
+    },
+
+    orderId: id,
+    storeId: sid,
+
+    status: "approved",
+
+    desc: "Saldo masuk dari pesanan selesai",
+
+    createdAt: Date.now(),
+
+    /* =========================
+    PENGIRIM (SYSTEM)
+    ========================= */
+    pengirimDana: {
+      nama: "Afkarmall.platform",
+      noPay: "777776666",
+      foto: "https://i.ibb.co.com/0p4jdSDb/watermak.jpg"
+    },
+
+    /* =========================
+    SOURCE ORDER
+    ========================= */
+    sumberPembelian: {
+      orderId: id,
+      storeId: sid
+    }
+  }
+);
+
+
+  /* =========================
+  UPDATE PESANAN STORE
+  ========================= */
+
+  const pesananStoreSnap = await get(
+    ref(db, "pesananStore")
+  );
+
+  if (pesananStoreSnap.exists()) {
+
+    pesananStoreSnap.forEach(ps => {
+
+      const val = ps.val();
+
+      if (
+        val.orderUtama === id &&
+        val.storeId === sid
+      ) {
+
+        update(
+          ref(db, "pesananStore/" + ps.key),
+          {
+            status: "selesai"
+          }
+        );
+
+      }
+
+    });
+
+  }
+
+  /* =========================
+  UPDATE PESANAN GUDANG
+  ========================= */
+
+  const gudangSnap = await get(
+    ref(db, "pesananGudang")
+  );
+
+  if (gudangSnap.exists()) {
+
+    gudangSnap.forEach(g => {
+
+      const val = g.val();
+
+      if (
+        val.orderUtama === id &&
+        val.storeId === sid
+      ) {
+
+        update(
+          ref(db, "pesananGudang/" + g.key),
+          {
+            status: "selesai"
+          }
+        );
+
+      }
+
+    });
+
+  }
+
+}
+
+
     popup.remove();
 
     alert("Pesanan sudah sampai");
@@ -2147,7 +2370,7 @@ nama: "Afkarmall.platform",
 noPay: "BOTAFKARMALL",
 
 foto:
-"https://i.ibb.co/7QpKsCX/store.png"
+"https://i.ibb.co.com/FqYhg1W5/watermak.jpg"
 
 },
 
@@ -2165,7 +2388,7 @@ Object.values(data.items || {})[0]?.namaStore || "Afkar Mall Store",
 
 fotoStore:
 Object.values(data.items || {})[0]?.fotoStore ||
-"https://i.ibb.co/7QpKsCX/store.png"
+"https://i.ibb.co.com/FqYhg1W5/watermak.jpg"
 
 }
 

@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Detail Pembayaran Modal</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f6f6f6;
+padding-bottom:120px;
+}
+
+/* HEADER */
+
+.header{
+
+background:
+linear-gradient(
+180deg,
+#ff8a00,
+#ff6f00
+);
+
+padding:20px;
+
+color:white;
+
+font-size:20px;
+font-weight:bold;
+
+display:flex;
+align-items:center;
+gap:14px;
+
+position:sticky;
+top:0;
+z-index:99;
+
+}
+
+.backBtn{
+cursor:pointer;
+font-size:20px;
+}
+
+/* CARD */
+
+.card{
+
+margin:15px;
+
+background:white;
+
+border-radius:24px;
+
+padding:25px;
+
+position:relative;
+
+overflow:hidden;
+
+box-shadow:
+0 3px 14px rgba(0,0,0,.05);
+
+}
+
+/* WATERMARK */
+
+.wm{
+
+position:absolute;
+inset:0;
+
+display:grid;
+
+grid-template-columns:
+repeat(6,1fr);
+
+transform:rotate(-28deg);
+
+opacity:.06;
+
+pointer-events:none;
+
+z-index:1;
+
+}
+
+.wm img{
+width:55px;
+height:55px;
+object-fit:contain;
+}
+
+.card *{
+position:relative;
+z-index:9;
+}
+
+.watermark{
+
+position:absolute;
+
+top:50%;
+left:50%;
+
+transform:
+translate(-50%,-50%)
+rotate(-28deg);
+
+font-size:55px;
+font-weight:900;
+
+color:
+rgba(255,111,0,.05);
+
+white-space:nowrap;
+
+pointer-events:none;
+
+z-index:2;
+
+}
+
+.security{
+
+position:absolute;
+
+top:14px;
+right:14px;
+
+padding:7px 12px;
+
+border-radius:999px;
+
+font-size:10px;
+font-weight:bold;
+
+background:
+rgba(239,68,68,.10);
+
+color:#dc2626;
+
+}
+
+/* TOP */
+
+.top{
+text-align:center;
+margin-bottom:26px;
+}
+
+.icon{
+
+width:76px;
+height:76px;
+
+border-radius:50%;
+
+background:
+linear-gradient(
+135deg,
+#ef4444,
+#dc2626
+);
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+color:white;
+
+font-size:31px;
+
+margin:auto;
+margin-bottom:14px;
+
+animation:pop .5s ease;
+
+}
+
+@keyframes pop{
+
+0%{
+transform:scale(.3);
+opacity:0;
+}
+
+70%{
+transform:scale(1.1);
+opacity:1;
+}
+
+100%{
+transform:scale(1);
+}
+
+}
+
+.status{
+font-size:19px;
+font-weight:700;
+}
+
+.nominal{
+
+font-size:35px;
+font-weight:800;
+
+color:#dc2626;
+
+margin-top:10px;
+
+}
+
+/* USER CARD */
+
+.userCard{
+
+background:#fafafa;
+
+border:
+1px solid #eee;
+
+padding:16px;
+
+border-radius:22px;
+
+margin-bottom:16px;
+
+}
+
+.titleBox{
+font-size:12px;
+color:#888;
+margin-bottom:10px;
+}
+
+.profile{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.profile img{
+
+width:58px;
+height:58px;
+
+border-radius:50%;
+
+object-fit:cover;
+
+background:#eee;
+
+}
+
+.nama{
+font-size:15px;
+font-weight:700;
+}
+
+.nopay{
+font-size:12px;
+color:#777;
+margin-top:4px;
+}
+
+/* INFO */
+
+.info{
+margin-top:20px;
+}
+
+.row{
+
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+
+gap:12px;
+
+padding:13px 0;
+
+border-bottom:
+1px solid #f1f1f1;
+
+}
+
+.row span{
+color:#777;
+font-size:14px;
+}
+
+.row b{
+font-size:14px;
+text-align:right;
+word-break:break-word;
+}
+
+/* STATUS */
+
+.statusSuccess{
+
+display:inline-flex;
+align-items:center;
+gap:8px;
+
+padding:8px 14px;
+
+border-radius:999px;
+
+background:
+linear-gradient(
+135deg,
+#fee2e2,
+#fecaca
+);
+
+color:#dc2626;
+
+font-size:13px;
+font-weight:700;
+
+border:
+1px solid rgba(239,68,68,.18);
+
+}
+
+.statusSuccess::after{
+
+content:"";
+
+width:6px;
+height:6px;
+
+border-radius:50%;
+
+background:#dc2626;
+
+}
+
+/* SEAL */
+
+.seal{
+
+margin-top:22px;
+
+display:flex;
+align-items:center;
+gap:12px;
+
+padding:13px;
+
+background:#fff7ed;
+
+border-radius:18px;
+
+}
+
+.seal img{
+width:42px;
+height:42px;
+object-fit:contain;
+}
+
+/* BUTTON */
+
+.btn{
+
+width:calc(100% - 30px);
+
+margin:15px;
+
+padding:16px;
+
+border:none;
+
+border-radius:22px;
+
+background:#ff6f00;
+
+color:white;
+
+font-size:15px;
+font-weight:700;
+
+}
+
+/* LOADER */
+
+.loaderWrap{
+
+position:fixed;
+inset:0;
+
+background:white;
+
+z-index:999999;
+
+display:flex;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+
+gap:18px;
+
+}
+
+.loader{
+
+width:65px;
+height:65px;
+
+border-radius:50%;
+
+border:5px solid #ffe0b2;
+border-top:5px solid #ff6f00;
+
+animation:spin .8s linear infinite;
+
+}
+
+.loaderText{
+font-size:14px;
+font-weight:700;
+color:#ff6f00;
+}
+
+@keyframes spin{
+100%{
+transform:rotate(360deg);
+}
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- LOADING -->
+
+<div class="loaderWrap" id="loaderWrap">
+
+<div class="loader"></div>
+
+<div class="loaderText">
+Memuat transaksi...
+</div>
+
+</div>
+
+<!-- HEADER -->
+
+<div class="header">
+
+<div
+class="backBtn"
+onclick="history.back()">
+
+<i class="fa fa-arrow-left"></i>
+
+</div>
+
+Detail Pembayaran Modal
+
+</div>
+
+<!-- CARD -->
+
+<div class="card">
+
+<div class="wm">
+
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+
+</div>
+
+<div class="watermark">
+AFKAR PAY
+</div>
+
+<div class="security">
+MODAL • SUPPLIER • VERIFIED
+</div>
+
+<!-- TOP -->
+
+<div class="top">
+
+<div class="icon">
+<i class="fa fa-cart-shopping"></i>
+</div>
+
+<div class="status">
+Pembayaran Modal Berhasil
+</div>
+
+<div
+class="nominal"
+id="nominal">
+
+Rp 0
+
+</div>
+
+</div>
+
+<!-- PENERIMA -->
+
+<div class="userCard">
+
+<div class="titleBox">
+Penerima Uang
+</div>
+
+<div class="profile">
+
+<img
+id="fotoPenerima"
+src="assets/images/watermak.jpeg">
+
+<div>
+
+<div
+class="nama"
+id="namaPenerima">
+
+Afkarmall.platform
+
+</div>
+
+<div
+class="nopay"
+id="payPenerima">
+
+777776666
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- INFO -->
+
+<div class="info">
+
+<div class="row">
+<span>ID Transaksi</span>
+<b id="idtrx"></b>
+</div>
+
+<div class="row">
+<span>Order ID</span>
+<b id="orderId"></b>
+</div>
+
+<div class="row">
+<span>Tanggal</span>
+<b id="tanggal"></b>
+</div>
+
+<div class="row">
+<span>Total Modal</span>
+<b id="modal"></b>
+</div>
+
+<div class="row">
+
+<span>Status</span>
+
+<div class="statusSuccess">
+
+<i class="fa fa-circle-check"></i>
+
+<span>
+Pembayaran Berhasil
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="seal">
+
+<img src="assets/images/bdn.png">
+
+<div>
+Pembayaran modal supplier AfkarPay
+</div>
+
+</div>
+
+</div>
+
+<button
+class="btn"
+onclick="
+location.href=
+'historysaldostore.html'
+">
+
+Selesai
+
+</button>
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* =========================
+FIREBASE
+========================= */
+
+const firebaseConfig = {
+
+apiKey:
+"AIzaSyD3DTcca7yZKVtllK3TQOUe6Yv2hSyG_g",
+
+authDomain:
+"shoponline-93646.firebaseapp.com",
+
+databaseURL:
+"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"shoponline-93646"
+
+};
+
+const app =
+initializeApp(firebaseConfig);
+
+const db =
+getDatabase(app);
+
+/* =========================
+FORMAT
+========================= */
+
+function rupiah(x){
+
+return "Rp " +
+
+Number(x || 0)
+.toLocaleString("id-ID");
+
+}
+
+function formatTanggal(t){
+
+if(!t) return "-";
+
+const d =
+new Date(Number(t));
+
+return d.toLocaleString(
+"id-ID",
+{
+day:"2-digit",
+month:"long",
+year:"numeric",
+hour:"2-digit",
+minute:"2-digit",
+second:"2-digit"
+}
+);
+
+}
+
+function shortId(id){
+
+if(!id) return "-";
+
+const match =
+id.match(/ORD\d+/);
+
+if(match){
+return match[0];
+}
+
+return id;
+
+}
+
+/* =========================
+PARAM
+========================= */
+
+const params =
+new URLSearchParams(location.search);
+
+const id =
+params.get("id");
+
+/* =========================
+HELPER
+========================= */
+
+function setText(el,val){
+
+const e =
+document.getElementById(el);
+
+if(e){
+
+e.innerHTML = val;
+
+}
+
+}
+
+function setSrc(el,val){
+
+const e =
+document.getElementById(el);
+
+if(e){
+
+e.src = val;
+
+}
+
+}
+
+/* =========================
+LOAD
+========================= */
+
+async function load(){
+
+try{
+
+const storeId =
+localStorage.getItem("storeId");
+
+/* =========================
+VALIDASI
+========================= */
+
+if(!id){
+
+alert("ID transaksi tidak ditemukan");
+return;
+
+}
+
+if(!storeId){
+
+alert("Store belum login");
+return;
+
+}
+
+/* =========================
+AMBIL DATA HISTORY
+========================= */
+
+const snap =
+await get(
+
+ref(
+db,
+"saldoHistory/" + storeId + "/" + id
+)
+
+);
+
+if(!snap.exists()){
+
+alert("Data transaksi tidak ada");
+return;
+
+}
+
+const data =
+snap.val();
+
+/* =========================
+AMBIL DATA STORE
+========================= */
+
+let store = {};
+
+const storeSnap =
+await get(
+ref(db,"stores/" + storeId)
+);
+
+if(storeSnap.exists()){
+
+store =
+storeSnap.val();
+
+}
+
+/* =========================
+AMBIL DATA BOT
+========================= */
+
+let bot = {};
+
+const botSnap =
+await get(
+ref(db,"users/Botafkarmall")
+);
+
+if(botSnap.exists()){
+
+bot =
+botSnap.val();
+
+}
+
+/* =========================
+STATUS
+========================= */
+
+setText(
+"statusTitle",
+"Pembayaran Modal Berhasil"
+);
+
+setText(
+"statusBadgeText",
+"Pembayaran Berhasil"
+);
+
+/* =========================
+NOMINAL
+========================= */
+
+setText(
+"nominal",
+rupiah(data.amount || 0)
+);
+
+/* =========================
+ID TRANSAKSI
+========================= */
+
+/* =========================
+ID TRANSAKSI
+========================= */
+
+setText(
+"idtrx",
+shortId(
+data.orderId ||
+data.id ||
+id
+)
+);
+
+/* =========================
+ID FULL
+========================= */
+
+const rows =
+document.querySelectorAll(".row");
+
+if(rows[1]){
+
+rows[1].innerHTML = `
+
+<span>ID Full</span>
+
+<b style="
+font-size:11px;
+word-break:break-all;
+text-align:right;
+display:block;
+max-width:180px;
+">
+${data.id || id}
+</b>
+
+`;
+
+}
+
+
+
+
+
+
+
+
+/* =========================
+TANGGAL
+========================= */
+
+setText(
+"tanggal",
+formatTanggal(
+data.createdAt
+)
+);
+
+/* =========================
+BIAYA ADMIN
+========================= */
+
+setText(
+"feeAdmin",
+"Rp 0"
+);
+
+/* =========================
+TOTAL POTONG
+========================= */
+
+setText(
+"totalPotong",
+rupiah(
+data.amount || 0
+)
+);
+
+/* =========================
+PENGIRIM
+========================= */
+
+setText(
+"pengirim",
+store.nama ||
+"Store"
+);
+
+setText(
+"noPengirim",
+store.noPay ||
+"-"
+);
+
+setSrc(
+"logoPengirim",
+
+store.logo ||
+
+store.foto ||
+
+"https://i.ibb.co/7QpKsCX/store.png"
+);
+
+/* =========================
+PENERIMA
+========================= */
+
+setText(
+"penerima",
+bot.nama ||
+"Afkarmall.platform"
+);
+
+setText(
+"noTujuan",
+bot.noPay ||
+"777776666"
+);
+
+setSrc(
+"logoPenerima",
+
+bot.foto ||
+
+"https://i.ibb.co/7QpKsCX/store.png"
+);
+
+/* =========================
+LABEL BOX
+========================= */
+
+const titleBox =
+document.querySelectorAll(".titleBox");
+
+if(titleBox[0]){
+
+titleBox[0].innerHTML =
+"Pusat penerima";
+
+}
+
+if(titleBox[1]){
+
+titleBox[1].innerHTML =
+"Penerima Modal";
+
+}
+
+/* =========================
+UBAH ROW INFO
+========================= */
+
+if(rows[2]){
+
+rows[2].innerHTML = `
+
+<span>Order ID</span>
+
+<b>
+${data.orderId || "-"}
+</b>
+
+`;
+
+}
+
+if(rows[3]){
+
+rows[2].innerHTML = `
+
+<span>Tanggal</span>
+
+<b id="tanggal">
+${formatTanggal(data.createdAt)}
+</b>
+
+`;
+
+}
+
+if(rows[3]){
+
+rows[3].innerHTML = `
+
+<span>Total Modal</span>
+
+<b id="totalPotong">
+${rupiah(data.amount || 0)}
+</b>
+
+`;
+
+}
+
+/* =========================
+ICON
+========================= */
+
+const icon =
+document.querySelector(".icon.success");
+
+if(icon){
+
+icon.innerHTML =
+`<i class="fa fa-cart-shopping"></i>`;
+
+icon.style.background =
+"linear-gradient(135deg,#ef4444,#dc2626)";
+
+}
+
+/* =========================
+SEAL TEXT
+========================= */
+
+const sealText =
+document.querySelector(".seal div");
+
+if(sealText){
+
+sealText.innerHTML =
+"Pembayaran modal supplier AfkarPay";
+
+}
+
+/* =========================
+WATERMARK
+========================= */
+
+const watermark =
+document.querySelector(".watermark");
+
+if(watermark){
+
+watermark.innerHTML =
+"AFKAR PAY";
+
+}
+
+/* =========================
+SECURITY TEXT
+========================= */
+
+const security =
+document.querySelector(".security");
+
+if(security){
+
+security.innerHTML =
+"MODAL • SUPPLIER • VERIFIED";
+
+}
+
+/* =========================
+LOADER
+========================= */
+
+const loader =
+document.getElementById("loaderWrap");
+
+if(loader){
+
+loader.style.opacity = "0";
+
+setTimeout(()=>{
+
+loader.style.display = "none";
+
+},300);
+
+}
+
+}catch(err){
+
+console.error(err);
+
+alert("Gagal memuat transaksi");
+
+}
+
+}
+
+/* =========================
+RUN
+========================= */
+
+load();
+
+</script>
+
+</body>
+</html>

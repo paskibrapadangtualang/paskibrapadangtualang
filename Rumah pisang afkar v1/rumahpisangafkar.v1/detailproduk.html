@@ -1047,27 +1047,88 @@ window.addCart = async () => {
     await set(
       ref(db, "cart/" + uid + "/" + produkId),
       {
-        id: produkId,
-        nama: data.nama || "",
-        harga: data.harga || 0,
-        qty: 1,
-        stok: data.stok || 0,
-        gambar: gambarUtama || "",
-        hargaAwal: data.hargaAwal || 0,
 
-        // 🔥 INI YANG KURANG KEMARIN
-        storeId: data.storeId || "unknown_store"
+        /* =========================
+        INFO PRODUK
+        ========================= */
+
+        id: produkId,
+
+        nama: data.nama || "",
+
+        harga: Number(data.harga || 0),
+
+        qty: 1,
+
+        stok: Number(data.stok || 0),
+
+        gambar: gambarUtama || "",
+
+        hargaAwal: Number(data.hargaAwal || 0),
+
+        storeId:
+        data.storeId || "unknown_store",
+
+        kategori:
+        data.kategori || "",
+
+        deskripsi:
+        data.deskripsi || "",
+
+        /* =========================
+        PRODUK GUDANG
+        ========================= */
+
+        gudangProduk:
+        data.gudangProduk || false,
+
+        gudangId:
+        data.gudangId || "",
+
+        supplier:
+        data.supplier || "",
+
+        supplierResmi:
+        data.supplierResmi || false,
+
+        /* =========================
+        HARGA GUDANG
+        ========================= */
+
+        hargaModal:
+        Number(data.hargaModal || 0),
+
+        hargaJual:
+        Number(data.hargaJual || data.harga || 0),
+
+        keuntunganStore:
+        Number(data.keuntunganStore || 0),
+
+        komisi:
+        Number(data.komisi || 0),
+
+        komisiPersen:
+        Number(data.komisiPersen || 0),
+
+        penjelasanKomisi:
+        data.penjelasanKomisi || ""
+
       }
     );
 
     alert("Produk ditambahkan ke keranjang");
 
-  } catch (err) {
-    console.log("CART ERROR:", err);
-    alert("Gagal menambahkan");
   }
-};
 
+  catch (err) {
+
+    console.log("CART ERROR:", err);
+
+    alert("Gagal menambahkan");
+
+  }
+
+};
 
 
 
@@ -1081,33 +1142,77 @@ window.checkoutNow = () => {
     "prod_" + Date.now();
 
   const product = {
+
     id: productId,
+
     nama: data.nama || "",
+
     harga: Number(data.harga) || 0,
+
     qty: 1,
+
     gambar: Array.isArray(data.gambar)
       ? data.gambar[0]
-      : (data.gambar || "")
+      : (data.gambar || ""),
+
+    storeId:
+    data.storeId || "unknown_store",
+
+    /* =========================
+    PRODUK GUDANG
+    ========================= */
+
+    gudangProduk:
+    data.gudangProduk || false,
+
+    gudangId:
+    data.gudangId || "",
+
+    supplier:
+    data.supplier || "",
+
+    supplierResmi:
+    data.supplierResmi || false,
+
+    /* =========================
+    HARGA
+    ========================= */
+
+    hargaModal:
+    Number(data.hargaModal || 0),
+
+    hargaJual:
+    Number(data.hargaJual || data.harga || 0),
+
+    keuntunganStore:
+    Number(data.keuntunganStore || 0),
+
+    komisi:
+    Number(data.komisi || 0),
+
+    komisiPersen:
+    Number(data.komisiPersen || 0),
+
+    penjelasanKomisi:
+    data.penjelasanKomisi || ""
+
   };
 
-  localStorage.setItem("checkoutMode", "buynow");
+  localStorage.setItem(
+    "checkoutMode",
+    "buynow"
+  );
 
-  localStorage.setItem("buyNowCart", JSON.stringify({
-    [product.id]: {
-      id: product.id,
-      nama: product.nama,
-      harga: product.harga,
-      qty: 1,
-      gambar: product.gambar,
-      storeId: data.storeId || "unknown_store"
-    }
-  }));
+  localStorage.setItem(
+    "buyNowCart",
+    JSON.stringify({
+      [product.id]: product
+    })
+  );
 
   location.href = "checkout.html";
+
 };
-
-
-
 
 
 

@@ -19,69 +19,159 @@ font-family:Arial;
 
 body{
 background:#f5f5f5;
-padding-top:85px;
+padding-top:0px;
 padding-bottom:90px;
 }
 
 /* HEADER */
-
 .header{
 
-position:fixed;
+background:
+linear-gradient(
+180deg,
+#ff6f00,
+#ff8300
+);
+
+padding:12px 14px 18px;
+
+border-bottom-left-radius:18px;
+border-bottom-right-radius:18px;
+
+position:sticky;
+
 top:0;
-left:0;
-right:0;
-height:80px;
-background:#d29a01;
-display:flex;
-align-items:center;
-padding:15px;
-gap:12px;
+
+z-index:999;
+
 box-shadow:
-0 2px 15px rgba(0,0,0,.08);
-z-index:1000;
+0 5px 15px rgba(0,0,0,.08);
+
+}
+
+.topHeader{
+
+display:flex;
+
+align-items:center;
+
+margin-bottom:12px;
+
+gap:12px;
+
+}
+
+.logoArea{
+
+flex:1;
+
+display:flex;
+
+align-items:center;
+
+}
+
+.logoImg{
+
+height:28px;
+border-radius: 10px;
+object-fit:contain;
 
 }
 
 .search{
 
-flex:1;
-height:45px;
-background:#f3f3f3;
-border-radius:15px;
+height:42px;
+
+background:white;
+
+border-radius:10px;
+
 display:flex;
+
 align-items:center;
-padding:0 15px;
-gap:10px;
+
+padding:0 14px;
+
+box-shadow:
+0 2px 8px rgba(0,0,0,.08);
+
+}
+
+.search i{
+
+color:#999;
+
+margin-right:10px;
+
+font-size:14px;
 
 }
 
 .search input{
+
+flex:1;
+
 border:none;
+
 outline:none;
+
 background:none;
-width:100%;
+
+font-size:13px;
 
 }
 
 .iconBtn{
-cursor:pointer;
-transition:.2s;
-width:45px;
-height:45px;
-border-radius:15px;
-background:#fff3dc;
+position:relative;
+width:34px;
+height:34px;
 display:flex;
 justify-content:center;
 align-items:center;
-color:#ff9800;
+color:white;
 font-size:18px;
+cursor:pointer;
 
 }
 
-.iconBtn:active{
-transform:scale(0.92);
+.badge:empty{
+display:none;
 }
+
+.badge{
+
+position:absolute;
+
+top:-4px;
+right:-2px;
+
+min-width:18px;
+height:18px;
+
+padding:0 5px;
+
+border-radius:20px;
+
+background:#ff2d2d;
+
+color:white;
+
+font-size:10px;
+font-weight:bold;
+
+display:flex;
+
+justify-content:center;
+align-items:center;
+
+border:2px solid #ff7a00;
+
+
+
+}
+
+
 
 
 /* CONTENT */
@@ -476,8 +566,56 @@ background:#f5f5f5;
 <body>
 
 <!-- HEADER -->
+<!-- HEADER -->
+<!-- HEADER -->
 
 <div class="header">
+
+<div class="topHeader">
+
+<div class="logoArea">
+
+<img
+src="assets/images/watermak.jpeg"
+class="logoImg">
+</div>
+
+
+<div
+class="iconBtn"
+
+onclick="
+location.href=
+'detailcart.html'
+">
+
+<i class="fa fa-shopping-cart"></i>
+<div
+class="badge"
+id="cartBadge"
+>
+</div>
+</div>
+
+
+<div
+class="iconBtn"
+onclick="
+location.href=
+'Chatcostumer.html'
+">
+<i class="fa fa-message"></i>
+<div
+class="badge"
+id="chatBadge"
+>
+</div>
+</div>
+</div>
+
+
+
+
 
 <div class="search">
 
@@ -490,30 +628,6 @@ placeholder="Cari produk..."
 </div>
 
 <div id="searchResult"></div>
-
-<div
-class="iconBtn"
-
-onclick="
-location.href=
-'detailcart.html'
-"
-
->
-
-<i class="fa fa-shopping-cart"></i>
-
-</div>
-
-
-
-
-
-<div class="iconBtn" onclick="location.href='Chatcostumer.html'">
-  <i class="fa fa-message"></i>
-</div>
-
-
 
 </div>
 
@@ -720,7 +834,20 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 
+const uid =
+localStorage.getItem(
+"userId"
+);
 
+const cartBadge =
+document.getElementById(
+"cartBadge"
+);
+
+const chatBadge =
+document.getElementById(
+"chatBadge"
+);
 
 
 
@@ -784,11 +911,139 @@ const produkList = document.getElementById("produkList");
 
 
 
+// ======================
+// CHAT BADGE REALTIME
+// ======================
+
+onValue(
+
+ref(
+db,
+"chatcostumer"
+),
+
+(snapshot)=>{
+
+let unreadRoom = 0;
+
+if(snapshot.exists()){
+
+snapshot.forEach((storeSnap)=>{
+
+storeSnap.forEach((userSnap)=>{
+
+const userId =
+userSnap.key;
+
+if(userId !== uid)
+return;
+
+const messages =
+userSnap.val();
+
+let adaBelumDibaca =
+false;
+
+Object.values(messages)
+.forEach((msg)=>{
+
+if(
+
+msg.sender !== uid &&
+
+!msg.readBy?.[uid]
+
+){
+
+adaBelumDibaca = true;
+
+}
+
+});
+
+if(adaBelumDibaca){
+
+unreadRoom++;
+
+}
+
+});
+
+});
+
+}
+
+if(unreadRoom > 0){
+
+chatBadge.style.display=
+"flex";
+
+chatBadge.innerText=
+unreadRoom;
+
+}else{
+
+chatBadge.style.display=
+"none";
+
+}
+
+}
+
+);
 
 
+// ======================
+// CART BADGE REALTIME
+// ======================
+// ======================
+// CART BADGE REALTIME
+// ======================
 
+onValue(
 
+ref(
+db,
+"cart/" + uid
+),
 
+(snapshot)=>{
+
+let totalCart = 0;
+
+if(snapshot.exists()){
+
+snapshot.forEach((itemSnap)=>{
+
+const item =
+itemSnap.val();
+
+/* jumlah qty */
+totalCart +=
+item.qty || 1;
+
+});
+
+}
+
+if(totalCart > 0){
+
+cartBadge.style.display =
+"flex";
+
+cartBadge.innerText =
+totalCart;
+
+}else{
+
+cartBadge.style.display =
+"none";
+
+}
+
+}
+
+);
 
 
 

@@ -3,355 +3,1263 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Gudang Produk</title>
 
 <style>
-body{
+
+*{
 margin:0;
+padding:0;
+box-sizing:border-box;
 font-family:Arial;
+}
+
+body{
 background:#f5f5f5;
 padding-bottom:90px;
 }
 
+/* =========================
+HEADER
+========================= */
+
 .header{
+
+position:sticky;
+top:0;
+z-index:999;
+
 background:#ff6f00;
+
+padding:14px;
+
+display:flex;
+align-items:center;
+gap:12px;
+
 color:white;
-padding:15px;
-font-weight:bold;
-text-align:center;
-position:relative;
+
 }
 
-/* CART */
-.cart{
-position:absolute;
-right:15px;
-top:12px;
+.searchBox{
+
+flex:1;
+
 background:white;
-color:#ff6f00;
-padding:5px 10px;
-border-radius:20px;
-font-size:12px;
-font-weight:bold;
+
+border-radius:30px;
+
+padding:10px 14px;
+
+display:flex;
+align-items:center;
+gap:10px;
+
 }
 
-/* PRODUCT */
-.container{
-padding:15px;
+.searchBox input{
+
+border:none;
+outline:none;
+
+width:100%;
+
+font-size:14px;
+
+}
+
+.headerIcon{
+
+font-size:22px;
+
+}
+
+/* =========================
+BANNER
+========================= */
+
+.banner{
+
+margin:14px;
+
+background:
+linear-gradient(
+135deg,
+#ff6f00,
+#ff9800
+);
+
+border-radius:20px;
+
+padding:20px;
+
+color:white;
+
+box-shadow:
+0 10px 25px rgba(255,111,0,.2);
+
+}
+
+.bannerTitle{
+
+font-size:22px;
+font-weight:bold;
+margin-bottom:8px;
+
+}
+
+.bannerText{
+
+font-size:13px;
+line-height:1.6;
+
+opacity:.95;
+
+}
+
+/* =========================
+MENU
+========================= */
+
+.menuRow{
+
+display:flex;
+gap:12px;
+
+overflow:auto;
+
+padding:0 14px 14px;
+
+}
+
+.menuCard{
+
+min-width:110px;
+
+background:white;
+
+border-radius:18px;
+
+padding:14px;
+
+box-shadow:
+0 4px 12px rgba(0,0,0,.05);
+
+text-align:center;
+
+}
+
+.menuIcon{
+
+font-size:26px;
+margin-bottom:8px;
+
+}
+
+.menuTitle{
+
+font-size:13px;
+font-weight:bold;
+
+}
+
+/* =========================
+PRODUK
+========================= */
+
+.section{
+
+padding:0 14px;
+
+}
+
+.sectionTitle{
+
+font-size:17px;
+font-weight:bold;
+
+margin-bottom:14px;
+
+}
+
+.productGrid{
+
 display:grid;
-grid-template-columns:1fr;
-gap:10px;
+
+grid-template-columns:
+repeat(2,1fr);
+
+gap:12px;
+
 }
 
 .card{
+
 background:white;
-border-radius:12px;
-padding:10px;
-box-shadow:0 5px 15px rgba(0,0,0,0.08);
+
+border-radius:18px;
+
+overflow:hidden;
+
+position:relative;
+
+box-shadow:
+0 5px 15px rgba(0,0,0,.05);
+
 }
 
 .card img{
+
 width:100%;
-border-radius:10px;
-height:160px;
+height:170px;
 object-fit:cover;
+
+background:#eee;
+
 }
 
-.title{
+.badge{
+
+position:absolute;
+
+top:10px;
+left:10px;
+
+background:#ff3d00;
+
+color:white;
+
+padding:5px 8px;
+
+font-size:11px;
 font-weight:bold;
-margin-top:8px;
+
+border-radius:10px;
+
+}
+
+.cardBody{
+
+padding:12px;
+
+}
+
+.productName{
+
+font-size:14px;
+font-weight:bold;
+
+line-height:1.5;
+
+height:42px;
+
+overflow:hidden;
+
 }
 
 .price{
-color:#ff6f00;
+
+margin-top:8px;
+
+font-size:18px;
 font-weight:bold;
-margin-top:5px;
+
+color:#ff6f00;
+
+}
+
+.oldPrice{
+
+font-size:12px;
+color:#999;
+
+text-decoration:line-through;
+
+margin-top:3px;
+
+}
+
+.row{
+
+display:flex;
+align-items:center;
+justify-content:space-between;
+
+margin-top:10px;
+
+}
+
+.location{
+
+font-size:12px;
+color:#777;
+
+}
+
+.stok{
+
+font-size:12px;
+color:#777;
+
+}
+
+.komisi{
+
+margin-top:10px;
+
+background:#fff5eb;
+
+border-radius:12px;
+
+padding:10px;
+
+font-size:12px;
+
+line-height:1.6;
+
+color:#ff6f00;
+
+border:1px solid #ffd9b3;
+
 }
 
 .btn{
-display:inline-block;
-margin-top:10px;
-padding:8px 10px;
+
+width:100%;
+
+margin-top:12px;
+
+height:42px;
+
+border:none;
+
+border-radius:14px;
+
 background:#ff6f00;
+
 color:white;
-border-radius:8px;
-font-size:12px;
-cursor:pointer;
+
+font-size:13px;
+font-weight:bold;
+
 }
 
-/* NAV */
-.bottom-nav{
+/* =========================
+BOTTOM NAV
+========================= */
+
+.bottomNav{
+
 position:fixed;
-bottom:0;
+
 left:0;
 right:0;
-height:65px;
+bottom:0;
+
+height:70px;
+
 background:white;
+
 border-top:1px solid #eee;
+
 display:flex;
-justify-content:space-around;
 align-items:center;
+justify-content:space-around;
+
+z-index:999;
+
 }
 
-.nav-item{
-text-decoration:none;
-color:#666;
-font-size:11px;
+.navItem{
+
 display:flex;
 flex-direction:column;
 align-items:center;
-flex:1;
+gap:4px;
+
+font-size:11px;
+
+color:#666;
+
+text-decoration:none;
+
 }
 
-.nav-icon{
-width:22px;
-height:22px;
-}
+.navItem.active{
 
-.nav-item.active{
 color:#ff6f00;
 font-weight:bold;
+
 }
 
-/* TOP ACTION */
-.top-action{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:10px 15px;
+.navIcon{
+
+font-size:22px;
+
 }
 
-.btn-right{
-background:#22c55e;
-color:white;
-padding:8px 12px;
-border-radius:8px;
-font-size:12px;
-cursor:pointer;
+/* =========================
+EMPTY
+========================= */
+
+.empty{
+
+background:white;
+
+padding:30px;
+
+border-radius:20px;
+
+text-align:center;
+
+color:#999;
+
 }
+
+/* =========================
+RESPONSIVE
+========================= */
+
+@media(max-width:500px){
+
+.productGrid{
+grid-template-columns:1fr 1fr;
+}
+
+.card img{
+height:150px;
+}
+
+}
+
 </style>
 </head>
 
 <body>
 
+<!-- HEADER -->
+
 <div class="header">
+
+<div class="headerIcon">
+🛍️
+</div>
+
+<div class="searchBox">
+
+🔍
+
+<input
+type="text"
+id="searchInput"
+placeholder="Cari produk gudang..."
+>
+
+</div>
+
+<div class="headerIcon">
+🛒
+</div>
+
+</div>
+
+<!-- BANNER -->
+
+<div class="banner">
+
+<div class="bannerTitle">
 Gudang Produk
-<div class="cart" id="cart">🛒 0</div>
 </div>
 
-<div class="top-action">
-<div>Produk tersedia</div>
-<div class="btn-right" onclick="checkout()">Tambahkan Sekarang</div>
+<div class="bannerText">
+Ambil produk supplier dan jual kembali di tokomu.
+Semua komisi otomatis masuk ke store sesuai pengaturan admin.
 </div>
 
-<div class="container" id="list">
-Loading...
+</div>
+
+<!-- MENU -->
+
+<div class="menuRow">
+
+<div class="menuCard">
+<div class="menuIcon">🔥</div>
+<div class="menuTitle">Produk Viral</div>
+</div>
+
+<div class="menuCard">
+<div class="menuIcon">💰</div>
+<div class="menuTitle">Komisi Besar</div>
+</div>
+
+<div class="menuCard">
+<div class="menuIcon">🚚</div>
+<div class="menuTitle">COD Ready</div>
+</div>
+
+<div class="menuCard">
+<div class="menuIcon">⚡</div>
+<div class="menuTitle">Fast Seller</div>
+</div>
+
+</div>
+
+<!-- PRODUK -->
+
+<div class="section">
+
+<div class="sectionTitle">
+Semua Produk Gudang
+</div>
+
+<div
+class="productGrid"
+id="productList"
+>
+
+<div class="empty">
+Memuat produk...
+</div>
+
+</div>
+
 </div>
 
 <!-- NAV -->
-<div class="bottom-nav">
 
-<a href="gudangproduk.html" class="nav-item active">
-<img src="assets/images/shopping.png" class="nav-icon">
-<span>Gudang produk</span>
+<div class="bottomNav">
+
+<a
+href="gudangproduk.html"
+class="navItem active"
+>
+<div class="navIcon">🛍️</div>
+<div>Gudang</div>
 </a>
 
-<a href="pesanansaya.html" class="nav-item">
-<img src="assets/images/shopping-list.png" class="nav-icon">
-<span>Pesanan</span>
+<a
+href="dashboardstore.html"
+class="navItem"
+>
+<div class="navIcon">🏪</div>
+<div>Toko</div>
 </a>
 
-<a href="dashboardstore.html" class="nav-item">
-<img src="assets/images/shope.png" class="nav-icon">
-<span>Vendor</span>
+<a
+href="pesanansaya.html"
+class="navItem"
+>
+<div class="navIcon">📦</div>
+<div>Pesanan</div>
+</a>
+
+<a
+href="profilestore.html"
+class="navItem"
+>
+<div class="navIcon">👤</div>
+<div>Akun</div>
 </a>
 
 </div>
-
-
-
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, push, set, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get,
+set
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* =========================
+FIREBASE
+========================= */
 
 const firebaseConfig = {
-apiKey:"AIzaSyD3DTcca7yZKVtllcK3TQOUe6Yv2hSyG_g",
-authDomain:"shoponline-93646.firebaseapp.com",
-databaseURL:"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId:"shoponline-93646",
-storageBucket:"shoponline-93646.firebasestorage.app",
-messagingSenderId:"435032364443",
-appId:"1:435032364443:web:5f76384f794693a892bd3e"
+
+apiKey:
+"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+
+authDomain:
+"shoponline-93646.firebaseapp.com",
+
+databaseURL:
+"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"shoponline-93646",
+
+storageBucket:
+"shoponline-93646.firebasestorage.app",
+
+messagingSenderId:
+"435032364443",
+
+appId:
+"1:435032364443:web:5f76384f794693a892bd3e"
+
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const app =
+initializeApp(firebaseConfig);
 
-const storeId = localStorage.getItem("storeId");
+const db =
+getDatabase(app);
 
-/* 🔥 AUTO DUMMY (OPTIONAL) */
-async function createDummy(){
+/* =========================
+STORE LOGIN
+========================= */
 
-const snap = await get(ref(db,"Gudangproduk"));
+const storeId =
+localStorage.getItem("storeId");
+
+/* =========================
+ELEMENT
+========================= */
+
+const list =
+document.getElementById("productList");
+
+if(!list){
+
+console.error("ELEMENT #productList TIDAK ADA");
+
+alert("Container list tidak ditemukan");
+
+throw new Error("productList null");
+
+}
+
+/* =========================
+FORMAT RUPIAH
+========================= */
+
+function rupiah(num){
+
+return Number(num || 0)
+.toLocaleString("id-ID");
+
+}
+
+/* =========================
+ADD TO STORE
+========================= */
+
+window.addToStore =
+async(productId)=>{
+
+try{
+
+/* =========================
+CHECK LOGIN
+========================= */
+
+if(!storeId){
+
+alert(
+"Login store dulu"
+);
+
+return;
+
+}
+
+/* =========================
+AMBIL DATA STORE
+========================= */
+
+const storeSnap =
+await get(
+ref(db,"stores/" + storeId)
+);
+
+if(!storeSnap.exists()){
+
+alert(
+"Store tidak ditemukan"
+);
+
+return;
+
+}
+
+const storeData =
+storeSnap.val();
+
+/* =========================
+CHECK APPROVED
+========================= */
+
+/* =========================
+CHECK APPROVED
+========================= */
+
+if(storeData.status !== "approved"){
+
+alert(
+
+"⚠️ Store kamu belum di approve admin.\n\n" +
+
+"Fitur Gudang Produk hanya untuk store yang sudah disetujui."
+
+);
+
+return;
+
+}
+
+/* =========================
+AMBIL PRODUK GUDANG
+========================= */
+
+const snap =
+await get(
+ref(
+db,
+"Gudangproduk/" + productId
+)
+);
 
 if(!snap.exists()){
 
-await set(ref(db,"Gudangproduk"), {
-product100:{
-nama:"Produk 100",
-deskripsi:"Produk premium kualitas terbaik",
-harga:56274,
-hargaAwal:210900,
-diskon:42,
-promo:true,
-stok:5,
-lokasi:"Jakarta",
-cod:true,
-kupon:true,
-gambar:[
-"https://picsum.photos/300/200",
-"https://picsum.photos/301/200"
-],
-storeId:"store_1779561538090",
-id:"produk100"
-}
-});
+alert(
+"Produk tidak ditemukan"
+);
 
-}
-}
-
-/* 🔥 ADD TO PRODUK */
-window.addToStore = async function(productString){
-
-if(!storeId){
-alert("Login sebagai store dulu!");
 return;
+
 }
 
-try {
+const p = snap.val();
 
-const product = JSON.parse(productString);
+/* =========================
+HARGA MODAL
+========================= */
 
-const newId = "produk" + Date.now();
+const hargaModal =
+Number(
+p.hargaModal || 0
+);
+
+/* =========================
+PERSEN KOMISI
+========================= */
+
+const persen =
+Number(
+p.komisiPersen || 10
+);
+
+/* =========================
+HITUNG KEUNTUNGAN
+========================= */
+
+const keuntungan =
+Math.floor(
+(hargaModal * persen) / 100
+);
+
+/* =========================
+HARGA JUAL OTOMATIS
+========================= */
+
+const hargaJual =
+hargaModal + keuntungan;
+
+/* =========================
+KONFIRMASI
+========================= */
+
+const lanjut =
+confirm(
+
+"📦 KONFIRMASI PRODUK\n\n" +
+
+"Nama Produk:\n" +
+(p.nama || "-") +
+
+"\n\n" +
+
+"Harga Modal:\nRp " +
+rupiah(hargaModal) +
+
+"\n\n" +
+
+"Keuntungan Store:\nRp " +
+rupiah(keuntungan) +
+
+" (" + persen + "%)" +
+
+"\n\n" +
+
+"Harga Jual Otomatis:\nRp " +
+rupiah(hargaJual) +
+
+"\n\n" +
+
+"⚠️ PENTING\n\n" +
+
+"Ketika ada pesanan masuk,\n" +
+"store wajib memiliki saldo\n" +
+"minimal sebesar harga modal.\n\n" +
+
+"Saldo akan dipotong otomatis\n" +
+"saat pesanan diterima.\n\n" +
+
+"Lanjut tambahkan produk?"
+
+);
+
+if(!lanjut)
+return;
+
+/* =========================
+ID PRODUK
+========================= */
+
+const newId =
+"produk" + Date.now();
+
+/* =========================
+DATA PRODUK
+========================= */
 
 const data = {
-id: newId,
-nama: product.nama || "Tanpa Nama",
-deskripsi: product.deskripsi || "-",
 
-harga: product.hargaPromo || product.harga || product.hargaAwal || 0,
-hargaAwal: product.hargaAwal || product.harga || 0,
+id:
+newId,
 
-diskon: product.diskon || 0,
-promo: product.promo || false,
-stok: product.stok || 0,
-lokasi: product.lokasi || "-",
-cod: product.cod || false,
-kupon: product.kupon || false,
-gambar: product.gambar || [],
-storeId: storeId
+/* INFO */
+
+nama:
+p.nama || "",
+
+deskripsi:
+p.deskripsi || "",
+
+kategori:
+p.kategori || "Gudang Produk",
+
+/* HARGA */
+
+harga:
+hargaJual,
+
+hargaJual:
+hargaJual,
+
+hargaModal:
+hargaModal,
+
+hargaAwal:
+hargaJual,
+
+keuntunganStore:
+keuntungan,
+
+/* KOMISI */
+
+komisi:
+keuntungan,
+
+komisiPersen:
+persen,
+
+penjelasanKomisi:
+
+`Store akan mendapatkan keuntungan Rp ${rupiah(keuntungan)} dari setiap produk berhasil terjual.`,
+
+/* DISKON */
+
+diskon:
+0,
+
+promo:
+false,
+
+/* STOK */
+
+stok:
+Number(
+p.stok || 0
+),
+
+/* LOKASI */
+
+lokasi:
+p.lokasi || "",
+
+/* FITUR */
+
+cod:
+p.cod || false,
+
+kupon:
+p.kupon || false,
+
+/* GAMBAR */
+
+gambar:
+Array.isArray(p.gambar)
+?
+p.gambar
+:
+[],
+
+/* STORE */
+
+storeId:
+storeId,
+
+/* GUDANG */
+
+gudangProduk:
+true,
+
+gudangId:
+productId,
+
+supplier:
+p.supplier ||
+"Gudang Produk",
+
+supplierResmi:
+true,
+
+/* STATUS */
+
+status:
+"aktif",
+
+createdAt:
+Date.now()
+
 };
 
-await set(ref(db, "produk/" + newId), data);
+/* =========================
+SIMPAN
+========================= */
 
-alert("Produk berhasil ditambahkan!");
+await set(
+ref(db,"produk/" + newId),
+data
+);
 
-} catch(err){
+/* =========================
+BERHASIL
+========================= */
+
+alert(
+
+"✅ Produk berhasil masuk ke toko.\n\n" +
+
+"Harga jual otomatis dibuat.\n" +
+"Store akan mendapat keuntungan\n" +
+"setiap produk berhasil terjual."
+
+);
+
+}catch(err){
+
 console.error(err);
-alert("Gagal menambahkan produk");
-}
+
+alert(
+"Gagal menambahkan produk"
+);
 
 }
 
-createDummy();
+};
 
-
-
-
-
-
+/* =========================
+LOAD PRODUK
+========================= */
 
 async function load(){
 
-await createDummy();
+try{
 
-const snap = await get(ref(db,"Gudangproduk"));
-const list = document.getElementById("list");
+const snap =
+await get(
+ref(db,"Gudangproduk")
+);
 
 if(!snap.exists()){
-list.innerHTML = "<div style='text-align:center;color:#888'>Tidak ada produk</div>";
+
+list.innerHTML = `
+
+<div style="
+text-align:center;
+padding:40px;
+color:#999;
+">
+
+Belum ada produk gudang
+
+</div>
+
+`;
+
 return;
+
 }
-
-let dataArray = [];
-
-/* 🔥 UBAH KE ARRAY (AMAN) */
-snap.forEach(item => {
-dataArray.push({
-key: item.key,
-...item.val()
-});
-});
-
-/* FORMAT RUPIAH */
-const format = (num) =>
-new Intl.NumberFormat('id-ID').format(num || 0);
 
 let html = "";
 
-/* 🔥 LOOP NORMAL */
-for(let p of dataArray){
+/* =========================
+LOOP
+========================= */
 
-/* AUTO FIX LOCAL (AMAN TANPA RUSAK FIREBASE) */
-p.nama = p.nama ?? "-";
-p.deskripsi = p.deskripsi ?? "-";
+snap.forEach(item=>{
 
-const hargaPromo = p.hargaPromo ?? 0;
-const hargaNormal = p.hargaNormal ?? p.hargaModal ?? 0;
+const p = item.val();
 
-p.stok = p.stok ?? 5;
-p.lokasi = p.lokasi ?? "-";
-p.gambar = Array.isArray(p.gambar) ? p.gambar : [];
+const productId =
+item.key;
 
-html += `
-<div class="card">
+/* =========================
+HARGA MODAL
+========================= */
 
-<img src="${p.gambar[0] || 'https://via.placeholder.com/300'}">
+const hargaModal =
+Number(
+p.hargaModal || 0
+);
 
-<div class="title">${p.nama}</div>
-<div>${p.deskripsi}</div>
+/* =========================
+PERSEN
+========================= */
 
-<div class="price">
-Rp ${format(hargaPromo)}
-</div>
+const persen =
+Number(
+p.komisiPersen || 10
+);
 
-<small style="color:#888">
-Stok: ${p.stok} | Lokasi: ${p.lokasi}
-</small>
+/* =========================
+KEUNTUNGAN
+========================= */
 
-<div class="btn"
-data-product='${JSON.stringify(p).replace(/'/g, "&apos;")} '
-onclick="addToStore(this.dataset.product)">
-+ Tambahkan ke toko
-</div>
+const keuntungan =
+Math.floor(
+(hargaModal * persen) / 100
+);
 
-</div>
-`;
+/* =========================
+HARGA JUAL
+========================= */
+
+const hargaJual =
+hargaModal + keuntungan;
+
+/* =========================
+GAMBAR
+========================= */
+
+let gambar =
+"https://via.placeholder.com/300";
+
+if(
+Array.isArray(p.gambar)
+&&
+p.gambar.length > 0
+){
+
+gambar = p.gambar[0];
+
 }
 
+/* =========================
+CARD
+========================= */
+
+html += `
+
+<div class="card">
+
+<div style="
+position:relative;
+">
+
+<img src="${gambar}">
+
+<div style="
+position:absolute;
+top:10px;
+left:10px;
+background:#ff6f00;
+color:white;
+font-size:11px;
+padding:5px 10px;
+border-radius:20px;
+font-weight:bold;
+">
+
+SUPPLIER RESMI
+
+</div>
+
+</div>
+
+<div class="title">
+
+${p.nama || "-"}
+
+</div>
+
+<div class="price">
+
+Rp ${rupiah(hargaJual)}
+
+</div>
+
+<div style="
+color:#999;
+font-size:13px;
+text-decoration:line-through;
+margin-top:2px;
+">
+
+Modal Rp ${rupiah(hargaModal)}
+
+</div>
+
+<div style="
+margin-top:8px;
+font-size:13px;
+color:#666;
+">
+
+📍 ${p.lokasi || "-"}
+
+</div>
+
+<div style="
+margin-top:4px;
+font-size:13px;
+color:#666;
+">
+
+📦 Stok ${p.stok || 0}
+
+</div>
+
+<div style="
+margin-top:12px;
+padding:10px;
+background:#fff7f0;
+border-radius:10px;
+">
+
+<div style="
+font-weight:bold;
+color:#ff6f00;
+font-size:13px;
+">
+
+💰 Keuntungan Store
+
+</div>
+
+<div style="
+margin-top:5px;
+font-size:18px;
+font-weight:bold;
+color:#222;
+">
+
+Rp ${rupiah(keuntungan)}
+
+<span style="
+font-size:13px;
+color:#ff6f00;
+">
+
+(${persen}%)
+
+</span>
+
+</div>
+
+<div style="
+margin-top:6px;
+font-size:12px;
+color:#666;
+line-height:1.5;
+">
+
+${
+
+p.penjelasanKomisi ||
+
+`Store akan mendapatkan keuntungan ${persen}% dari setiap produk berhasil terjual.`
+
+}
+
+</div>
+
+</div>
+
+<button
+onclick="addToStore('${productId}')"
+style="
+width:100%;
+margin-top:12px;
+height:45px;
+border:none;
+border-radius:12px;
+background:#ff6f00;
+color:white;
+font-weight:bold;
+cursor:pointer;
+font-size:14px;
+">
+
+Tambahkan ke Toko
+
+</button>
+
+</div>
+
+`;
+
+});
+
 list.innerHTML = html;
+
+}catch(err){
+
+console.error(err);
+
+list.innerHTML = `
+
+<div style="
+padding:40px;
+text-align:center;
+color:red;
+">
+
+Gagal memuat produk
+
+</div>
+
+`;
+
+}
 
 }
 
 load();
+
 </script>
-
-
-
-
-
-
 </body>
 </html>

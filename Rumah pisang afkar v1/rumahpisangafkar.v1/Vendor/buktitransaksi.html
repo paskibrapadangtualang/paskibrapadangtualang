@@ -900,13 +900,17 @@ return;
 
 }
 
-const snap=
+/* =========================
+AMBIL DATA
+========================= */
+
+const snap =
 
 await get(
 
 ref(
 db,
-"transfer/"+id
+"transfer/" + id
 )
 
 );
@@ -923,25 +927,217 @@ return;
 
 }
 
-const data=
+const data =
 snap.val();
 
-
-document.getElementById("feeAdmin").innerHTML =
-rupiah(data.fee || 0);
-
-document.getElementById("totalPotong").innerHTML =
-rupiah(data.totalPotong || (data.nominal + (data.fee || 0)));
-
 /* =========================
-TAMPILKAN DATA TRANSFER
+CEK UANG MASUK
 ========================= */
 
+const isUangMasuk =
 
+data.type === "in" ||
 
-/* PROFIL */
+(
+data.toId === localStorage.getItem("uid")
+||
 
-const pengirim=
+data.toId === localStorage.getItem("storeId")
+);
+
+/* =========================
+ELEMENT
+========================= */
+
+const statusText =
+document.querySelector(".status");
+
+const statusSuccess =
+document.querySelector(".statusSuccess span");
+
+const iconBox =
+document.querySelector(".icon.success");
+
+const infoBox =
+document.querySelector(".info");
+
+const feeRow =
+document.getElementById("feeAdmin")
+?.closest(".row");
+
+const totalPotongRow =
+document.getElementById("totalPotong")
+?.closest(".row");
+
+/* =========================
+MODE UANG MASUK
+========================= */
+
+if(isUangMasuk){
+
+/* TITLE */
+
+document.title =
+"Bukti Uang Masuk";
+
+/* HEADER */
+
+const header =
+document.querySelector(".header");
+
+if(header){
+
+header.innerHTML = `
+
+<div
+class="backBtn"
+onclick="history.back()"
+>
+<i class="fa fa-arrow-left"></i>
+</div>
+
+Detail Uang Masuk
+
+`;
+
+}
+
+/* STATUS */
+
+if(statusText){
+
+statusText.innerHTML =
+"Uang Masuk";
+
+}
+
+if(statusSuccess){
+
+statusSuccess.innerHTML =
+"Uang Masuk";
+
+}
+
+/* ICON */
+
+if(iconBox){
+
+iconBox.innerHTML =
+`<i class="fa fa-download"></i>`;
+
+iconBox.style.background =
+"linear-gradient(135deg,#22c55e,#16a34a)";
+
+}
+
+/* SEMBUNYIKAN BIAYA ADMIN */
+
+if(feeRow){
+
+feeRow.style.display =
+"none";
+
+}
+
+/* SEMBUNYIKAN TOTAL POTONG */
+
+if(totalPotongRow){
+
+totalPotongRow.style.display =
+"none";
+
+}
+
+/* TOTAL NOMINAL */
+
+const totalNominalHTML = `
+
+<div class="row" id="rowTotalNominal">
+
+<span>Total Nominal</span>
+
+<b>
+${rupiah(
+data.nominal || 0
+)}
+</b>
+
+</div>
+
+`;
+
+if(infoBox){
+
+infoBox.insertAdjacentHTML(
+"afterbegin",
+totalNominalHTML
+);
+
+}
+
+}else{
+
+/* =========================
+TRANSFER KELUAR
+========================= */
+
+if(statusText){
+
+statusText.innerHTML =
+"Transfer Berhasil";
+
+}
+
+if(statusSuccess){
+
+statusSuccess.innerHTML =
+"Transfer Berhasil";
+
+}
+
+/* ICON */
+
+if(iconBox){
+
+iconBox.innerHTML =
+`<i class="fa fa-paper-plane"></i>`;
+
+iconBox.style.background =
+"linear-gradient(135deg,#ff6f00,#ea580c)";
+
+}
+
+/* BIAYA ADMIN */
+
+document.getElementById(
+"feeAdmin"
+).innerHTML =
+rupiah(data.fee || 0);
+
+/* TOTAL POTONG */
+
+document.getElementById(
+"totalPotong"
+).innerHTML =
+rupiah(
+
+data.totalPotong ||
+
+(
+Number(data.nominal || 0)
++
+Number(data.fee || 0)
+)
+
+);
+
+}
+
+/* =========================
+PROFIL
+========================= */
+
+const pengirim =
 
 await getProfile(
 
@@ -951,7 +1147,7 @@ data.fromId
 
 );
 
-const penerima=
+const penerima =
 
 await getProfile(
 
@@ -961,115 +1157,113 @@ data.toId
 
 );
 
-
-/* NOMINAL */
+/* =========================
+NOMINAL
+========================= */
 
 document
 .getElementById(
 "nominal"
 )
 
-.innerHTML=
+.innerHTML =
 
 rupiah(
 data.nominal
 );
 
-
-/* ID */
+/* =========================
+ID
+========================= */
 
 document
 .getElementById(
 "idtrx"
 )
 
-.innerHTML=
+.innerHTML =
 
 data.id ||
 id;
 
-
-/* TANGGAL */
+/* =========================
+TANGGAL
+========================= */
 
 document
 .getElementById(
 "tanggal"
 )
 
-.innerHTML=
+.innerHTML =
 
 formatTanggal(
-
 data.createdAt
-
 );
 
-
-/* PENGIRIM */
+/* =========================
+PENGIRIM
+========================= */
 
 document
 .getElementById(
 "pengirim"
 )
 
-.innerHTML=
+.innerHTML =
 
 pengirim.nama;
-
 
 document
 .getElementById(
 "noPengirim"
 )
 
-.innerHTML=
+.innerHTML =
 
 pengirim.pay;
-
 
 document
 .getElementById(
 "logoPengirim"
 )
 
-.src=
+.src =
 
 pengirim.foto;
 
-
-/* PENERIMA */
+/* =========================
+PENERIMA
+========================= */
 
 document
 .getElementById(
 "penerima"
 )
 
-.innerHTML=
+.innerHTML =
 
 penerima.nama;
-
 
 document
 .getElementById(
 "noTujuan"
 )
 
-.innerHTML=
+.innerHTML =
 
 penerima.pay;
-
 
 document
 .getElementById(
 "logoPenerima"
 )
 
-.src=
+.src =
 
 penerima.foto;
 
 
-/* STATUS */
 
 if(
 document.getElementById(

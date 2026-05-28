@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Detail Transaksi Toko</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f6f6f6;
+padding-bottom:120px;
+}
+
+/* ================= HEADER ================= */
+
+.header{
+
+background:
+linear-gradient(
+180deg,
+#ff8a00,
+#ff6f00
+);
+
+padding:20px;
+
+color:white;
+
+font-size:20px;
+font-weight:bold;
+
+display:flex;
+align-items:center;
+gap:14px;
+
+position:sticky;
+top:0;
+z-index:99;
+
+}
+
+.backBtn{
+cursor:pointer;
+font-size:20px;
+}
+
+/* ================= CARD ================= */
+
+.card{
+
+margin:15px;
+
+background:white;
+
+border-radius:24px;
+
+padding:25px;
+
+position:relative;
+
+overflow:hidden;
+
+box-shadow:
+0 3px 14px rgba(0,0,0,.05);
+
+}
+
+/* ================= WATERMARK ================= */
+
+.wm{
+
+position:absolute;
+inset:0;
+
+display:grid;
+
+grid-template-columns:
+repeat(6,1fr);
+
+transform:rotate(-28deg);
+
+opacity:.06;
+
+pointer-events:none;
+
+z-index:1;
+
+}
+
+.wm img{
+width:55px;
+height:55px;
+object-fit:contain;
+}
+
+/* semua isi card */
+
+.card *{
+position:relative;
+z-index:9;
+}
+
+/* ================= WATERMARK TEXT ================= */
+
+.watermark{
+
+position:absolute;
+
+top:50%;
+left:50%;
+
+transform:
+translate(-50%,-50%)
+rotate(-28deg);
+
+font-size:55px;
+font-weight:900;
+
+color:
+rgba(255,111,0,.05);
+
+white-space:nowrap;
+
+pointer-events:none;
+
+z-index:2;
+
+}
+
+/* ================= SECURITY ================= */
+
+.security{
+
+position:absolute;
+
+top:14px;
+right:14px;
+
+padding:7px 12px;
+
+border-radius:999px;
+
+font-size:10px;
+font-weight:bold;
+
+background:
+rgba(34,197,94,.1);
+
+color:#22c55e;
+
+}
+
+/* ================= TOP ================= */
+
+.top{
+text-align:center;
+margin-bottom:26px;
+}
+
+.icon{
+
+width:76px;
+height:76px;
+
+border-radius:50%;
+
+background:
+linear-gradient(
+135deg,
+#22c55e,
+#16a34a
+);
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+color:white;
+
+font-size:32px;
+
+margin:auto;
+margin-bottom:14px;
+
+animation:pop .5s ease;
+
+}
+
+@keyframes pop{
+
+0%{
+transform:scale(.3);
+opacity:0;
+}
+
+70%{
+transform:scale(1.1);
+opacity:1;
+}
+
+100%{
+transform:scale(1);
+}
+
+}
+
+.status{
+font-size:19px;
+font-weight:700;
+}
+
+.nominal{
+
+font-size:35px;
+font-weight:800;
+
+color:#ff6f00;
+
+margin-top:10px;
+
+}
+
+/* ================= USER CARD ================= */
+
+.userCard{
+
+background:#fafafa;
+
+border:
+1px solid #eee;
+
+padding:16px;
+
+border-radius:22px;
+
+margin-bottom:16px;
+
+}
+
+.titleBox{
+font-size:12px;
+color:#888;
+margin-bottom:10px;
+}
+
+.profile{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.profile img{
+
+width:58px;
+height:58px;
+
+border-radius:50%;
+
+object-fit:cover;
+
+background:#eee;
+
+}
+
+.nama{
+font-size:15px;
+font-weight:700;
+}
+
+.nopay{
+font-size:12px;
+color:#777;
+margin-top:4px;
+}
+
+/* ================= INFO ================= */
+
+.info{
+margin-top:20px;
+}
+
+.row{
+
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+
+gap:12px;
+
+padding:13px 0;
+
+border-bottom:
+1px solid #f1f1f1;
+
+}
+
+.row span{
+color:#777;
+font-size:14px;
+}
+
+.row b{
+font-size:14px;
+text-align:right;
+word-break:break-word;
+}
+
+/* ================= STATUS BADGE ================= */
+
+.statusSuccess{
+
+display:inline-flex;
+align-items:center;
+gap:8px;
+
+padding:8px 14px;
+
+border-radius:999px;
+
+background:
+linear-gradient(
+135deg,
+#dcfce7,
+#bbf7d0
+);
+
+color:#16a34a;
+
+font-size:13px;
+font-weight:700;
+
+border:
+1px solid rgba(34,197,94,.18);
+
+}
+
+.statusSuccess::after{
+
+content:"";
+
+width:6px;
+height:6px;
+
+border-radius:50%;
+
+background:#22c55e;
+
+}
+
+/* ================= SEAL ================= */
+
+.seal{
+
+margin-top:22px;
+
+display:flex;
+align-items:center;
+gap:12px;
+
+padding:13px;
+
+background:#fff7ed;
+
+border-radius:18px;
+
+}
+
+.seal img{
+width:42px;
+height:42px;
+object-fit:contain;
+}
+
+/* ================= BUTTON ================= */
+
+.btn{
+
+width:calc(100% - 30px);
+
+margin:15px;
+
+padding:16px;
+
+border:none;
+
+border-radius:22px;
+
+background:#ff6f00;
+
+color:white;
+
+font-size:15px;
+font-weight:700;
+
+}
+
+/* ================= LOADER ================= */
+
+.loaderWrap{
+
+position:fixed;
+inset:0;
+
+background:white;
+
+z-index:999999;
+
+display:flex;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+
+gap:18px;
+
+}
+
+.loader{
+
+width:65px;
+height:65px;
+
+border-radius:50%;
+
+border:5px solid #ffe0b2;
+border-top:5px solid #ff6f00;
+
+animation:spin .8s linear infinite;
+
+}
+
+.loaderText{
+font-size:14px;
+font-weight:700;
+color:#ff6f00;
+}
+
+@keyframes spin{
+100%{
+transform:rotate(360deg);
+}
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- LOADING -->
+
+<div class="loaderWrap" id="loaderWrap">
+
+<div class="loader"></div>
+
+<div class="loaderText">
+Memuat transaksi...
+</div>
+
+</div>
+
+<!-- HEADER -->
+
+<div class="header">
+
+<div
+class="backBtn"
+onclick="history.back()">
+
+<i class="fa fa-arrow-left"></i>
+
+</div>
+
+Detail Transaksi
+
+</div>
+
+<!-- CARD -->
+
+<div class="card">
+
+<!-- WATERMARK -->
+
+<div class="wm">
+
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+<img src="assets/images/watermak-remove.png">
+
+</div>
+
+<div class="watermark">
+AFKAR PAY
+</div>
+
+<div class="security">
+VERIFIED • SECURE • STORE
+</div>
+
+<!-- TOP -->
+
+<div class="top">
+
+<div class="icon">
+<i class="fa fa-shop"></i>
+</div>
+
+<div class="status">
+Saldo Berhasil Masuk
+</div>
+
+<div
+class="nominal"
+id="nominal">
+
+Rp 0
+
+</div>
+
+</div>
+
+<!-- PENGIRIM -->
+
+<div class="userCard">
+
+<div class="titleBox">
+Sumber Dana
+</div>
+
+<div class="profile">
+
+<img
+id="fotoPengirim"
+src="assets/images/default.png">
+
+<div>
+
+<div
+class="nama"
+id="namaPengirim">
+
+Afkarmall.System
+
+</div>
+
+<div
+class="nopay"
+id="payPengirim">
+
+SYSTEM
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- INFO -->
+
+<div class="info">
+
+<div class="row">
+<span>ID Transaksi</span>
+<b id="idtrx"></b>
+</div>
+
+<div class="row">
+<span>Order ID</span>
+<b id="orderId"></b>
+</div>
+
+<div class="row">
+<span>Tanggal</span>
+<b id="tanggal"></b>
+</div>
+
+<div class="row">
+<span>Modal Produk</span>
+<b id="modal"></b>
+</div>
+
+<div class="row">
+<span>Komisi Toko</span>
+<b id="komisi"></b>
+</div>
+
+<div class="row">
+<span>Total Saldo Masuk</span>
+<b id="total"></b>
+</div>
+
+<div class="row">
+
+<span>Status</span>
+
+<div class="statusSuccess">
+
+<i class="fa fa-circle-check"></i>
+
+<span>
+Transaksi Berhasil
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- SEAL -->
+
+<div class="seal">
+
+<img src="assets/images/bdn.png">
+
+<div>
+Transaksi otomatis sistem AfkarPay Store
+</div>
+
+</div>
+
+</div>
+
+<!-- BUTTON -->
+
+<button
+class="btn"
+onclick="
+location.href=
+'historysaldostore.html'
+">
+
+Selesai
+
+</button>
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* ================= FIREBASE ================= */
+
+const firebaseConfig = {
+
+apiKey:
+"AIzaSyD3DTcca7yZKVtllK3TQOUe6Yv2hSyG_g",
+
+authDomain:
+"shoponline-93646.firebaseapp.com",
+
+databaseURL:
+"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"shoponline-93646"
+
+};
+
+const app =
+initializeApp(firebaseConfig);
+
+const db =
+getDatabase(app);
+
+/* ================= FORMAT ================= */
+
+function rupiah(x){
+
+return "Rp " +
+
+Number(x || 0)
+.toLocaleString("id-ID");
+
+}
+
+function tanggal(t){
+
+const d =
+new Date(Number(t));
+
+return d.toLocaleString(
+"id-ID",
+{
+day:"2-digit",
+month:"long",
+year:"numeric",
+hour:"2-digit",
+minute:"2-digit"
+}
+);
+
+}
+
+function shortId(id){
+
+if(!id) return "-";
+
+const match =
+id.match(/STORE_ORD\d+/);
+
+if(match){
+return match[0];
+}
+
+return id;
+
+}
+
+/* ================= PARAM ================= */
+
+const params =
+new URLSearchParams(location.search);
+
+const id =
+params.get("id");
+
+/* ================= LOAD ================= */
+
+async function load(){
+
+if(!id){
+
+alert("ID transaksi tidak ditemukan");
+
+return;
+
+}
+
+const storeId =
+localStorage.getItem("storeId");
+
+const snap =
+await get(
+ref(
+db,
+"saldoHistory/" +
+storeId + "/" +
+id
+)
+);
+
+if(!snap.exists()){
+
+alert("Data transaksi tidak ditemukan");
+
+return;
+
+}
+
+const d = snap.val();
+
+/* ================= NOMINAL ================= */
+
+document.getElementById(
+"nominal"
+).innerHTML =
+rupiah(d.amount);
+
+/* ================= ID ================= */
+
+document.getElementById(
+"idtrx"
+).innerHTML =
+shortId(d.id);
+
+/* ================= ORDER ID ================= */
+
+document.getElementById(
+"orderId"
+).innerHTML =
+d.orderId || "-";
+
+/* ================= TANGGAL ================= */
+
+document.getElementById(
+"tanggal"
+).innerHTML =
+tanggal(d.createdAt);
+
+/* ================= BREAKDOWN ================= */
+
+document.getElementById(
+"modal"
+).innerHTML =
+rupiah(
+d.breakdown?.modal || 0
+);
+
+document.getElementById(
+"komisi"
+).innerHTML =
+rupiah(
+d.breakdown?.komisi || 0
+);
+
+document.getElementById(
+"total"
+).innerHTML =
+rupiah(
+d.breakdown?.total || d.amount || 0
+);
+
+/* ================= PENGIRIM ================= */
+
+document.getElementById(
+"namaPengirim"
+).innerHTML =
+d.pengirimDana?.nama ||
+"Afkarmall.System";
+
+document.getElementById(
+"payPengirim"
+).innerHTML =
+d.pengirimDana?.noPay ||
+"SYSTEM";
+
+document.getElementById(
+"fotoPengirim"
+).src =
+d.pengirimDana?.foto ||
+"assets/images/default.png";
+
+/* ================= HIDE LOADER ================= */
+
+setTimeout(()=>{
+
+loaderWrap.style.opacity = "0";
+
+setTimeout(()=>{
+
+loaderWrap.style.display = "none";
+
+},300);
+
+},500);
+
+}
+
+load();
+
+</script>
+
+</body>
+</html>

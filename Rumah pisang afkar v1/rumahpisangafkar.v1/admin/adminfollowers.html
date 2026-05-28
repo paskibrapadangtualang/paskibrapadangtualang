@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Admin Followers Store</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#f5f5f5;
+padding-bottom:120px;
+}
+
+/* =========================
+HEADER
+========================= */
+
+.header{
+
+position:sticky;
+top:0;
+z-index:100;
+
+background:white;
+
+padding:18px 15px;
+
+display:flex;
+align-items:center;
+justify-content:space-between;
+
+box-shadow:0 2px 10px rgba(0,0,0,.05);
+
+}
+
+.headerTitle{
+
+font-size:20px;
+font-weight:bold;
+
+}
+
+.searchBox{
+
+padding:15px;
+
+}
+
+.searchInput{
+
+width:100%;
+height:50px;
+
+border:none;
+
+border-radius:16px;
+
+padding:0 15px;
+
+background:white;
+
+font-size:14px;
+
+outline:none;
+
+box-shadow:0 2px 10px rgba(0,0,0,.05);
+
+}
+
+/* =========================
+CARD
+========================= */
+
+.storeList{
+
+padding:0 15px;
+
+}
+
+.card{
+
+background:white;
+
+border-radius:22px;
+
+padding:15px;
+
+margin-bottom:15px;
+
+box-shadow:0 4px 15px rgba(0,0,0,.05);
+
+}
+
+.top{
+
+display:flex;
+gap:12px;
+align-items:center;
+
+margin-bottom:15px;
+
+}
+
+.top img{
+
+width:65px;
+height:65px;
+
+border-radius:18px;
+
+object-fit:cover;
+
+border:1px solid #eee;
+
+}
+
+.storeName{
+
+font-size:16px;
+font-weight:bold;
+
+}
+
+.storeId{
+
+font-size:12px;
+color:#888;
+
+margin-top:4px;
+
+word-break:break-all;
+
+}
+
+/* =========================
+STAT
+========================= */
+
+.stats{
+
+display:flex;
+gap:10px;
+
+margin-bottom:15px;
+
+}
+
+.stat{
+
+flex:1;
+
+background:#fafafa;
+
+padding:12px;
+
+border-radius:16px;
+
+text-align:center;
+
+}
+
+.statTitle{
+
+font-size:12px;
+color:#888;
+
+margin-bottom:5px;
+
+}
+
+.statValue{
+
+font-size:18px;
+font-weight:bold;
+color:#ff6f00;
+
+}
+
+/* =========================
+INPUT
+========================= */
+
+.inputBox{
+
+margin-bottom:12px;
+
+}
+
+.label{
+
+font-size:13px;
+font-weight:bold;
+
+margin-bottom:8px;
+
+}
+
+.input{
+
+width:100%;
+height:48px;
+
+border:none;
+
+background:#fafafa;
+
+border-radius:14px;
+
+padding:0 14px;
+
+font-size:14px;
+
+outline:none;
+
+border:1px solid #eee;
+
+}
+
+/* =========================
+BUTTON
+========================= */
+
+.saveBtn{
+
+width:100%;
+height:50px;
+
+border:none;
+
+border-radius:16px;
+
+background:
+linear-gradient(
+135deg,
+#ff9800,
+#ff6f00
+);
+
+color:white;
+
+font-size:14px;
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+/* =========================
+LOADING
+========================= */
+
+.loading{
+
+padding:30px;
+text-align:center;
+color:#777;
+
+}
+
+/* =========================
+EMPTY
+========================= */
+
+.empty{
+
+background:white;
+
+padding:30px;
+
+border-radius:18px;
+
+text-align:center;
+
+color:#888;
+
+}
+
+/* =========================
+BOTTOM NAV
+========================= */
+
+.bottomNav{
+
+position:fixed;
+
+left:0;
+right:0;
+bottom:0;
+
+height:70px;
+
+background:white;
+
+display:flex;
+justify-content:space-around;
+align-items:center;
+
+box-shadow:0 -3px 15px rgba(0,0,0,.06);
+
+}
+
+.navItem{
+
+text-align:center;
+
+font-size:12px;
+
+color:#777;
+
+}
+
+.navItem i{
+
+font-size:20px;
+
+margin-bottom:4px;
+
+display:block;
+
+}
+
+.active{
+
+color:#ff6f00;
+
+font-weight:bold;
+
+}
+
+/* =========================
+TOAST
+========================= */
+
+.toast{
+
+position:fixed;
+
+top:20px;
+left:50%;
+
+transform:translateX(-50%);
+
+background:#16a34a;
+
+color:white;
+
+padding:14px 18px;
+
+border-radius:14px;
+
+font-size:14px;
+
+z-index:999999;
+
+display:none;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<div class="header">
+
+<div class="headerTitle">
+
+Admin Store
+
+</div>
+
+<i class="fa-solid fa-store"
+style="
+font-size:20px;
+color:#ff6f00;
+">
+</i>
+
+</div>
+
+<!-- SEARCH -->
+
+<div class="searchBox">
+
+<input
+id="searchInput"
+class="searchInput"
+placeholder="Cari nama store..."
+>
+
+</div>
+
+<!-- STORE LIST -->
+
+<div
+id="storeList"
+class="storeList">
+
+<div class="loading">
+Memuat store...
+</div>
+
+</div>
+
+<!-- TOAST -->
+
+<div
+id="toast"
+class="toast">
+
+Berhasil disimpan
+
+</div>
+
+<!-- BOTTOM NAV -->
+
+<div class="bottomNav">
+
+<div class="navItem active">
+
+<i class="fa-solid fa-store"></i>
+
+Store
+
+</div>
+
+<div class="navItem">
+
+<i class="fa-solid fa-users"></i>
+
+Followers
+
+</div>
+
+<div class="navItem">
+
+<i class="fa-solid fa-chart-line"></i>
+
+Statistik
+
+</div>
+
+</div>
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get,
+update,
+onValue
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig={
+
+apiKey:
+"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+
+authDomain:
+"shoponline-93646.firebaseapp.com",
+
+databaseURL:
+"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"shoponline-93646",
+
+storageBucket:
+"shoponline-93646.firebasestorage.app",
+
+messagingSenderId:
+"435032364443",
+
+appId:
+"1:435032364443:web:5f76384f794693a892bd3e"
+
+};
+
+const app =
+initializeApp(firebaseConfig);
+
+const db =
+getDatabase(app);
+
+/* =========================
+ELEMENT
+========================= */
+
+const storeList =
+document.getElementById(
+"storeList"
+);
+
+const searchInput =
+document.getElementById(
+"searchInput"
+);
+
+let allStoreData = [];
+
+/* =========================
+FORMAT ANGKA
+========================= */
+
+function formatAngka(num){
+
+num = Number(num || 0);
+
+if(num >= 1000000){
+
+return (
+(num / 1000000)
+.toFixed(1)
+.replace(".0","")
++ "jt"
+);
+
+}
+
+if(num >= 1000){
+
+return (
+(num / 1000)
+.toFixed(1)
+.replace(".0","")
++ "rb"
+);
+
+}
+
+return num;
+
+}
+
+/* =========================
+TOAST
+========================= */
+
+function showToast(text){
+
+const toast =
+document.getElementById(
+"toast"
+);
+
+toast.innerHTML = text;
+
+toast.style.display = "block";
+
+setTimeout(()=>{
+
+toast.style.display = "none";
+
+},2000);
+
+}
+
+/* =========================
+LOAD STORE
+========================= */
+
+async function loadStores(){
+
+onValue(
+ref(db,"stores"),
+async(snap)=>{
+
+if(!snap.exists()){
+
+storeList.innerHTML = `
+<div class="empty">
+Belum ada store
+</div>
+`;
+
+return;
+
+}
+
+allStoreData = [];
+
+const stores = snap.val();
+
+for(const id in stores){
+
+const store = stores[id];
+
+/* followers asli */
+
+const followerSnap =
+await get(
+ref(db,"followers/"+id)
+);
+
+let followersAsli = 0;
+
+if(followerSnap.exists()){
+
+followersAsli =
+Object.keys(
+followerSnap.val()
+).length;
+
+}
+
+/* following asli */
+
+const followingSnap =
+await get(
+ref(db,"following")
+);
+
+let followingAsli = 0;
+
+if(followingSnap.exists()){
+
+const allFollowing =
+followingSnap.val();
+
+for(const uid in allFollowing){
+
+if(
+allFollowing[uid] &&
+allFollowing[uid][id]
+){
+
+followingAsli++;
+
+}
+
+}
+
+}
+
+/* manual */
+
+const followersManual =
+Number(
+store.followersManual || 0
+);
+
+const followingManual =
+Number(
+store.followingManual || 0
+);
+
+allStoreData.push({
+
+id:id,
+
+nama:
+store.nama || "Store",
+
+foto:
+store.logo ||
+store.foto ||
+"https://i.ibb.co/7QpKsCX/store.png",
+
+followers:
+followersAsli +
+followersManual,
+
+following:
+followingAsli +
+followingManual,
+
+followersManual,
+
+followingManual
+
+});
+
+}
+
+renderStores(allStoreData);
+
+}
+);
+
+}
+
+/* =========================
+RENDER STORE
+========================= */
+
+function renderStores(data){
+
+if(data.length <= 0){
+
+storeList.innerHTML = `
+<div class="empty">
+Store tidak ditemukan
+</div>
+`;
+
+return;
+
+}
+
+storeList.innerHTML = "";
+
+data.forEach((store)=>{
+
+storeList.innerHTML += `
+
+<div class="card">
+
+<div class="top">
+
+<img src="${store.foto}">
+
+<div>
+
+<div class="storeName">
+
+${store.nama}
+
+</div>
+
+<div class="storeId">
+
+${store.id}
+
+</div>
+
+</div>
+
+</div>
+
+<div class="stats">
+
+<div class="stat">
+
+<div class="statTitle">
+
+Followers
+
+</div>
+
+<div class="statValue">
+
+${formatAngka(store.followers)}
+
+</div>
+
+</div>
+
+<div class="stat">
+
+<div class="statTitle">
+
+Mengikuti
+
+</div>
+
+<div class="statValue">
+
+${formatAngka(store.following)}
+
+</div>
+
+</div>
+
+</div>
+
+<div class="inputBox">
+
+<div class="label">
+
+Followers Manual
+
+</div>
+
+<input
+id="followers_${store.id}"
+class="input"
+type="number"
+value="${store.followersManual}"
+>
+
+</div>
+
+<div class="inputBox">
+
+<div class="label">
+
+Following Manual
+
+</div>
+
+<input
+id="following_${store.id}"
+class="input"
+type="number"
+value="${store.followingManual}"
+>
+
+</div>
+
+<button
+class="saveBtn"
+onclick="saveData('${store.id}')">
+
+Simpan Data
+
+</button>
+
+</div>
+
+`;
+
+});
+
+}
+
+/* =========================
+SAVE DATA
+========================= */
+
+window.saveData =
+async(id)=>{
+
+const followers =
+Number(
+document.getElementById(
+"followers_"+id
+).value || 0
+);
+
+const following =
+Number(
+document.getElementById(
+"following_"+id
+).value || 0
+);
+
+await update(
+ref(db,"stores/"+id),
+{
+followersManual: followers,
+followingManual: following
+}
+);
+
+showToast(
+"Berhasil disimpan"
+);
+
+};
+
+/* =========================
+SEARCH
+========================= */
+
+searchInput.oninput = ()=>{
+
+const keyword =
+searchInput.value
+.toLowerCase();
+
+const filtered =
+allStoreData.filter((x)=>{
+
+return (
+x.nama
+.toLowerCase()
+.includes(keyword)
+);
+
+});
+
+renderStores(filtered);
+
+};
+
+/* =========================
+INIT
+========================= */
+
+loadStores();
+
+</script>
+
+</body>
+
+</html>

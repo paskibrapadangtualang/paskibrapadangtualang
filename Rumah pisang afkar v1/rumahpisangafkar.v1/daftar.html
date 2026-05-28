@@ -264,45 +264,7 @@ id="konfirmasi"
 placeholder="Konfirmasi Password"
 required>
 
-<h3>
-Alamat Lengkap
-</h3>
 
-<input
-type="text"
-id="kecamatan"
-placeholder="Kecamatan"
-required>
-
-<input
-type="text"
-id="kabupaten"
-placeholder="Kabupaten"
-required>
-
-<input
-type="text"
-id="provinsi"
-placeholder="Provinsi"
-required>
-
-<input
-type="text"
-id="dusun"
-placeholder="Dusun"
-required>
-
-<input
-type="text"
-id="kodepos"
-placeholder="Kode Pos"
-required>
-
-<textarea
-id="alamat"
-placeholder="Ketik alamat lengkap disini"
-required
-></textarea>
 
 <label>
 Foto Profil
@@ -472,41 +434,6 @@ document
 "konfirmasi"
 ).value;
 
-const kecamatan =
-document
-.getElementById(
-"kecamatan"
-).value;
-
-const kabupaten =
-document
-.getElementById(
-"kabupaten"
-).value;
-
-const provinsi =
-document
-.getElementById(
-"provinsi"
-).value;
-
-const dusun =
-document
-.getElementById(
-"dusun"
-).value;
-
-const kodepos =
-document
-.getElementById(
-"kodepos"
-).value;
-
-const alamat =
-document
-.getElementById(
-"alamat"
-).value;
 
 const foto =
 document
@@ -625,7 +552,6 @@ const pinTransfer =
 /* ======================
 SIMPAN DATABASE
 ====================== */
-
 await set(
 
 ref(
@@ -635,31 +561,36 @@ db,
 
 {
 uid:uid,
+
 nama:nama,
+
 email:email,
+
 wa:wa,
+
 jk:jk,
+
 foto:fotoURL,
+
+role:"customer",
+
+status:"aktif",
+
+createdAt:Date.now(),
+
+/* PROFIL */
+
+profilLengkap:false,
+
 alamatLengkap:{
-kecamatan:
-kecamatan,
-kabupaten:
-kabupaten,
-provinsi:
-provinsi,
-dusun:
-dusun,
-kodepos:
-kodepos,
-alamat:
-alamat
+kecamatan:"",
+kabupaten:"",
+provinsi:"",
+dusun:"",
+kodepos:"",
+alamat:""
 },
-role:
-"customer",
-status:
-"aktif",
-createdAt:
-Date.now(),
+
 /* SALDO */
 saldo:0,
 saldoAfkar:0,
@@ -667,8 +598,8 @@ saldoTertahan:0,
 poinAfkar:0,
 /* TRANSFER */
 noPay:noPay,
-pinTransfer:
-pinTransfer,
+pinTransfer:"",
+pinSudahDibuat:false,
 totalMasuk:0,
 totalKeluar:0,
 /* STATISTIK */
@@ -679,7 +610,6 @@ rating:0
 }
 
 );
-
 
 
 

@@ -88,7 +88,7 @@ font-size:12px;
 
 display:flex;
 
-gap:25px;
+gap:4px;
 
 margin-top:15px;
 
@@ -390,6 +390,12 @@ font-size:20px;
   font-weight:600;
   color:#333;
 }
+
+
+.garis{
+opacity:.4;
+font-size:14px;
+}
 </style>
 </head>
 
@@ -427,28 +433,29 @@ Silver Member
 <div>
 
 <b id="ikut">
-
 0
-
 </b>
 
 Mengikuti
 
 </div>
 
+<div class="garis">
+|
+</div>
+
 <div>
 
 <b id="pengikut">
-
 0
-
 </b>
 
 Pengikut
 
 </div>
-
 </div>
+
+
 
 </div>
 
@@ -699,7 +706,33 @@ localStorage.getItem(
 "OPMxN10uM3XCKIfRD02Mvd7PdK72";
 
 
+function formatAngka(num){
 
+if(num >= 1000000){
+
+return (
+(num / 1000000)
+.toFixed(1)
+.replace(".0","")
++ "jt"
+);
+
+}
+
+if(num >= 1000){
+
+return (
+(num / 1000)
+.toFixed(1)
+.replace(".0","")
++ "rb"
+);
+
+}
+
+return num;
+
+}
 
 
 async function loadUserVoucherCount(){
@@ -916,12 +949,11 @@ document
 "ikut"
 )
 
-.innerHTML=
+.innerHTML =
 
-user.mengikuti
-||
-
-0;
+formatAngka(
+user.mengikuti || 0
+);
 
 
 document
@@ -929,13 +961,11 @@ document
 "pengikut"
 )
 
-.innerHTML=
+.innerHTML =
 
-user.pengikut
-||
-
-0;
-
+formatAngka(
+user.pengikut || 0
+);
 
 /* LEVEL */
 document.querySelector(".level").innerHTML =

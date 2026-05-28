@@ -1287,258 +1287,448 @@ location.href = `detailchatcostumer.html?store=${id}`;
 
 
 
-function getUID(){
-  return localStorage.getItem("userId");
+
+
+// =========================
+// FOLLOW SYSTEM FINAL
+// =========================
+
+// ELEMENT
+const followBtn =
+document.getElementById("followBtn");
+
+const followersEl =
+document.getElementById("followers");
+
+// =========================
+// FORMAT ANGKA
+// =========================
+
+function formatAngka(num){
+
+num = Number(num || 0);
+
+if(num >= 1000000){
+
+return (
+(num / 1000000)
+.toFixed(1)
+.replace(".0","")
++ "jt"
+);
+
 }
 
+if(num >= 1000){
 
+return (
+(num / 1000)
+.toFixed(1)
+.replace(".0","")
++ "rb"
+);
 
-// ref
-const followBtn = document.getElementById("followBtn");
-const followersEl = document.getElementById("followers");
-const followingEl = document.getElementById("following");
+}
+
+return num;
+
+}
 
 // =========================
-// INIT DUMMY DATA FOLLOWERS
+// AMBIL UID
 // =========================
-async function initFollowDummy(){
 
+function getUID(){
+
+return localStorage.getItem("userId");
+
+}
+
+// =========================
+// BUAT DATA FOLLOW KOSONG
+// =========================
+
+async function initFollowData(){
+
+// followers store
+const followerRef =
+ref(db,"followers/"+id);
+
+const followerSnap =
+await get(followerRef);
+
+if(!followerSnap.exists()){
+
+await set(followerRef,{});
+
+}
+
+// following user
 const uid = getUID();
 
-if(!uid){
-  console.log("USER BELUM LOGIN");
-  return;
+if(uid){
+
+const followingRef =
+ref(db,"following/"+uid);
+
+const followingSnap =
+await get(followingRef);
+
+if(!followingSnap.exists()){
+
+await set(followingRef,{});
+
 }
 
-const snap = await get(ref(db,"followers/"+id));
-
-if(!snap.exists()){
-  await set(ref(db,"followers/"+id), {
-    u1:true,
-    u2:true,
-    u3:true
-  });
-}
-
-const snap2 = await get(ref(db,"following/"+uid));
-
-if(!snap2.exists()){
-  await set(ref(db,"following/"+uid), {
-    store1:true
-  });
 }
 
 }
 
-await initFollowDummy();
+await initFollowData();
 
 // =========================
-// UPDATE COUNTER
+// UPDATE TOTAL FOLLOWERS
 // =========================
-async function updateCount(){
 
-const f = await get(ref(db,"followers/"+id));
+async function updateFollowers(){
 
-followersEl.innerText =
-f.exists() ? Object.keys(f.val()).length : 0;
+const followerSnap =
+await get(
+ref(db,"followers/"+id)
+);
+
+let followersAsli = 0;
+
+if(followerSnap.exists()){
+
+followersAsli =
+Object.keys(
+followerSnap.val()
+).length;
 
 }
 
+/* =========================
+AMBIL FOLLOWERS MANUAL
+========================= */
 
+const storeSnap =
+await get(
+ref(db,"stores/"+id)
+);
+
+let followersManual = 0;
+
+if(storeSnap.exists()){
+
+const store =
+storeSnap.val();
+
+followersManual =
+Number(
+store.followersManual || 0
+);
+
+}
+
+/* =========================
+TOTAL
+========================= */
+
+const totalFollowers =
+followersAsli + followersManual;
+
+/* UI */
+
+followersEl.innerHTML =
+formatAngka(totalFollowers);
+
+}
 
 // =========================
 // CHECK STATUS FOLLOW
 // =========================
-async function checkFollow(){
+
+async function checkFollowStatus(){
 
 const uid = getUID();
 
 if(!uid){
-  console.log("USER BELUM LOGIN");
-  return;
+
+followBtn.innerHTML =
+"Ikuti";
+
+return;
+
 }
 
-const snap = await get(ref(db,"following/"+uid+"/"+id));
+const snap =
+await get(
+ref(db,"following/"+uid+"/"+id)
+);
 
 if(snap.exists()){
-  followBtn.innerText = "Batal Mengikuti";
-  followBtn.style.background = "#eee";
-  followBtn.style.color = "#333";
+
+followBtn.innerHTML =
+"Batal Mengikuti";
+
+followBtn.style.background =
+"#eee";
+
+followBtn.style.color =
+"#333";
+
 }else{
-  followBtn.innerText = "Ikuti";
-  followBtn.style.background = "#ff6f00";
-  followBtn.style.color = "white";
-}
+
+followBtn.innerHTML =
+"Ikuti";
+
+followBtn.style.background =
+"#ff6f00";
+
+followBtn.style.color =
+"white";
 
 }
 
+}
 
 // =========================
 // CLICK FOLLOW
 // =========================
-followBtn.onclick = async () => {
+followBtn.onclick = async ()=>{
+
+try{
 
 const uid = getUID();
 
 if(!uid){
-  openModal();
-  return;
+
+openModal();
+return;
+
 }
 
-const followRef = ref(db,"following/"+uid+"/"+id);
-const snap = await get(followRef);
+followBtn.style.pointerEvents = "none";
+
+// =========================
+// REF FOLLOW
+// =========================
+
+const followRef =
+ref(db,"following/"+uid+"/"+id);
+
+const followerRef =
+ref(db,"followers/"+id+"/"+uid);
+
+const snap =
+await get(followRef);
+
+// =========================
+// UNFOLLOW
+// =========================
 
 if(snap.exists()){
 
-  await set(ref(db,"following/"+uid+"/"+id), null);
+// hapus following
+await set(
+followRef,
+null
+);
 
-// KURANGI MENGIKUTI USER
-const userRef = ref(db,"users/"+uid);
-const userSnap = await get(userRef);
+// hapus followers
+await set(
+followerRef,
+null
+);
 
-if(userSnap.exists()){
-  const u = userSnap.val();
+// update jumlah
+await updateFollowers();
 
-  await set(userRef,{
-    ...u,
-    mengikuti: Math.max((u.mengikuti || 0) - 1, 0)
-  });
-}
+// tombol
+followBtn.innerHTML =
+"Ikuti";
 
+followBtn.style.background =
+"#ff6f00";
 
-
-  const fSnap = await get(ref(db,"followers/"+id));
-  let data = fSnap.val() || {};
-  delete data[uid];
-  await set(ref(db,"followers/"+id), data);
-
-}else{
-
-  await set(ref(db,"following/"+uid+"/"+id), true);
-// TAMBAH MENGIKUTI USER
-const userRef = ref(db,"users/"+uid);
-const userSnap = await get(userRef);
-
-if(userSnap.exists()){
-  const u = userSnap.val();
-
-  await set(userRef,{
-    ...u,
-    mengikuti: (u.mengikuti || 0) + 1
-  });
-}
-  const fSnap = await get(ref(db,"followers/"+id));
-  let data = fSnap.val() || {};
-  data[uid] = true;
-  await set(ref(db,"followers/"+id), data);
+followBtn.style.color =
+"#fff";
 
 }
 
+// =========================
+// FOLLOW
+// =========================
 
+else{
+
+// following
+await set(
+followRef,
+true
+);
+
+// followers
+await set(
+followerRef,
+true
+);
+
+// update jumlah
+await updateFollowers();
+
+// tombol
+followBtn.innerHTML =
+"Batal Mengikuti";
+
+followBtn.style.background =
+"#eee";
+
+followBtn.style.color =
+"#333";
+
+}
+
+}
+catch(err){
+
+console.log(
+"FOLLOW ERROR:",
+err
+);
+
+}
+
+finally{
+
+followBtn.style.pointerEvents =
+"auto";
+
+}
 
 };
-console.log("LOGIN:", localStorage.getItem("userId"));
 
 
+
+
+
+// =========================
+// LOAD RATING REALTIME
+// =========================
 
 function loadStoreRatingRealtime(storeId){
 
-  onValue(ref(db, "review"), async (snap) => {
+onValue(ref(db,"review"), async (snap)=>{
 
-    let totalRating = 0;
-    let totalReview = 0;
+let totalRating = 0;
+let totalReview = 0;
 
-    let bagus = 0;
-    let lumayan = 0;
-    let jelek = 0;
+if(!snap.exists()){
 
-    if(!snap.exists()){
+document.getElementById("storeRating")
+.innerHTML = "0.0";
 
-      updateUI(0,0,0,0,0);
-      return;
+document.getElementById("storeReviewCount")
+.innerHTML = "0 Ulasan";
 
-    }
+return;
 
-    // ambil semua produk
-    const produkSnap = await get(ref(db, "produk"));
+}
 
-    if(!produkSnap.exists()) return;
+// ambil semua produk
+const produkSnap =
+await get(ref(db,"produk"));
 
-    const produkData = produkSnap.val();
-    const reviewData = snap.val();
+if(!produkSnap.exists())
+return;
 
-    for(const productId in reviewData){
+const produkData =
+produkSnap.val();
 
-      const produk = produkData[productId];
+const reviewData =
+snap.val();
 
-      // cek produk milik store ini
-      if(!produk) continue;
-      if(produk.storeId !== storeId) continue;
+// loop review
+for(const productId in reviewData){
 
-      const users = reviewData[productId];
+const produk =
+produkData[productId];
 
-      for(const uid in users){
+if(!produk)
+continue;
 
-        const r = users[uid];
+// hanya produk store ini
+if(produk.storeId !== storeId)
+continue;
 
-        if(!r.rating) continue;
+const users =
+reviewData[productId];
 
-        totalRating += Number(r.rating);
-        totalReview++;
+for(const uid in users){
 
-        // label otomatis
-        if(r.rating <= 2){
-          jelek++;
-        }
-        else if(r.rating <= 4){
-          lumayan++;
-        }
-        else{
-          bagus++;
-        }
+const r = users[uid];
 
-      }
+if(!r.rating)
+continue;
 
-    }
+totalRating +=
+Number(r.rating);
 
-    const avg = totalReview
-      ? (totalRating / totalReview).toFixed(1)
-      : "0.0";
+totalReview++;
 
-    updateUI(avg, totalReview, bagus, lumayan, jelek);
+}
 
-  });
+}
+
+const avg = totalReview
+? (totalRating / totalReview).toFixed(1)
+: "0.0";
+
+// UI
+document.getElementById("storeRating")
+.innerHTML = avg;
+
+document.getElementById("storeReviewCount")
+.innerHTML =
+formatAngka(totalReview)
++ " Ulasan";
+
+});
 
 }
 
 
+
 // =========================
-// UPDATE UI
+// LOAD AWAL
 // =========================
-function updateUI(avg, total, bagus, lumayan, jelek){
 
-  document.getElementById("storeRating").innerText =
-    avg;
+await updateFollowers();
 
-  document.getElementById("storeReviewCount").innerText =
-    total + " Ulasan";
+await checkFollowStatus();
 
-  console.log("⭐ Rating:", avg);
-  console.log("🟢 Bagus:", bagus);
-  console.log("🟡 Lumayan:", lumayan);
-  console.log("🔴 Jelek:", jelek);
+// load rating
+if(typeof loadStoreRatingRealtime === "function"){
+
+loadStoreRatingRealtime(id);
 
 }
+
+
+
+
+
 /* =========================
 LOAD PRODUK
 ========================= */
 
-const productList=
+const productList =
 document.getElementById(
 "productList"
 );
 
-const produkSnap=
+const produkSnap =
 await get(
 ref(
 db,
@@ -1546,9 +1736,7 @@ db,
 )
 );
 
-if(
-produkSnap.exists()
-){
+if(produkSnap.exists()){
 
 produkSnap.forEach((x)=>{
 
@@ -1557,7 +1745,7 @@ const d = x.val();
 if(d.storeId !== id)
 return;
 
-/* GAMBAR UTAMA */
+/* GAMBAR */
 
 const gambarUtama =
 
@@ -1571,12 +1759,7 @@ d.gambar[0]
 
 d.gambar;
 
-/* TEMPLATE */
-
-
-
-
-
+/* CARD */
 
 productList.innerHTML += `
 
@@ -1611,7 +1794,7 @@ ${d.nama}
 
 Rp ${
 
-(d.harga||0)
+(d.harga || 0)
 
 .toLocaleString(
 "id-ID"
@@ -1625,7 +1808,7 @@ Rp ${
 
 Rp ${
 
-(d.hargaAwal||0)
+(d.hargaAwal || 0)
 
 .toLocaleString(
 "id-ID"
@@ -1659,7 +1842,7 @@ d.kupon ?
 
 <div class="tag">
 
-⚡ ${d.stok||0}
+⚡ ${d.stok || 0}
 
 </div>
 
@@ -1667,7 +1850,7 @@ d.kupon ?
 
 <div class="lokasi">
 
-📍 ${d.lokasi||"-"}
+📍 ${d.lokasi || "-"}
 
 </div>
 
@@ -1677,30 +1860,25 @@ d.kupon ?
 
 `;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 });
 
 }
 
+/* =========================
+LOAD AWAL
+========================= */
 
+await updateFollowers();
 
-await updateCount();
-await checkFollow();
+await checkFollowStatus();
+
+if(typeof loadStoreRatingRealtime === "function"){
+
 loadStoreRatingRealtime(id);
+
+}
+
+
 
 </script>
 </body>

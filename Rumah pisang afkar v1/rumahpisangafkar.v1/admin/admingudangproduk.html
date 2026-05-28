@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Admin Gudang Produk</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#f5f5f5;
+padding-bottom:120px;
+}
+
+/* =========================
+HEADER
+========================= */
+
+.header{
+
+position:sticky;
+top:0;
+z-index:100;
+
+background:white;
+
+padding:18px 15px;
+
+display:flex;
+align-items:center;
+justify-content:space-between;
+
+box-shadow:0 2px 10px rgba(0,0,0,.05);
+
+}
+
+.headerTitle{
+
+font-size:20px;
+font-weight:bold;
+
+}
+
+/* =========================
+FORM
+========================= */
+
+.formWrap{
+
+padding:15px;
+
+}
+
+.card{
+
+background:white;
+
+padding:16px;
+
+border-radius:22px;
+
+margin-bottom:15px;
+
+box-shadow:0 4px 15px rgba(0,0,0,.05);
+
+}
+
+.label{
+
+font-size:13px;
+font-weight:bold;
+
+margin-bottom:8px;
+
+}
+
+.input,
+.textarea{
+
+width:100%;
+
+border:none;
+
+outline:none;
+
+background:#fafafa;
+
+border-radius:14px;
+
+padding:14px;
+
+font-size:14px;
+
+border:1px solid #eee;
+
+}
+
+.textarea{
+
+height:120px;
+resize:none;
+
+}
+
+.row{
+
+display:flex;
+gap:10px;
+
+}
+
+.row .col{
+
+flex:1;
+
+}
+
+/* =========================
+IMAGE
+========================= */
+
+.imageInput{
+
+margin-bottom:10px;
+
+}
+
+.addImage{
+
+margin-top:10px;
+
+height:45px;
+
+border:none;
+
+border-radius:14px;
+
+background:#ff9800;
+
+color:white;
+
+font-weight:bold;
+
+width:100%;
+
+}
+
+.previewWrap{
+
+display:flex;
+gap:10px;
+overflow:auto;
+
+margin-top:12px;
+
+}
+
+.previewWrap img{
+
+width:80px;
+height:80px;
+
+border-radius:12px;
+
+object-fit:cover;
+
+border:1px solid #eee;
+
+}
+
+/* =========================
+CHECKBOX
+========================= */
+
+.checkWrap{
+
+display:flex;
+gap:10px;
+align-items:center;
+
+margin-bottom:12px;
+
+font-size:14px;
+
+}
+
+/* =========================
+BUTTON
+========================= */
+
+.submitBtn{
+
+width:100%;
+height:55px;
+
+border:none;
+
+border-radius:18px;
+
+background:
+linear-gradient(
+135deg,
+#ff9800,
+#ff6f00
+);
+
+color:white;
+
+font-size:16px;
+font-weight:bold;
+
+}
+
+/* =========================
+LIST
+========================= */
+
+.productList{
+
+padding:0 15px 120px;
+
+}
+
+.productCard{
+
+background:white;
+
+border-radius:20px;
+
+padding:14px;
+
+margin-bottom:15px;
+
+box-shadow:0 4px 15px rgba(0,0,0,.05);
+
+}
+
+.productTop{
+
+display:flex;
+gap:12px;
+
+}
+
+.productTop img{
+
+width:90px;
+height:90px;
+
+border-radius:14px;
+
+object-fit:cover;
+
+}
+
+.productName{
+
+font-size:16px;
+font-weight:bold;
+
+margin-bottom:6px;
+
+}
+
+.productPrice{
+
+font-size:18px;
+font-weight:bold;
+color:#ff6f00;
+
+margin-bottom:6px;
+
+}
+
+.tag{
+
+display:inline-block;
+
+padding:5px 10px;
+
+border-radius:10px;
+
+background:#fff3e6;
+
+font-size:12px;
+
+color:#ff6f00;
+
+margin-right:5px;
+margin-top:5px;
+
+}
+
+.bottomBtn{
+
+display:flex;
+gap:10px;
+
+margin-top:14px;
+
+}
+
+.btn{
+
+flex:1;
+
+height:45px;
+
+border:none;
+
+border-radius:14px;
+
+font-weight:bold;
+
+}
+
+.editBtn{
+
+background:#ff9800;
+color:white;
+
+}
+
+.deleteBtn{
+
+background:#eee;
+color:#333;
+
+}
+
+/* =========================
+TOAST
+========================= */
+
+.toast{
+
+position:fixed;
+
+top:20px;
+left:50%;
+
+transform:translateX(-50%);
+
+background:#16a34a;
+
+color:white;
+
+padding:14px 18px;
+
+border-radius:14px;
+
+display:none;
+
+z-index:999999;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<div class="header">
+
+<div class="headerTitle">
+
+Admin Gudang Produk
+
+</div>
+
+<i class="fa-solid fa-box"
+style="
+font-size:20px;
+color:#ff6f00;
+">
+</i>
+
+</div>
+
+<!-- FORM -->
+
+<div class="formWrap">
+
+<div class="card">
+
+<div class="label">
+Nama Produk
+</div>
+
+<input
+id="nama"
+class="input"
+placeholder="Masukkan nama produk"
+>
+
+<br><br>
+
+<div class="label">
+Deskripsi
+</div>
+
+<textarea
+id="deskripsi"
+class="textarea"
+placeholder="Deskripsi produk">
+</textarea>
+
+<br><br>
+
+<div class="row">
+
+<div class="col">
+
+<div class="label">
+Harga Modal
+</div>
+
+<input
+id="hargaModal"
+class="input"
+type="number"
+placeholder="100000"
+>
+
+</div>
+
+<div class="col">
+
+<div class="label">
+Harga Jual
+</div>
+
+<input
+id="harga"
+class="input"
+type="number"
+placeholder="120000"
+>
+
+</div>
+
+</div>
+
+<br>
+
+<div class="row">
+
+<div class="col">
+
+<div class="label">
+Diskon
+</div>
+
+<input
+id="diskon"
+class="input"
+type="number"
+placeholder="0"
+>
+
+</div>
+
+<div class="col">
+
+<div class="label">
+Stok
+</div>
+
+<input
+id="stok"
+class="input"
+type="number"
+placeholder="10"
+>
+
+</div>
+
+</div>
+
+<br>
+
+<div class="row">
+
+<div class="col">
+
+<div class="label">
+Lokasi
+</div>
+
+<input
+id="lokasi"
+class="input"
+placeholder="Jakarta"
+>
+
+</div>
+
+<div class="col">
+
+<div class="label">
+Komisi Store (%)
+</div>
+
+<input
+id="komisi"
+class="input"
+type="number"
+placeholder="10"
+>
+
+</div>
+
+</div>
+
+<br>
+
+<div class="label">
+Link Gambar Produk
+</div>
+
+<div id="gambarWrap">
+
+<input
+class="input imageInput gambarInput"
+placeholder="https://..."
+>
+
+</div>
+
+<button
+class="addImage"
+onclick="addImageInput()">
+
++ Tambah Link Gambar
+
+</button>
+
+<div
+id="previewWrap"
+class="previewWrap">
+
+</div>
+
+<br>
+
+<label class="checkWrap">
+<input type="checkbox" id="promo">
+Produk Promo
+</label>
+
+<label class="checkWrap">
+<input type="checkbox" id="cod">
+Bisa COD
+</label>
+
+<label class="checkWrap">
+<input type="checkbox" id="kupon">
+Bisa Pakai Kupon
+</label>
+
+<br>
+
+<button
+class="submitBtn"
+onclick="saveProduk()">
+
+Simpan Gudang Produk
+
+</button>
+
+</div>
+
+</div>
+
+<!-- LIST -->
+
+<div
+id="productList"
+class="productList">
+
+</div>
+
+<!-- TOAST -->
+
+<div
+id="toast"
+class="toast">
+
+Berhasil disimpan
+
+</div>
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+set,
+get,
+remove,
+onValue
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig={
+
+apiKey:
+"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+
+authDomain:
+"shoponline-93646.firebaseapp.com",
+
+databaseURL:
+"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"shoponline-93646",
+
+storageBucket:
+"shoponline-93646.firebasestorage.app",
+
+messagingSenderId:
+"435032364443",
+
+appId:
+"1:435032364443:web:5f76384f794693a892bd3e"
+
+};
+
+const app =
+initializeApp(firebaseConfig);
+
+const db =
+getDatabase(app);
+
+/* =========================
+TOAST
+========================= */
+
+function showToast(text){
+
+const toast =
+document.getElementById(
+"toast"
+);
+
+toast.innerHTML = text;
+
+toast.style.display = "block";
+
+setTimeout(()=>{
+
+toast.style.display = "none";
+
+},2000);
+
+}
+
+/* =========================
+TAMBAH INPUT GAMBAR
+========================= */
+
+window.addImageInput = ()=>{
+
+const total =
+document.querySelectorAll(
+".gambarInput"
+).length;
+
+if(total >= 5){
+
+alert(
+"Maksimal 5 gambar"
+);
+
+return;
+
+}
+
+const input =
+document.createElement("input");
+
+input.className =
+"input imageInput gambarInput";
+
+input.placeholder =
+"https://...";
+
+document
+.getElementById("gambarWrap")
+.appendChild(input);
+
+};
+
+/* =========================
+PREVIEW GAMBAR
+========================= */
+
+document.addEventListener(
+"input",
+()=>{
+
+const wrap =
+document.getElementById(
+"previewWrap"
+);
+
+wrap.innerHTML = "";
+
+document
+.querySelectorAll(".gambarInput")
+.forEach((x)=>{
+
+if(x.value){
+
+wrap.innerHTML += `
+<img src="${x.value}">
+`;
+
+}
+
+});
+
+}
+);
+
+/* =========================
+SAVE PRODUK
+========================= */
+
+window.saveProduk =
+async()=>{
+
+const id =
+"produk" + Date.now();
+
+const gambar = [];
+
+document
+.querySelectorAll(".gambarInput")
+.forEach((x)=>{
+
+if(x.value){
+
+gambar.push(x.value);
+
+}
+
+});
+
+const hargaModal =
+Number(
+document.getElementById(
+"hargaModal"
+).value || 0
+);
+
+const harga =
+Number(
+document.getElementById(
+"harga"
+).value || 0
+);
+
+const komisiPersen =
+Number(
+document.getElementById(
+"komisi"
+).value || 0
+);
+
+const komisiNominal =
+Math.floor(
+(harga * komisiPersen) / 100
+);
+
+const data = {
+
+id:id,
+
+nama:
+document.getElementById(
+"nama"
+).value,
+
+deskripsi:
+document.getElementById(
+"deskripsi"
+).value,
+
+gambar:gambar,
+
+harga:harga,
+
+hargaAwal:harga,
+
+hargaModal:hargaModal,
+
+diskon:
+Number(
+document.getElementById(
+"diskon"
+).value || 0
+),
+
+stok:
+Number(
+document.getElementById(
+"stok"
+).value || 0
+),
+
+lokasi:
+document.getElementById(
+"lokasi"
+).value,
+
+promo:
+document.getElementById(
+"promo"
+).checked,
+
+cod:
+document.getElementById(
+"cod"
+).checked,
+
+kupon:
+document.getElementById(
+"kupon"
+).checked,
+
+komisiPersen:
+komisiPersen,
+
+komisiNominal:
+komisiNominal,
+
+penjelasanKomisi:
+`Store akan mendapatkan komisi ${komisiPersen}% dari setiap produk berhasil terjual.`,
+
+createdAt:
+Date.now()
+
+};
+
+await set(
+ref(db,"Gudangproduk/"+id),
+data
+);
+
+showToast(
+"Produk berhasil disimpan"
+);
+
+location.reload();
+
+};
+
+/* =========================
+LOAD PRODUK
+========================= */
+
+onValue(
+ref(db,"Gudangproduk"),
+(snap)=>{
+
+const list =
+document.getElementById(
+"productList"
+);
+
+if(!snap.exists()){
+
+list.innerHTML = `
+<div style="
+padding:20px;
+text-align:center;
+color:#888;
+">
+Belum ada produk
+</div>
+`;
+
+return;
+
+}
+
+list.innerHTML = "";
+
+snap.forEach((x)=>{
+
+const d = x.val();
+
+list.innerHTML += `
+
+<div class="productCard">
+
+<div class="productTop">
+
+<img src="${
+d.gambar?.[0] ||
+'https://picsum.photos/300/200'
+}">
+
+<div>
+
+<div class="productName">
+
+${d.nama}
+
+</div>
+
+<div class="productPrice">
+
+Rp ${Number(
+d.harga || 0
+).toLocaleString("id-ID")}
+
+</div>
+
+<div style="
+font-size:13px;
+line-height:1.7;
+color:#666;
+">
+
+Komisi :
+<b>
+${d.komisiPersen || 0}%
+</b>
+
+<br>
+
+Rp ${Number(
+d.komisiNominal || 0
+).toLocaleString("id-ID")}
+
+</div>
+
+<div>
+
+${d.cod ? `
+<div class="tag">
+COD
+</div>
+` : ""}
+
+${d.promo ? `
+<div class="tag">
+PROMO
+</div>
+` : ""}
+
+${d.kupon ? `
+<div class="tag">
+KUPON
+</div>
+` : ""}
+
+</div>
+
+</div>
+
+</div>
+
+<div class="bottomBtn">
+
+<button
+class="btn deleteBtn"
+onclick="hapusProduk('${d.id}')">
+
+Hapus
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+);
+
+/* =========================
+HAPUS
+========================= */
+
+window.hapusProduk =
+async(id)=>{
+
+if(!confirm(
+"Hapus produk?"
+))
+return;
+
+await remove(
+ref(db,"Gudangproduk/"+id)
+);
+
+showToast(
+"Produk berhasil dihapus"
+);
+
+};
+
+</script>
+
+</body>
+
+</html>

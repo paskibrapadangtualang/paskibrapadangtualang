@@ -36,6 +36,49 @@ gap:15px;
 align-items:center;
 }
 
+.profileInfo{
+flex:1;
+}
+
+.topName{
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+gap:10px;
+}
+
+.settingBtn{
+
+width:38px;
+height:38px;
+
+border-radius:50%;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+background:#fff7ef;
+
+color:#ff6f00;
+
+box-shadow:
+0 3px 10px rgba(255,111,0,.18);
+
+cursor:pointer;
+
+transition:.2s;
+
+}
+
+.settingBtn:hover{
+transform:scale(1.05);
+}
+
+.settingBtn i{
+font-size:16px;
+}
+
 .profileCard img{
 width:70px;
 height:70px;
@@ -123,12 +166,38 @@ font-weight:bold;
 </div>
 
 <!-- PROFILE -->
+<!-- PROFILE -->
 <div class="profileCard">
+
 <img id="foto">
+
+<div class="profileInfo">
+
+<div class="topName">
+
 <div>
-<div class="name" id="nama">Loading...</div>
-<div class="role" id="role">User</div>
+
+<div class="name" id="nama">
+Loading...
 </div>
+
+<div class="role" id="role">
+User
+</div>
+
+</div>
+
+<div class="settingBtn"
+onclick="location.href='editdata.html'">
+
+<i class="fa fa-gear"></i>
+
+</div>
+
+</div>
+
+</div>
+
 </div>
 
 <!-- QUICK STATS -->

@@ -1809,59 +1809,285 @@ orderTemp
 
 
 
+/* =========================
+SIMPAN PESANAN UTAMA
+========================= */
+
+await set(
+
+ref(
+db,
+"pesanan/" + orderTemp.id
+),
+
+orderTemp
+
+);
 
 /* =========================
-KURANGI STOCK PRODUK
+BUAT PESANAN STORE
 ========================= */
+
+const itemsOrder =
+orderTemp.items || {};
+
+/* GROUP BY STORE */
+
+let groupedStore = {};
+
+Object.values(itemsOrder).forEach(item=>{
+
+const sid =
+item.storeId || "unknown";
+
+if(!groupedStore[sid]){
+
+groupedStore[sid] = [];
+
+}
+
+groupedStore[sid].push(item);
+
+});
+
+/* LOOP STORE */
+
+for(const sid in groupedStore){
+
+const itemsStore =
+groupedStore[sid];
+
 /* =========================
-KURANGI STOCK PRODUK
+CEK ADA PRODUK GUDANG?
 ========================= */
-const itemsOrder = orderTemp.items || {};
 
-for (const key in itemsOrder) {
+const adaGudang =
+itemsStore.some(x=>
+x.gudangProduk === true
+);
 
-  const item = itemsOrder[key];
+const storeOrderId =
+"STORE_" + Date.now() + "_" + sid;
 
-  // ambil ID produk dengan aman
-  const produkId = item.id || item.produkId;
+/* =========================
+HITUNG TOTAL
+========================= */
 
-  if (!produkId) {
-    console.log("❌ Produk ID tidak ditemukan di item:", item);
-    continue;
-  }
+let subtotalStore = 0;
 
-  const qtyBeli = Number(item.qty || 1);
+itemsStore.forEach(x=>{
 
-  const produkRef = ref(db, "produk/" + produkId);
-  const produkSnap = await get(produkRef);
+subtotalStore +=
+(Number(x.harga || 0) *
+Number(x.qty || 1));
 
-  if (!produkSnap.exists()) {
-    console.log("❌ Produk tidak ditemukan di Firebase:", produkId);
-    continue;
-  }
+});
 
-  const produk = produkSnap.val();
+/* =========================
+DATA ORDER STORE
+========================= */
 
-  // ✅ PAKAI FIELD STOK (bukan stock)
-  const stokLama = Number(produk.stok || 0);
-  const stokBaru = Math.max(stokLama - qtyBeli, 0);
+const storeOrder = {
 
-  // 🔥 update hanya 1 field
-  await set(
-    ref(db, "produk/" + produkId + "/stok"),
-    stokBaru
-  );
+id:
+storeOrderId,
 
-  console.log(
-    "✅ STOK BERKURANG:",
-    produkId,
-    stokLama,
-    "→",
-    stokBaru
-  );
+orderUtama:
+orderTemp.id,
+
+storeId:
+sid,
+
+user:
+uidUser,
+
+namaPembeli:
+user.nama || "",
+
+fotoPembeli:
+user.foto || "",
+
+status:
+"pending",
+
+metode:
+orderTemp.metode || "COD",
+
+subtotal:
+subtotalStore,
+
+total:
+subtotalStore,
+
+createdAt:
+Date.now(),
+
+gudangOrder:
+adaGudang,
+
+items:
+itemsStore
+
+};
+
+/* =========================
+ORDER STORE NORMAL
+========================= */
+
+await set(
+
+ref(
+db,
+"pesananStore/" + storeOrderId
+),
+
+storeOrder
+
+);
+
+/* =========================
+JIKA PRODUK GUDANG
+========================= */
+
+if(adaGudang){
+
+await set(
+
+ref(
+db,
+"pesananGudang/" + storeOrderId
+),
+
+{
+
+...storeOrder,
+
+status:
+"menunggu_diterima_store",
+
+saldoRequired:
+itemsStore.reduce((t,i)=>{
+
+return t + (
+
+Number(i.hargaModal || 0)
+
+*
+
+Number(i.qty || 1)
+
+);
+
+},0)
+
+}
+
+);
+
+}
+
 }
 
 
+
+
+/* =========================
+KURANGI STOCK PRODUK
+========================= */
+
+const itemsStock =
+orderTemp.items || {};
+
+for (const key in itemsStock) {
+
+  const item =
+  itemsStock[key];
+
+  /* AMBIL ID PRODUK */
+
+  const produkId =
+  item.id || item.produkId;
+
+  if (!produkId) {
+
+    console.log(
+    "❌ Produk ID tidak ditemukan:",
+    item
+    );
+
+    continue;
+
+  }
+
+  const qtyBeli =
+  Number(item.qty || 1);
+
+  const produkRef =
+  ref(
+  db,
+  "produk/" + produkId
+  );
+
+  const produkSnap =
+  await get(produkRef);
+
+  if (!produkSnap.exists()) {
+
+    console.log(
+    "❌ Produk tidak ditemukan:",
+    produkId
+    );
+
+    continue;
+
+  }
+
+  const produk =
+  produkSnap.val();
+
+  /* STOK LAMA */
+
+  const stokLama =
+  Number(produk.stok || 0);
+
+  /* STOK BARU */
+
+  const stokBaru =
+  Math.max(
+  stokLama - qtyBeli,
+  0
+  );
+
+  /* UPDATE STOK */
+
+  await set(
+
+    ref(
+    db,
+    "produk/" +
+    produkId +
+    "/stok"
+    ),
+
+    stokBaru
+
+  );
+
+  console.log(
+
+    "✅ STOK BERKURANG:",
+
+    produkId,
+
+    stokLama,
+
+    "→",
+
+    stokBaru
+
+  );
+
+}
 
 
 

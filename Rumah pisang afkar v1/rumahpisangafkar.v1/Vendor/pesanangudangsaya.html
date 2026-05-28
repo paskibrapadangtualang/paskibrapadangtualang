@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Pesanan Gudang Saya</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#f5f5f5;
+padding-bottom:100px;
+}
+
+/* HEADER */
+
+.header{
+position:sticky;
+top:0;
+z-index:10;
+background:#ff6f00;
+padding:15px;
+color:white;
+font-size:18px;
+font-weight:bold;
+}
+
+/* CONTAINER */
+
+.container{
+padding:12px;
+}
+
+/* CARD */
+
+.card{
+background:white;
+border-radius:16px;
+padding:12px;
+margin-bottom:12px;
+box-shadow:0 4px 12px rgba(0,0,0,0.06);
+}
+
+/* TOP */
+
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:10px;
+}
+
+.badge{
+background:#fff3e0;
+color:#ff6f00;
+padding:5px 10px;
+border-radius:20px;
+font-size:11px;
+font-weight:bold;
+}
+
+.status{
+font-size:12px;
+font-weight:bold;
+color:#666;
+}
+
+/* PRODUK */
+
+.product{
+display:flex;
+gap:10px;
+margin-top:10px;
+}
+
+.product img{
+width:80px;
+height:80px;
+border-radius:12px;
+object-fit:cover;
+border:1px solid #eee;
+}
+
+.name{
+font-size:14px;
+font-weight:bold;
+line-height:1.4;
+}
+
+.price{
+margin-top:6px;
+color:#ff6f00;
+font-weight:bold;
+}
+
+.info{
+font-size:12px;
+color:#666;
+margin-top:5px;
+line-height:1.5;
+}
+
+/* BOX */
+
+.box{
+margin-top:10px;
+padding:10px;
+background:#fff7f0;
+border-radius:12px;
+font-size:13px;
+line-height:1.6;
+}
+
+/* ACTION */
+
+.action{
+display:flex;
+gap:10px;
+margin-top:14px;
+}
+
+.btn{
+flex:1;
+height:42px;
+border:none;
+border-radius:12px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.terima{
+background:#ff6f00;
+color:white;
+}
+
+.tolak{
+background:#eee;
+color:#333;
+}
+
+.kirim{
+background:#22c55e;
+color:white;
+}
+
+/* EMPTY */
+
+.empty{
+padding:60px 20px;
+text-align:center;
+color:#888;
+font-size:14px;
+}
+
+
+
+
+
+
+/* =========================
+POPUP
+========================= */
+
+.popupBg{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.45);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:99999;
+padding:20px;
+animation:fadeIn .2s ease;
+}
+
+.popupBox{
+width:100%;
+max-width:340px;
+background:white;
+border-radius:28px;
+padding:24px 20px;
+text-align:center;
+animation:popupUp .25s ease;
+}
+
+.popupIcon{
+width:70px;
+height:70px;
+margin:auto;
+border-radius:50%;
+background:#ff6f00;
+color:white;
+font-size:34px;
+font-weight:bold;
+display:flex;
+align-items:center;
+justify-content:center;
+margin-bottom:18px;
+}
+
+.popupTitle{
+font-size:20px;
+font-weight:bold;
+margin-bottom:10px;
+color:#111;
+}
+
+.popupDesc{
+font-size:14px;
+color:#666;
+line-height:1.6;
+margin-bottom:22px;
+}
+
+.popupAction{
+display:flex;
+gap:10px;
+}
+
+.popupBtn{
+flex:1;
+height:48px;
+border:none;
+border-radius:16px;
+font-size:15px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.cancelBtn{
+background:#f1f1f1;
+color:#333;
+}
+
+.okBtn{
+background:#ff6f00;
+color:white;
+}
+
+.pinInput{
+width:100%;
+height:52px;
+border:1px solid #ddd;
+border-radius:16px;
+padding:0 16px;
+font-size:18px;
+margin-top:10px;
+margin-bottom:20px;
+outline:none;
+text-align:center;
+letter-spacing:5px;
+}
+
+@keyframes popupUp{
+
+from{
+transform:translateY(30px) scale(.95);
+opacity:0;
+}
+
+to{
+transform:translateY(0) scale(1);
+opacity:1;
+}
+
+}
+
+@keyframes fadeIn{
+
+from{
+opacity:0;
+}
+
+to{
+opacity:1;
+}
+
+}
+
+
+
+</style>
+</head>
+
+<body>
+
+
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+<!-- =========================
+POPUP SHOPEE STYLE
+========================= -->
+
+<div id="popupBg" class="popupBg">
+
+<div class="popupBox">
+
+<div class="popupIcon" id="popupIcon">
+✓
+</div>
+
+<div class="popupTitle" id="popupTitle">
+Berhasil
+</div>
+
+<div class="popupDesc" id="popupDesc">
+Pesanan berhasil diproses
+</div>
+
+<div class="popupAction" id="popupAction">
+
+<button
+class="popupBtn cancelBtn"
+onclick="closePopup()">
+
+Tutup
+
+</button>
+
+<button
+class="popupBtn okBtn"
+id="popupOkBtn">
+
+OK
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- =========================
+PIN POPUP
+========================= -->
+
+<div id="pinBg" class="popupBg">
+
+<div class="popupBox">
+
+<div class="popupTitle">
+Masukkan PIN
+</div>
+
+<div class="popupDesc">
+Masukkan PIN saldo store
+</div>
+
+<input
+type="password"
+id="pinInput"
+class="pinInput"
+placeholder="••••••">
+
+<div class="popupAction">
+
+<button
+class="popupBtn cancelBtn"
+onclick="closePinPopup()">
+
+Batal
+
+</button>
+
+<button
+class="popupBtn okBtn"
+id="pinSubmitBtn">
+
+Lanjut
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+
+<div class="header">
+Pesanan Gudang Saya
+</div>
+
+<div class="container" id="list">
+
+<div class="empty">
+Memuat pesanan...
+</div>
+
+</div>
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get,
+update,
+onValue,
+set
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* =========================
+FIREBASE
+========================= */
+
+const firebaseConfig = {
+
+apiKey:
+"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+
+authDomain:
+"shoponline-93646.firebaseapp.com",
+
+databaseURL:
+"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"shoponline-93646",
+
+storageBucket:
+"shoponline-93646.firebasestorage.app",
+
+messagingSenderId:
+"435032364443",
+
+appId:
+"1:435032364443:web:5f76384f794693a892bd3e"
+
+};
+
+const app =
+initializeApp(firebaseConfig);
+
+const db =
+getDatabase(app);
+
+/* =========================
+STORE LOGIN
+========================= */
+
+const storeId =
+localStorage.getItem("storeId");
+
+const list =
+document.getElementById("list");
+
+if(!storeId){
+
+list.innerHTML = `
+<div class="empty">
+Store belum login
+</div>
+`;
+
+throw new Error("Store belum login");
+
+}
+
+/* =========================
+RUPIAH
+========================= */
+
+function rupiah(num){
+
+return Number(num || 0)
+.toLocaleString("id-ID");
+
+}
+
+/* =========================
+STATUS TEXT
+========================= */
+
+function statusText(status){
+
+if(status === "pending")
+return "Menunggu Konfirmasi";
+
+if(status === "diproses")
+return "Diproses";
+
+if(status === "dikirim")
+return "Sedang Dikirim";
+
+if(status === "selesai")
+return "Selesai";
+
+if(status === "dibatalkan")
+return "Dibatalkan";
+
+return status || "-";
+
+}
+
+/* =========================
+TERIMA ORDER
+========================= */
+
+window.terimaOrder =
+async(orderId)=>{
+
+try{
+
+const orderSnap =
+await get(
+ref(db,"pesanan/" + orderId)
+);
+
+if(!orderSnap.exists()){
+
+showPopup(
+"Gagal",
+"Pesanan tidak ditemukan",
+"error"
+);
+return;
+
+}
+
+const order =
+orderSnap.val();
+
+/* =========================
+AMBIL STORE
+========================= */
+
+const storeSnap =
+await get(
+ref(db,"stores/" + storeId)
+);
+
+if(!storeSnap.exists()){
+
+showPopup(
+"Gagal",
+"Store tidak ditemukan",
+"error"
+);
+return;
+
+}
+
+const store =
+storeSnap.val();
+
+/* =========================
+HITUNG TOTAL MODAL
+========================= */
+
+let totalModal = 0;
+
+Object.values(order.items || {})
+.forEach(item=>{
+
+if(item.gudangProduk === true){
+
+totalModal +=
+Number(item.hargaModal || 0)
+*
+Number(item.qty || 1);
+
+}
+
+});
+
+/* =========================
+CHECK SALDO
+========================= */
+
+const saldoStore =
+Number(store.saldo || 0);
+
+if(saldoStore < totalModal){
+
+alert(
+
+"❌ Saldo store tidak cukup.\n\n" +
+
+"Saldo Dibutuhkan:\nRp " +
+rupiah(totalModal) +
+
+"\n\n" +
+
+"Saldo Store:\nRp " +
+rupiah(saldoStore)
+
+);
+
+return;
+
+}
+
+/* =========================
+PIN
+========================= */
+
+const pin =
+await showPinPopup(
+"Verifikasi PIN"
+);
+
+if(!pin)
+return;
+
+if(pin.trim() !== String(store.pinTransfer)){
+
+showPopup(
+"PIN Salah",
+"PIN saldo store tidak sesuai",
+"error"
+);
+return;
+
+}
+
+/* =========================
+POTONG SALDO
+========================= */
+
+await update(
+ref(db,"stores/" + storeId),
+{
+saldo:
+saldoStore - totalModal
+}
+);
+
+
+
+/* =========================
+SALDO HISTORY
+========================= */
+
+const historyId =
+"MODAL_" +
+orderId +
+"_" +
+Date.now();
+
+await set(
+
+ref(
+db,
+"saldoHistory/" +
+storeId +
+"/" +
+historyId
+),
+
+{
+
+id:historyId,
+
+type:"out",
+
+category:"pembayaran_modal",
+
+amount:totalModal,
+
+status:"approved",
+
+desc:
+"Pembayaran modal pesanan",
+
+orderId:
+order.id || orderId,
+
+createdAt:
+Date.now(),
+
+storeId:storeId,
+
+breakdown:{
+modal:totalModal
+}
+
+}
+
+);
+
+
+
+/* =========================
+UPDATE ORDER
+========================= */
+
+await update(
+ref(db,"pesanan/" + orderId),
+{
+status:"diproses",
+diprosesAt:Date.now()
+}
+);
+
+showPopup(
+"Pesanan Diterima",
+"Saldo modal store berhasil dipotong"
+);
+
+}catch(err){
+
+console.error(err);
+
+showPopup(
+"Gagal",
+"Gagal menerima order",
+"error"
+);
+
+}
+
+};
+
+/* =========================
+TOLAK ORDER
+========================= */
+
+window.tolakOrder =
+async(orderId)=>{
+
+try{
+
+const yes = await new Promise(resolve=>{
+
+showConfirm(
+"Tolak Pesanan",
+"Yakin ingin membatalkan pesanan ini?",
+()=>resolve(true)
+);
+
+});
+
+if(!yes)
+return;
+
+/* =========================
+AMBIL ORDER
+========================= */
+
+const orderSnap =
+await get(
+ref(db,"pesanan/" + orderId)
+);
+
+if(!orderSnap.exists()){
+
+alert("Pesanan tidak ditemukan");
+return;
+
+}
+
+const order =
+orderSnap.val();
+
+/* =========================
+SUDAH DIBATALKAN
+========================= */
+
+if(order.status === "dibatalkan"){
+
+showPopup(
+"Pesanan Dibatalkan",
+"Pesanan ini sudah dibatalkan sebelumnya",
+"error"
+);
+return;
+
+}
+
+/* =========================
+CEK SUDAH REFUND?
+========================= */
+
+let sudahRefund = false;
+
+const historySnap =
+await get(
+ref(
+db,
+"saldoHistory/" + order.user
+)
+);
+
+if(historySnap.exists()){
+
+historySnap.forEach(h=>{
+
+const v = h.val();
+
+if(
+v.orderId === (order.id || orderId)
+&&
+v.category === "refund"
+){
+
+sudahRefund = true;
+
+}
+
+});
+
+}
+
+if(sudahRefund){
+
+showPopup(
+"Refund Sudah Ada",
+"Pesanan ini sudah pernah direfund",
+"error"
+);
+return;
+
+}
+
+/* =========================
+UPDATE STATUS ORDER
+========================= */
+
+await update(
+ref(db,"pesanan/" + orderId),
+{
+status:"dibatalkan",
+dibatalkanAt:Date.now(),
+
+"logStatus/ditolak":{
+
+timestamp:Date.now(),
+
+waktu:new Date().toLocaleString(
+"id-ID",
+{
+year:"numeric",
+month:"long",
+day:"2-digit",
+hour:"2-digit",
+minute:"2-digit",
+second:"2-digit"
+}
+),
+
+oleh:"Penjual"
+
+},
+
+"logStatus/ditolakOleh":"penjual",
+
+}
+);
+
+/* =========================
+REFUND KE PEMBELI
+========================= */
+
+if(
+order.metode === "SALDO"
+&&
+order.user
+){
+
+const userRef =
+ref(db,"users/" + order.user);
+
+const userSnap =
+await get(userRef);
+
+if(userSnap.exists()){
+
+const userData =
+userSnap.val();
+
+const saldoAwal =
+Number(userData.saldo || 0);
+
+const totalRefund =
+Number(order.total || 0);
+
+/* =========================
+KEMBALIKAN SALDO
+========================= */
+
+await update(
+userRef,
+{
+saldo:
+saldoAwal + totalRefund
+}
+);
+
+/* =========================
+ID HISTORY
+========================= */
+
+const refundId =
+"REFUND_" +
+(order.id || orderId) +
+"_" +
+Date.now();
+
+/* =========================
+SALDO HISTORY
+========================= */
+
+await set(
+
+ref(
+db,
+"saldoHistory/" +
+order.user +
+"/" +
+refundId
+),
+
+{
+
+id:refundId,
+
+type:"in",
+
+category:"refund",
+
+amount:totalRefund,
+
+status:"approved",
+
+metode:"REFUND",
+
+desc:
+"Refund pembatalan pesanan gudang",
+
+createdAt:
+Date.now(),
+
+orderId:
+order.id || orderId,
+
+fee:0,
+
+totalMasuk:
+totalRefund,
+
+/* =========================
+PENGIRIM DANA
+========================= */
+
+pengirimDana:{
+
+uid:"Botafkarmall",
+
+nama:"Afkarmall.platform",
+
+noPay:"BOTAFKARMALL",
+
+foto:
+"https://i.ibb.co.com/FqYhg1W5/watermak.jpg"
+
+},
+
+/* =========================
+PENERIMA DANA
+========================= */
+/* =========================
+PENERIMA DANA
+========================= */
+penerimaDana:{
+
+uid:
+order.user,
+
+nama:
+
+userData.nama ||
+
+userData.username ||
+
+"User",
+
+noPay:
+
+userData.noPay ||
+
+userData.pay ||
+
+userData.nomorPay ||
+
+userData.nomor ||
+
+userData.usernamePay ||
+
+"-",
+
+foto:
+
+userData.foto ||
+
+userData.photo ||
+
+"https://i.ibb.co.com/FqYhg1W5/watermak.jpg"
+
+}
+
+
+
+}
+
+);
+
+}
+
+}
+
+showPopup(
+"Pesanan Dibatalkan",
+"Saldo pembeli berhasil dikembalikan"
+);
+
+}catch(err){
+
+console.error(err);
+
+showPopup(
+"Gagal",
+"Gagal membatalkan pesanan",
+"error"
+);
+
+}
+
+};
+
+/* =========================
+KIRIM ORDER
+========================= */
+
+window.kirimOrder =
+async(orderId)=>{
+
+await update(
+ref(db,"pesanan/" + orderId),
+{
+status:"dikirim",
+dikirimAt:Date.now()
+}
+);
+
+showPopup(
+"Pesanan Dikirim",
+"Pesanan sedang dalam perjalanan"
+);
+
+};
+
+/* =========================
+LOAD ORDER
+========================= */
+
+function loadOrder(){
+
+onValue(
+ref(db,"pesanan"),
+(snap)=>{
+
+if(!snap.exists()){
+
+list.innerHTML = `
+<div class="empty">
+Belum ada pesanan gudang
+</div>
+`;
+
+return;
+
+}
+
+let found = false;
+
+/* =========================
+GROUP HTML
+========================= */
+
+let pendingHTML = "";
+let prosesHTML = "";
+let kirimHTML = "";
+let selesaiHTML = "";
+let batalHTML = "";
+
+/* =========================
+ARRAY ORDER
+========================= */
+
+const orders = [];
+
+snap.forEach(item=>{
+
+orders.push({
+id:item.key,
+data:item.val()
+});
+
+});
+
+/* =========================
+SORT TERBARU
+========================= */
+
+orders.sort((a,b)=>{
+
+return Number(
+b.data.createdAt || 0
+) - Number(
+a.data.createdAt || 0
+);
+
+});
+
+/* =========================
+LOOP ORDER
+========================= */
+
+orders.forEach(obj=>{
+
+const orderId = obj.id;
+const order = obj.data;
+
+let adaGudang = false;
+let produkHTML = "";
+let totalModal = 0;
+
+/* LOOP ITEMS */
+
+Object.values(order.items || {})
+.forEach(p=>{
+
+if(
+p.storeId === storeId
+&&
+p.gudangProduk === true
+){
+
+adaGudang = true;
+
+const qty =
+Number(p.qty || 1);
+
+const modal =
+Number(p.hargaModal || 0)
+*
+qty;
+
+totalModal += modal;
+
+/* GAMBAR */
+
+let gambar =
+"https://via.placeholder.com/200";
+
+if(Array.isArray(p.gambar)){
+
+gambar =
+p.gambar[0] || gambar;
+
+}else{
+
+gambar =
+p.gambar || gambar;
+
+}
+
+/* PRODUK */
+
+produkHTML += `
+
+<div class="product">
+
+<img src="${gambar}">
+
+<div style="flex:1;">
+
+<div class="name">
+${p.nama || "-"}
+</div>
+
+<div class="price">
+Rp ${rupiah(p.harga || 0)}
+</div>
+
+<div class="info">
+
+📦 Qty ${qty}<br>
+
+💰 Modal:
+Rp ${rupiah(modal)}<br>
+
+🏪 Supplier:
+${p.supplier || "Gudang Produk"}
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+}
+
+});
+
+/* SKIP */
+
+if(!adaGudang)
+return;
+
+found = true;
+
+/* ACTION BUTTON */
+
+let actionHTML = "";
+
+/* PENDING */
+
+if(order.status === "pending"){
+
+actionHTML = `
+
+<div class="action">
+
+<button
+class="btn tolak"
+onclick="tolakOrder('${orderId}')">
+
+Tolak
+
+</button>
+
+<button
+class="btn terima"
+onclick="terimaOrder('${orderId}')">
+
+Terima
+
+</button>
+
+</div>
+
+`;
+
+}
+
+/* DIPROSES */
+
+if(order.status === "diproses"){
+
+actionHTML = `
+
+<div class="action">
+
+<button
+class="btn kirim"
+onclick="kirimOrder('${orderId}')">
+
+Diantar
+
+</button>
+
+</div>
+
+`;
+
+}
+
+/* CARD */
+
+const cardHTML = `
+
+<div class="card">
+
+<div class="top">
+
+<div class="badge">
+SUPPLIER ORDER
+</div>
+
+<div class="status">
+${statusText(order.status)}
+</div>
+
+</div>
+
+${produkHTML}
+
+<div class="box">
+
+💳 Total Modal:
+<b>
+Rp ${rupiah(totalModal)}
+</b>
+
+<br><br>
+
+📦 Order ID:
+${order.id || orderId}
+
+</div>
+
+${actionHTML}
+
+</div>
+
+`;
+
+/* =========================
+MASUKKAN KE GROUP
+========================= */
+
+if(
+order.status === "pending"
+){
+
+pendingHTML += cardHTML;
+
+}
+
+else if(
+order.status === "diproses"
+){
+
+prosesHTML += cardHTML;
+
+}
+
+else if(
+order.status === "dikirim"
+){
+
+kirimHTML += cardHTML;
+
+}
+
+else if(
+order.status === "selesai"
+){
+
+selesaiHTML += cardHTML;
+
+}
+
+else if(
+order.status === "dibatalkan"
+){
+
+batalHTML += cardHTML;
+
+}
+
+});
+
+/* =========================
+FINAL HTML
+========================= */
+
+let finalHTML = "";
+
+/* PENDING */
+
+if(pendingHTML){
+
+finalHTML += `
+
+<h3 style="
+margin:8px 4px 12px;
+font-size:15px;
+color:#ff6f00;
+">
+Pesanan Baru
+</h3>
+
+${pendingHTML}
+
+`;
+
+}
+
+/* DIPROSES */
+
+if(prosesHTML){
+
+finalHTML += `
+
+<h3 style="
+margin:18px 4px 12px;
+font-size:15px;
+color:#2563eb;
+">
+Sedang Diproses
+</h3>
+
+${prosesHTML}
+
+`;
+
+}
+
+/* DIKIRIM */
+
+if(kirimHTML){
+
+finalHTML += `
+
+<h3 style="
+margin:18px 4px 12px;
+font-size:15px;
+color:#22c55e;
+">
+Sedang Dikirim
+</h3>
+
+${kirimHTML}
+
+`;
+
+}
+
+/* SELESAI */
+
+if(selesaiHTML){
+
+finalHTML += `
+
+<h3 style="
+margin:18px 4px 12px;
+font-size:15px;
+color:#555;
+">
+Pesanan Selesai
+</h3>
+
+${selesaiHTML}
+
+`;
+
+}
+
+/* DIBATALKAN */
+
+if(batalHTML){
+
+finalHTML += `
+
+<h3 style="
+margin:18px 4px 12px;
+font-size:15px;
+color:#dc2626;
+">
+Pesanan Dibatalkan
+</h3>
+
+${batalHTML}
+
+`;
+
+}
+
+list.innerHTML = finalHTML;
+
+/* EMPTY */
+
+/* EMPTY */
+
+if(!found){
+
+list.innerHTML = `
+<div class="empty">
+Belum ada pesanan gudang
+</div>
+`;
+
+return;
+
+}
+
+list.innerHTML = finalHTML;
+
+});
+
+}
+
+loadOrder();
+
+
+
+
+
+/* =========================
+POPUP SYSTEM
+========================= */
+/* =========================
+POPUP SYSTEM
+========================= */
+
+const popupBg =
+document.getElementById("popupBg");
+
+const popupTitle =
+document.getElementById("popupTitle");
+
+const popupDesc =
+document.getElementById("popupDesc");
+
+const popupIcon =
+document.getElementById("popupIcon");
+
+const popupOkBtn =
+document.getElementById("popupOkBtn");
+
+/* CLOSE */
+
+window.closePopup = ()=>{
+
+popupBg.style.display = "none";
+
+};
+
+/* SHOW POPUP */
+
+function showPopup(
+title="Berhasil",
+desc="",
+type="success"
+){
+
+popupTitle.innerHTML = title;
+
+popupDesc.innerHTML = desc;
+
+/* ICON */
+
+if(type === "error"){
+
+popupIcon.innerHTML = "✕";
+
+popupIcon.style.background =
+"#ef4444";
+
+}else{
+
+popupIcon.innerHTML = "✓";
+
+popupIcon.style.background =
+"#ff6f00";
+
+}
+
+/* BUTTON */
+
+popupOkBtn.innerHTML = "OK";
+
+popupOkBtn.onclick = ()=>{
+
+closePopup();
+
+};
+
+popupBg.style.display = "flex";
+
+}
+
+/* =========================
+CONFIRM POPUP
+========================= */
+
+function showConfirm(
+title="Konfirmasi",
+desc="Lanjutkan?"
+){
+
+return new Promise(resolve=>{
+
+popupTitle.innerHTML = title;
+
+popupDesc.innerHTML = desc;
+
+popupIcon.innerHTML = "?";
+
+popupIcon.style.background =
+"#ff9800";
+
+popupOkBtn.innerHTML =
+"Ya";
+
+popupOkBtn.onclick = ()=>{
+
+closePopup();
+
+resolve(true);
+
+};
+
+popupBg.style.display = "flex";
+
+});
+
+}
+
+/* =========================
+PIN POPUP
+========================= */
+
+window.closePinPopup = ()=>{
+
+document.getElementById(
+"pinBg"
+).style.display = "none";
+
+};
+
+function showPinPopup(){
+
+return new Promise(resolve=>{
+
+const bg =
+document.getElementById(
+"pinBg"
+);
+
+const input =
+document.getElementById(
+"pinInput"
+);
+
+const btn =
+document.getElementById(
+"pinSubmitBtn"
+);
+
+input.value = "";
+
+bg.style.display = "flex";
+
+/* AUTO FOCUS */
+
+setTimeout(()=>{
+
+input.focus();
+
+},200);
+
+btn.onclick = ()=>{
+
+const pin =
+input.value;
+
+closePinPopup();
+
+resolve(pin);
+
+};
+
+});
+
+}
+
+
+
+
+
+
+
+</script>
+
+</body>
+</html>

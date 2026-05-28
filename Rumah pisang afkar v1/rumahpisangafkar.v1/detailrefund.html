@@ -453,7 +453,7 @@ Sumber Dana
 
 <img
 id="fotoBot"
-src="https://i.imgur.com/8Km9tLL.png"
+src="assets/images/watermak.jpeg"
 >
 
 <div>
@@ -871,6 +871,9 @@ const botData =
 
 
 /* TAMPILKAN */
+/* =========================
+TAMPILKAN
+========================= */
 
 document.getElementById("nominal")
 .innerHTML =
@@ -891,74 +894,116 @@ document.getElementById("note")
 dataRefund.desc ||
 "Refund pembatalan pesanan";
 
+/* =========================
+DATA PENERIMA REFUND
+========================= */
+
+const penerima =
+dataRefund.penerimaDana || {};
+
 document.getElementById("namaUser")
 .innerHTML =
-user.nama || "User";
+
+penerima.nama ||
+
+user.nama ||
+
+"User";
 
 document.getElementById("noPay")
 .innerHTML =
-user.noPay || "-";
 
+"NO.PAY • " +
+
+(
+
+penerima.noPay ||
+
+user.noPay ||
+
+user.pay ||
+
+user.nomorPay ||
+
+user.nomor ||
+
+user.usernamePay ||
+
+"000000"
+
+);
 document.getElementById("fotoUser")
 .src =
+
+penerima.foto ||
+
 user.foto ||
-"assets/images/default-user.png";
 
+user.photo ||
 
+"assets/images/watermak.jpeg";
 
 /* =========================
-TAMPILKAN BOT
+SUMBER DANA / BOT
 ========================= */
+
+const pengirim =
+dataRefund.pengirimDana || {};
+
+/* NAMA */
 
 document
 .getElementById("namaBot")
 .innerHTML =
+
+pengirim.nama ||
+
 botData.nama ||
+
 "Afkarmall.platform";
+
+/* NO PAY */
 
 document
 .getElementById("noPayBot")
 .innerHTML =
+
 "NO.PAY • " +
-(botData.noPay || "BOTAFKAR");
+
+(
+
+pengirim.noPay ||
+
+botData.noPay ||
+
+"BOTAFKAR"
+
+);
+
+/* FOTO */
 
 document
 .getElementById("fotoBot")
 .src =
+
+pengirim.foto ||
+
 botData.foto ||
+
 "https://i.imgur.com/8Km9tLL.png";
 
 /* =========================
 PENGIRIM DANA
 ========================= */
-
 document
 .getElementById("pengirimDana")
 .innerHTML =
+
+pengirim.nama ||
+
 botData.nama ||
+
 "Afkarmall.platform";
-
-/* =========================
-SUMBER PEMBELIAN
-========================= */
-/* =========================
-SUMBER PEMBELIAN
-========================= */
-
-document
-.getElementById("storeNama")
-.innerHTML =
-
-data?.sumberPembelian?.namaStore ||
-"Afkar Mall Store";
-
-document
-.getElementById("storeFoto")
-.src =
-
-data?.sumberPembelian?.fotoStore ||
-
-"https://i.ibb.co/7QpKsCX/store.png";
 
 }
 
@@ -983,7 +1028,6 @@ loaderWrap.style.display = "none";
 loaderWrap.style.display = "none";
 
 });
-
 </script>
 
 </body>

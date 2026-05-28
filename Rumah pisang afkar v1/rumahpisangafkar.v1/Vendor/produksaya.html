@@ -6,13 +6,20 @@
 <title>Produk Saya</title>
 
 <style>
-body{
+
+*{
 margin:0;
+padding:0;
+box-sizing:border-box;
 font-family:Arial;
+}
+
+body{
 background:#f5f5f5;
 padding-bottom:80px;
 }
 
+/* HEADER */
 .header{
 background:#ff6f00;
 color:white;
@@ -23,6 +30,8 @@ top:0;
 display:flex;
 justify-content:space-between;
 align-items:center;
+z-index:10;
+box-shadow:0 2px 10px rgba(0,0,0,0.1);
 }
 
 .header img{
@@ -32,44 +41,131 @@ cursor:pointer;
 filter:brightness(0) invert(1);
 }
 
+/* CONTAINER */
 .container{
-padding:15px;
+padding:12px;
 }
 
+/* CARD */
 .card{
 background:white;
 padding:12px;
-border-radius:12px;
-margin-bottom:10px;
-box-shadow:0 5px 15px rgba(0,0,0,0.08);
+border-radius:16px;
+margin-bottom:12px;
+box-shadow:0 4px 15px rgba(0,0,0,0.06);
 display:flex;
-gap:10px;
-align-items:center;
+gap:12px;
+align-items:flex-start;
+position:relative;
+overflow:hidden;
 }
 
+/* PRODUK GUDANG */
+.card.gudang{
+border:2px solid #ff6f00;
+background:linear-gradient(
+to bottom,
+#fff,
+#fff8f2
+);
+}
+
+/* LABEL */
+.label{
+position:absolute;
+top:0;
+right:0;
+padding:6px 10px;
+font-size:10px;
+font-weight:bold;
+color:white;
+border-bottom-left-radius:10px;
+}
+
+.label.sendiri{
+background:#22c55e;
+}
+
+.label.gudang{
+background:#ff6f00;
+}
+
+/* GAMBAR */
 .card img{
-width:60px;
-height:60px;
+width:80px;
+height:80px;
 object-fit:cover;
-border-radius:10px;
+border-radius:12px;
 border:1px solid #eee;
+background:#fafafa;
 }
 
+/* NAMA */
 .name{
 font-weight:bold;
 font-size:14px;
+line-height:1.4;
+color:#222;
 }
 
+/* PRICE */
 .price{
 color:#ff6f00;
 font-weight:bold;
-margin-top:4px;
+margin-top:5px;
+font-size:16px;
 }
 
+.oldPrice{
+font-size:12px;
+color:#999;
+text-decoration:line-through;
+margin-top:2px;
+}
+
+/* INFO */
+.info{
+font-size:12px;
+color:#666;
+margin-top:6px;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+/* KOMISI */
+.komisiBox{
+margin-top:8px;
+background:#fff5ed;
+padding:8px;
+border-radius:10px;
+font-size:12px;
+}
+
+.komisiTitle{
+font-weight:bold;
+color:#ff6f00;
+margin-bottom:4px;
+}
+
+.komisiNominal{
+font-weight:bold;
+color:#222;
+}
+
+/* SUPPLIER */
+.supplier{
+font-size:11px;
+margin-top:6px;
+color:#888;
+}
+
+/* EMPTY */
 .empty{
 text-align:center;
-margin-top:50px;
+margin-top:60px;
 color:#888;
+font-size:14px;
 }
 
 </style>
@@ -77,112 +173,498 @@ color:#888;
 
 <body>
 
+<!-- HEADER -->
 <div class="header">
-  <div>Produk Saya</div>
 
-  <!-- tombol tambah -->
-  <img src="assets/images/shopping.png" onclick="location.href='tambahproduk.html'">
+<div>Produk Saya</div>
+
+<img src="assets/images/shopping.png"
+onclick="location.href='tambahproduk.html'">
+
 </div>
 
+<!-- LIST -->
 <div class="container" id="list">
-  <div class="empty">Loading produk...</div>
+
+<div class="empty">
+Loading produk...
+</div>
+
 </div>
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* =========================
+FIREBASE
+========================= */
 
 const firebaseConfig = {
-apiKey:"AIzaSyD3DTcca7yZKVtllc3TQOUe6Yv2hSyG_g",
-authDomain:"shoponline-93646.firebaseapp.com",
-databaseURL:"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId:"shoponline-93646",
-storageBucket:"shoponline-93646.firebasestorage.app",
-messagingSenderId:"435032364443",
-appId:"1:435032364443:web:5f76384f794693a892bd3e"
+
+apiKey:
+"AIzaSyD3DTcca7yZKVtllc3TQOUe6Yv2hSyG_g",
+
+authDomain:
+"shoponline-93646.firebaseapp.com",
+
+databaseURL:
+"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:
+"shoponline-93646",
+
+storageBucket:
+"shoponline-93646.firebasestorage.app",
+
+messagingSenderId:
+"435032364443",
+
+appId:
+"1:435032364443:web:5f76384f794693a892bd3e"
+
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const app =
+initializeApp(firebaseConfig);
 
-const storeId = localStorage.getItem("storeId");
-const list = document.getElementById("list");
+const db =
+getDatabase(app);
+
+/* =========================
+ELEMENT
+========================= */
+
+const storeId =
+localStorage.getItem("storeId");
+
+const list =
+document.getElementById("list");
+
+/* =========================
+CHECK LOGIN STORE
+========================= */
 
 if(!storeId){
-list.innerHTML = `<div class="empty">Store belum login</div>`;
-throw new Error("No store");
+
+list.innerHTML = `
+
+<div class="empty">
+Store belum login
+</div>
+
+`;
+
+throw new Error("Store belum login");
+
 }
+
+/* =========================
+FORMAT RUPIAH
+========================= */
+
+function rupiah(num){
+
+return Number(num || 0)
+.toLocaleString("id-ID");
+
+}
+
+/* =========================
+LOAD PRODUK
+========================= */
 
 async function loadProduk(){
 
-const snap = await get(ref(db, "produk"));
+const snap =
+await get(ref(db,"produk"));
 
 if(!snap.exists()){
-list.innerHTML = `<div class="empty">Belum ada produk</div>`;
+
+list.innerHTML = `
+
+<div class="empty">
+Belum ada produk
+</div>
+
+`;
+
 return;
+
 }
 
 let html = "";
 let found = false;
 
-snap.forEach(item => {
+/* =========================
+LOOP PRODUK
+========================= */
+
+snap.forEach(item=>{
 
 const p = item.val();
 
-if(p.storeId !== storeId) return;
+/* hanya produk store ini */
+if(p.storeId !== storeId)
+return;
 
 found = true;
 
-// =====================
-// AMBIL GAMBAR PERTAMA
-// =====================
-let img = "assets/images/default.png";
+/* =========================
+AUTO FIX HARGA
+========================= */
 
-if (p.gambar) {
-  if (typeof p.gambar === "object") {
-    img = Object.values(p.gambar)[0] || img;
-  } else {
-    img = p.gambar;
-  }
+/* harga utama */
+let harga = Number(
+
+p.harga
+||
+p.hargaPromo
+||
+p.hargaNormal
+||
+0
+
+);
+
+/* harga coret */
+let hargaAwal = Number(
+
+p.hargaAwal
+||
+p.hargaNormal
+||
+harga
+
+);
+
+/* jika harga masih 0 */
+if(harga <= 0){
+
+harga = Number(
+p.hargaNormal
+||
+p.hargaModal
+||
+0
+);
+
 }
 
-html += `
-<div class="card" onclick="location.href='detailproduksaya.html?id=${p.id}'">
+/* jika harga awal kosong */
+if(hargaAwal <= 0){
 
-  <img src="${img}"
-  onerror="this.src='assets/images/default.png'">
+hargaAwal = harga;
 
-  <div style="flex:1;">
+}
 
-    <div class="name">${p.nama || "-"}</div>
+/* =========================
+GAMBAR
+========================= */
 
-    <div class="price">
-      Rp ${(p.harga || 0).toLocaleString("id-ID")}
-    </div>
+let img =
+"assets/images/default.png";
 
-    <div style="font-size:12px;color:#777;margin-top:4px;">
-      Stok: ${p.stok || 0}
-    </div>
+if(p.gambar){
 
-    <!-- 🔥 TAMBAHAN KATEGORI -->
-    <div style="font-size:11px;color:#999;margin-top:3px;">
-      ${p.kategori || "Tanpa Kategori"}
-    </div>
+if(Array.isArray(p.gambar)){
 
-  </div>
+img =
+p.gambar[0]
+||
+img;
+
+}
+
+else if(typeof p.gambar === "object"){
+
+img =
+Object.values(p.gambar)[0]
+||
+img;
+
+}
+
+else{
+
+img = p.gambar;
+
+}
+
+}
+
+/* =========================
+PRODUK GUDANG ?
+========================= */
+
+const isGudang =
+p.gudangProduk === true;
+
+/* =========================
+KOMISI
+========================= */
+
+let komisiText = "";
+
+if(isGudang){
+
+/* =========================
+HITUNG KOMISI
+========================= */
+
+let komisiNominal = 0;
+
+/* nominal langsung */
+if(Number(p.komisi || 0) > 0){
+
+komisiNominal =
+Number(p.komisi || 0);
+
+}
+
+/* otomatis persen */
+else if(Number(p.komisiPersen || 0) > 0){
+
+komisiNominal = Math.floor(
+
+(
+harga
+*
+Number(p.komisiPersen || 0)
+)
+/
+100
+
+);
+
+}
+
+/* =========================
+TEXT KOMISI
+========================= */
+
+komisiText = `
+
+<div class="komisiBox">
+
+<div class="komisiTitle">
+💰 Komisi Store
+</div>
+
+<div class="komisiNominal">
+
+Rp ${rupiah(komisiNominal)}
+
+(${p.komisiPersen || 0}%)
 
 </div>
+
+<div style="
+margin-top:4px;
+color:#666;
+font-size:11px;
+line-height:1.5;
+">
+
+${
+p.penjelasanKomisi
+||
+`Store akan mendapatkan komisi ${p.komisiPersen || 0}% dari setiap produk berhasil terjual.`
+}
+
+</div>
+
+</div>
+
 `;
+
+}
+
+/* =========================
+CARD
+========================= */
+
+html += `
+
+<div class="card ${isGudang ? 'gudang' : ''}"
+
+onclick="
+location.href=
+'detailproduksaya.html?id=${p.id}'
+">
+
+<!-- LABEL -->
+
+<div class="label
+${isGudang ? 'gudang' : 'sendiri'}">
+
+${isGudang
+? 'GUDANG PRODUK'
+: 'PRODUK SENDIRI'}
+
+</div>
+
+<!-- IMAGE -->
+
+<img src="${img}"
+
+onerror="
+this.src=
+'assets/images/default.png'
+">
+
+<!-- CONTENT -->
+
+<div style="flex:1;">
+
+<!-- NAMA -->
+
+<div class="name">
+
+${p.nama || "-"}
+
+</div>
+
+<!-- HARGA -->
+
+<div class="price">
+
+Rp ${rupiah(harga)}
+
+</div>
+
+<!-- HARGA AWAL -->
+
+${
+hargaAwal > harga
+
+?
+
+`
+
+<div class="oldPrice">
+
+Rp ${rupiah(hargaAwal)}
+
+</div>
+
+`
+
+:
+
+""
+}
+
+<!-- INFO -->
+
+<div class="info">
+
+<div>
+📍 ${p.lokasi || "-"}
+</div>
+
+<div>
+📦 Stok ${p.stok || 0}
+</div>
+
+</div>
+
+<!-- KATEGORI -->
+
+<div style="
+font-size:11px;
+color:#999;
+margin-top:6px;
+">
+
+${p.kategori || "Tanpa Kategori"}
+
+</div>
+
+<!-- KOMISI -->
+
+${komisiText}
+
+<!-- SUPPLIER -->
+
+${
+isGudang
+
+?
+
+`
+
+<div class="supplier">
+
+🏪 Supplier:
+${p.supplier || "Gudang Produk"}
+
+</div>
+
+`
+
+:
+
+`
+
+<div class="supplier">
+
+🛍️ Produk milik store sendiri
+
+</div>
+
+`
+}
+
+</div>
+
+</div>
+
+`;
+
 });
 
+/* =========================
+EMPTY
+========================= */
+
 if(!found){
-list.innerHTML = `<div class="empty">Belum ada produk kamu</div>`;
+
+list.innerHTML = `
+
+<div class="empty">
+Belum ada produk kamu
+</div>
+
+`;
+
 return;
+
 }
 
+/* =========================
+RENDER
+========================= */
+
 list.innerHTML = html;
+
 }
+
+/* =========================
+LOAD
+========================= */
 
 loadProduk();
 
