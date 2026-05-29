@@ -386,6 +386,50 @@ height:360px;
 
 
 
+.detailProduk{
+margin-top:15px;
+background:#fafafa;
+border-radius:14px;
+padding:15px;
+border:1px solid #eee;
+}
+
+.detailTitle{
+font-size:15px;
+font-weight:bold;
+margin-bottom:12px;
+}
+
+.detailItem{
+display:flex;
+justify-content:space-between;
+padding:10px 0;
+border-bottom:1px solid #eee;
+gap:10px;
+}
+
+.detailItem:last-child{
+border-bottom:none;
+}
+
+.detailLabel{
+font-size:13px;
+color:#666;
+}
+
+.detailValue{
+font-size:13px;
+font-weight:bold;
+text-align:right;
+max-width:60%;
+word-break:break-word;
+}
+
+
+
+
+
+
 
 </style>
 </head>
@@ -505,24 +549,108 @@ justify-content:center;
 
 
 
+<div
+id="reportProduk"
+style="
+width:42px;
+height:42px;
+border-radius:14px;
+background:#f5f5f5;
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+flex-shrink:0;
+margin-top:2px;
+"
+>
 
+<i class="fa-regular fa-flag"
+style="
+font-size:18px;
+color:#666;
+">
+</i>
 
-
-
+</div>
 
 <div id="slider" class="slider"></div>
 
 <div class="info">
 <div id="kategori"></div>
+<br>
+
+<div
+id="lokasiProduk"
+style="
+font-size:12px;
+color:#bb0000;
+line-height:1.4;
+display:block;
+"
+>
+Lokasi
+</div>
+
+
 <div id="nama" class="nama"></div>
+
+<div style="
+display:flex;
+align-items:flex-start;
+justify-content:space-between;
+gap:10px;
+">
 
 <div id="harga" class="harga"></div>
 
+
+
+</div>
+
+<div style="
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:10px;
+margin-top:5px;
+">
+
 <div id="coret" class="coret"></div>
+
+<div
+id="produkTerjual"
+style="
+font-size:13px;
+color:#666;
+font-weight:500;
+">
+0 Terjual
+</div>
+
+</div>
+
+
+
+
 
 <div id="stok"></div>
 
+<!-- DETAIL PRODUK -->
+<div id="detailProdukBox"></div>
+
 <div id="desc" class="desc"></div>
+
+
+
+
+
+
+
+
+
+
+
 
 <!-- STORE -->
 <div class="storeBox">
@@ -545,16 +673,27 @@ Nama Store
 
 </div>
 
+
+
+
+
+<div style="
+margin-top:4px;
+display:flex;
+flex-direction:column;
+gap:4px;
+">
+
 <div
 id="storeKategori"
 class="storeKategori"
+style="
+margin:0;
+"
 >
-
 Kategori
-
 </div>
-
-
+</div>
 
 
 </div>
@@ -799,21 +938,9 @@ img.style.position = "relative";
 const parent = img.parentElement;
 parent.style.position = "relative";
 
-// buat tombol report
-const report = document.createElement("div");
-report.className = "reportBtn";
 
-report.innerHTML = `<img src="assets/images/analyst.png">`;
 
-report.onclick = (e) => {
-e.stopPropagation();
-alert("Laporan produk dikirim");
-};
 
-// pastikan tidak dobel
-if (!parent.querySelector(".reportBtn")) {
-parent.appendChild(report);
-}
 
 });
 
@@ -904,6 +1031,107 @@ document
 .innerHTML =
 store.kategori || "-";
 
+
+
+
+
+
+/* =========================
+LOKASI PRODUK
+========================= */
+
+const lokasi =
+data.lokasiDetail || {};
+
+const kecamatan =
+lokasi.kecamatan || "-";
+
+let kabupaten =
+lokasi.kabupaten || "";
+
+/* AUTO AMBIL DARI ALAMAT */
+
+if(!kabupaten){
+
+const alamat =
+lokasi.alamatLengkap || "";
+
+/* PECAH BERDASARKAN KOMA */
+
+const parts =
+alamat.split(",");
+
+/* CARI YANG ADA KATA KOTA / KABUPATEN */
+
+const kotaKab =
+parts.find(x =>
+x.includes("Kota") ||
+x.includes("Kabupaten")
+);
+
+if(kotaKab){
+
+kabupaten =
+kotaKab.trim();
+
+}
+
+}
+
+/* FALLBACK */
+
+if(!kabupaten){
+
+kabupaten = "-";
+
+}
+
+document
+.getElementById(
+"lokasiProduk"
+)
+.innerHTML = `
+
+<div style="
+display:flex;
+align-items:center;
+gap:5px;
+font-size:12px;
+color:#757575;
+font-weight:500;
+">
+
+<i class="fa-solid fa-location-dot"
+style="
+font-size:12px;
+color:#ff6f00;
+">
+</i>
+
+<span>
+
+Kec. ${kecamatan}
+
+<span style="
+margin:0 4px;
+color:#bbb;
+">
+•
+</span>
+
+${kabupaten}
+
+</span>
+
+</div>
+
+`;
+
+
+console.log("LOKASI BERHASIL");
+console.log(kecamatan);
+console.log(kabupaten);
+
 /* BUTTON */
 
 document
@@ -924,18 +1152,128 @@ storeId;
 }
 
 
-let desc = data.deskripsi || "Tidak ada deskripsi";
 
-// enter jadi baris baru
-desc = desc.replace(/\n/g, "<br>");
+/* =========================
+DESKRIPSI SIMPLE + LIHAT SELENGKAPNYA
+========================= */
 
-// bold **teks**
-desc = desc.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
+let fullDesc =
+data.deskripsi || "Tidak ada deskripsi";
 
-// underline __teks__
-desc = desc.replace(/__(.*?)__/g, "<u>$1</u>");
+/* ENTER */
+fullDesc =
+fullDesc.replace(/\n/g,"<br>");
 
-document.getElementById("desc").innerHTML = desc;
+/* BOLD */
+fullDesc =
+fullDesc.replace(
+/\*\*(.*?)\*\*/g,
+"<b>$1</b>"
+);
+
+/* UNDERLINE */
+fullDesc =
+fullDesc.replace(
+/__(.*?)__/g,
+"<u>$1</u>"
+);
+
+/* SHORT DESC */
+let shortDesc =
+fullDesc;
+
+/* HAPUS TAG HTML UNTUK HITUNG */
+const tempText =
+shortDesc.replace(/<[^>]+>/g,'');
+
+if(tempText.length > 120){
+
+shortDesc =
+tempText.substring(0,120)
++ "...";
+
+}
+
+document.getElementById("desc")
+.innerHTML = `
+
+<div id="descText"
+style="
+font-size:14px;
+line-height:1.7;
+color:#444;
+">
+
+${shortDesc}
+
+</div>
+
+<div
+id="lihatSelengkapnya"
+
+style="
+margin-top:10px;
+color:#ff6f00;
+font-weight:bold;
+font-size:14px;
+cursor:pointer;
+user-select:none;
+">
+
+Lihat Selengkapnya
+
+</div>
+
+`;
+
+/* =========================
+TOGGLE DESKRIPSI
+========================= */
+
+let descOpen = false;
+
+document
+.getElementById(
+"lihatSelengkapnya"
+)
+
+.onclick = ()=>{
+
+const text =
+document.getElementById(
+"descText"
+);
+
+const btn =
+document.getElementById(
+"lihatSelengkapnya"
+);
+
+if(!descOpen){
+
+text.innerHTML =
+fullDesc;
+
+btn.innerHTML =
+"Tampilkan Sedikit";
+
+descOpen = true;
+
+}else{
+
+text.innerHTML =
+shortDesc;
+
+btn.innerHTML =
+"Lihat Selengkapnya";
+
+descOpen = false;
+
+}
+
+};
+
+
 
 
 
@@ -1096,9 +1434,335 @@ data.hargaAwal.toLocaleString(
 "id-ID"
 );
 
-stok.innerHTML=
-"Stok : "+
-data.stok;
+
+/* =========================
+FORMAT TERJUAL
+========================= */
+
+function formatTerjual(num){
+
+num = Number(num || 0);
+
+if(num >= 1000000){
+
+return (
+(num/1000000)
+.toFixed(1)
+.replace(".0","")
++ "jt"
+);
+
+}
+
+if(num >= 1000){
+
+return (
+(num/1000)
+.toFixed(1)
+.replace(".0","")
++ "rb"
+);
+
+}
+
+return num;
+
+}
+
+document
+.getElementById(
+"produkTerjual"
+)
+.innerHTML = `
+
+${formatTerjual(data.terjual || 0)} Terjual
+
+`;
+
+
+
+document
+.getElementById("reportProduk")
+.onclick = ()=>{
+
+alert("Laporan produk dikirim");
+
+};
+
+
+
+/* =========================
+DETAIL PRODUK DINAMIS
+========================= */
+
+let detailHTML = `
+<div class="detailProduk">
+
+<div class="detailTitle">
+Detail Produk
+</div>
+`;
+
+/* =========================
+FUNCTION TAMBAH ITEM
+========================= */
+
+function addDetail(label,value){
+
+if(
+value === undefined ||
+value === null ||
+value === ""
+)return;
+
+detailHTML += `
+<div class="detailItem">
+
+<div class="detailLabel">
+${label}
+</div>
+
+<div class="detailValue">
+${value}
+</div>
+
+</div>
+`;
+
+}
+
+/* =========================
+DETAIL UMUM
+========================= */
+
+addDetail(
+"Kategori",
+data.kategori
+);
+
+addDetail(
+"Jenis Produk",
+data.jenisProduk
+);
+
+addDetail(
+"Status",
+data.statusProduk
+);
+
+addDetail(
+"Berat",
+data.berat
+? data.berat + " gram"
+: ""
+);
+
+/* =========================
+DIMENSI
+========================= */
+
+if(data.dimensi){
+
+addDetail(
+"Dimensi",
+`${data.dimensi.panjang || 0} x
+${data.dimensi.lebar || 0} x
+${data.dimensi.tinggi || 0} cm`
+);
+
+}
+
+/* =========================
+SKU / VARIASI
+========================= */
+
+if(data.sku){
+
+Object.values(data.sku)
+.forEach((s)=>{
+
+if(s.warna){
+
+addDetail(
+"Warna",
+s.warna
+);
+
+}
+
+if(s.ukuran){
+
+addDetail(
+"Ukuran",
+s.ukuran
+);
+
+}
+
+if(s.sku){
+
+addDetail(
+"SKU",
+s.sku
+);
+
+}
+
+});
+
+}
+
+/* =========================
+FASHION
+========================= */
+
+addDetail(
+"Bahan",
+data.bahan
+);
+
+/* =========================
+FOOD
+========================= */
+
+addDetail(
+"Rasa",
+data.rasa
+);
+
+addDetail(
+"Expired",
+data.expired
+);
+
+addDetail(
+"Halal",
+data.halal
+);
+
+addDetail(
+"Berat Bersih",
+data.beratFood
+);
+
+/* =========================
+HANDPHONE
+========================= */
+
+addDetail(
+"RAM",
+data.ram
+);
+
+addDetail(
+"Storage",
+data.storage
+);
+
+addDetail(
+"Chipset",
+data.chipset
+);
+
+addDetail(
+"Garansi",
+data.garansi
+);
+
+/* =========================
+LAPTOP
+========================= */
+
+addDetail(
+"Processor",
+data.processor
+);
+
+addDetail(
+"SSD / HDD",
+data.storageLaptop
+);
+
+addDetail(
+"VGA",
+data.vgaLaptop
+);
+
+addDetail(
+"Layar",
+data.layarLaptop
+);
+
+/* =========================
+MAKEUP
+========================= */
+
+addDetail(
+"Shade",
+data.shadeMakeup
+);
+
+addDetail(
+"BPOM",
+data.bpomMakeup
+);
+
+/* =========================
+SKINCARE
+========================= */
+
+addDetail(
+"Tipe Kulit",
+data.kulitSkincare
+);
+
+addDetail(
+"BPOM Skincare",
+data.bpomSkincare
+);
+
+/* =========================
+ELEKTRONIK
+========================= */
+
+addDetail(
+"Daya",
+data.daya
+);
+
+addDetail(
+"Garansi Elektronik",
+data.garansiElektronik
+);
+
+/* =========================
+TANAMAN
+========================= */
+
+addDetail(
+"Usia Tanaman",
+data.usiaTanaman
+);
+
+addDetail(
+"Tinggi Tanaman",
+data.tinggiTanaman
+);
+
+/* =========================
+DEKORASI
+========================= */
+
+addDetail(
+"Style",
+data.styleDekorasi
+);
+
+detailHTML += `</div>`;
+
+document.getElementById(
+"detailProdukBox"
+).innerHTML = detailHTML;
 
 
 
@@ -1148,9 +1812,7 @@ slider.innerHTML += `
 
 <div class="slideItem" onclick="showZoom('${img}')">
     <img src="${img}">
-    <div class="reportBtn" onclick="event.stopPropagation(); alert('Laporan terkirim')">
-        <img src="assets/images/analyst.png">
-    </div>
+
 </div>
 
 `;
@@ -1222,7 +1884,14 @@ window.addCart = async () => {
 
         gambar: gambarUtama || "",
 
+          // 🔥 FIX INI
+  ongkir: Number(data.ongkir || 0),
+
         hargaAwal: Number(data.hargaAwal || 0),
+
+         cod: true,
+  codAllowed: true,
+
 
         storeId:
         data.storeId || "unknown_store",
@@ -1322,6 +1991,9 @@ window.checkoutNow = async () => {
     nama: data.nama || "",
     harga: Number(data.harga) || 0,
     qty: 1,
+      // 🔥 FIX INI
+  ongkir: Number(data.ongkir || 0),
+
     gambar: Array.isArray(data.gambar)
       ? data.gambar[0]
       : (data.gambar || ""),

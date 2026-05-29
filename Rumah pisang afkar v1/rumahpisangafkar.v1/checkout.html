@@ -1110,7 +1110,7 @@ Belum ada voucher dipilih
 <div class="shopeeHead">
 
 <span>
-Total Belanja
+Total Pembayaran
 </span>
 
 
@@ -1150,13 +1150,8 @@ Memuat...
 
 <div class="bottom">
 
-<button
-onclick="
-buatPesanan()
-">
-
-Buat Pesanan
-
+<button id="btnBuatPesanan" onclick="buatPesanan()">
+  Buat Pesanan
 </button>
 
 </div>
@@ -1256,7 +1251,7 @@ db,
 null
 );
 
-
+let COD_AVAILABLE = false;
 
 /* USER DATA */
 
@@ -1324,14 +1319,53 @@ let biayaOngkir = 0;
 let dataCheckout = {};
 
 /* =========================
+FINAL TOTAL FIX FUNCTION
+========================= */
+function hitungFinalTotal(){
+  return Math.max(
+    Number(totalBelanja || 0)
+    +
+    Number(biayaAdmin || 0)
+    +
+    Number(biayaOngkir || 0)
+    -
+    Number(potonganToko || 0)
+    -
+    Number(potonganOngkir || 0)
+  ,0);
+
+}
+
+function cekCODValid(items) {
+  return items.some(item => {
+    return item.cod === true || item.cod === "true";
+  });
+}
+
+const semuaItem = Object.values(rawCart || {});
+const produkBisaCOD = cekCODValid(semuaItem);
+
+
+/* =========================
+VOUCHER SYSTEM
+========================= */
+
+/* =========================
 VOUCHER SYSTEM
 ========================= */
 
 let allVoucher = [];
 
-let voucherAktif = null;
+/* voucher toko */
+let voucherToko = null;
+let potonganToko = 0;
 
-let potonganVoucher = 0;
+/* voucher ongkir */
+let voucherOngkir = null;
+let potonganOngkir = 0;
+
+
+
 try {
 
   /* =========================
@@ -1382,62 +1416,127 @@ rawCart = {};
 
 }
 
-  /* =========================
-     HITUNG TOTAL
-  ========================= */
+/* =========================
+HITUNG TOTAL
+========================= */
 
-  if (rawCart && typeof rawCart === "object") {
+if (rawCart && typeof rawCart === "object") {
 
-    Object.values(rawCart).forEach((item) => {
-      totalBelanja +=
-        (Number(item.harga) || 0) *
-        (Number(item.qty) || 1);
-    });
+  Object.values(rawCart).forEach((item) => {
+    totalBelanja +=
+      (Number(item.harga) || 0) *
+      (Number(item.qty) || 1);
+  });
 
-  }
-
-
+}
 
 /* =========================
 AMBIL BIAYA CHECKOUT
 ========================= */
-
 const biayaSnap = await get(
-ref(db,"pengaturanCheckout")
+  ref(db, "pengaturanCheckout")
 );
 
-if(biayaSnap.exists()){
+if (biayaSnap.exists()) {
 
-dataCheckout = biayaSnap.val();
+  dataCheckout = biayaSnap.val();
 
-biayaAdmin =
-Number(dataCheckout.adminFee || 0);
+  biayaAdmin =
+    Number(dataCheckout.adminFee || 0);
 
-/* default ongkir regular */
-biayaOngkir =
-Number(
-dataCheckout?.ongkir?.regular || 0
-);
+  const ongkirGlobal =
+    Number(dataCheckout?.ongkir?.regular || 0);
 
-/* gratis ongkir */
-if(
-totalBelanja >=
-Number(
-dataCheckout.minimalGratisOngkir || 0
-)
-){
+  /* =========================
+  HITUNG ONGKIR
+  ========================= */
 
-biayaOngkir = 0;
+  biayaOngkir = 0;
 
+  const values = Object.values(rawCart || {});
+
+  values.forEach(item => {
+
+    const qty = Number(item.qty || 1);
+    const isGudang = item.gudangProduk === true;
+    const ongkirProduk = Number(item.ongkir || 0);
+
+    console.log("ITEM:", {
+      id: item.id,
+      gudang: isGudang,
+      ongkir: ongkirProduk
+    });
+
+    if (isGudang) {
+      biayaOngkir += ongkirGlobal * qty;
+    } else {
+      biayaOngkir += ongkirProduk * qty;
+    }
+
+  });
+
+  console.log("TOTAL ONGKIR SEBELUM GRATIS:", biayaOngkir);
+
+  /* =========================
+  GRATIS ONGKIR
+  ========================= */
+
+  const gratisMin =
+    Number(dataCheckout?.minimalGratisOngkir ?? 0);
+
+  console.log("GRATIS MIN:", gratisMin);
+  console.log("TOTAL BELANJA:", totalBelanja);
+
+  if (
+    gratisMin > 0 &&
+    totalBelanja >= gratisMin
+  ) {
+    biayaOngkir = 0;
+    console.log("GRATIS ONGKIR AKTIF");
+  } else {
+    console.log("GRATIS ONGKIR TIDAK AKTIF");
+  }
+
+  /* =========================
+  TAMPIL TOTAL
+  ========================= */
+finalTotal = hitungFinalTotal();
+
+  document.getElementById("total").innerHTML = `
+    Rp ${finalTotal.toLocaleString("id-ID")}
+
+    <div style="
+      margin-top:10px;
+      font-size:13px;
+      line-height:1.7;
+      color:#666;
+    ">
+
+      Subtotal :
+      Rp ${totalBelanja.toLocaleString("id-ID")}
+
+      <br>
+
+      Biaya Admin :
+      Rp ${biayaAdmin.toLocaleString("id-ID")}
+
+      <br>
+
+      Ongkir :
+      Rp ${biayaOngkir.toLocaleString("id-ID")}
+
+    </div>
+  `;
+
+  await loadVoucherCheckout();
+
+} else {
+
+  biayaOngkir = 0;
+  biayaAdmin = 0;
+finalTotal = hitungFinalTotal();
+  console.log("pengaturanCheckout TIDAK ADA");
 }
-
-}
-
-
-
-
-
-
 
 
   /* =========================
@@ -1894,9 +1993,74 @@ SALDO DAN POIN
 
 const saldoUtama =
 Number(user.saldo || 0);
-
+updateBuatPesananButton();
 saldoUser.innerHTML =
 saldoUtama.toLocaleString("id-ID");
+
+
+
+
+
+
+
+
+
+
+
+
+
+async function updateBuatPesananButton() {
+  const btn = document.getElementById("btnBuatPesanan");
+  if (!btn) return;
+
+  const semuaItem = Object.values(rawCart || {});
+
+  COD_AVAILABLE = false;
+
+  for (const item of semuaItem) {
+    const snap = await get(ref(db, "produk/" + item.id));
+    if (!snap.exists()) continue;
+
+    const produk = snap.val();
+
+    const cod = produk.cod === true || produk.cod === "true";
+    const allowed = produk.codAllowed === true || produk.codAllowed === "true";
+
+    console.log("CHECK:", item.id, cod, allowed);
+
+    if (cod && allowed) {
+      COD_AVAILABLE = true;
+      break;
+    }
+  }
+
+  const saldoCukup = Number(saldoUtama || 0) >= Number(finalTotal || 0);
+
+  const aktif = saldoCukup || COD_AVAILABLE;
+
+  console.log("SALDO:", saldoCukup);
+  console.log("COD:", COD_AVAILABLE);
+  console.log("AKTIF:", aktif);
+
+  if (!aktif) {
+    btn.style.background = "#ccc";
+    btn.style.pointerEvents = "none";
+    btn.innerText = "Buat Pesanan (Tidak Tersedia)";
+  } else {
+    btn.style.background = "#ff6f00";
+    btn.style.pointerEvents = "auto";
+    btn.innerText = "Buat Pesanan";
+  }
+
+  updatePaymentMethod(); // ⬅️ PENTING
+}
+
+
+
+
+
+
+
 
 
 poinUser.innerHTML=
@@ -1944,99 +2108,103 @@ poinRadio.parentElement.style.opacity=.5;
 PILIH PEMBAYARAN (FIX: ONLY COD)
 =========================== */
 
-document.querySelectorAll("input[name='pay']").forEach((x) => {
+function updatePaymentMethod() {
 
-  /* NONAKTIFKAN SEMUA
-     KECUALI COD & SALDO */
-  if (
-    x.value !== "COD" &&
-    x.value !== "SALDO"
-  ) {
+  const radios = document.querySelectorAll("input[name='pay']");
 
-    x.disabled = true;
+  radios.forEach((x) => {
 
-    x.parentElement.style.opacity = 0.4;
-
-    x.parentElement.style.pointerEvents = "none";
-  }
-
-  x.onchange = () => {
-
-    /* COD */
     if (x.value === "COD") {
 
-      codInfo.style.display = "block";
-
-      codInfo.innerHTML = `
-        Siapkan uang tunai sebesar <br><br>
-        <b>Rp ${totalBelanja.toLocaleString("id-ID")}</b>
-      `;
+      // ❌ INI KUNCI FIX
+      if (!COD_AVAILABLE) {
+        x.disabled = true;
+        x.checked = false;
+        x.parentElement.style.opacity = 0.4;
+        x.parentElement.style.pointerEvents = "none";
+      } else {
+        x.disabled = false;
+        x.parentElement.style.opacity = 1;
+        x.parentElement.style.pointerEvents = "auto";
+      }
     }
 
-    /* SALDO */
-    else if (x.value === "SALDO") {
-
-      codInfo.style.display = "block";
-
-      codInfo.innerHTML = `
-        Pembayaran menggunakan saldo utama<br><br>
-
-        Saldo Anda :
-        <b>
-        Rp ${saldoUtama.toLocaleString("id-ID")}
-        </b>
-      `;
+    // SALDO tetap normal tapi hanya aktif kalau saldo cukup
+    if (x.value === "SALDO") {
+      if (saldoUtama <= 0) {
+        x.disabled = true;
+        x.parentElement.style.opacity = 0.5;
+      } else {
+        x.disabled = false;
+        x.parentElement.style.opacity = 1;
+      }
     }
 
-    else {
+    x.onchange = () => {
 
-      codInfo.style.display = "none";
+      if (x.value === "COD") {
+        codInfo.style.display = "block";
+        codInfo.innerHTML = `
+          Siapkan uang tunai sebesar <br><br>
+          <b>Rp ${finalTotal.toLocaleString("id-ID")}</b>
+        `;
+      }
 
+      if (x.value === "SALDO") {
+        codInfo.style.display = "block";
+        codInfo.innerHTML = `
+          Pembayaran menggunakan saldo utama<br><br>
+          Saldo Anda :
+          <b>Rp ${saldoUtama.toLocaleString("id-ID")}</b>
+        `;
+      }
+
+    };
+
+  });
+
+  // AUTO SELECT FIX
+  const saldoCukup = saldoUtama >= finalTotal;
+
+  if (saldoCukup) {
+    const saldoRadio = document.querySelector("input[value='SALDO']");
+    if (saldoRadio && !saldoRadio.disabled) {
+      saldoRadio.checked = true;
     }
-
-  };
-
-});
-
-
-
-// auto pilih COD
-const saldoCukup =
-saldoUtama >= totalBelanja;
-
-if(saldoCukup){
-
-  saldoRadio.checked = true;
-
-  codInfo.style.display = "block";
-
-  codInfo.innerHTML = `
-    Pembayaran menggunakan saldo utama<br><br>
-
-    Saldo Anda :
-    <b>
-    Rp ${saldoUtama.toLocaleString("id-ID")}
-    </b>
-  `;
-
-}else{
-
-  const codRadio =
-  document.querySelector("input[value='COD']");
-
-  if (codRadio) {
-
-    codRadio.checked = true;
-
-    codInfo.style.display = "block";
-
-    codInfo.innerHTML = `
-      Siapkan uang tunai sebesar <br><br>
-      <b>Rp ${totalBelanja.toLocaleString("id-ID")}</b>
-    `;
+  } else {
+    const codRadio = document.querySelector("input[value='COD']");
+    if (codRadio && !codRadio.disabled) {
+      codRadio.checked = true;
+    }
   }
-
 }
+
+
+
+function hitungOngkirFinal(items){
+  let ongkir = 0;
+
+  const ongkirGlobal =
+    Number(dataCheckout?.ongkir?.regular || 0);
+
+  Object.values(items).forEach(item => {
+
+    const qty = Number(item.qty || 1);
+    const isGudang = item.gudangProduk === true;
+    const ongkirProduk = Number(item.ongkir || 0);
+
+    if (isGudang) {
+      ongkir += ongkirGlobal * qty;
+    } else {
+      ongkir += ongkirProduk * qty;
+    }
+
+  });
+
+  return ongkir;
+}
+
+
 
 
 /* ===========================
@@ -2107,6 +2275,8 @@ if (metode.value === "SALDO") {
     /* 🔥 FIX UTAMA: AMBIL ITEMS DARI rawCart (BUKAN cartSnap) */
     const itemsData = rawCart || {};
 
+const ongkirFinal = hitungOngkirFinal(itemsData);
+
     const orderId = "ORD" + Date.now();
 
 orderTemp = {
@@ -2120,12 +2290,18 @@ orderTemp = {
 
   // SEMUA ORDER BARU = PENDING
   status: "pending",
-  ongkir: biayaOngkir,
+  ongkir: ongkirFinal,
   adminFee: biayaAdmin,
   alamat: user.alamatLengkap || {},
   subtotal: totalBelanja,
-  diskon: potonganVoucher,
-  voucher: voucherAktif || null,
+diskonToko: potonganToko,
+
+diskonOngkir: potonganOngkir,
+
+voucherToko: voucherToko || null,
+
+voucherOngkir: voucherOngkir || null,
+
   total: finalTotal,
   createdAt: Date.now(),
   items: itemsData
@@ -2279,15 +2455,22 @@ font-size:14px;
 <span>Biaya Ongkir</span>
 
 <span>
-Rp ${Number(biayaOngkir || 0).toLocaleString("id-ID")}
+Rp ${Number(ongkirFinal || 0).toLocaleString("id-ID")}
 </span>
 
 </div>
 
+
+
+
+
+
+
 `;
 
 if(
-potonganVoucher > 0
+potonganToko > 0 ||
+potonganOngkir > 0
 ){
 
 html += `
@@ -2300,10 +2483,18 @@ font-size:14px;
 color:#4caf50;
 ">
 
-<span>Voucher</span>
+<span>Voucher Toko</span>
 
 <span>
-- Rp ${potonganVoucher.toLocaleString("id-ID")}
+- Rp ${potonganToko.toLocaleString("id-ID")}
+</span>
+
+<br><br>
+
+<span>Voucher Ongkir</span>
+
+<span>
+- Rp ${potonganOngkir.toLocaleString("id-ID")}
 </span>
 
 </div>
@@ -2621,18 +2812,29 @@ document.getElementById("total");
 const voucherLabel =
 document.getElementById("voucherText");
 
+
+const voucherDesc =
+document.getElementById("voucherDesc");
+
+
+
 const snap = await get(
 ref(db,"checkoutVoucher/" + uidUser)
 );
 
 /* default aman */
-voucherAktif = null;
-potonganVoucher = 0;
+/* default aman */
+voucherToko = null;
+potonganToko = 0;
 
 if(!snap.exists()){
 
 if(voucherLabel){
-voucherLabel.innerHTML = "Belum ada voucher dipilih";
+voucherLabel.innerHTML = "Pilih Voucher";
+}
+
+if(voucherDesc){
+voucherDesc.innerHTML = "Belum ada voucher dipilih";
 }
 
 finalTotal =
@@ -2678,6 +2880,12 @@ Number(biayaOngkir||0);
 
 renderTotal();
 
+
+
+
+
+
+
 return;
 }
 
@@ -2714,7 +2922,7 @@ return;
 AKTIFKAN VOUCHER
 ========================= */
 
-voucherAktif = v;
+voucherToko = v;
 
 /* PERSEN */
 
@@ -2722,7 +2930,7 @@ if(
 v.tipe==="persen"
 ){
 
-potonganVoucher =
+potonganToko =
 Math.floor(
 
 totalBelanja *
@@ -2738,12 +2946,10 @@ v.diskon||0
 
 if(v.maxDiskon){
 
-potonganVoucher =
+potonganToko =
 Math.min(
-potonganVoucher,
-Number(
-v.maxDiskon
-)
+potonganToko,
+Number(v.maxDiskon)
 );
 
 }
@@ -2756,14 +2962,10 @@ else if(
 v.tipe==="ongkir"
 ){
 
-potonganVoucher =
+potonganToko =
 Math.min(
-Number(
-v.diskon||0
-),
-Number(
-biayaOngkir||0
-)
+Number(v.diskon||0),
+Number(biayaOngkir||0)
 );
 
 }
@@ -2774,10 +2976,8 @@ else if(
 v.tipe==="nominal"
 ){
 
-potonganVoucher =
-Number(
-v.diskon||0
-);
+potonganToko =
+Number(v.diskon||0);
 
 }
 
@@ -2799,7 +2999,7 @@ biayaOngkir||0
 -
 
 Number(
-potonganVoucher||0
+potonganToko||0
 ),
 
 0
@@ -2809,19 +3009,33 @@ potonganVoucher||0
 /* LABEL */
 
 voucherLabel.innerHTML = `
-
-${v.kode}
-
-<br>
-
-Potongan :
-Rp ${potonganVoucher.toLocaleString("id-ID")}
-
+🎟️ ${v.kode}
 `;
+
+if(voucherDesc){
+voucherDesc.innerHTML = `
+Potongan : Rp ${potonganToko.toLocaleString("id-ID")}
+`;
+}
+
+
+
+finalTotal =
+Math.max(
+totalBelanja +
+Number(biayaAdmin || 0) +
+Number(biayaOngkir || 0) -
+Number(potonganToko || 0),
+0
+);
+
 
 renderTotal();
 
 }
+updateBuatPesananButton();
+
+
 
 /* =========================
 RENDER TOTAL
@@ -2860,7 +3074,7 @@ biayaOngkir||0
 ).toLocaleString("id-ID")}
 
 ${
-potonganVoucher>0 ?
+potonganToko > 0 ?
 
 `
 
@@ -2872,7 +3086,7 @@ font-weight:bold;
 ">
 
 Voucher :
-- Rp ${potonganVoucher.toLocaleString("id-ID")}
+- Rp ${potonganToko.toLocaleString("id-ID")}
 
 </span>
 
@@ -2887,6 +3101,28 @@ Voucher :
 </div>
 
 `;
+
+
+
+/* UPDATE INFO COD SETELAH VOUCHER */
+
+const codRadio =
+document.querySelector(
+"input[value='COD']"
+);
+
+if(
+codRadio &&
+codRadio.checked
+){
+
+codInfo.innerHTML = `
+Siapkan uang tunai sebesar <br><br>
+<b>Rp ${finalTotal.toLocaleString("id-ID")}</b>
+`;
+
+}
+
 
 }
 
@@ -3031,6 +3267,10 @@ arrow.innerHTML="›";
 }
 
 };
+
+
+
+await updateBuatPesananButton();
 </script>
 
 <!-- POPUP KONFIRMASI -->

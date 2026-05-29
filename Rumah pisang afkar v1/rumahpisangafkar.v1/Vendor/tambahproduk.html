@@ -1,60 +1,157 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Tambah Produk</title>
 
 <style>
-body{
+
+*{
 margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
 font-family:Arial;
 background:#f5f5f5;
 padding:15px;
+color:#222;
 }
 
 .box{
 background:white;
-padding:15px;
-border-radius:12px;
-box-shadow:0 5px 15px rgba(0,0,0,0.08);
+padding:18px;
+border-radius:18px;
+box-shadow:0 5px 20px rgba(0,0,0,0.08);
+max-width:700px;
+margin:auto;
 }
 
-input, textarea{
-width:100%;
-padding:12px;
-margin-top:8px;
-margin-bottom:12px;
-border:1px solid #ddd;
-border-radius:10px;
+h2{
+margin-bottom:18px;
+font-size:22px;
+}
+
+label{
 font-size:14px;
+font-weight:bold;
+display:block;
+margin-bottom:6px;
+margin-top:15px;
+}
+
+input,
+textarea,
+select{
+width:100%;
+padding:13px;
+border-radius:12px;
+border:1px solid #ddd;
+font-size:14px;
+outline:none;
+}
+
+textarea{
+min-height:110px;
+resize:none;
 }
 
 button{
 width:100%;
 padding:14px;
+border:none;
+border-radius:12px;
 background:#ff6f00;
 color:white;
-border:none;
-border-radius:10px;
 font-weight:bold;
 font-size:15px;
+cursor:pointer;
+margin-top:15px;
+}
+
+button:disabled{
+opacity:0.5;
+cursor:not-allowed;
 }
 
 .preview{
 display:flex;
-gap:8px;
+gap:10px;
 flex-wrap:wrap;
-margin-bottom:10px;
+margin-top:12px;
 }
 
 .preview img{
-width:70px;
-height:70px;
+width:85px;
+height:85px;
 object-fit:cover;
-border-radius:8px;
+border-radius:10px;
 border:1px solid #ddd;
 }
+
+.card{
+padding:14px;
+border-radius:14px;
+background:#fafafa;
+border:1px solid #eee;
+margin-top:15px;
+}
+
+.sku-item{
+padding:12px;
+border:1px solid #eee;
+border-radius:12px;
+margin-top:10px;
+background:white;
+}
+
+.flex{
+display:flex;
+gap:10px;
+}
+
+.flex input{
+flex:1;
+}
+
+.locationBox{
+background:#fff7e8;
+padding:14px;
+border-radius:12px;
+font-size:13px;
+line-height:1.5;
+margin-top:10px;
+border:1px solid #ffd699;
+}
+
+.small{
+font-size:12px;
+color:#666;
+margin-top:5px;
+}
+
+.videoPreview{
+width:100%;
+height:220px;
+border:none;
+border-radius:14px;
+margin-top:10px;
+display:none;
+}
+
+.badge{
+display:inline-block;
+padding:5px 10px;
+border-radius:999px;
+background:#fff0db;
+font-size:12px;
+margin-top:8px;
+}
+
 </style>
 </head>
 
@@ -64,60 +161,167 @@ border:1px solid #ddd;
 
 <h2>Tambah Produk</h2>
 
-<input id="nama" placeholder="Nama Produk">
-<textarea id="deskripsi" placeholder="Deskripsi"></textarea>
+<label>Nama Produk</label>
+<input id="nama" placeholder="Masukan nama produk">
 
+<label>Deskripsi Produk</label>
+<textarea id="deskripsi" placeholder="Masukan deskripsi produk"></textarea>
+
+<div class="flex">
+
+<div style="flex:1;">
+<label>Harga</label>
 <input id="harga" type="number" placeholder="Harga">
+</div>
+
+<div style="flex:1;">
+<label>Harga Coret</label>
 <input id="hargaAwal" type="number" placeholder="Harga Awal">
+</div>
+
+</div>
+
+<div class="flex">
+
+<div style="flex:1;">
+<label>Stok</label>
 <input id="stok" type="number" placeholder="Stok">
-<input id="diskon" type="number" placeholder="Diskon %">
-<input id="lokasi" placeholder="Lokasi">
+</div>
+
+<div style="flex:1;">
+<label>Diskon %</label>
+<input id="diskon" type="number" placeholder="Diskon">
+</div>
+
+</div>
+
+<div class="flex" style="margin-top:12px;">
+
+<div style="flex:1;">
+<label>Ongkir Produk</label>
+
+<input
+id="ongkir"
+type="number"
+placeholder="Contoh 10000">
+
+<div class="small">
+Isi 0 jika gratis ongkir
+</div>
+
+</div>
+
+</div>
 
 <label>Kategori Produk</label>
-<select id="kategori" style="
-width:100%;
-padding:12px;
-margin-bottom:12px;
-border:1px solid #ddd;
-border-radius:10px;
-font-size:14px;
-">
+<select id="kategori">
+<option value="">Memuat kategori...</option>
+</select>
 
-  <option value="">Pilih Kategori</option>
-  <option value="fashion">Fashion</option>
-  <option value="food">Food</option>
-  <option value="digital">Produk Digital</option>
-  <option value="elektronik">Elektronik</option>
-  <option value="tanaman">Tanaman</option>
-  <option value="dekorasi">Dekorasi</option>
-  <option value="makeup">Make Up</option>
-  <option value="skincare">Skincare</option>
+<div id="skuContainer"></div>
 
+<div class="card">
+
+<label>Video Produk YouTube</label>
+<input id="youtube" placeholder="https://youtube.com/watch?v=xxxx">
+
+<iframe id="videoPreview" class="videoPreview"></iframe>
+
+</div>
+
+<div class="card">
+
+<label>Berat Produk (gram)</label>
+<input id="berat" type="number" placeholder="Contoh 500">
+
+<label>Panjang (cm)</label>
+<input id="panjang" type="number">
+
+<label>Lebar (cm)</label>
+<input id="lebar" type="number">
+
+<label>Tinggi (cm)</label>
+<input id="tinggi" type="number">
+
+</div>
+
+<div class="card">
+
+<label>Jenis Produk</label>
+<select id="jenisProduk">
+<option value="fisik">Produk Fisik</option>
+<option value="digital">Produk Digital</option>
+</select>
+
+<label>Status Produk</label>
+<select id="statusProduk">
+<option value="aktif">Aktif</option>
+<option value="draft">Draft</option>
+<option value="preorder">Pre Order</option>
 </select>
 
 
+<label>Metode Pembayaran Produk</label>
+<select id="metodeCOD">
+  <option value="cod">COD + SALDO</option>
+  <option value="noncod">NON COD (SALDO saja)</option>
+</select>
+
+<div class="small">
+Jika NON COD, pembeli tidak bisa pilih COD di checkout
+</div>
 
 
 
 
+</div>
 
+<div class="card">
 
+<label>Lokasi Toko</label>
 
+<button type="button" onclick="ambilLokasi()">
+📍 Gunakan Lokasi Saya
+</button>
+
+<div id="lokasiBox" class="locationBox">
+Lokasi belum diambil
+</div>
+
+<div class="small">
+GPS wajib aktif sebelum upload produk
+</div>
+
+</div>
+
+<label>Upload Foto Produk</label>
 <input type="file" id="gambar" multiple accept="image/*">
 
 <div class="preview" id="preview"></div>
 
-<button onclick="uploadProduk()">Simpan Produk</button>
+<button id="btnUpload" onclick="uploadProduk()">
+Simpan Produk
+</button>
 
 </div>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-/* FIREBASE */
+import {
+getDatabase,
+ref,
+set,
+onValue
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* =========================
+FIREBASE
+========================= */
+
 const firebaseConfig = {
+
 apiKey:"AIzaSyD3DTcca7yZKVtllc3TQOUe6Yv2hSyG_g",
 authDomain:"shoponline-93646.firebaseapp.com",
 databaseURL:"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -125,101 +329,1024 @@ projectId:"shoponline-93646",
 storageBucket:"shoponline-93646.firebasestorage.app",
 messagingSenderId:"435032364443",
 appId:"1:435032364443:web:5f76384f794693a892bd3e"
+
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* CLOUDINARY */
+/* =========================
+CLOUDINARY
+========================= */
+
 const CLOUD_NAME = "djxlbemky";
 const UPLOAD_PRESET = "uploadgambar";
-const CLOUD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+
+const CLOUD_URL =
+`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+
+/* =========================
+STORE LOGIN
+========================= */
 
 const storeId = localStorage.getItem("storeId");
 
 if(!storeId){
+
 alert("Store belum login");
 location.href="login.html";
+
 }
 
-/* PREVIEW */
-document.getElementById("gambar").addEventListener("change",(e)=>{
-const preview = document.getElementById("preview");
+/* =========================
+GLOBAL
+========================= */
+
+let lokasiValid = false;
+
+let lokasiDetail = {};
+
+let skuData = [];
+
+/* =========================
+LOAD KATEGORI DINAMIS
+========================= */
+
+const kategoriSelect =
+document.getElementById("kategori");
+
+kategoriSelect.innerHTML = `
+
+<option value="">Pilih Kategori</option>
+
+<option value="fashion">Fashion</option>
+
+<option value="food">Food</option>
+
+<option value="piscok">pisang coklat</option>
+
+<option value="digital">Digital</option>
+
+<option value="elektronik">Elektronik</option>
+
+<option value="tanaman">Tanaman</option>
+
+<option value="dekorasi">Dekorasi</option>
+
+<option value="makeup">Makeup</option>
+
+<option value="skincare">Skincare</option>
+
+`;
+
+
+
+/* =========================
+SKU OTOMATIS
+========================= */
+
+/* =========================
+FORM DINAMIS KATEGORI
+========================= */
+
+kategoriSelect.addEventListener("change",()=>{
+
+const kategori =
+kategoriSelect.value.toLowerCase();
+
+const box =
+document.getElementById("skuContainer");
+
+box.innerHTML = "";
+
+/* =========================
+FASHION
+========================= */
+
+if(kategori === "fashion"){
+
+box.innerHTML = `
+
+<div class="card">
+
+<h3>Fashion</h3>
+
+<label>Jenis Fashion</label>
+
+<select id="subFashion">
+
+<option value="">Pilih</option>
+
+<option value="baju">Baju</option>
+<option value="celana">Celana</option>
+<option value="jaket">Jaket</option>
+<option value="sepatu">Sepatu</option>
+<option value="tas">Tas</option>
+
+</select>
+
+<label>Warna</label>
+<input id="warna"
+placeholder="Merah,Hitam,Putih">
+
+<label>Ukuran</label>
+<input id="ukuran"
+placeholder="S,M,L,XL">
+
+<label>Bahan</label>
+<input id="bahan"
+placeholder="Katun,Denim,dll">
+
+<div class="badge">
+SKU otomatis dibuat
+</div>
+
+</div>
+
+`;
+
+}
+
+/* =========================
+FOOD
+========================= */
+
+if(kategori === "food"){
+
+box.innerHTML = `
+
+<div class="card">
+
+<h3>Food / Makanan</h3>
+
+<label>Jenis Makanan</label>
+
+<select id="jenisMakanan">
+
+<option>Makanan Ringan</option>
+<option>Makanan Berat</option>
+<option>Frozen Food</option>
+<option>Kue</option>
+<option>Minuman</option>
+
+</select>
+
+<label>Expired</label>
+<input id="expired"
+type="date">
+
+<label>Berat Bersih</label>
+<input id="beratFood"
+placeholder="500gr">
+
+<label>Rasa</label>
+<input id="rasa"
+placeholder="Coklat,Keju,dll">
+
+<label>Halal</label>
+
+<select id="halal">
+<option>Ya</option>
+<option>Tidak</option>
+</select>
+
+</div>
+
+`;
+
+}
+
+/* =========================
+DIGITAL
+========================= */
+
+if(kategori === "digital"){
+
+box.innerHTML = `
+
+<div class="card">
+
+<h3>Produk Digital</h3>
+
+<label>Jenis Digital</label>
+
+<select id="subDigital">
+
+<option value="">Pilih</option>
+
+<option value="handphone">Handphone</option>
+
+<option value="laptop">Laptop</option>
+
+<option value="voucher">Voucher</option>
+
+<option value="akun">Akun Premium</option>
+
+<option value="software">Software</option>
+
+</select>
+
+<div id="digitalDetail"></div>
+
+</div>
+
+`;
+
+setTimeout(()=>{
+
+const subDigital =
+document.getElementById("subDigital");
+
+subDigital.addEventListener("change",()=>{
+
+const val =
+subDigital.value;
+
+const detail =
+document.getElementById("digitalDetail");
+
+detail.innerHTML = "";
+
+/* =========================
+HANDPHONE
+========================= */
+
+if(val === "handphone"){
+
+detail.innerHTML = `
+
+<label>RAM</label>
+<input id="ram"
+placeholder="8GB">
+
+<label>Storage</label>
+<input id="storage"
+placeholder="256GB">
+
+<label>Warna</label>
+<input id="warnaHp"
+placeholder="Hitam,Biru">
+
+<label>Chipset</label>
+<input id="chipset"
+placeholder="Snapdragon">
+
+<label>Garansi</label>
+<input id="garansi"
+placeholder="1 Tahun">
+
+`;
+
+}
+
+/* =========================
+LAPTOP
+========================= */
+
+if(val === "laptop"){
+
+detail.innerHTML = `
+
+<label>Processor</label>
+<input id="processor">
+
+<label>RAM</label>
+<input id="ramLaptop">
+
+<label>SSD/HDD</label>
+<input id="storageLaptop">
+
+<label>Ukuran Layar</label>
+<input id="layarLaptop">
+
+<label>VGA</label>
+<input id="vgaLaptop">
+
+`;
+
+}
+
+/* =========================
+VOUCHER
+========================= */
+
+if(val === "voucher"){
+
+detail.innerHTML = `
+
+<label>Jenis Voucher</label>
+<input id="voucherJenis">
+
+<label>Masa Aktif</label>
+<input id="masaAktif">
+
+<label>Nominal</label>
+<input id="voucherNominal">
+
+`;
+
+}
+
+/* =========================
+AKUN
+========================= */
+
+if(val === "akun"){
+
+detail.innerHTML = `
+
+<label>Jenis Akun</label>
+<input id="akunJenis">
+
+<label>Durasi</label>
+<input id="akunDurasi">
+
+<label>Private / Sharing</label>
+
+<select id="sharing">
+<option>Private</option>
+<option>Sharing</option>
+</select>
+
+`;
+
+}
+
+});
+
+},100);
+
+}
+
+/* =========================
+ELEKTRONIK
+========================= */
+
+if(kategori === "elektronik"){
+
+box.innerHTML = `
+
+<div class="card">
+
+<h3>Elektronik</h3>
+
+<label>Jenis Elektronik</label>
+
+<select id="jenisElektronik">
+
+<option>TV</option>
+<option>Kulkas</option>
+<option>Mesin Cuci</option>
+<option>Kipas</option>
+<option>AC</option>
+
+</select>
+
+<label>Daya Listrik</label>
+<input id="daya">
+
+<label>Garansi</label>
+<input id="garansiElektronik">
+
+<label>Warna</label>
+<input id="warnaElektronik">
+
+</div>
+
+`;
+
+}
+
+/* =========================
+TANAMAN
+========================= */
+
+if(kategori === "tanaman"){
+
+box.innerHTML = `
+
+<div class="card">
+
+<h3>Tanaman</h3>
+
+<label>Jenis Tanaman</label>
+<input id="jenisTanaman">
+
+<label>Usia Tanaman</label>
+<input id="usiaTanaman">
+
+<label>Tinggi Tanaman</label>
+<input id="tinggiTanaman">
+
+<label>Pot Include?</label>
+
+<select id="potTanaman">
+<option>Ya</option>
+<option>Tidak</option>
+</select>
+
+</div>
+
+`;
+
+}
+
+/* =========================
+DEKORASI
+========================= */
+
+if(kategori === "dekorasi"){
+
+box.innerHTML = `
+
+<div class="card">
+
+<h3>Dekorasi</h3>
+
+<label>Bahan</label>
+<input id="bahanDekorasi">
+
+<label>Style</label>
+<input id="styleDekorasi">
+
+<label>Warna</label>
+<input id="warnaDekorasi">
+
+</div>
+
+`;
+
+}
+
+/* =========================
+MAKEUP
+========================= */
+
+if(kategori === "makeup"){
+
+box.innerHTML = `
+
+<div class="card">
+
+<h3>Makeup</h3>
+
+<label>Jenis Makeup</label>
+
+<select id="jenisMakeup">
+
+<option>Lipstick</option>
+<option>Foundation</option>
+<option>Bedak</option>
+<option>Maskara</option>
+
+</select>
+
+<label>Shade</label>
+<input id="shadeMakeup">
+
+<label>BPOM</label>
+<input id="bpomMakeup">
+
+<label>Expired</label>
+<input type="date" id="expiredMakeup">
+
+</div>
+
+`;
+
+}
+
+/* =========================
+SKINCARE
+========================= */
+
+if(kategori === "skincare"){
+
+box.innerHTML = `
+
+<div class="card">
+
+<h3>Skincare</h3>
+
+<label>Jenis Skincare</label>
+
+<select id="jenisSkincare">
+
+<option>Serum</option>
+<option>Moisturizer</option>
+<option>Sunscreen</option>
+<option>Facial Wash</option>
+
+</select>
+
+<label>Tipe Kulit</label>
+<input id="kulitSkincare">
+
+<label>BPOM</label>
+<input id="bpomSkincare">
+
+<label>Expired</label>
+<input type="date" id="expiredSkincare">
+
+</div>
+
+`;
+
+}
+
+});
+
+
+/* =========================
+PREVIEW GAMBAR
+========================= */
+
+document.getElementById("gambar")
+.addEventListener("change",(e)=>{
+
+const preview =
+document.getElementById("preview");
+
 preview.innerHTML = "";
 
-Array.from(e.target.files).forEach(file=>{
+Array.from(e.target.files)
+.forEach(file=>{
+
 const url = URL.createObjectURL(file);
-preview.innerHTML += `<img src="${url}">`;
-});
+
+preview.innerHTML += `
+<img src="${url}">
+`;
+
 });
 
-/* UPLOAD KE CLOUDINARY */
+});
+
+/* =========================
+YOUTUBE PREVIEW
+========================= */
+
+document.getElementById("youtube")
+.addEventListener("input",(e)=>{
+
+const val = e.target.value;
+
+const iframe =
+document.getElementById("videoPreview");
+
+const regex =
+/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/;
+
+const match = val.match(regex);
+
+if(match){
+
+iframe.style.display = "block";
+
+iframe.src =
+`https://www.youtube.com/embed/${match[1]}`;
+
+}else{
+
+iframe.style.display = "none";
+
+}
+
+});
+
+/* =========================
+AMBIL LOKASI GPS
+========================= */
+
+window.ambilLokasi = async ()=>{
+
+if(!navigator.geolocation){
+
+alert("Browser tidak support GPS");
+return;
+
+}
+
+navigator.geolocation.getCurrentPosition(
+
+async(pos)=>{
+
+const lat = pos.coords.latitude;
+const lng = pos.coords.longitude;
+
+try{
+
+const url =
+`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
+
+const res = await fetch(url);
+
+const data = await res.json();
+
+lokasiDetail = {
+
+provinsi:
+data.address.state || "",
+
+kabupaten:
+data.address.county || "",
+
+kecamatan:
+data.address.city_district || "",
+
+desa:
+data.address.village || "",
+
+jalan:
+data.address.road || "",
+
+kodepos:
+data.address.postcode || "",
+
+latitude: lat,
+longitude: lng,
+
+alamatLengkap:
+data.display_name || ""
+
+};
+
+lokasiValid = true;
+
+document.getElementById("lokasiBox")
+.innerHTML = `
+
+<b>Lokasi Terdeteksi:</b><br><br>
+
+${data.display_name}
+
+`;
+
+}catch(err){
+
+alert("Gagal mengambil lokasi");
+
+}
+
+},
+
+(err)=>{
+
+alert("GPS wajib diaktifkan");
+
+lokasiValid = false;
+
+},
+
+{
+enableHighAccuracy:true
+}
+
+);
+
+};
+
+/* =========================
+UPLOAD CLOUDINARY
+========================= */
+
 async function uploadToCloud(file){
-const form = new FormData();
-form.append("file", file);
-form.append("upload_preset", UPLOAD_PRESET);
 
-const res = await fetch(CLOUD_URL, {
+const form = new FormData();
+
+form.append("file", file);
+
+form.append("upload_preset",
+UPLOAD_PRESET);
+
+const res = await fetch(CLOUD_URL,{
 method:"POST",
 body:form
 });
 
 const data = await res.json();
+
 return data.secure_url;
+
 }
 
-window.uploadProduk = async () => {
+/* =========================
+GENERATE SKU
+========================= */
 
-const nama = document.getElementById("nama").value;
-const deskripsi = document.getElementById("deskripsi").value;
-const harga = parseInt(document.getElementById("harga").value || 0);
-const hargaAwal = parseInt(document.getElementById("hargaAwal").value || 0);
-const stok = parseInt(document.getElementById("stok").value || 0);
-const diskon = parseInt(document.getElementById("diskon").value || 0);
-const lokasi = document.getElementById("lokasi").value;
-const kategori = document.getElementById("kategori").value;
+function generateSKU(
+kategori,
+warna,
+ukuran
+){
 
-const files = document.getElementById("gambar").files;
+return (
+kategori.substring(0,3).toUpperCase()
++
+"-" +
+Date.now()
++
+"-" +
+warna
++
+"-" +
+ukuran
+);
+
+}
+
+/* =========================
+UPLOAD PRODUK
+========================= */
+
+window.uploadProduk = async ()=>{
+
+const btn =
+document.getElementById("btnUpload");
+
+btn.disabled = true;
+btn.innerHTML = "Uploading...";
+
+/* VALIDASI GPS */
+
+if(!lokasiValid){
+
+alert("Aktifkan GPS & ambil lokasi dulu");
+
+btn.disabled = false;
+btn.innerHTML = "Simpan Produk";
+
+return;
+
+}
+
+/* INPUT */
+
+const nama =
+document.getElementById("nama").value;
+
+const deskripsi =
+document.getElementById("deskripsi").value;
+
+const harga =
+parseInt(
+document.getElementById("harga").value || 0
+);
+
+const hargaAwal =
+parseInt(
+document.getElementById("hargaAwal").value || 0
+);
+
+const stok =
+parseInt(
+document.getElementById("stok").value || 0
+);
+
+const diskon =
+parseInt(
+document.getElementById("diskon").value || 0
+);
+
+const ongkir =
+parseInt(
+document.getElementById("ongkir").value || 0
+);
+
+const metodeCOD =
+document.getElementById("metodeCOD").value;
+
+const kategori =
+document.getElementById("kategori").value;
+
+const youtube =
+document.getElementById("youtube").value;
+
+const berat =
+parseInt(
+document.getElementById("berat").value || 0
+);
+
+const panjang =
+parseInt(
+document.getElementById("panjang").value || 0
+);
+
+const lebar =
+parseInt(
+document.getElementById("lebar").value || 0
+);
+
+const tinggi =
+parseInt(
+document.getElementById("tinggi").value || 0
+);
+
+const jenisProduk =
+document.getElementById("jenisProduk").value;
+
+const statusProduk =
+document.getElementById("statusProduk").value;
+
+const files =
+document.getElementById("gambar").files;
+
+/* VALIDASI */
 
 if(!nama || !harga){
-alert("Nama & Harga wajib diisi");
+
+alert("Nama & harga wajib diisi");
+
+btn.disabled = false;
+btn.innerHTML = "Simpan Produk";
+
 return;
+
 }
 
-/* UPLOAD GAMBAR */
-let images = {};
+/* =========================
+UPLOAD GAMBAR
+========================= */
+
+let gambar = {};
 
 for(let i=0;i<files.length;i++){
-images[i] = await uploadToCloud(files[i]);
+
+gambar[i] =
+await uploadToCloud(files[i]);
+
 }
 
-/* DATA PRODUK */
-const id = "produk" + Date.now();
+/* =========================
+SKU VARIASI
+========================= */
 
-const data = {
-id,
-storeId,
-nama,
-deskripsi,
-harga,
-hargaAwal,
-stok,
-diskon,
-lokasi,
+let sku = {};
+
+if(kategori.toLowerCase()
+.includes("fashion")){
+
+const warna =
+document.getElementById("warna")
+.value
+.split(",");
+
+const ukuran =
+document.getElementById("ukuran")
+.value
+.split(",");
+
+let no = 0;
+
+warna.forEach(w=>{
+
+ukuran.forEach(u=>{
+
+const kode =
+generateSKU(
 kategori,
-promo: diskon > 0,
-kupon: false,
-cod: true,
-gambar: images
+w.trim(),
+u.trim()
+);
+
+sku["sku"+no] = {
+
+sku:kode,
+
+warna:w.trim(),
+
+ukuran:u.trim(),
+
+stok:stok,
+
+harga:harga
+
 };
 
-await set(ref(db,"produk/"+id),data);
+no++;
 
-alert("Produk berhasil disimpan");
-location.href="produksaya.html";
+});
+
+});
+
+}
+
+/* =========================
+YOUTUBE THUMBNAIL
+========================= */
+
+let youtubeThumbnail = "";
+
+const regex =
+/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/;
+
+const match = youtube.match(regex);
+
+if(match){
+
+youtubeThumbnail =
+`https://img.youtube.com/vi/${match[1]}/hqdefault.jpg`;
+
+}
+
+/* =========================
+ID PRODUK
+========================= */
+
+const id =
+"produk" + Date.now();
+
+/* =========================
+SLUG
+========================= */
+
+const slug =
+nama
+.toLowerCase()
+.replace(/\s+/g,"-");
+
+/* =========================
+DATA PRODUK
+========================= */
+
+const data = {
+
+id,
+slug,
+
+storeId,
+
+nama,
+deskripsi,
+
+harga,
+hargaAwal,
+
+stok,
+diskon,
+
+ongkir,
+
+kategori,
+
+jenisProduk,
+statusProduk,
+
+codAllowed: metodeCOD === "cod",
+
+promo:diskon > 0,
+
+kupon:false,
+
+cod:true,
+
+videoProduk:{
+
+url:youtube,
+thumbnail:youtubeThumbnail
+
+},
+
+berat,
+
+dimensi:{
+panjang,
+lebar,
+tinggi
+},
+
+lokasiDetail,
+
+sku,
+
+gambar,
+
+rating:0,
+terjual:0,
+views:0,
+
+createdAt:Date.now()
+
+};
+
+/* =========================
+SIMPAN FIREBASE
+========================= */
+
+await set(
+ref(db,"produk/"+id),
+data
+);
+
+alert("Produk berhasil ditambahkan");
+
+location.href =
+"produksaya.html";
+
 };
 
 </script>
 
 </body>
 </html>
+

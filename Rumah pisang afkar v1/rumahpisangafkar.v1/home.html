@@ -239,7 +239,7 @@ padding:5px;
 display:grid;
 grid-template-columns:
 repeat(2,1fr);
-gap:15px;
+gap:9px;
 
 }
 
@@ -281,13 +281,7 @@ border-radius:0 0 0 6px;
 padding:10px;
 }
 
-.nama{
-font-size:14px;
-font-weight:600;
-margin-bottom:8px;
-height:36px;
-overflow:hidden;
-}
+
 
 .harga{
 font-size:18px;
@@ -327,15 +321,20 @@ color:#777;
 }
 
 .info{
-padding:12px;
+  padding:10px 12px 12px 12px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
 }
 
 .nama{
-
-font-size:14px;
-font-weight:bold;
-margin-bottom:8px;
-
+  font-size:13px;
+  font-weight:600;
+  line-height:1.3;
+  margin-top:6px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
 }
 
 .harga{
@@ -582,7 +581,7 @@ padding:8px 10px 0 10px;
 }
 
 .catBox img{
-  width:30px;
+  width:30px; 
   height:30px;
   object-fit:contain;
 }
@@ -879,254 +878,132 @@ document.getElementById(
 "chatBadge"
 );
 
+window.cekMenuSaldo=async function(){
 
-window.cekMenuSaldo = async function(){
+const uid=localStorage.getItem("userId");
 
-  const uid = localStorage.getItem("userId");
+if(!uid){
+location.href="index.html";
+return;
+}
 
-  if(!uid){
+try{
 
-    location.href = "index.html";
-    return;
+const snap=await get(ref(db,"users/"+uid));
 
-  }
+if(!snap.exists()){
+alert("Data user tidak ditemukan");
+return;
+}
 
-  try{
+const user=snap.val();
 
-    const snap = await get(
-      ref(db, "users/" + uid)
-    );
+// cek pin transfer
+if(!user.pinTransfer){
+location.href="pembukaannopay.html";
+return;
+}
 
-    if(!snap.exists()){
+// sudah punya pin
+location.href="saldo.html";
 
-      alert("Data user tidak ditemukan");
-      return;
-
-    }
-
-    const user = snap.val();
-
-    // cek pin transfer
-    if(
-      !user.pinTransfer ||
-      user.pinTransfer === "" ||
-      user.pinTransfer === null
-    ){
-
-      location.href =
-      "pembukaannopay.html";
-
-      return;
-
-    }
-
-    // sudah punya pin
-    location.href =
-    "saldo.html";
-
-  }catch(err){
-
-    console.error(err);
-    alert("Gagal memuat data user");
-
-  }
+}catch(err){
+console.error(err);
+alert("Gagal memuat data user");
+}
 
 }
 
 
-
-
-
-const auth = getAuth(app);
+const auth=getAuth(app);
 
 // CEK STATUS LOGIN (TANPA REDIRECT)
 onAuthStateChanged(auth,(user)=>{
-
 if(user){
-
-console.log("User login:", user.email);
-
+console.log("User login:",user.email);
 }else{
-
 console.log("Guest mode");
-
 }
-
 });
 
 
-
-
-
-window.cekLoginSaya = function(){
-
-const uid = localStorage.getItem("userId");
-
-if(uid){
-
-location.href = "saya.html";
-
-}else{
-
-location.href = "index.html";
-
-}
-
+window.cekLoginSaya=function(){
+const uid=localStorage.getItem("userId");
+location.href=uid?"saya.html":"index.html";
 }
 
 
-
-
-
-
-
-
-
-const produkRef = ref(db,"produk");
-const produkList = document.getElementById("produkList");
-
-
-
-
-
-
+const produkRef=ref(db,"produk");
+const produkList=document.getElementById("produkList");
 
 
 // ======================
 // CHAT BADGE REALTIME
 // ======================
 
-onValue(
+onValue(ref(db,"chatcostumer"),(snapshot)=>{
 
-ref(
-db,
-"chatcostumer"
-),
-
-(snapshot)=>{
-
-let unreadRoom = 0;
+let unreadRoom=0;
 
 if(snapshot.exists()){
 
 snapshot.forEach((storeSnap)=>{
-
 storeSnap.forEach((userSnap)=>{
 
-const userId =
-userSnap.key;
+const userId=userSnap.key;
+if(userId!==uid)return;
 
-if(userId !== uid)
-return;
+const messages=userSnap.val();
+let adaBelumDibaca=false;
 
-const messages =
-userSnap.val();
-
-let adaBelumDibaca =
-false;
-
-Object.values(messages)
-.forEach((msg)=>{
-
-if(
-
-msg.sender !== uid &&
-
-!msg.readBy?.[uid]
-
-){
-
-adaBelumDibaca = true;
-
+Object.values(messages).forEach((msg)=>{
+if(msg.sender!==uid && !msg.readBy?.[uid]){
+adaBelumDibaca=true;
 }
-
 });
 
-if(adaBelumDibaca){
-
-unreadRoom++;
-
-}
+if(adaBelumDibaca)unreadRoom++;
 
 });
-
 });
 
 }
 
-if(unreadRoom > 0){
-
-chatBadge.style.display=
-"flex";
-
-chatBadge.innerText=
-unreadRoom;
-
+if(unreadRoom>0){
+chatBadge.style.display="flex";
+chatBadge.innerText=unreadRoom;
 }else{
-
-chatBadge.style.display=
-"none";
-
+chatBadge.style.display="none";
 }
 
-}
-
-);
+});
 
 
 // ======================
 // CART BADGE REALTIME
 // ======================
-// ======================
-// CART BADGE REALTIME
-// ======================
 
-onValue(
+onValue(ref(db,"cart/"+uid),(snapshot)=>{
 
-ref(
-db,
-"cart/" + uid
-),
-
-(snapshot)=>{
-
-let totalCart = 0;
+let totalCart=0;
 
 if(snapshot.exists()){
 
 snapshot.forEach((itemSnap)=>{
-
-const item =
-itemSnap.val();
-
-/* jumlah qty */
-totalCart +=
-item.qty || 1;
-
+const item=itemSnap.val();
+totalCart+=item.qty||1;
 });
 
 }
 
-if(totalCart > 0){
-
-cartBadge.style.display =
-"flex";
-
-cartBadge.innerText =
-totalCart;
-
+if(totalCart>0){
+cartBadge.style.display="flex";
+cartBadge.innerText=totalCart;
 }else{
-
-cartBadge.style.display =
-"none";
-
+cartBadge.style.display="none";
 }
 
-}
-
-);
-
-
+});
 
 
 
@@ -1195,43 +1072,15 @@ gambar:[
 // =========================
 function createCard(data,key){
 
-const harga=
-(data.harga||0)
-.toLocaleString(
-"id-ID"
-);
+const harga=(data.harga||0).toLocaleString("id-ID");
 
+const soldOut=Number(data.stok||0)<=0;
 
-const soldOut = Number(data.stok || 0) <= 0;
+const hargaAwal=(data.hargaAwal||0).toLocaleString("id-ID");
 
+const produkId=data.id||key;
 
-const hargaAwal=
-(data.hargaAwal||0)
-.toLocaleString(
-"id-ID"
-);
-
-const produkId=
-data.id || key;
-
-const gambarUtama=
-
-Array.isArray(
-data.gambar
-)
-
-?
-
-data.gambar[0]
-
-:
-
-(
-data.gambar ||
-
-"https://via.placeholder.com/300"
-);
-
+const gambarUtama=Array.isArray(data.gambar)?data.gambar[0]:(data.gambar||"https://via.placeholder.com/300");
 
 return `
 <div class="card ${soldOut ? 'soldout' : ''}" data-id="${produkId}">
@@ -1245,27 +1094,41 @@ PROMO
 
 <div style="position:relative;">
 
-
-${data.bestSeller ? `
-<div style="
-position:absolute;
-top:0;
-left:0;
-z-index:30;
-background:#ee4d2d;
-color:#fff;
-font-size:10px;
-font-weight:700;
-padding:4px 10px;
-border-radius:0 0 6px 0;
-text-transform:uppercase;
-box-shadow:0 2px 6px rgba(0,0,0,.15);
-">
-BEST SELLER
-</div>
-` : ""}
-
   <img src="${gambarUtama}" style="width:100%;height:170px;object-fit:cover;">
+
+  ${data.bestSeller ? `
+    <div style="
+      position:absolute;
+      top:0;
+      left:0;
+      z-index:10;
+      background:#ee4d2d;
+      color:#fff;
+      font-size:10px;
+      font-weight:700;
+      padding:4px 10px;
+      border-radius:0 0 6px 0;
+    ">
+      BEST SELLER
+    </div>
+  ` : ''}
+
+  ${data.diskon ? `
+    <div style="
+      position:absolute;
+      bottom:0;
+      right:0;
+      z-index:10;
+      background:#ff3b30;
+      color:white;
+      font-size:11px;
+      font-weight:800;
+      padding:2px 2px;
+      border-radius:8px 0 0 0;
+    ">
+      ${data.diskon}% OFF
+    </div>
+  ` : ''}
 
   ${data.stok <= 0 ? `
     <div style="
@@ -1281,61 +1144,124 @@ BEST SELLER
       color:white;
       font-weight:bold;
       font-size:16px;
-      letter-spacing:1px;
     ">
       STOK HABIS
     </div>
-  ` : ""}
-</div>
+  ` : ''}
 
+</div>
 <div class="info">
 
 <div class="nama">
 
-${data.nama||"-"}
+  ${Number(data.terjual || 0) > 20 ? `
+    <span style="
+      background:#ff3b30;
+      color:white;
+      font-size:10px;
+      font-weight:700;
+      padding:2px 6px;
+      border-radius:4px;
+      width:max-content;
+    ">
+      STAR
+    </span>
+  ` : ''}
+
+  <span style="
+    display:block;
+    line-height:1.4;
+  ">
+    ${data.nama || "-"}
+  </span>
 
 </div>
 
-<div class="harga">
+  <div class="harga" style="margin-bottom:4px;">
+    Rp ${harga}
+  </div>
 
-Rp ${harga}
 
-</div>
 
 <div class="coret">
 
 Rp ${hargaAwal}
 
 </div>
+<!-- RATING SHOPEE STYLE -->
+<div style="display:flex;align-items:center;gap:6px;margin-top:6px;">
+
+  <i class="fa fa-star" style="color:#ffc400;font-size:12px;"></i>
+
+  <span style="font-size:12px;color:#333;font-weight:600;">
+    ${data.avgRating ? data.avgRating.toFixed(1) : "0.0"}
+  </span>
+
+  <span style="font-size:11px;color:#888;">
+    (${data.reviewCount || 0})
+  </span>
+
+</div>
+
 
 <div class="row">
 
 ${
-data.cod ? `
-<div class="tag" style="display:flex;align-items:center;gap:5px;">
-  <img src="assets/images/cash-on-delivery.png" style="width:14px;height:14px;object-fit:contain;">
+data.cod
+? `
+<div class="tag" style="display:flex;align-items:center;gap:5px;color:#16a34a;">
+  <i class="fa-solid fa-truck-fast"></i>
   COD
+</div>
+`
+: `
+<div class="tag" style="display:flex;align-items:center;gap:5px;color:#ef4444;">
+  <i class="fa-solid fa-circle-xmark"></i>
+  NON COD
+</div>
+`
+}
+
+
+
+${
+data.kupon ? `
+<div class="tag" style="display:flex;align-items:center;gap:5px;color:#ff6f00;">
+  <i class="fa fa-percent" style="font-size:12px;color:#ff6f00;"></i>
+  Voucher
 </div>
 ` : ''
 }
 
 ${
-data.kupon ? `
-<div class="tag" style="display:flex;align-items:center;gap:5px;">
-  <img src="assets/images/id-50009109-dd50489812b1eb792c5cfae00a3b512a@resize_w90_nl.webp" style="width:14px;height:14px;object-fit:contain;">
-  Kupon
+(data.stok || 0) > 0
+? `
+<div class="tag" style="display:flex;align-items:center;gap:5px;color:#2563eb;">
+  <i class="fa-solid fa-box-open"></i>
+  Stok ${data.stok}
 </div>
-` : ''
+`
+: `
+<div class="tag" style="display:flex;align-items:center;gap:5px;color:#ef4444;">
+  <i class="fa-solid fa-circle-xmark"></i>
+  Habis
+</div>
+`
 }
 
-<div class="tag" style="display:flex;align-items:center;gap:5px;">
-  <img src="assets/images/id-11134258-7rbkc-mas4hs48hfp464@resize_w90_nl.webp" style="width:34px;height:34px;object-fit:contain;">
-  ${data.stok || 0}
+
+<!-- TERJUAL -->
+<div class="tag" style="display:flex;align-items:center;gap:5px;color:#000000;">
+  <i class="fa fa-chart-line" style="color:#00b94e;"></i>
+  ${formatTerjual(data.terjual)}
 </div>
 
+
+
+
 <div class="tag" style="display:flex;align-items:center;gap:5px;">
-  <img src="assets/images/destination.png" style="width:14px;height:14px;object-fit:contain;">
-  ${data.lokasi || "-"}
+  <i class="fa-solid fa-location-dot" style="color:#ff6f00;"></i>
+  ${data.lokasiDetail?.kecamatan || data.lokasi || "-"}
 </div>
 
 </div>
@@ -1354,7 +1280,7 @@ data.kupon ? `
 // =========================
 
 let produkListener = null;
-
+    
 function loadProducts() {
 
   if (produkListener) return;
@@ -1367,6 +1293,7 @@ function loadProducts() {
     }
 
     let tempProduk = [];
+
 
     // =====================
     // 1. AMBIL PRODUK
@@ -1386,6 +1313,23 @@ function loadProducts() {
 // =====================
 const reviewSnap = await get(ref(db,"review"));
 const reviewData = {};
+
+function hitungRating(reviews){
+  if(!reviews || reviews.length === 0){
+    return { avg: 0, count: 0 };
+  }
+
+  let total = 0;
+
+  reviews.forEach(r => {
+    total += Number(r.rating || 0);
+  });
+
+  return {
+    avg: total / reviews.length,
+    count: reviews.length
+  };
+}
 
 if(reviewSnap.exists()){
 
@@ -1413,6 +1357,13 @@ if(reviewSnap.exists()){
 // 3. HITUNG METRICS (FIXED TOTAL)
 // =====================
 tempProduk.forEach(p=>{
+
+
+  const storeId = p.storeId;
+  const store = storeMap[storeId] || {};
+
+  p.isStarStore = store.isStar || false;
+
 
   const reviews = reviewData[p.id] || [];
 
@@ -1501,207 +1452,55 @@ tempProduk.forEach((p,index)=>{
 
 
 
-
-const bannerDummy = [
-
-{
-gambar:
-"https://images.unsplash.com/photo-1515003197210-e0cd71810b5f"
-},
-
-{
-gambar:
-"https://images.unsplash.com/photo-1499028344343-cd173ffc68a9"
-},
-
-{
-gambar:
-"https://images.unsplash.com/photo-1482049016688-2d3e1b311543"
-},
-
-{
-gambar:
-"https://images.unsplash.com/photo-1464306076886-da185f6a9d05"
-},
-
-{
-gambar:
-"https://images.unsplash.com/photo-1504754524776-8f4f37790ca0"
-}
-
+const bannerDummy=[
+{gambar:"https://images.unsplash.com/photo-1515003197210-e0cd71810b5f"},
+{gambar:"https://images.unsplash.com/photo-1499028344343-cd173ffc68a9"},
+{gambar:"https://images.unsplash.com/photo-1482049016688-2d3e1b311543"},
+{gambar:"https://images.unsplash.com/photo-1464306076886-da185f6a9d05"},
+{gambar:"https://images.unsplash.com/photo-1504754524776-8f4f37790ca0"}
 ];
 
-const slider =
-document.getElementById(
-"bannerSlider"
-);
+const slider=document.getElementById("bannerSlider");
+const dots=document.getElementById("bannerDots");
 
-const dots =
-document.getElementById(
-"bannerDots"
-);
-
-let current = 0;
-
+let current=0;
 
 // BUAT BANNER
-
-bannerDummy.forEach(
-(item,index)=>{
-
-slider.innerHTML += `
-
-<div class="bannerItem">
-
-<img src="${item.gambar}">
-
-</div>
-
-`;
-
-dots.innerHTML += `
-
-<div class="
-dot
-${index===0 ?
-"active" :
-""
-}
-">
-
-</div>
-
-`;
-
+bannerDummy.forEach((item,index)=>{
+slider.innerHTML+=`<div class="bannerItem"><img src="${item.gambar}"></div>`;
+dots.innerHTML+=`<div class="dot ${index===0?"active":""}"></div>`;
 });
-
 
 // UPDATE DOT
-
 function updateDot(){
-
-document
-.querySelectorAll(
-".dot"
-)
-
-.forEach(
-x=>x.classList.remove(
-"active"
-)
-);
-
-document
-.querySelectorAll(
-".dot"
-)
-
-[current]
-
-.classList.add(
-"active"
-);
-
+document.querySelectorAll(".dot").forEach(x=>x.classList.remove("active"));
+document.querySelectorAll(".dot")[current].classList.add("active");
 }
-
 
 // NEXT
-
-window.nextBanner =
-function(){
-
+window.nextBanner=function(){
 current++;
-
-if(
-current >=
-bannerDummy.length
-){
-
-current = 0;
-
-}
-
-slider.scrollTo({
-
-left:
-slider.offsetWidth
-*
-current,
-
-behavior:
-"smooth"
-
-});
-
+if(current>=bannerDummy.length)current=0;
+slider.scrollTo({left:slider.offsetWidth*current,behavior:"smooth"});
 updateDot();
-
 };
-
 
 // PREV
-
-window.prevBanner =
-function(){
-
+window.prevBanner=function(){
 current--;
-
-if(
-current < 0
-){
-
-current =
-bannerDummy.length - 1;
-
-}
-
-slider.scrollTo({
-
-left:
-slider.offsetWidth
-*
-current,
-
-behavior:
-"smooth"
-
-});
-
+if(current<0)current=bannerDummy.length-1;
+slider.scrollTo({left:slider.offsetWidth*current,behavior:"smooth"});
 updateDot();
-
 };
 
-
 // AUTO SLIDE
-
-setInterval(()=>{
-
-nextBanner();
-
-},4000);
-
+setInterval(()=>{nextBanner();},4000);
 
 // GESER MANUAL
-
-slider.addEventListener(
-"scroll",
-
-()=>{
-
-current =
-Math.round(
-
-slider.scrollLeft /
-slider.offsetWidth
-
-);
-
+slider.addEventListener("scroll",()=>{
+current=Math.round(slider.scrollLeft/slider.offsetWidth);
 updateDot();
-
-}
-
-);
-
-
+});
 
 
 
@@ -1731,28 +1530,39 @@ loadProducts();
 
 
 
-
 let allProduk = [];
 let allStore = [];
+let storeMap = {}; // ✔ FIX PENTING
 
-// AMBIL DATA PRODUK
+// =========================
+// AMBIL PRODUK
+// =========================
 const produkSnap = await get(ref(db, "produk"));
 if (produkSnap.exists()) {
-produkSnap.forEach(x => {
-allProduk.push({ id: x.key, ...x.val() });
-});
+  produkSnap.forEach(x => {
+    allProduk.push({ id: x.key, ...x.val() });
+  });
 }
 
-// AMBIL DATA STORE
+// =========================
+// AMBIL STORE
+// =========================
 const storeSnap = await get(ref(db, "stores"));
+
 if (storeSnap.exists()) {
-storeSnap.forEach(x => {
-allStore.push({ id: x.key, ...x.val() });
-});
+  storeSnap.forEach(x => {
+    const data = x.val();
+
+    storeMap[x.key] = data; // ✔ MAP UNTUK CEK STAR / DATA STORE
+
+    allStore.push({
+      id: x.key,
+      ...data
+    });
+  });
 }
 
 console.log("READY SEARCH DATA:", allProduk.length, allStore.length);
-
 
 // =========================
 // SEARCH PRODUK + STORE (SHOPEE STYLE FIXED)
@@ -2018,6 +1828,39 @@ function initKategori() {
   });
 
 }
+
+
+
+
+function formatTerjual(num){
+  num = Number(num || 0);
+
+  if(num >= 1000000){
+    return (num/1000000).toFixed(1) + "jt Terjual";
+  }
+
+  if(num >= 1000){
+    return (num/1000).toFixed(1) + "rb Terjual";
+  }
+
+  return num + " Terjual";
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // panggil setelah semua render
 initKategori();

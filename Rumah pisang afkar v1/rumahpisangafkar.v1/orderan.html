@@ -1810,11 +1810,65 @@ await set(ref(db, "adminDanaHistory/REL_" + Date.now()), {
 });
 
 
+
+
+/* =========================
+CEK METODE PEMBAYARAN
+COD TIDAK CAIRKAN SALDO
+========================= */
+
+const metodePembayaran =
+(data.metode || "").toUpperCase();
+
+const bolehCairkanSaldo =
+metodePembayaran !== "COD";
+
+
+
+
 /* =========================
 BAGIKAN SALDO KE STORE
 ========================= */
 
 const items = data.items || {};
+
+
+
+/* =========================
+UPDATE PRODUK TERJUAL
+========================= */
+
+for (const key in items) {
+
+  const item = items[key];
+
+  const produkId = item.id;
+
+  if (!produkId) continue;
+
+  const produkRef = ref(db, "produk/" + produkId);
+
+  const produkSnap = await get(produkRef);
+
+  if (!produkSnap.exists()) continue;
+
+  const produk = produkSnap.val();
+
+  const lamaTerjual =
+    Number(produk.terjual || 0);
+
+  const qty =
+    Number(item.qty || 1);
+
+  await update(produkRef, {
+
+    terjual: lamaTerjual + qty
+
+  });
+
+}
+
+
 
 /* GROUP STORE */
 let storeGroup = {};
@@ -1830,6 +1884,15 @@ Object.values(items).forEach(item => {
   storeGroup[sid].push(item);
 
 });
+
+if(!bolehCairkanSaldo){
+
+  console.log(
+    "COD -> saldo store tidak dicairkan"
+  );
+
+}else{
+
 
 /* LOOP STORE */
 for (const sid in storeGroup) {
@@ -2028,7 +2091,7 @@ await set(
   }
 
 }
-
+}
 
     popup.remove();
 

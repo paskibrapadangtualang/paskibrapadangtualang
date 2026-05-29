@@ -139,6 +139,10 @@ list.innerHTML += `
       Qty: ${d.qty || 1}<br>
 
       <small style="color:#888">
+  Ongkir: Rp ${(d.ongkir || 0).toLocaleString("id-ID")}
+</small>
+
+      <small style="color:#888">
         Store: ${d.storeId || "❌ missing storeId"}
       </small>
 
