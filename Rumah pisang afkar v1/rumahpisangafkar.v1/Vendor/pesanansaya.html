@@ -295,60 +295,69 @@ async function loadOrders() {
 
   let found = false;
 
-  snap.forEach(item => {
+snap.forEach(item => {
 
-    const data = item.val();
-    const items = data.items || {};
+  const data = item.val();
+  const items = data.items || {};
 
-    const filteredItems = Object.values(items).filter(p => p.storeId === storeId);
+  const allItems = Object.values(items);
 
-    if (filteredItems.length === 0) return;
-
-    found = true;
-
-    let totalStore = 0;
-    filteredItems.forEach(p => {
-      totalStore += (p.harga || 0) * (p.qty || 1);
-    });
-
-    let status = data.status || "pending";
-
-    let statusClass = "pending";
-    if (status === "diproses" || status === "dikirim") statusClass = "proses";
-    if (status === "selesai") statusClass = "selesai";
-
-    const card = `
-      <div class="card" onclick="openOrder('${data.id}')">
-
-        <div style="font-weight:bold;margin-bottom:5px;">
-          ${data.id}
-        </div>
-
-        <div style="font-size:12px;color:#666;">
-          ${filteredItems.length} produk
-        </div>
-
-        <div style="margin-top:8px;font-weight:bold;color:#ff6f00;">
-          Rp ${totalStore.toLocaleString("id-ID")}
-        </div>
-
-        <span class="status ${statusClass}">
-          ${status}
-        </span>
-
-      </div>
-    `;
-
-    // 🔥 PEMISAH SECTION
-    if (status === "selesai") {
-      selesai += card;
-    } else if (status === "diproses" || status === "dikirim") {
-      proses += card;
-    } else {
-      baru += card;
-    }
-
+  // 🔥 FILTER KHUSUS PESANAN PRIBADI STORE
+  const storeItems = allItems.filter(p => {
+    return (
+      p.storeId === storeId &&
+      p.gudangProduk === false   // 👈 INI KUNCI UTAMA
+    );
   });
+
+  // ❌ kalau tidak ada item yang sesuai, skip ORDER ini
+  if (storeItems.length === 0) return;
+
+  found = true;
+
+  let totalStore = 0;
+
+  storeItems.forEach(p => {
+    totalStore += (p.harga || 0) * (p.qty || 1);
+  });
+
+  let status = data.status || "pending";
+
+  let statusClass = "pending";
+  if (status === "diproses" || status === "dikirim") statusClass = "proses";
+  if (status === "selesai") statusClass = "selesai";
+
+  const card = `
+    <div class="card" onclick="openOrder('${data.id}')">
+
+      <div style="font-weight:bold;margin-bottom:5px;">
+        ${data.id}
+      </div>
+
+      <div style="font-size:12px;color:#666;">
+        ${storeItems.length} produk
+      </div>
+
+      <div style="margin-top:8px;font-weight:bold;color:#ff6f00;">
+        Rp ${totalStore.toLocaleString("id-ID")}
+      </div>
+
+      <span class="status ${statusClass}">
+        ${status}
+      </span>
+
+    </div>
+  `;
+
+  if (status === "selesai") {
+    selesai += card;
+  } else if (status === "diproses" || status === "dikirim") {
+    proses += card;
+  } else {
+    baru += card;
+  }
+
+});
 
   if (!found) {
     list.innerHTML = `<div class="empty">Belum ada pesanan masuk</div>`;

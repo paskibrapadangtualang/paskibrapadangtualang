@@ -168,6 +168,9 @@ const snap = await get(ref(db,"produk/"+id));
 if(!snap.exists()) return;
 
 const p = snap.val();
+
+const isGudang = p.gudangProduk === true;
+
 currentData = p;
 
 document.getElementById("box").innerHTML = `
@@ -179,21 +182,20 @@ document.getElementById("box").innerHTML = `
 <p>Rp ${Number(p.harga).toLocaleString("id-ID")}</p>
 <p>Harga Awal: Rp ${Number(p.hargaAwal).toLocaleString("id-ID")}</p>
 <p>Stok: ${p.stok}</p>
-    <!-- 🔥 TAMBAHAN KATEGORI -->
-    <div style="font-size:11px;color:#999;margin-top:3px;">
-      ${p.kategori || "Tanpa Kategori"}
-    </div>
-<p style="
-white-space:pre-line;
-line-height:1.5;
-font-size:13px;
-color:#444;
-">
-${(p.deskripsi || "-")
-  .replace(/\n/g, "\n")}
+
+<div style="font-size:11px;color:#999;margin-top:3px;">
+  ${p.kategori || "Tanpa Kategori"}
+</div>
+
+<p style="white-space:pre-line;font-size:13px;color:#444;">
+${p.deskripsi || "-"}
 </p>
 
-<button class="btn" onclick="openEdit()">Edit Produk</button>
+${
+  isGudang
+  ? `<button class="btn" style="background:#999" disabled>Produk Gudang (Tidak Bisa Diedit)</button>`
+  : `<button class="btn" onclick="openEdit()">Edit Produk</button>`
+}
 
 </div>
 `;
@@ -235,7 +237,10 @@ return data.secure_url;
 
 /* SAVE */
 window.saveEdit = async ()=>{
-
+if (currentData.gudangProduk === true) {
+  alert("Produk gudang tidak bisa diedit");
+  return;
+}
 let img = currentData.gambar?.[0];
 
 const file = document.getElementById("file").files[0];

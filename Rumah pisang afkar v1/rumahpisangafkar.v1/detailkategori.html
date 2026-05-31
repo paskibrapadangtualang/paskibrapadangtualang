@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detail Kategori</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#f5f5f5;
+}
+
+.header{
+position:sticky;
+top:0;
+background:#ff6f00;
+padding:15px;
+color:#fff;
+font-weight:bold;
+font-size:18px;
+z-index:10;
+}
+
+.container{
+padding:10px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
+}
+
+.card{
+background:#fff;
+border-radius:10px;
+overflow:hidden;
+box-shadow:0 2px 8px rgba(0,0,0,.08);
+cursor:pointer;
+}
+
+.card img{
+width:100%;
+height:160px;
+object-fit:cover;
+}
+
+.info{
+padding:10px;
+}
+
+.nama{
+font-size:13px;
+font-weight:600;
+margin-bottom:5px;
+}
+
+.harga{
+color:#ff6f00;
+font-weight:bold;
+}
+
+.rating{
+font-size:12px;
+display:flex;
+gap:5px;
+align-items:center;
+margin-top:5px;
+}
+
+.badge{
+font-size:11px;
+background:#ff6f00;
+color:#fff;
+padding:2px 6px;
+border-radius:5px;
+display:inline-block;
+}
+</style>
+</head>
+<body>
+
+<div class="header" id="title">Kategori</div>
+
+<div class="container">
+<div class="grid" id="produkGrid"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+authDomain:"shoponline-93646.firebaseapp.com",
+databaseURL:"https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"shoponline-93646"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// ================= URL KATEGORI =================
+const params = new URLSearchParams(location.search);
+const kategori = (params.get("kategori") || "").toLowerCase();
+
+document.getElementById("title").innerText =
+kategori ? kategori.toUpperCase() : "SEMUA PRODUK";
+
+// ================= FORMAT TERJUAL =================
+function formatTerjual(num){
+  num = Number(num || 0);
+
+  if(num >= 1000000) return (num/1000000).toFixed(1) + "jt";
+  if(num >= 1000) return (num/1000).toFixed(1) + "rb";
+  return num;
+}
+
+// ================= LOKASI SHOPEE STYLE =================
+function getLokasi(p){
+  return (
+    p.lokasiDetail?.kecamatan &&
+    p.lokasiDetail?.kabupaten
+  )
+  ? `${p.lokasiDetail.kecamatan}, ${p.lokasiDetail.kabupaten}`
+  : p.lokasiDetail?.kecamatan ||
+    p.lokasiDetail?.kabupaten ||
+    "-";
+}
+
+// ================= REVIEW =================
+async function getReviews(){
+const snap = await get(ref(db,"review"));
+const data = {};
+
+if(snap.exists()){
+snap.forEach(prod=>{
+const pid = prod.key;
+data[pid] = [];
+
+prod.forEach(r=>{
+data[pid].push(r.val());
+});
+});
+}
+
+return data;
+}
+
+// ================= LOAD PRODUK =================
+async function loadProduk(){
+
+const grid = document.getElementById("produkGrid");
+
+const [produkSnap, reviewData] = await Promise.all([
+get(ref(db,"produk")),
+getReviews()
+]);
+
+if(!produkSnap.exists()){
+grid.innerHTML = `<p style="text-align:center">Tidak ada produk</p>`;
+return;
+}
+
+let list = [];
+
+produkSnap.forEach(x=>{
+const p = x.val();
+
+// FILTER KATEGORI
+if(kategori && kategori !== "all"){
+if((p.kategori || "").toLowerCase() !== kategori){
+return;
+}
+}
+
+// ================= REVIEW =================
+const reviews = reviewData[p.id] || [];
+
+let total = 0;
+reviews.forEach(r=>{
+total += Number(r.rating || 0);
+});
+
+const avg = reviews.length ? (total / reviews.length) : 0;
+
+p.avgRating = avg;
+p.reviewCount = reviews.length;
+
+// SAFE DATA
+p.terjual = Number(p.terjual || 0);
+p.stok = Number(p.stok || 0);
+
+// STAR
+p.isStar = p.terjual > 20;
+
+list.push(p);
+});
+
+// SORT RATING
+list.sort((a,b)=>b.avgRating - a.avgRating);
+
+// ================= RENDER =================
+let html = "";
+
+list.forEach(p=>{
+
+const img = Array.isArray(p.gambar) ? p.gambar[0] : (p.gambar || "");
+
+html += `
+<div class="card" onclick="location.href='detailproduk.html?id=${p.id}'">
+
+<!-- IMAGE -->
+<div style="position:relative;">
+  <img src="${img}" style="width:100%;height:170px;object-fit:cover;">
+
+  ${p.diskon ? `
+  <div style="
+    position:absolute;
+    top:0;
+    right:0;
+    background:#ff3b30;
+    color:#fff;
+    font-size:11px;
+    padding:3px 8px;
+    font-weight:bold;
+    border-radius:0 0 0 6px;
+  ">
+    ${p.diskon}% OFF
+  </div>
+  ` : ""}
+</div>
+
+<div class="info">
+
+  <!-- STAR -->
+  ${p.isStar ? `
+  <div style="
+    background:#ff3b30;
+    color:#fff;
+    font-size:10px;
+    font-weight:bold;
+    display:inline-block;
+    padding:2px 6px;
+    border-radius:4px;
+    margin-bottom:4px;
+  ">
+    STAR
+  </div>
+  ` : ""}
+
+  <!-- NAMA -->
+  <div class="nama" style="font-size:13px;font-weight:600;">
+    ${p.nama || "-"}
+  </div>
+
+  <!-- HARGA -->
+  <div style="color:#ff6f00;font-weight:bold;margin-top:4px;">
+    Rp ${Number(p.harga||0).toLocaleString("id-ID")}
+  </div>
+
+<!-- HARGA CORET -->
+${p.hargaAwal > p.harga ? `
+<div style="
+  color:#999;
+  font-size:11px;
+  text-decoration:line-through;
+  margin-top:2px;
+">
+  Rp ${Number(p.hargaAwal || 0).toLocaleString("id-ID")}
+</div>
+` : ""}
+
+
+  <!-- ⭐ RATING -->
+  <div style="font-size:12px;display:flex;gap:5px;align-items:center;margin-top:5px;">
+    <i class="fa fa-star" style="color:gold"></i>
+    ${p.avgRating.toFixed(1)}
+    <span style="color:#777">(${p.reviewCount})</span>
+  </div>
+
+  <!-- ========================= -->
+  <!-- 🔥 GRID 2 BARIS SHOPEE STYLE -->
+  <!-- ========================= -->
+  <div style="
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:6px;
+margin-top:6px;
+font-size:11px;
+color:#555;
+">
+
+  <!-- TERJUAL -->
+  <div style="display:flex;align-items:center;gap:5px;">
+    <i class="fa-solid fa-chart-line" style="color:#00b894;"></i>
+    <span>${formatTerjual(p.terjual)} terjual</span>
+  </div>
+
+  <!-- STOK -->
+  <div style="display:flex;align-items:center;gap:5px;">
+    <i class="fa-solid fa-box" style="color:#3498db;"></i>
+    <span>Stok ${p.stok}</span>
+  </div>
+
+  <!-- COD -->
+  <div style="display:flex;align-items:center;gap:5px;">
+    <i class="fa-solid fa-truck-fast" style="color:${p.cod ? '#16a34a' : '#ef4444'};"></i>
+    <span>${p.cod ? 'COD ' : 'Non COD'}</span>
+  </div>
+
+  <!-- LOKASI -->
+  <div style="display:flex;align-items:center;gap:5px;">
+    <i class="fa-solid fa-location-dot" style="color:#ff6f00;"></i>
+    <span>${p.lokasiDetail?.kecamatan || '-'} ${p.lokasiDetail?.kabupaten || ''}</span>
+  </div>
+
+</div>
+
+</div>
+</div>
+`;
+});
+
+grid.innerHTML = html;
+}
+
+loadProduk();
+</script>
+
+</body>
+</html>

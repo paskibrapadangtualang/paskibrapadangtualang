@@ -417,6 +417,8 @@ placeholder="Masukkan nama produk"
 Deskripsi
 </div>
 
+
+
 <textarea
 id="deskripsi"
 class="textarea"
@@ -424,6 +426,95 @@ placeholder="Deskripsi produk">
 </textarea>
 
 <br><br>
+
+<div class="label">
+Kategori
+</div>
+
+<select
+id="kategori"
+class="input">
+
+<option value="">
+Pilih Kategori
+</option>
+
+<option value="game">
+Game
+</option>
+
+<option value="pulsa">
+Pulsa
+</option>
+
+<option value="data">
+Paket Data
+</option>
+
+<option value="voucher">
+Voucher
+</option>
+
+<option value="giftcard">
+Gift Card
+</option>
+
+<option value="fashion">
+Fashion
+</option>
+
+<option value="pakaian-anak">
+Pakaian anak
+</option>
+
+<option value="Umkm">
+Makanan UMKM
+</option>
+
+
+
+<option value="elektronik">
+Elektronik
+</option>
+
+<option value="makanan">
+Makanan
+</option>
+
+<option value="skincare">
+Skincare
+</option>
+
+<option value="digital">
+Produk Digital
+</option>
+
+</select>
+
+<div class="card">
+
+<div class="label">
+Variasi Produk
+</div>
+
+<div id="variantWrap">
+
+</div>
+
+<button
+type="button"
+class="addImage"
+onclick="addVariant()">
+
++ Tambah Variasi
+
+</button>
+
+</div>
+
+<br><br>
+
+
 
 <div class="row">
 
@@ -559,6 +650,8 @@ class="previewWrap">
 
 </div>
 
+
+
 <br>
 
 <label class="checkWrap">
@@ -572,11 +665,19 @@ Bisa COD
 </label>
 
 <label class="checkWrap">
+<input type="checkbox" id="noncod">
+NON COD (Saldo Saja)
+</label>
+
+<label class="checkWrap">
 <input type="checkbox" id="kupon">
 Bisa Pakai Kupon
 </label>
 
 <br>
+
+
+
 
 <button
 class="submitBtn"
@@ -721,9 +822,131 @@ document
 PREVIEW GAMBAR
 ========================= */
 
+
+
+let variantIndex = 0;
+
+window.addVariant = ()=>{
+
+const box =
+document.createElement("div");
+
+box.className = "card";
+
+box.innerHTML = `
+
+<div class="label">
+Tipe Variasi
+</div>
+
+<select
+class="input variantTipe">
+
+<option value="diamond">
+Diamond
+</option>
+
+<option value="voucher">
+Voucher
+</option>
+
+<option value="giftcard">
+Gift Card
+</option>
+
+<option value="ukuran">
+Ukuran
+</option>
+
+<option value="warna">
+Warna
+</option>
+
+</select>
+
+<br><br>
+
+<div class="row">
+
+<div class="col">
+
+<input
+class="input variantJumlah"
+placeholder="Jumlah / Nama">
+
+</div>
+
+<div class="col">
+
+<input
+class="input variantHarga"
+type="number"
+placeholder="Harga">
+
+</div>
+
+</div>
+
+<br>
+
+<div class="row">
+
+<div class="col">
+
+<input
+class="input variantStok"
+type="number"
+placeholder="Stok">
+
+</div>
+
+<div class="col">
+
+<input
+class="input variantGambar"
+placeholder="Link Gambar">
+
+</div>
+
+</div>
+
+`;
+
+document
+.getElementById("variantWrap")
+.appendChild(box);
+
+variantIndex++;
+
+};
+
+
+
+
 document.addEventListener(
 "input",
 ()=>{
+
+
+document.getElementById("cod")
+.addEventListener("change",function(){
+
+if(this.checked){
+document.getElementById("noncod").checked = false;
+}
+
+});
+
+document.getElementById("noncod")
+.addEventListener("change",function(){
+
+if(this.checked){
+document.getElementById("cod").checked = false;
+}
+
+});
+
+
 
 const wrap =
 document.getElementById(
@@ -755,6 +978,43 @@ SAVE PRODUK
 
 window.saveProduk =
 async()=>{
+
+const variants = [];
+
+document
+.querySelectorAll("#variantWrap .card")
+.forEach(card=>{
+
+variants.push({
+
+tipe:
+card.querySelector(".variantTipe").value,
+
+jumlah:
+card.querySelector(".variantJumlah").value,
+
+harga:
+Number(
+card.querySelector(".variantHarga").value || 0
+),
+
+stok:
+Number(
+card.querySelector(".variantStok").value || 0
+),
+
+gambar:
+card.querySelector(".variantGambar").value || ""
+
+});
+
+});
+
+
+
+
+
+
 
 const id =
 "produk" + Date.now();
@@ -799,6 +1059,14 @@ Math.floor(
 (harga * komisiPersen) / 100
 );
 
+
+const codChecked =
+document.getElementById("cod").checked;
+
+const nonCodChecked =
+document.getElementById("noncod").checked;
+
+
 const data = {
 
 id:id,
@@ -813,6 +1081,14 @@ document.getElementById(
 "deskripsi"
 ).value,
 
+
+kategori:
+document.getElementById("kategori").value,
+
+variants: variants,
+
+
+
 gambar:gambar,
 
 harga:harga,
@@ -820,6 +1096,7 @@ harga:harga,
 hargaAwal:harga,
 
 hargaModal:hargaModal,
+
 
 diskon:
 Number(
@@ -845,10 +1122,9 @@ document.getElementById(
 "promo"
 ).checked,
 
-cod:
-document.getElementById(
-"cod"
-).checked,
+cod: codChecked,
+
+codAllowed: !nonCodChecked,
 
 kupon:
 document.getElementById(
@@ -873,6 +1149,15 @@ await set(
 ref(db,"Gudangproduk/"+id),
 data
 );
+
+// 🔥 TAMBAHAN WAJIB INI
+await set(ref(db,"Gudangproduk/"+id), {
+  ...data,
+  gudangProduk: true,
+  diAmbil: false,
+  statusGudang: "tersedia",
+  createdAt: Date.now()
+});
 
 showToast(
 "Produk berhasil disimpan"

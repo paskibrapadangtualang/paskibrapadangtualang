@@ -3,6 +3,8 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
 <title>Tambah Produk</title>
@@ -152,6 +154,40 @@ font-size:12px;
 margin-top:8px;
 }
 
+
+.kategori-container{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  padding:15px;
+}
+
+.category{
+  background:white;
+  border-radius:12px;
+  padding:12px 5px;
+  text-align:center;
+  box-shadow:0 3px 10px rgba(0,0,0,0.08);
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.category i{
+  font-size:22px;
+  color:#ff6f00;
+  display:block;
+  margin-bottom:6px;
+}
+
+.category span{
+  font-size:12px;
+  color:#333;
+}
+
+.category:hover{
+  transform:scale(1.05);
+}
+
 </style>
 </head>
 
@@ -219,6 +255,19 @@ Isi 0 jika gratis ongkir
 </select>
 
 <div id="skuContainer"></div>
+
+
+<div class="card" id="variantBox">
+  <h3>Varian Produk</h3>
+
+  <div id="variantList"></div>
+
+  <button type="button" onclick="tambahVarian()" style="margin-top:10px;">
+    + Tambah Varian
+  </button>
+</div>
+
+
 
 <div class="card">
 
@@ -367,39 +416,57 @@ let lokasiValid = false;
 let lokasiDetail = {};
 
 let skuData = [];
-
+let variants = [];
 /* =========================
 LOAD KATEGORI DINAMIS
 ========================= */
-
-const kategoriSelect =
-document.getElementById("kategori");
+const kategoriSelect = document.getElementById("kategori");
 
 kategoriSelect.innerHTML = `
-
 <option value="">Pilih Kategori</option>
 
-<option value="fashion">Fashion</option>
+<option value="fashion">👕 Fashion</option>
+<option value="fashion-wanita">👗 Fashion Wanita</option>
+<option value="fashion-pria">👔 Fashion Pria</option>
+<option value="fashion-anak">🧒 Fashion Anak</option>
 
-<option value="food">Food</option>
+<option value="makanan">🍱 Makanan</option>
+<option value="minuman">🥤 Minuman</option>
+<option value="snack">🍪 Snack</option>
+<option value="frozen">🧊 Frozen Food</option>
 
-<option value="piscok">pisang coklat</option>
+<option value="hp">📱 Handphone</option>
+<option value="laptop">💻 Laptop</option>
+<option value="elektronik">🔌 Elektronik</option>
+<option value="aksesoris-hp">🎧 Aksesoris HP</option>
 
-<option value="digital">Digital</option>
+<option value="kecantikan">💄 Kecantikan</option>
+<option value="skincare">🧴 Skincare</option>
+<option value="makeup">💋 Makeup</option>
 
-<option value="elektronik">Elektronik</option>
+<option value="rumah-tangga">🏠 Rumah Tangga</option>
+<option value="dekorasi">🖼️ Dekorasi</option>
+<option value="furniture">🪑 Furniture</option>
+<option value="peralatan-rumah">🧺 Peralatan Rumah</option>
 
-<option value="tanaman">Tanaman</option>
+<option value="tanaman">🌱 Tanaman</option>
+<option value="berkebun">🪴 Berkebun</option>
 
-<option value="dekorasi">Dekorasi</option>
+<option value="otomotif">🚗 Otomotif</option>
+<option value="aksesoris-mobil">⛽ Aksesoris Mobil</option>
 
-<option value="makeup">Makeup</option>
+<option value="digital">💾 Produk Digital</option>
+<option value="game">🎮 Game & Voucher</option>
 
-<option value="skincare">Skincare</option>
+<option value="umkm">🏪 Makanan UMKM</option>
+<option value="souvenir">🎁 Gift & Souvenir</option>
 
+<option value="bayi">🍼 Perlengkapan Bayi</option>
+<option value="pet">🐶 Pet Shop</option>
+
+<option value="alat-tulis">📚 Alat Tulis</option>
+<option value="perkakas">🛠️ Perkakas</option>
 `;
-
-
 
 /* =========================
 SKU OTOMATIS
@@ -816,6 +883,279 @@ box.innerHTML = `
 
 }
 
+
+
+
+if(kategori === "bayi"){
+
+box.innerHTML = `
+<div class="card">
+
+<h3>Perlengkapan Bayi</h3>
+
+<label>Jenis Produk</label>
+<select id="jenisBayi">
+  <option>Popok</option>
+  <option>Pakaian Bayi</option>
+  <option>Susu</option>
+  <option>Mainan Bayi</option>
+  <option>Peralatan Mandi</option>
+</select>
+
+<label>Umur Bayi</label>
+<input id="umurBayi" placeholder="0-3 bulan">
+
+<label>Bahan Aman</label>
+<input id="bahanBayi">
+
+</div>
+`;
+}
+
+
+if(kategori === "pet"){
+
+box.innerHTML = `
+<div class="card">
+
+<h3>Pet Shop</h3>
+
+<label>Jenis Hewan</label>
+<select id="jenisPet">
+  <option>Kucing</option>
+  <option>Anjing</option>
+  <option>Ikan</option>
+  <option>Burung</option>
+</select>
+
+<label>Makanan / Aksesoris</label>
+<input id="produkPet">
+
+<label>Umur Hewan (jika ada)</label>
+<input id="umurPet">
+
+</div>
+`;
+}
+
+
+if(kategori === "alat-tulis"){
+
+box.innerHTML = `
+<div class="card">
+
+<h3>Alat Tulis</h3>
+
+<label>Jenis</label>
+<select id="jenisATK">
+  <option>Buku</option>
+  <option>Pulpen</option>
+  <option>Pensil</option>
+  <option>Penghapus</option>
+  <option>Map</option>
+</select>
+
+<label>Isi / Pack</label>
+<input id="isiATK">
+
+<label>Brand</label>
+<input id="brandATK">
+
+</div>
+`;
+}
+
+
+if(kategori === "perkakas"){
+
+box.innerHTML = `
+<div class="card">
+
+<h3>Perkakas</h3>
+
+<label>Jenis</label>
+<select id="jenisPerkakas">
+  <option>Obeng</option>
+  <option>Palu</option>
+  <option>Gergaji</option>
+  <option>Mesin Bor</option>
+</select>
+
+<label>Material</label>
+<input id="materialPerkakas">
+
+<label>Ukuran</label>
+<input id="ukuranPerkakas">
+
+</div>
+`;
+}
+
+if(kategori === "furniture"){
+
+box.innerHTML = `
+<div class="card">
+
+<h3>Furniture</h3>
+
+<label>Jenis</label>
+<select id="jenisFurniture">
+  <option>Kursi</option>
+  <option>Meja</option>
+  <option>Lemari</option>
+  <option>Kasur</option>
+</select>
+
+<label>Material</label>
+<input id="materialFurniture">
+
+<label>Ukuran</label>
+<input id="ukuranFurniture">
+
+<label>Warna</label>
+<input id="warnaFurniture">
+
+</div>
+`;
+}
+
+
+
+if(kategori === "rumah-tangga"){
+
+box.innerHTML = `
+<div class="card">
+
+<h3>Rumah Tangga</h3>
+
+<label>Jenis</label>
+<select id="jenisRT">
+  <option>Peralatan Masak</option>
+  <option>Pembersih</option>
+  <option>Peralatan Listrik</option>
+</select>
+
+<label>Brand</label>
+<input id="brandRT">
+
+<label>Material</label>
+<input id="materialRT">
+
+</div>
+`;
+}
+
+
+if(kategori === "otomotif"){
+
+box.innerHTML = `
+<div class="card">
+
+<h3>Otomotif</h3>
+
+<label>Jenis</label>
+<select id="jenisOto">
+  <option>Motor</option>
+  <option>Mobil</option>
+  <option>Aksesoris</option>
+  <option>Oli</option>
+</select>
+
+<label>Merk</label>
+<input id="merkOto">
+
+<label>Tipe</label>
+<input id="tipeOto">
+
+</div>
+`;
+}
+
+
+if(kategori === "game"){
+
+box.innerHTML = `
+
+<div class="card">
+
+<h3>Game & Voucher</h3>
+
+<label>Jenis Produk</label>
+
+<select id="subGame">
+<option value="">Pilih Jenis</option>
+
+<option value="diamond">Top Up Diamond</option>
+<option value="voucher">Voucher Game</option>
+<option value="giftcard">Gift Card</option>
+
+</select>
+
+<div id="gameDetail"></div>
+
+</div>
+
+`;
+
+document.getElementById("subGame")
+.addEventListener("change", renderGameForm);
+
+}
+
+
+function renderGameForm(){
+
+const jenis =
+document.getElementById("subGame").value;
+
+const detail =
+document.getElementById("gameDetail");
+
+detail.innerHTML = "";
+
+if(jenis === "diamond"){
+
+detail.innerHTML = `
+<div id="gameVariantList"></div>
+
+<button type="button"
+onclick="tambahVarianDiamond()">
++ Tambah Paket Diamond
+</button>
+`;
+
+}
+
+if(jenis === "voucher"){
+
+detail.innerHTML = `
+<div id="variantList"></div>
+
+<button type="button"
+onclick="tambahVarianVoucher()">
++ Tambah Voucher
+</button>
+`;
+
+}
+
+if(jenis === "giftcard"){
+
+detail.innerHTML = `
+<div id="variantList"></div>
+
+<button type="button"
+onclick="tambahVarianGiftcard()">
++ Tambah Gift Card
+</button>
+`;
+
+}
+
+}
+
+
+
 /* =========================
 SKINCARE
 ========================= */
@@ -1181,55 +1521,177 @@ await uploadToCloud(files[i]);
 SKU VARIASI
 ========================= */
 
-let sku = {};
+let variantData = [];
 
-if(kategori.toLowerCase()
-.includes("fashion")){
+/* =========================
+VARIAN GAME DIAMOND
+========================= */
+const diamondJumlah =
+document.querySelectorAll(".diamondJumlah");
 
-const warna =
-document.getElementById("warna")
-.value
-.split(",");
+for(let i=0;i<diamondJumlah.length;i++){
 
-const ukuran =
-document.getElementById("ukuran")
-.value
-.split(",");
+let gambarVarian = "";
 
-let no = 0;
+const file =
+document.querySelectorAll(".diamondGambar")[i]
+?.files[0];
 
-warna.forEach(w=>{
+if(file){
 
-ukuran.forEach(u=>{
+gambarVarian =
+await uploadToCloud(file);
 
-const kode =
-generateSKU(
-kategori,
-w.trim(),
-u.trim()
-);
+}
 
-sku["sku"+no] = {
+variantData.push({
 
-sku:kode,
+tipe:"diamond",
 
-warna:w.trim(),
+jumlah:
+diamondJumlah[i].value,
 
-ukuran:u.trim(),
+harga:
+parseInt(
+document.querySelectorAll(".diamondHarga")[i].value || 0
+),
 
-stok:stok,
+stok:
+parseInt(
+document.querySelectorAll(".diamondStok")[i].value || 0
+),
 
-harga:harga
-
-};
-
-no++;
-
-});
+gambar:
+gambarVarian
 
 });
 
 }
+
+/* =========================
+VARIAN VOUCHER
+========================= */
+const voucherNominal =
+document.querySelectorAll(".voucherNominal");
+
+for(let i=0;i<voucherNominal.length;i++){
+
+let gambarVarian = "";
+
+const file =
+document.querySelectorAll(".voucherGambar")[i]
+?.files[0];
+
+if(file){
+gambarVarian =
+await uploadToCloud(file);
+}
+
+variantData.push({
+
+tipe:"voucher",
+
+nominal:
+voucherNominal[i].value,
+
+harga:
+parseInt(
+document.querySelectorAll(".voucherHarga")[i].value || 0
+),
+
+stok:
+parseInt(
+document.querySelectorAll(".voucherStok")[i].value || 0
+),
+
+gambar:gambarVarian
+
+});
+
+}
+
+/* =========================
+VARIAN GIFTCARD
+========================= */
+const giftBrand =
+document.querySelectorAll(".giftBrand");
+
+for(let i=0;i<giftBrand.length;i++){
+
+let gambarVarian = "";
+
+const file =
+document.querySelectorAll(".giftGambar")[i]
+?.files[0];
+
+if(file){
+gambarVarian =
+await uploadToCloud(file);
+}
+
+variantData.push({
+
+tipe:"giftcard",
+
+brand:
+giftBrand[i].value,
+
+nominal:
+document.querySelectorAll(".giftNominal")[i].value,
+
+harga:
+parseInt(
+document.querySelectorAll(".giftHarga")[i].value || 0
+),
+
+stok:
+parseInt(
+document.querySelectorAll(".giftStok")[i].value || 0
+),
+
+gambar:gambarVarian
+
+});
+
+}
+
+/* =========================
+VARIAN FASHION DLL
+========================= */
+variants.forEach((v,i)=>{
+
+const warna =
+document.getElementById(`warna-${i}`)?.value;
+
+const ukuran =
+document.getElementById(`ukuran-${i}`)?.value;
+
+const harga =
+parseInt(
+document.getElementById(`harga-${i}`)?.value || 0
+);
+
+const stok =
+parseInt(
+document.getElementById(`stok-${i}`)?.value || 0
+);
+
+if(warna || ukuran){
+
+variantData.push({
+
+tipe:"fashion",
+
+warna,
+ukuran,
+harga,
+stok
+
+});
+
+}
+
+});
 
 /* =========================
 YOUTUBE THUMBNAIL
@@ -1317,7 +1779,7 @@ tinggi
 
 lokasiDetail,
 
-sku,
+variants: variantData,
 
 gambar,
 
@@ -1342,6 +1804,202 @@ alert("Produk berhasil ditambahkan");
 
 location.href =
 "produksaya.html";
+
+};
+
+
+
+
+window.tambahVarian = () => {
+
+const kategori = document.getElementById("kategori").value;
+
+const index = variants.length;
+
+const box = document.getElementById("variantList");
+
+const div = document.createElement("div");
+
+div.className = "sku-item";
+
+let form = "";
+
+/* =========================
+FASHION
+========================= */
+if(kategori.includes("fashion")){
+form = `
+<label>Warna</label>
+<input id="warna-${index}" placeholder="Merah">
+
+<label>Ukuran</label>
+<input id="ukuran-${index}" placeholder="XL">
+`;
+}
+
+/* =========================
+VOUCHER / GAME
+========================= */
+else if(kategori.includes("game") || kategori.includes("voucher")){
+form = `
+<label>Nominal</label>
+<input id="nominal-${index}" placeholder="10000 / 50000">
+
+<label>Kode Voucher</label>
+<input id="kode-${index}" placeholder="ABC123">
+`;
+}
+
+/* =========================
+ELEKTRONIK
+========================= */
+else if(kategori.includes("elektronik")){
+form = `
+<label>Tipe</label>
+<input id="tipe-${index}" placeholder="TV / Kulkas">
+
+<label>Varian</label>
+<input id="varian-${index}" placeholder="32 inch / 1TB">
+`;
+}
+
+/* =========================
+DEFAULT
+========================= */
+else {
+form = `
+<label>Nama Varian</label>
+<input id="varian-${index}" placeholder="Contoh: Default">
+
+<label>Detail</label>
+<input id="detail-${index}" placeholder="Opsional">
+`;
+}
+
+div.innerHTML = `
+  ${form}
+
+  <label>Harga</label>
+  <input id="harga-${index}" type="number" placeholder="30000">
+
+  <label>Stok</label>
+  <input id="stok-${index}" type="number" placeholder="10">
+
+  <button type="button" onclick="hapusVarian(this)" style="margin-top:8px;background:red;">
+    Hapus
+  </button>
+`;
+
+box.appendChild(div);
+
+variants.push(index);
+};
+
+
+window.hapusVarian = (btn) => {
+  btn.parentElement.remove();
+};
+
+window.tambahVarianDiamond = ()=>{
+
+const box =
+document.getElementById("gameVariantList");
+
+box.innerHTML += `
+
+<div class="sku-item">
+
+<label>Jumlah Diamond</label>
+<input class="diamondJumlah">
+
+<label>Harga</label>
+<input class="diamondHarga" type="number">
+
+<label>Stok</label>
+<input class="diamondStok" type="number">
+
+<label>Gambar Varian</label>
+
+<input
+type="file"
+class="diamondGambar"
+accept="image/*">
+
+</div>
+
+`;
+
+};
+
+window.tambahVarianVoucher = ()=>{
+
+const box =
+document.getElementById("gameVariantList");
+
+box.innerHTML += `
+
+<div class="sku-item">
+
+<label>Nominal Voucher</label>
+<input class="voucherNominal">
+
+<label>Harga Jual</label>
+<input class="voucherHarga" type="number">
+
+<label>Stok</label>
+<input class="voucherStok" type="number">
+
+<label>Gambar Voucher</label>
+
+<input
+type="file"
+class="voucherGambar"
+accept="image/*">
+
+</div>
+
+`;
+
+};
+
+window.tambahVarianGiftcard = ()=>{
+
+const box =
+document.getElementById("gameVariantList");
+
+box.innerHTML += `
+
+<div class="sku-item">
+
+<label>Brand</label>
+
+<select class="giftBrand">
+<option>Google Play</option>
+<option>Steam</option>
+<option>iTunes</option>
+<option>Xbox</option>
+<option>PlayStation</option>
+</select>
+
+<label>Nominal</label>
+<input class="giftNominal">
+
+<label>Harga</label>
+<input class="giftHarga" type="number">
+
+<label>Stok</label>
+<input class="giftStok" type="number">
+
+<label>Gambar Gift Card</label>
+
+<input
+type="file"
+class="giftGambar"
+accept="image/*">
+
+</div>
+
+`;
 
 };
 

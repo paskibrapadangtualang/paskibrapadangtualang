@@ -112,28 +112,70 @@ object-fit:contain;
 }
 
 .bottom{
-
 position:fixed;
-
-bottom:0;
 left:0;
 right:0;
+bottom:0;
 
-height:80px;
+height:65px;
 
-background:white;
+background:#fff;
 
 display:flex;
+align-items:center;
 
+padding:8px 12px;
 gap:10px;
 
-padding:10px;
+border-top:1px solid #eee;
 
-box-shadow:
-0 -3px 15px rgba(0,0,0,.1);
+box-shadow:0 -2px 12px rgba(0,0,0,.08);
 
+z-index:999;
 }
 
+.bottomIcon{
+width:60px;
+
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+
+cursor:pointer;
+
+font-size:11px;
+color:#555;
+
+gap:3px;
+}
+
+.bottomIcon img{
+width:22px;
+height:22px;
+object-fit:contain;
+}
+
+.buyBtn{
+flex:1;
+
+height:48px;
+
+border:none;
+border-radius:24px;
+
+background:#ff6f00;
+color:white;
+
+font-size:15px;
+font-weight:700;
+
+cursor:pointer;
+}
+
+.buyBtn:active{
+transform:scale(.98);
+}
 .cartBtn{
 
 width:80px;
@@ -428,14 +470,227 @@ word-break:break-word;
 
 
 
+.variantModal{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.5);
+display:none;
+align-items:flex-end;
+z-index:999999;
+}
+
+.variantContent{
+width:100%;
+background:white;
+border-radius:24px 24px 0 0;
+padding:16px;
+max-height:85vh;
+overflow:auto;
+animation:slideUp .2s;
+}
+
+@keyframes slideUp{
+from{
+transform:translateY(100%);
+}
+to{
+transform:translateY(0);
+}
+}
+
+.dragLine{
+width:60px;
+height:5px;
+background:#ddd;
+border-radius:999px;
+margin:auto;
+margin-bottom:15px;
+}
+
+.variantHeader{
+display:flex;
+gap:12px;
+margin-bottom:20px;
+}
+
+.variantHeader img{
+width:90px;
+height:90px;
+border-radius:12px;
+object-fit:cover;
+border:1px solid #eee;
+}
+
+.variantPrice{
+font-size:24px;
+font-weight:bold;
+color:#ff6f00;
+}
+
+.variantStock{
+font-size:13px;
+color:#666;
+margin-top:5px;
+}
+
+.variantSelected{
+font-size:13px;
+margin-top:5px;
+}
+
+.variantChip{
+display:inline-flex;
+padding:10px 16px;
+border-radius:999px;
+background:#f5f5f5;
+margin:5px;
+cursor:pointer;
+}
+
+.variantChip.active{
+background:#fff3e0;
+border:1px solid #ff9800;
+color:#ff9800;
+font-weight:bold;
+}
+
+.qtyBox{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-top:20px;
+}
+
+.qtyBox button{
+width:35px;
+height:35px;
+border:none;
+background:#f5f5f5;
+border-radius:8px;
+}
+
+.variantActionBtn{
+width:100%;
+height:50px;
+border:none;
+background:#ff6f00;
+color:white;
+font-weight:bold;
+border-radius:14px;
+margin-top:20px;
+}
 
 
+
+.varianWrapper{
+display:flex;
+gap:12px;
+align-items:flex-start;
+}
+
+.varianFoto{
+width:90px;
+height:90px;
+border-radius:12px;
+overflow:hidden;
+border:1px solid #eee;
+flex-shrink:0;
+}
+
+.varianFoto img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+#varianList{
+flex:1;
+
+display:grid;
+grid-template-columns:repeat(4,1fr);
+
+gap:8px;
+}
+
+.variantItem{
+padding:10px 6px;
+border:1px solid #ddd;
+border-radius:10px;
+cursor:pointer;
+text-align:center;
+background:#fff;
+
+font-size:12px;
+line-height:1.4;
+}
+
+
+
+
+.varianAction{
+display:flex;
+gap:10px;
+margin-top:15px;
+}
+
+.btnKembaliVarian{
+flex:1;
+height:48px;
+border:none;
+border-radius:12px;
+background:#f1f1f1;
+color:#333;
+font-size:14px;
+font-weight:600;
+cursor:pointer;
+transition:.2s;
+}
+
+.btnKembaliVarian:hover{
+opacity:.9;
+}
+
+.btnKonfirmasiVarian{
+flex:1;
+height:48px;
+border:none;
+border-radius:12px;
+background:#ff6f00;
+color:#fff;
+font-size:14px;
+font-weight:600;
+cursor:pointer;
+transition:.2s;
+}
+
+.btnKonfirmasiVarian:hover{
+opacity:.9;
+}
+
+.btnKonfirmasiVarian:active,
+.btnKembaliVarian:active{
+transform:scale(.98);
+}
+
+
+.bottomIcon i{
+font-size:24px;
+color:#ff6f00;
+}
 
 </style>
 </head>
 
 <body>
 
+
+
+
+
+
+
+
+  
 
 <div id="alamatModal" style="
 display:none;
@@ -709,23 +964,7 @@ Kunjungi
 </div>
 
 
-<div onclick="chatSeller()" style="
-  flex:1;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#ff6f00;
-  color:white;
-  font-size:15px;
-  font-weight:bold;
-  border-radius:18px;
-  cursor:pointer;
-  user-select:none;
-  box-shadow:0 4px 10px rgba(255,111,0,.25);
-  transition:0.2s;
-">
-  Chat
-</div>
+
 
 </div>
 
@@ -794,19 +1033,26 @@ onclick="hideZoom()">
 
 <div class="bottom">
 
-<button
-class="cartBtn"
+<div class="bottomIcon"
+onclick="chatSeller()">
+
+<i class="fa-regular fa-comment-dots"></i>
+
+<span>Chat</span>
+
+</div>
+
+<div class="bottomIcon"
 onclick="addCart()">
 
-<img
-src="assets/images/shopping-cart.png"
-width="28">
+<i class="fa-solid fa-cart-shopping"></i>
 
-</button>
+<span>Keranjang</span>
+
+</div>
 
 <button
 class="buyBtn"
-
 onclick="checkoutNow()">
 
 Checkout Sekarang
@@ -1790,9 +2036,7 @@ ${data.kategori || "-"}
 
 const gambarList =
 
-Array.isArray(
-data.gambar
-)
+Array.isArray(data.gambar)
 
 ?
 
@@ -1800,18 +2044,20 @@ data.gambar
 
 :
 
-[
-data.gambar
-];
+[data.gambar];
 
 gambarList
 .slice(0,5)
-.forEach((img)=>{
+.forEach((img,index)=>{
 
 slider.innerHTML += `
 
-<div class="slideItem" onclick="showZoom('${img}')">
-    <img src="${img}">
+<div class="slideItem"
+onclick="showZoom('${img}')">
+
+<img
+id="${index === 0 ? 'mainProductImg' : ''}"
+src="${img}">
 
 </div>
 
@@ -1838,7 +2084,14 @@ zoom.style.display=
 
 }
 
-window.addCart = async () => {
+
+
+
+
+let selectedVariant = null;
+let actionType = "";
+
+async function realAddCart(){
 
   if (!requireLogin()) return;
 
@@ -1875,10 +2128,13 @@ window.addCart = async () => {
         id: produkId,
 
         nama: data.nama || "",
+        variant: selectedVariant || null,
 
-        harga: Number(data.harga || 0),
+        harga: Number(
+  selectedVariant?.harga || data.harga || 0
+),
 
-        qty: 1,
+       qty: Number(window.qty || 1),
 
         stok: Number(data.stok || 0),
 
@@ -1957,19 +2213,26 @@ window.addCart = async () => {
 
 };
 
+window.addCart = () => {
+  showVarianModal("cart");
+};
 
+window.checkoutNow = () => {
+  showVarianModal("checkout");
+};
 
-window.checkoutNow = async () => {
+async function realCheckout(){
 
   if (!requireLogin()) return;
 
   // CEK STOK DULU
   const stok = Number(data.stok || 0);
-
+showVarianModal("checkout");
   if (stok <= 0) {
     showStokModal(); // popup Shopee
     return; // STOP DI SINI
   }
+
 
   const uid = getUID();
 
@@ -1986,40 +2249,65 @@ window.checkoutNow = async () => {
     new URLSearchParams(location.search).get("id") ||
     "prod_" + Date.now();
 
-  const product = {
-    id: productId,
-    nama: data.nama || "",
-    harga: Number(data.harga) || 0,
-    qty: 1,
-      // 🔥 FIX INI
+ const product = {
+  id: productId,
+
+  nama: data.nama || "",
+
+  harga: Number(
+    selectedVariant?.harga || data.harga
+  ) || 0,
+
+  variant: selectedVariant || null,
+
+ qty: Number(window.qty || 1),
+
   ongkir: Number(data.ongkir || 0),
 
-    gambar: Array.isArray(data.gambar)
-      ? data.gambar[0]
-      : (data.gambar || ""),
-    storeId: data.storeId || "unknown_store",
-    gudangProduk: data.gudangProduk || false,
-    gudangId: data.gudangId || "",
-    supplier: data.supplier || "",
-    supplierResmi: data.supplierResmi || false,
-    hargaModal: Number(data.hargaModal || 0),
-    hargaJual: Number(data.hargaJual || data.harga || 0),
-    keuntunganStore: Number(data.keuntunganStore || 0),
-    komisi: Number(data.komisi || 0),
-    komisiPersen: Number(data.komisiPersen || 0),
-    penjelasanKomisi: data.penjelasanKomisi || ""
-  };
+  gambar: Array.isArray(data.gambar)
+    ? data.gambar[0]
+    : (data.gambar || ""),
 
-  localStorage.setItem("checkoutMode", "buynow");
-  localStorage.setItem("buyNowCart", JSON.stringify({
-    [product.id]: product
-  }));
+  storeId: data.storeId || "unknown_store",
 
-  location.href = "checkout.html";
+  gudangProduk: data.gudangProduk || false,
+
+  gudangId: data.gudangId || "",
+
+  supplier: data.supplier || "",
+
+  supplierResmi: data.supplierResmi || false,
+
+  hargaModal: Number(data.hargaModal || 0),
+
+  hargaJual: Number(
+    selectedVariant?.harga ||
+    data.hargaJual ||
+    data.harga ||
+    0
+  ),
+
+  keuntunganStore: Number(data.keuntunganStore || 0),
+
+  komisi: Number(data.komisi || 0),
+
+  komisiPersen: Number(data.komisiPersen || 0),
+
+  penjelasanKomisi: data.penjelasanKomisi || ""
 };
 
+localStorage.setItem("checkoutMode", "buynow");
 
+localStorage.setItem(
+  "buyNowCart",
+  JSON.stringify({
+    [product.id]: product
+  })
+);
 
+location.href = "checkout.html";
+
+}
 
 window.chatSeller = () => {
   const product = {
@@ -2034,6 +2322,196 @@ window.chatSeller = () => {
 
   location.href = `detailchatcostumer.html?store=${data.storeId}`;
 };
+
+
+
+
+
+
+
+let variants = data.variants || [];
+
+if ((!variants || variants.length === 0) && data.gudangProduk) {
+  if (data.gudangId) {
+    const snapGudang = await get(ref(db, "Gudangproduk/" + data.gudangId));
+
+    if (snapGudang.exists()) {
+      variants = snapGudang.val().variants || [];
+    }
+  }
+}
+
+window.variants = variants;
+
+
+console.log("VARIANTS :", window.variants);
+function showVarianModal(type){
+
+actionType = type;
+
+const modal = document.getElementById("varianModal");
+const list = document.getElementById("varianList");
+
+list.innerHTML = "";
+
+// pakai VARIANTS YANG SUDAH DI-FALLBACK
+const vList = window.variants || data.variants || [];
+
+if(!vList || vList.length === 0){
+  selectedVariant = null;
+
+  // tetap boleh lanjut kalau produk memang single item
+  if(type === "cart"){
+    realAddCart();
+  }else{
+    realCheckout();
+  }
+  return;
+}
+
+vList.forEach((v,index)=>{
+
+let title = v.tipe === "diamond" ? v.jumlah :
+            v.tipe === "voucher" ? v.nominal :
+            v.tipe === "giftcard" ? v.brand+" "+v.nominal :
+            "Varian";
+
+list.innerHTML += `
+<div onclick="pilihVarian(${index})"
+class="variantItem"
+data-index="${index}">
+
+<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+<img src="${v.gambar || (Array.isArray(data.gambar)?data.gambar[0]:data.gambar)}"
+style="width:28px;height:28px;border-radius:6px;object-fit:cover;border:1px solid #eee;">
+<span style="font-weight:bold;font-size:13px;">${title}</span>
+</div>
+
+<div style="font-size:11px;color:#ff6f00;font-weight:bold;">
+Rp ${(v.harga || 0).toLocaleString("id-ID")}
+</div>
+
+</div>`;
+});
+
+modal.style.display = "flex";
+}
+
+
+window.pilihVarian = (index)=>{
+
+selectedVariant =
+(window.variants || [])[index];
+document.getElementById("variantSelected").innerHTML =
+selectedVariant.nama ||
+selectedVariant.jumlah ||
+selectedVariant.nominal ||
+selectedVariant.warna ||
+"Varian Dipilih";
+if(!selectedVariant) return;
+
+document.getElementById("hargaVarian").innerHTML =
+"Rp " +
+Number(selectedVariant.harga || 0)
+.toLocaleString("id-ID");
+
+document.getElementById("stokVarian").innerHTML =
+"Stok " +
+Number(selectedVariant.stok || 0);
+
+/* =========================
+GANTI FOTO MINI DI POPUP
+========================= */
+
+const variantImage =
+document.getElementById("variantImage");
+
+if(
+variantImage &&
+selectedVariant.gambar
+){
+variantImage.src =
+selectedVariant.gambar;
+}
+
+/* =========================
+GANTI FOTO PRODUK UTAMA
+========================= */
+
+if(selectedVariant.gambar){
+
+const mainImg =
+document.getElementById(
+"mainProductImg"
+);
+
+if(mainImg){
+mainImg.src =
+selectedVariant.gambar;
+}
+
+}
+
+/* =========================
+HIGHLIGHT VARIAN
+========================= */
+
+document
+.querySelectorAll(".variantItem")
+.forEach(el=>{
+
+el.style.border =
+"1px solid #ddd";
+
+el.style.background =
+"#fff";
+
+});
+
+const aktif =
+document.querySelector(
+`[data-index="${index}"]`
+);
+
+if(aktif){
+
+aktif.style.border =
+"2px solid #ff6f00";
+
+aktif.style.background =
+"#fff7f0";
+
+}
+
+};
+
+
+document
+.getElementById("btnPilihVarian")
+.onclick = ()=>{
+
+if(!selectedVariant){
+
+alert("Pilih varian dulu");
+
+return;
+
+}
+
+document.getElementById(
+"varianModal"
+).style.display = "none";
+
+if(actionType === "cart"){
+realAddCart();
+}else{
+realCheckout();
+}
+
+};
+
+
+
 
 
 
@@ -2058,7 +2536,97 @@ window.closeStokModal = () => {
   document.getElementById("stokModal").style.display = "none";
 };
 
+
+window.qty = 1;
+
+window.minusQty = () => {
+  if (qty > 1) qty--;
+  document.getElementById("qtyText").textContent = qty;
+};
+
+window.plusQty = () => {
+  qty++;
+  document.getElementById("qtyText").textContent = qty;
+};
+
+window.tutupVarianModal = ()=>{
+
+document.getElementById(
+"varianModal"
+).style.display = "none";
+
+}
 </script>
+
+
+<div id="varianModal" class="variantModal">
+
+  <div class="variantContent">
+
+    <div class="dragLine"></div>
+
+    <div class="variantHeader">
+
+      <img id="variantImage"
+      src="assets/images/shopping-cart.png">
+
+      <div>
+
+        <div id="hargaVarian"
+        class="variantPrice">
+          Rp 0
+        </div>
+
+        <div id="stokVarian"
+        class="variantStock">
+          Stok 0
+        </div>
+
+        <div id="variantSelected"
+        class="variantSelected">
+          Pilih Varian
+        </div>
+
+      </div>
+
+    </div>
+
+    <div id="varianList"></div>
+
+    <div class="qtyBox">
+
+      <span>Jumlah</span>
+
+      <div>
+
+<button type="button" onclick="minusQty()">-</button>
+
+<span id="qtyText">1</span>
+
+<button type="button" onclick="plusQty()">+</button>
+
+      </div>
+
+    </div>
+
+<div class="varianAction">
+
+<button
+type="button"
+class="btnKembaliVarian"
+onclick="tutupVarianModal()">
+Kembali
+</button>
+
+<button
+id="btnPilihVarian"
+class="btnKonfirmasiVarian">
+Konfirmasi
+</button>
+
+</div>
+
+</div>
 
 </body>
 </html>

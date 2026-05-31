@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Semua Kategori</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f5f5f5;
+padding-bottom:30px;
+}
+
+/* HEADER */
+.header{
+position:sticky;
+top:0;
+z-index:100;
+background:#ff6f00;
+padding:15px;
+color:#fff;
+box-shadow:0 2px 10px rgba(0,0,0,.08);
+}
+
+.headerTop{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.backBtn{
+font-size:22px;
+cursor:pointer;
+}
+
+.headerTitle{
+font-size:18px;
+font-weight:bold;
+}
+
+.searchBox{
+margin-top:12px;
+background:#fff;
+border-radius:12px;
+padding:10px 14px;
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.searchBox input{
+border:none;
+outline:none;
+width:100%;
+font-size:14px;
+}
+
+/* CONTENT */
+.content{
+padding:12px;
+}
+
+/* GRID */
+.kategoriGrid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:10px;
+}
+
+/* ITEM */
+.kategoriItem{
+background:#fff;
+border-radius:14px;
+padding:12px 8px;
+text-align:center;
+cursor:pointer;
+transition:.15s;
+box-shadow:0 2px 8px rgba(0,0,0,.04);
+}
+
+.kategoriItem:active{
+transform:scale(.96);
+}
+
+.kategoriItem img{
+width:55px;
+height:55px;
+object-fit:contain;
+margin-bottom:8px;
+}
+
+.kategoriNama{
+font-size:12px;
+line-height:1.4;
+color:#333;
+font-weight:500;
+word-break:break-word;
+}
+
+/* RESPONSIVE */
+@media(max-width:420px){
+.kategoriGrid{
+grid-template-columns:repeat(4,1fr);
+}
+
+.kategoriItem img{
+width:50px;
+height:50px;
+}
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+
+<div class="headerTop">
+
+<div class="backBtn" onclick="history.back()">
+<i class="fa-solid fa-arrow-left"></i>
+</div>
+
+<div class="headerTitle">
+Semua Kategori
+</div>
+
+</div>
+
+<div class="searchBox">
+
+<i class="fa-solid fa-magnifying-glass" style="color:#999;"></i>
+
+<input type="text" id="searchKategori" placeholder="Cari kategori...">
+
+</div>
+
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+<div class="kategoriGrid" id="kategoriGrid"></div>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD3DTcca7yZKVtllCk3TQOUe6Yv2hSyG_g",
+  authDomain: "shoponline-93646.firebaseapp.com",
+  databaseURL: "https://shoponline-93646-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "shoponline-93646"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const grid = document.getElementById("kategoriGrid");
+const search = document.getElementById("searchKategori");
+
+let allKategori = [];
+
+/* =========================
+AMBIL DARI FIREBASE PRODUK
+========================= */
+async function loadKategori() {
+
+  const snap = await get(ref(db, "produk"));
+
+  if (!snap.exists()) {
+    grid.innerHTML = "<p style='text-align:center'>Tidak ada produk</p>";
+    return;
+  }
+
+  const kategoriSet = new Set();
+
+  snap.forEach(child => {
+    const p = child.val();
+
+    if (p.kategori) {
+      kategoriSet.add(p.kategori.trim());
+    }
+
+  });
+
+  allKategori = Array.from(kategoriSet);
+
+  render();
+}
+
+/* =========================
+RENDER KATEGORI
+========================= */
+function render(keyword = "") {
+
+  grid.innerHTML = "";
+
+  const filtered = allKategori.filter(k =>
+    k.toLowerCase().includes(keyword.toLowerCase())
+  );
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;color:#888;padding:30px">
+        Kategori tidak ditemukan
+      </div>
+    `;
+    return;
+  }
+
+  filtered.forEach(k => {
+
+    const slug = k.toLowerCase().replace(/\s+/g, "-");
+
+    grid.innerHTML += `
+      <div class="kategoriItem"
+      onclick="bukaKategori('${k}')">
+
+        <img src="assets/images/${slug}.png"
+        onerror="this.src='assets/images/house-decoration.png'">
+
+        <div class="kategoriNama">
+          ${k}
+        </div>
+
+      </div>
+    `;
+  });
+}
+
+/* =========================
+SEARCH
+========================= */
+search.addEventListener("input", (e) => {
+  render(e.target.value);
+});
+
+/* =========================
+CLICK KE DETAIL
+========================= */
+window.bukaKategori = (kategori) => {
+  location.href = "detailkategori.html?kategori=" + encodeURIComponent(kategori);
+};
+
+/* =========================
+START
+========================= */
+loadKategori();
+
+</script>
+</body>
+</html>
