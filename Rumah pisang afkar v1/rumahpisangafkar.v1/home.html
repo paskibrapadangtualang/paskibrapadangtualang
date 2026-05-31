@@ -229,7 +229,7 @@ padding:0 15px;
 margin-top:10px;
 margin-bottom:12px;
 font-weight:bold;
-font-size:18px;
+font-size:14px;
 
 }
 
@@ -590,6 +590,202 @@ padding:8px 10px 0 10px;
   filter: grayscale(1) brightness(0.7);
 }
 
+
+.headerTop{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 12px;
+  background:#fff;
+}
+
+.locationArea{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:12px;
+  color:#333;
+  background:#f5f5f5;
+  padding:6px 10px;
+  border-radius:20px;
+  max-width:55%;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.locationArea i{
+  color:#ff5722;
+}
+
+
+
+.titleBar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 14px;
+  border-bottom:1px solid #eee;
+}
+
+.titleLeft,
+.titleRight{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:16px;
+  font-weight:600;
+  color:#888;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.titleLeft i{
+  color:#999;
+}
+
+.titleRight i{
+  color:#ee4d2d;
+}
+
+/* ACTIVE TAB */
+.titleRight.active{
+  color:#ee4d2d;
+  position:relative;
+}
+
+.titleRight.active::after{
+  content:"";
+  position:absolute;
+  bottom:-8px;
+  left:0;
+  width:100%;
+  height:2px;
+  background:#ee4d2d;
+  border-radius:2px;
+}
+
+/* hover effect */
+.titleRight:hover,
+.titleLeft:hover{
+  color:#ee4d2d;
+}
+
+
+#productList {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  padding: 10px;
+}
+
+/* CARD STYLE SHOPEE */
+.productCard {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.productCard:active {
+  transform: scale(0.97);
+}
+
+/* IMAGE */
+.imgWrap {
+  position: relative;
+  width: 100%;
+  height: 140px;
+}
+
+.imgWrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* BADGE JARAK */
+.badgeDistance {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  font-size: 11px;
+  padding: 3px 6px;
+  border-radius: 6px;
+}
+
+/* CONTENT */
+.content {
+  padding: 8px;
+}
+
+
+.price {
+  color: #e74c3c;
+  font-weight: bold;
+  margin-top: 4px;
+  font-size: 13px;
+}
+
+.location {
+  font-size: 11px;
+  color: #777;
+  margin-top: 4px;
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+
+.metaRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  margin-top: 4px;
+  color: #666;
+}
+
+.badgeCOD {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: #00c853;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.sold {
+  color: #777;
+}
+
+.rating {
+  color: #f39c12;
+}
+
+
+.badgePromo {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: #ff3b30;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  z-index: 5;
+}
 </style>
 
 </head>
@@ -604,12 +800,16 @@ padding:8px 10px 0 10px;
 
 <div class="topHeader">
 
-<div class="logoArea">
 
-<img
-src="assets/images/watermak.jpeg"
-class="logoImg">
-</div>
+
+  <div class="logoArea">
+    <img src="assets/images/watermak.jpeg" class="logoImg">
+  </div>
+
+  <div class="locationArea">
+    <i class="fa fa-map-marker-alt"></i>
+    <span id="userLocationText">Aktifkan lokasi</span>
+  </div>
 
 
 <div
@@ -705,7 +905,7 @@ id="bannerDots"
 <div class="menuItem" onclick="window.location.href='nextkategori.html'">
 <i class="fa fa-box"></i>
 <p>
-Produk
+All Produk
 </p>
 </div>
 
@@ -787,12 +987,23 @@ Toko
 
 
 
-<div class="title">
+<div class="titleBar">
 
-Produk Pilihan
+  <div class="titleLeft">
+    <i class="fa-solid fa-box"></i>
+    Produk Pilihan
+  </div>
+
+  <div class="titleRight active" onclick="switchMenu('terdekat')">
+    <i class="fa-solid fa-location-dot"></i>
+    Produk Terdekat
+  </div>
 
 </div>
 
+
+
+  <div id="productList"></div>
 <div
 class="list"
 id="produkList"
@@ -1861,9 +2072,6 @@ function formatTerjual(num){
 
 
 
-
-
-
 // panggil setelah semua render
 initKategori();
 
@@ -1872,6 +2080,312 @@ initKategori();
 
 
 
+
+
+
+
+
+
+
+
+/* =========================
+   GLOBAL DATA
+========================= */
+
+window.dataProduk = [];
+window.dataProdukLoaded = false;
+window.userLat = null;
+window.userLng = null;
+
+
+/* =========================
+   FIREBASE LOAD PRODUK
+========================= */
+
+produkSnap.forEach((x) => {
+  const d = x.val();
+
+  window.dataProduk.push({
+    id: d.id,
+    nama: d.nama || "-",
+    harga: Number(d.harga || 0),
+    promo: d.promo || false,
+    diskon: Number(d.diskon || 0),
+    gambar: d.gambar || "",
+    kategori: d.kategori || "",
+    cod: d.cod || false,
+    lokasiDetail: {
+      latitude: Number(d.lokasiDetail?.latitude),
+      longitude: Number(d.lokasiDetail?.longitude),
+      kecamatan: d.lokasiDetail?.kecamatan || "-",
+      desa: d.lokasiDetail?.desa || "-"
+    },
+    terjual: Number(d.terjual || 0)
+  });
+});
+
+window.dataProdukLoaded = true;
+
+console.log("🔥 DATA READY:", window.dataProduk.length);
+
+
+/* =========================
+   GET PRODUCT LIST
+========================= */
+function getProductList() {
+  return document.getElementById("productList");
+}
+
+
+/* =========================
+   INIT KATEGORI
+========================= */
+if (typeof initKategori === "function") {
+  initKategori();
+}
+
+
+/* =========================
+   GPS INIT (ONLY ONE)
+========================= */
+function initUserLocation() {
+
+  if (!navigator.geolocation) return;
+
+  navigator.geolocation.getCurrentPosition(async (pos) => {
+
+    window.userLat = Number(pos.coords.latitude);
+    window.userLng = Number(pos.coords.longitude);
+
+    console.log("🔥 GPS READY:", window.userLat, window.userLng);
+
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${window.userLat}&lon=${window.userLng}`
+      );
+
+      const data = await res.json();
+
+      const kecamatan =
+        data.address?.suburb ||
+        data.address?.village ||
+        data.address?.town ||
+        data.address?.county ||
+        "-";
+
+      const dusun =
+        data.address?.hamlet ||
+        data.address?.neighbourhood ||
+        "";
+
+      window.userLokasi = dusun ? `${dusun}, ${kecamatan}` : kecamatan;
+
+      const el = document.getElementById("userLocationText");
+      if (el) el.innerText = window.userLokasi;
+
+      console.log("📍 LOKASI READY:", window.userLokasi);
+
+    } catch (err) {
+      console.log("reverse error", err);
+    }
+
+  }, (err) => {
+    console.log("GPS ERROR:", err);
+  });
+}
+
+initUserLocation();
+
+
+/* =========================
+   DISTANCE
+========================= */
+function getDistanceKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+
+  const a =
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI/180) *
+    Math.cos(lat2 * Math.PI/180) *
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+
+  return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+}
+
+
+/* =========================
+   TERDEKAT PRODUCT
+========================= */
+function renderProdukTerdekat() {
+
+  const list = document.getElementById("productList");
+
+  console.log("🔥 RUN TERDEKAT FUNCTION");
+
+  if (!list) {
+    console.log("❌ productList NOT FOUND");
+    return;
+  }
+
+  if (!window.dataProduk) {
+    console.log("❌ dataProduk kosong");
+    return;
+  }
+
+  const userLat = Number(window.userLat);
+  const userLng = Number(window.userLng);
+
+  console.log("🔥 GPS:", userLat, userLng);
+
+  if (isNaN(userLat) || isNaN(userLng)) {
+    list.innerHTML = "GPS belum siap";
+    return;
+  }
+
+  let hasil = [];
+
+  for (let i = 0; i < window.dataProduk.length; i++) {
+
+    const p = window.dataProduk[i];
+
+    if (!p.lokasiDetail) continue;
+    if (!p.lokasiDetail.latitude || !p.lokasiDetail.longitude) continue;
+
+    const lat = Number(p.lokasiDetail.latitude);
+    const lng = Number(p.lokasiDetail.longitude);
+
+    const jarak = getDistanceKm(userLat, userLng, lat, lng);
+
+    hasil.push({ ...p, jarak });
+  }
+
+  console.log("🔥 HASIL TERDEKAT:", hasil.length);
+
+  hasil.sort((a, b) => a.jarak - b.jarak);
+
+  hasil = hasil.slice(0, 20);
+
+  if (hasil.length === 0) {
+    list.innerHTML = "Tidak ada produk terdekat";
+    return;
+  }
+
+  list.innerHTML = "";
+
+  for (let i = 0; i < hasil.length; i++) {
+
+    const d = hasil[i];
+
+list.innerHTML += `
+<div class="productCard" onclick="location.href='detailproduk.html?id=${d.id}'">
+
+  <div class="imgWrap">
+
+    <img src="${Array.isArray(d.gambar) ? d.gambar[0] : d.gambar}">
+
+    <!-- JARAK -->
+    <div class="badgeDistance">
+      <i class="fa-solid fa-location-dot"></i>
+      ${d.jarak.toFixed(1)} km
+    </div>
+
+    <!-- COD -->
+    ${d.cod ? `
+      <div class="badgeCOD">
+        <i class="fa-solid fa-truck-fast"></i> COD
+      </div>
+    ` : ""}
+
+    <!-- PROMO -->
+    ${d.promo ? `
+      <div class="badgePromo">
+        <i class="fa-solid fa-bolt"></i> ${d.diskon}% OFF
+      </div>
+    ` : ""}
+
+  </div>
+
+  <div class="content">
+
+    <!-- TITLE -->
+    <div class="title">
+      <i class="fa-solid fa-box"style="color:#ee4d2d; margin-right:4px;"></i> ${d.nama || "-"}
+    </div>
+
+    <!-- PRICE -->
+    <div class="price">
+      <i class="fa-solid fa-tag"></i>
+      Rp ${Number(d.harga).toLocaleString("id-ID")}
+    </div>
+
+    <!-- META -->
+    <div class="metaRow">
+
+      <div class="sold">
+        <i class="fa-solid fa-cart-shopping"></i>
+        ${d.terjual || 0} terjual
+      </div>
+
+      <div class="rating">
+        <i class="fa-solid fa-star"></i>
+        ${d.rating || 4.5}
+      </div>
+
+    </div>
+
+    <!-- LOCATION -->
+    <div class="location">
+      <i class="fa-solid fa-location-dot"style="color:#ee4d2d; margin-right:4px;"></i>
+      ${d.lokasiDetail?.kecamatan || "-"}
+    </div>
+
+  </div>
+
+</div>
+`;
+  }
+}
+
+
+
+/* =========================
+   SWITCH MENU (FIX FINAL)
+========================= */
+window.switchMenu = function(type) {
+
+  console.log("🔥 MENU CLICK:", type);
+
+  const list = document.getElementById("productList");
+  if (!list) return;
+
+  if (!window.dataProduk || window.dataProduk.length === 0) {
+    list.innerHTML = "Loading produk...";
+    return;
+  }
+
+  if (type === "rekomendasi") {
+    renderAllProducts?.();
+    return;
+  }
+
+  if (type === "terdekat") {
+    console.log("🔥 CALL TERDEKAT OK");
+    renderProdukTerdekat();
+    return;
+  }
+
+  if (type === "kategori") {
+    showKategori?.();
+    return;
+  }
+};
+
+/* =========================
+   DEBUG GPS MANUAL
+========================= */
 
 </script>
 

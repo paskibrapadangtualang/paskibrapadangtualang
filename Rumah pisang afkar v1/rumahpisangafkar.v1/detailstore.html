@@ -120,13 +120,20 @@ margin-bottom:6px;
 }
 
 .kategori{
+  font-size:12px;
+  color:#003c66;
+  margin-bottom:4px;
+  line-height:1.2;
+  font-weight:600;
 
-font-size:13px;
+  /* biar mirip Shopee: teks tidak terlalu tebal & soft */
+  letter-spacing:0.1px;
 
-opacity:.9;
+  /* kalau teks panjang */
+  display:-webkit-box;
 
-margin-bottom:6px;
-
+  -webkit-box-orient:vertical;
+  overflow:hidden;
 }
 
 .desc{
@@ -209,27 +216,98 @@ display:block;
 
 /* PROMO */
 
+.card{
+  background:#fff;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 2px 10px rgba(0,0,0,.08);
+  margin-bottom:12px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.card:active{
+  transform:scale(.98);
+}
+
+.imgBox img{
+  width:100%;
+  height:180px;
+  object-fit:cover;
+}
+
+.productInfo{
+  padding:10px;
+}
+
+
+
+.productPrice{
+  color:#ee4d2d;
+  font-weight:700;
+  margin-top:4px;
+  display:flex;
+  gap:6px;
+  align-items:center;
+}
+
+.productOld{
+  font-size:12px;
+  text-decoration:line-through;
+  color:#999;
+  display:flex;
+  gap:6px;
+  align-items:center;
+}
+
+.row{
+  display:flex;
+  gap:6px;
+  margin-top:8px;
+  flex-wrap:wrap;
+}
+
+.tag{
+  font-size:11px;
+  padding:3px 6px;
+  border-radius:6px;
+  background:#f5f5f5;
+  display:flex;
+  gap:4px;
+  align-items:center;
+}
+
+.cod{
+  background:#e6f7ff;
+  color:#007aff;
+}
+
+.kupon{
+  background:#fff0f0;
+  color:#ff4d4f;
+}
+
+.stok{
+  background:#fff7e6;
+  color:#fa8c16;
+}
+
+.lokasi{
+  font-size:11px;
+  color:#777;
+  margin-top:6px;
+  display:flex;
+  gap:6px;
+  align-items:center;
+}
+
 .promo{
-
-position:absolute;
-
-top:10px;
-left:10px;
-
-background:#ff3d00;
-
-color:white;
-
-padding:5px 10px;
-
-border-radius:10px;
-
-font-size:11px;
-
-font-weight:bold;
-
-z-index:2;
-
+  position:absolute;
+  background:#ff3b30;
+  color:#fff;
+  font-size:11px;
+  padding:4px 8px;
+  border-radius:0 0 8px 0;
 }
 
 /* CONTENT */
@@ -514,6 +592,62 @@ font-weight:bold;
 cursor:pointer;
 }
 
+
+
+
+.scrollHeader{
+  position:fixed;
+  top:-70px; /* awalnya sembunyi */
+  left:0;
+  right:0;
+  height:55px;
+  background:#fff;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  box-shadow:0 2px 10px rgba(0,0,0,.08);
+  transition:.25s ease;
+  z-index:9999;
+}
+
+.scrollHeader.show{
+  top:0; /* muncul saat scroll */
+}
+
+.navItem{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  font-size:11px;
+  color:#333;
+  gap:2px;
+}
+
+.navItem i{
+  font-size:16px;
+  color:#d10000;
+}
+
+
+
+.kategoriCard{
+  padding:12px;
+  margin:8px;
+  background:#fff;
+  border-radius:10px;
+  display:flex;
+  gap:8px;
+  align-items:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+  cursor:pointer;
+}
+
+.kategoriCard i{
+  color:#d10000;
+}
+
+
+
 </style>
 </head>
 <body>
@@ -695,6 +829,29 @@ Voucher Toko
 </div>
 
 </div>
+
+
+
+
+<div class="scrollHeader" id="scrollHeader">
+
+  <div class="navItem" onclick="switchMenu('rekomendasi')">
+    <i class="fa fa-star"></i>
+    <span>Rekomendasi</span>
+  </div>
+
+  <div class="navItem" onclick="switchMenu('terdekat')">
+    <i class="fa fa-location-dot"></i>
+    <span>Produk Terdekat</span>
+  </div>
+
+  <div class="navItem" onclick="switchMenu('kategori')">
+    <i class="fa fa-list"></i>
+    <span>Kategori</span>
+  </div>
+
+</div>
+
 
 
 
@@ -1637,8 +1794,38 @@ return;
 }
 
 // ambil semua produk
-const produkSnap =
-await get(ref(db,"produk"));
+window.dataProdukLoaded = false;
+window.dataProduk = [];
+
+// AMBIL PRODUK FIREBASE
+const produkSnap = await get(ref(db, "produk"));
+
+if (produkSnap.exists()) {
+
+  produkSnap.forEach((x) => {
+    const d = x.val();
+
+    // filter hanya store ini
+    if (d.storeId !== id) return;
+
+    window.dataProduk.push(d);
+  });
+
+}
+
+window.dataProdukLoaded = true;
+
+console.log("DATA READY:", window.dataProduk);
+
+
+
+
+
+
+
+
+
+
 
 if(!produkSnap.exists())
 return;
@@ -1759,105 +1946,60 @@ d.gambar[0]
 
 d.gambar;
 
-/* CARD */
-
 productList.innerHTML += `
-
 <div class="card"
+onclick="location.href='detailproduk.html?id=${d.id}'">
 
-onclick="
-location.href=
-'detailproduk.html?id=${d.id}'
-">
+  ${d.promo ? `
+    <div class="promo">
+      <i class="fa fa-bolt"></i> PROMO
+    </div>
+  ` : ""}
 
-${d.promo ? `
+  <div class="imgBox">
+    <img src="${gambarUtama}">
+  </div>
 
-<div class="promo">
-
-🔥 PROMO
-
-</div>
-
-` : ""}
-
-<img src="${gambarUtama}">
-
-<div class="productInfo">
+  <div class="productInfo">
 
 <div class="productName">
-
-${d.nama}
-
+  <i class="fa fa-box" style="color:#d10000;"></i> ${d.nama}
 </div>
 
-<div class="productPrice">
+    <div class="productPrice">
+      <i class="fa fa-tags"></i> Rp ${ (d.harga || 0).toLocaleString("id-ID") }
+    </div>
 
-Rp ${
+    <div class="productOld">
+      <i class="fa fa-strikethrough"></i> Rp ${ (d.hargaAwal || 0).toLocaleString("id-ID") }
+    </div>
 
-(d.harga || 0)
+    <div class="row">
 
-.toLocaleString(
-"id-ID"
-)
+      ${d.cod ? `
+        <div class="tag cod">
+          <i class="fa fa-truck"></i> COD
+        </div>
+      ` : ''}
 
-}
+      ${d.kupon ? `
+        <div class="tag kupon">
+          <i class="fa fa-ticket"></i> Kupon
+        </div>
+      ` : ''}
 
+      <div class="tag stok">
+        <i class="fa fa-bolt"></i> ${d.stok || 0} stok
+      </div>
+
+    </div>
+
+    <div class="lokasi">
+      <i class="fa fa-map-marker-alt"></i> ${d.lokasi || "-"}
+    </div>
+
+  </div>
 </div>
-
-<div class="productOld">
-
-Rp ${
-
-(d.hargaAwal || 0)
-
-.toLocaleString(
-"id-ID"
-)
-
-}
-
-</div>
-
-<div class="row">
-
-${
-d.cod ?
-
-'<div class="tag">🚚 COD</div>'
-
-:
-
-''
-}
-
-${
-d.kupon ?
-
-'<div class="tag">🎫 Kupon</div>'
-
-:
-
-''
-}
-
-<div class="tag">
-
-⚡ ${d.stok || 0}
-
-</div>
-
-</div>
-
-<div class="lokasi">
-
-📍 ${d.lokasi || "-"}
-
-</div>
-
-</div>
-
-</div>
-
 `;
 
 });
@@ -1879,7 +2021,343 @@ loadStoreRatingRealtime(id);
 }
 
 
+window.addEventListener("scroll", function () {
+  const header = document.getElementById("scrollHeader");
 
+  if (window.scrollY > 80) {
+    header.classList.add("show");
+  } else {
+    header.classList.remove("show");
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+window.dataProduk = window.dataProduk || [];
+window.userLokasi = window.userLokasi || "";
+
+/* =========================
+   GET PRODUCT LIST
+========================= */
+function getProductList() {
+  return document.getElementById("productList");
+}
+
+/* =========================
+   SWITCH MENU
+========================= */
+window.switchMenu = function(type) {
+
+  const productList = getProductList();
+  if (!productList) return;
+
+  // ❗ CEK DATA SUDAH READY ATAU BELUM
+  if (!window.dataProdukLoaded) {
+    productList.innerHTML = `
+      <div style="padding:15px;color:#999;">
+        Loading produk...
+      </div>
+    `;
+    return;
+  }
+
+  const data = window.dataProduk || [];
+
+  if (type === "rekomendasi") {
+    renderAllProducts();
+  }
+
+  else if (type === "terdekat") {
+    filterProdukTerdekat();
+  }
+
+  else if (type === "kategori") {
+    showKategori();
+  }
+};
+/* =========================
+   RENDER ALL PRODUCT (STORE ONLY)
+========================= */
+function renderAllProducts() {
+
+  const productList = getProductList();
+  if (!productList) return;
+
+  productList.innerHTML = "";
+
+  const rekomendasi = window.dataProduk
+    .filter(d => Number(d.terjual || 0) > 20) // 🔥 syarat utama
+    .sort((a, b) => (b.terjual || 0) - (a.terjual || 0)); // optional: paling laris di atas
+
+  console.log("REKOMENDASI:", rekomendasi);
+
+  if (rekomendasi.length === 0) {
+    productList.innerHTML = `
+      <div style="padding:15px;color:#999;font-size:12px;">
+        Belum ada produk rekomendasi
+      </div>
+    `;
+    return;
+  }
+
+  rekomendasi.forEach(d => {
+
+    productList.innerHTML += `
+      <div class="card"
+      onclick="location.href='detailproduk.html?id=${d.id}'">
+
+        <div class="imgBox">
+          <img src="${Array.isArray(d.gambar) ? d.gambar[0] : d.gambar}">
+        </div>
+
+        <div class="productInfo">
+
+          <div class="productName">
+            ${d.nama || "-"}
+          </div>
+
+          <div class="productPrice">
+            Rp ${(d.harga || 0).toLocaleString("id-ID")}
+          </div>
+
+          <div class="lokasi">
+            Terjual: ${d.terjual || 0}
+          </div>
+
+        </div>
+
+      </div>
+    `;
+  });
+}
+/* =========================
+   FILTER TERDEKAT (STORE ONLY)
+========================= */
+function filterProdukTerdekat() {
+
+  const productList = getProductList();
+  if (!productList) return;
+
+  productList.innerHTML = "";
+
+  const hasil = window.dataProduk.filter(d => {
+
+    // =========================
+    // 1. JIKA ADA GPS (LOKASI DETAIL)
+    // =========================
+    if (d.lokasiDetail?.latitude && d.lokasiDetail?.longitude) {
+
+      const userLat = window.userLat;
+      const userLng = window.userLng;
+
+      if (!userLat || !userLng) return false;
+
+      const distance = getDistanceKm(
+        userLat,
+        userLng,
+        d.lokasiDetail.latitude,
+        d.lokasiDetail.longitude
+      );
+
+      // radius 10 km
+      return distance <= 10;
+    }
+
+    // =========================
+    // 2. FALLBACK (LOKASI TEXT)
+    // =========================
+    const userLoc = (window.userLokasi || "").toLowerCase().trim();
+    const lokasiProduk = (d.lokasi || "").toLowerCase().trim();
+
+    return userLoc && lokasiProduk === userLoc;
+  });
+
+  console.log("HASIL TERDEKAT:", hasil);
+
+  if (hasil.length === 0) {
+    productList.innerHTML = `
+      <div style="padding:15px;color:#999;font-size:12px;">
+        Aktifkan lokasi anda untuk produk terdekat
+      </div>
+    `;
+    return;
+  }
+
+  hasil.forEach(d => {
+
+    productList.innerHTML += `
+      <div class="card"
+      onclick="location.href='detailproduk.html?id=${d.id}'">
+
+        <div class="imgBox">
+          <img src="${Array.isArray(d.gambar) ? d.gambar[0] : d.gambar}">
+        </div>
+
+        <div class="productInfo">
+
+          <div class="productName">
+            ${d.nama || "-"}
+          </div>
+
+          <div class="productPrice">
+            Rp ${(d.harga || 0).toLocaleString("id-ID")}
+          </div>
+
+          <div class="lokasi">
+            📍 ${d.lokasiDetail?.kecamatan || d.lokasi || "-"}
+          </div>
+
+        </div>
+
+      </div>
+    `;
+  });
+}
+function getDistanceKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+
+  const a =
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI/180) *
+    Math.cos(lat2 * Math.PI/180) *
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+  return R * c;
+}
+
+navigator.geolocation.getCurrentPosition((pos) => {
+  window.userLat = pos.coords.latitude;
+  window.userLng = pos.coords.longitude;
+});
+/* =========================
+   SHOW KATEGORI (STORE ONLY)
+========================= */
+function showKategori() {
+
+  const productList = getProductList();
+  if (!productList) return;
+
+  productList.innerHTML = "";
+
+  const data = (window.dataProduk || []);
+
+
+const kategoriUnik = [...new Set(
+  window.dataProduk
+    .map(d => (d.kategori || "").trim())
+    .filter(k => k !== "")
+)];
+
+  if (kategoriUnik.length === 0) {
+    productList.innerHTML = `
+      <div style="padding:15px;color:#999;">
+        Tidak ada kategori
+      </div>
+    `;
+    return;
+  }
+
+  kategoriUnik.forEach(k => {
+
+    productList.innerHTML += `
+      <div class="kategoriCard" onclick="filterKategori('${k}')">
+        <i class="fa fa-list"></i>
+        ${k}
+      </div>
+    `;
+  });
+}
+/* =========================
+   FILTER KATEGORI (STORE ONLY)
+========================= */
+window.filterKategori = function(kategori) {
+
+  const productList = getProductList();
+  if (!productList) return;
+
+  productList.innerHTML = "";
+
+  const target = (kategori || "").trim().toLowerCase();
+
+  const hasil = (window.dataProduk || []).filter(d =>
+    (d.kategori || "").trim().toLowerCase() === target
+  );
+
+  console.log("KATEGORI DIPILIH:", kategori);
+  console.log("HASIL FILTER:", hasil);
+
+  if (hasil.length === 0) {
+    productList.innerHTML = `
+      <div style="padding:15px;color:#999;font-size:12px;">
+        Tidak ada produk
+      </div>
+    `;
+    return;
+  }
+
+  // 🔥 PAKAI SATU SISTEM SAJA (JANGAN CAMPUR renderCard)
+  hasil.forEach(d => {
+
+    productList.innerHTML += `
+      <div class="card" onclick="location.href='detailproduk.html?id=${d.id}'">
+
+        <div class="imgBox">
+          <img src="${Array.isArray(d.gambar) ? d.gambar[0] : d.gambar}">
+        </div>
+
+        <div class="productInfo">
+
+          <div class="productName">
+            ${d.nama || "-"}
+          </div>
+
+          <div class="productPrice">
+            Rp ${(d.harga || 0).toLocaleString("id-ID")}
+          </div>
+
+          <div class="lokasi">
+            ${d.lokasi || "-"}
+          </div>
+
+        </div>
+
+      </div>
+    `;
+  });
+};
+/* =========================
+   NORMALISASI DATA FIREBASE
+========================= */
+function normalizeProduk(d) {
+  return {
+    ...d,
+
+    stok: d.stok ?? d.stock ?? 0,
+    harga: d.harga ?? 0,
+    hargaAwal: d.hargaAwal ?? 0,
+    kategori: d.kategori ?? "lainnya",
+    lokasi: d.lokasi ?? "-",
+    promo: d.promo ?? false,
+    cod: d.cod ?? false,
+    kupon: d.kupon ?? false
+  };
+}
 </script>
 </body>
 </html>
